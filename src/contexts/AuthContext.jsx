@@ -1,72 +1,119 @@
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebaseConfig';
+import { ROLES } from '@/constants/roles';
+import { loginWithEmailPassword, logoutUser, registerUserByAdmin } from '@/services/authService';
+import { getUserProfileByUid } from '@/services/userService';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+const AuthContext = createContext(null);
 
-const AuthContext = createContext();
-
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth debe ser usado dentro de AuthProvider');
-  }
-  return context;
-};
 
-export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  if (!context) {
+    throw new Error('useAuth debe usarse dentro de AuthProvider.');
+  }
+
+  return context;
+}
+
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem('hospital_auth');
-    const savedUser = localStorage.getItem('hospital_user');
-    
-    if (savedAuth === 'true' && savedUser) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    let isMounted = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!isMounted) return;
+      setLoading(true);
+
+      if (!firebaseUser) {
+        setUser(null);
+        setProfile(null);
+        setRole(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const firestoreProfile = await getUserProfileByUid(firebaseUser.uid);
+
+        if (!isMounted) return;
+
+        setUser(firebaseUser);
+        setProfile(firestoreProfile);
+        setRole(firestoreProfile.rol);
+      } catch (error) {
+        console.error('Error cargando rol/perfil del usuario:', error);
+        await logoutUser();
+
+        if (!isMounted) return;
+
+        setUser(null);
+        setProfile(null);
+        setRole(null);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
-  const login = (username, password) => {
-    // Simulación de autenticación
-    const validCredentials = [
-      { username: 'admin', password: 'admin123', role: 'Administrador', name: 'Dr. Admin' },
-      { username: 'doctor', password: 'doctor123', role: 'Médico', name: 'Dr. García' },
-      { username: 'enfermera', password: 'nurse123', role: 'Enfermera', name: 'Enf. María' }
-    ];
-
-    const user = validCredentials.find(
-      cred => cred.username === username && cred.password === password
-    );
-
-    if (user) {
-      setIsAuthenticated(true);
-      setUser(user);
-      localStorage.setItem('hospital_auth', 'true');
-      localStorage.setItem('hospital_user', JSON.stringify(user));
-      return true;
+  const login = useCallback(async ({ email, password }) => {
+    setLoading(true);
+    try {
+      await loginWithEmailPassword(email, password);
+    } catch (error) {
+      setLoading(false);
+      throw error;
     }
-    return false;
-  };
+  }, []);
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    localStorage.removeItem('hospital_auth');
-    localStorage.removeItem('hospital_user');
-  };
+  const logout = useCallback(async () => {
+    setLoading(true);
+    try {
+      await logoutUser();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const registerUser = useCallback(
+    async ({ nombre, email, password, rol }) => {
+      if (role !== ROLES.ADMIN) {
+        throw new Error('Solo un administrador puede registrar nuevos usuarios.');
+      }
+
+      return registerUserByAdmin({
+        nombre,
+        email,
+        password,
+        rol,
+        createdByUid: user?.uid,
+      });
+    },
+    [role, user?.uid]
+  );
 
   const value = {
-    isAuthenticated,
     user,
+    profile,
+    role,
+    loading,
+    isAuthenticated: Boolean(user),
     login,
     logout,
-    loading
+    registerUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

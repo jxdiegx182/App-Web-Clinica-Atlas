@@ -250,14 +250,14 @@ function Admision() {
   return (
     <div className="min-h-screen bg-white p-4">
       {/* Encabezado */}
-      <div className="relative mb-4">
+      <div className="relative mb-2">
         <button
           onClick={() => navigate(-1)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#4b6bb3]/80 text-white font-semibold py-1 px-3 rounded hover:bg-[#2b8d8f] shadow"
+          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
         >
           ← Volver
         </button>
-        <h1 className="text-3xl text-[#5dbfc1] font-bold text-center">
+        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
           ADMISION CLINICA
         </h1>
       </div>

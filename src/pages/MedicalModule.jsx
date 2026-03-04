@@ -55,9 +55,6 @@ const MedicalModulePanel = () => {
       if (!mainId) {
         console.warn('⚠️ mainId es undefined o null'); 
         setLoading(false);
-<pre className="text-xs text-black bg-white p-2">
-  {JSON.stringify(admisiones, null, 2)}
-</pre>
         return;
       }
       
@@ -157,37 +154,33 @@ useEffect(() => {
   }
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-1">
+      <div className="relative mb-2">
         <button
           onClick={() => window.history.back()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#007e8f] text-white font-semibold py-1 px-3 rounded hover:bg-[#2b8d8f] shadow"
+          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
         >
           ← Volver
         </button>
-        <h1 className="text-3xl text-[#5dbfc1] font-bold  text-center">
+        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
           MODULO MEDICO
         </h1>
       </div>
 
       <div className="min-h-screen bg-[#4b6bb3]/20 p-2">
-        <header className="bg-[#ffffff]/90 rounded-md p-4 shadow-md text-[#0E2942]">
-          {/*fecha*/}
-
-          <p className="absolute left-40 top-36  text-lg font-bold  ">
-            {formattedTime}
-          </p>
-          <p className="absolute left-24 top-44 text-sm uppercase tracking-wide">
-            {formattedDate.toUpperCase()}
-          </p>
+        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
 {/**SE AGREGA COLUMNAS LUEGO DE LA IMAGEN  */}
-          <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-9 text-sm">
-            <div className="max-w-6xl mx-auto p-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs leading-tight">
+            <div className="rounded-xl bg-[#007e8f]/5 p-2">
               {/*la imagen de la clinica atlas y su fecha */}
               <img
                 src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-                alt="Imagen médica decorativa"
-                className="w-48 h-auto mcx-auto mb-4"
+                alt="Logo Clinica Atlas"
+                className="w-36 h-auto"
               />
+              <p className="mt-1 text-sm font-bold text-[#1c3f6e]">{formattedTime}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#007e8f]">
+                {formattedDate.toUpperCase()}
+              </p>
             </div>
 
             
@@ -198,26 +191,25 @@ useEffect(() => {
               <p className="text-gray-600">Cargando datos de admisiones...</p>
             ) : admisiones ? (
               <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {edad}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {estancia}<br/>
-                  
+                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
+                  <p className="font-bold text-sm text-[#1c3f6e]">{admisiones.firstName} {admisiones.lastName}{' '}</p>
+                  <p><strong>Identificacion:</strong> {admisiones.cedula}</p>
+                  <p><strong>Edad:</strong> {edad}</p>
+                  <p><strong>Medico:</strong> {admisiones.medico}</p>
+                  <p><strong>Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}</p>
+                  <p><strong>Estancia:</strong> {estancia} dias</p>
                 </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                
+                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
+                  <p><strong>Servicio:</strong> {admisiones.servicio}</p>
+                  <p><strong>Seguro:</strong> {admisiones.seguro}</p>
+                  <p><strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}</p>
+                  <p>{admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''}</p>
+                  <p>{admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}</p>
                 </div>
-                <div className=" bg-[#007e8f]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                <strong>PISO:</strong>  {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'}<br/>
+                <div className="rounded-xl bg-gradient-to-br from-[#ffffff] to-[#f3f8fc] border border-[#007e8f]/15 p-2 text-center font-semibold text-[#1c3f6e]">
+                  <p>PISO: {admisiones.ubicacion?.piso || 'No Reg'}</p>
+                  <p>{admisiones.ubicacion?.habitacion || 'No Reg'}</p>
+                  <p className="mt-1 text-[10px] font-bold text-[#007e8f]">Turno Medico</p>
                 </div>
                 
               </>
@@ -227,8 +219,6 @@ useEffect(() => {
               </p>
             )}
           </div>
-
-
 
         </header>
 

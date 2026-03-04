@@ -21,6 +21,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import { canAccessByRole, getAllowedRolesForDashboardModule } from '@/constants/accessControl';
 import {
   LogOut,
   User,
@@ -53,9 +54,10 @@ const serviciosHospital = [
   'CUIDADO',
 ];
 //'Quirófano',
+const UNAUTHORIZED_MODULE_BUTTON_MODE = 'hide'; // 'hide' | 'disable'
 
 const Dashboard = () => {
-  const { user, logout } = useAuth(); //USUARIO
+  const { user, profile, role, logout } = useAuth(); //USUARIO
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState(''); //BUSQUEDA DE TERMINOS
@@ -214,8 +216,8 @@ const Dashboard = () => {
 
   //+++++++++++agregado por chat gpt 5 ++++++++++++++++++++++++++++
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast({
       title: 'Sesión cerrada',
       description: 'Has salido del sistema correctamente',
@@ -226,6 +228,16 @@ const Dashboard = () => {
     /*_________constantes para REDIRIGIR A LA VENTANA____________________*/
   }
   const handleModuleClick = (mainId, moduleName) => {
+    const hasAccess = canAccessByRole(
+      role,
+      getAllowedRolesForDashboardModule(moduleName)
+    );
+
+    if (!hasAccess) {
+      navigate('/unauthorized');
+      return;
+    }
+
     if (moduleName === 'Modulo Médico') {
       navigate(`/modulo-medico/${mainId}`, { state: { moduleName } });
     } else if (moduleName === 'Modulo Enfermeria') {
@@ -235,6 +247,17 @@ const Dashboard = () => {
     } else {
       toast({ title: '🚧 Esta función no está implementada aún.' });
     }
+  };
+
+  const userCanAccessModule = (moduleName) =>
+    canAccessByRole(role, getAllowedRolesForDashboardModule(moduleName));
+
+  const getRenderableModules = (modules = []) => {
+    if (UNAUTHORIZED_MODULE_BUTTON_MODE === 'hide') {
+      return modules.filter((moduleName) => userCanAccessModule(moduleName));
+    }
+
+    return modules;
   };
 
   const getStatusColor = (estado) => {
@@ -431,7 +454,8 @@ const totalTerapiaIntensiva = mains.filter(
             <div className="flex items-center gap-2">
               <div className="text-[0.8rem] text-gray-700 font-medium flex items-right gap-1">
                 <User className="w-8 h-8" />
-                {user?.name}
+                {profile?.nombre || user?.email || 'Usuario'}
+                {role ? ` (${role})` : ''}
               </div>
               <Button
                 onClick={handleLogout}
@@ -958,32 +982,47 @@ const totalTerapiaIntensiva = mains.filter(
 
                     <td className="px-4 py-3 ">
                       <div className="flex justify-center gap-2">
-                        {main.modulos.map((modulo, idx) => (
-                          <Button
-                            key={idx}
-                            size="icon"
-                            variant="outline"
-                            onClick={() => handleModuleClick(main.id, modulo)}
-                            className={` relative rounded-full hover:bg-gray-100 border-2 shadow-sm bg-white hover:shadow-md transition  ${moduleColors[modulo]}`}
-                            title={modulo}
-                          >
-                            {moduleIcons[modulo] || (
-                              <FileText className="w-5 h-5" />
-                            )}
+                        {getRenderableModules(main.modulos).map((modulo, idx) => {
+                          const hasAccess = userCanAccessModule(modulo);
+                          const shouldDisable =
+                            UNAUTHORIZED_MODULE_BUTTON_MODE === 'disable' && !hasAccess;
 
-                            {/**aqui agrego informacion para el mensaje de alerta en mod enfrmeria  */}
-                            {modulo === 'Modulo Enfermeria' &&
-                              alertasEnfermeria[main.id] && (
-                                <span
-                                  className="absolute -top-1 -right-1 bg-red-600 text-white 
+                          return (
+                            <Button
+                              key={idx}
+                              size="icon"
+                              variant="outline"
+                              disabled={shouldDisable}
+                              onClick={() => handleModuleClick(main.id, modulo)}
+                              className={`relative rounded-full border-2 shadow-sm bg-white transition ${moduleColors[modulo]} ${
+                                shouldDisable
+                                  ? 'cursor-not-allowed opacity-40'
+                                  : 'hover:bg-gray-100 hover:shadow-md'
+                              }`}
+                              title={
+                                shouldDisable
+                                  ? `${modulo} (sin permisos para tu rol)`
+                                  : modulo
+                              }
+                            >
+                              {moduleIcons[modulo] || (
+                                <FileText className="w-5 h-5" />
+                              )}
+
+                              {/**aqui agrego informacion para el mensaje de alerta en mod enfrmeria  */}
+                              {modulo === 'Modulo Enfermeria' &&
+                                alertasEnfermeria[main.id] && (
+                                  <span
+                                    className="absolute -top-1 -right-1 bg-red-600 text-white 
       text-[10px] w-5 h-5 rounded-full flex items-center justify-center
       alert-pulse"
-                                >
-                                  1
-                                </span>
-                              )}
-                          </Button>
-                        ))}
+                                  >
+                                    1
+                                  </span>
+                                )}
+                            </Button>
+                          );
+                        })}
                       </div>
                     </td>
                   </motion.tr>

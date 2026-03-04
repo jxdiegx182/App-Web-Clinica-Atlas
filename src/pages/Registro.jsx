@@ -157,19 +157,19 @@ function Registro() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <button
           onClick={() => window.history.back()}
-          className="left-0 top-1/2 -translate-y-1/2 bg-[#4b6bb3] text-white font-semibold py-1 px-3 rounded-lg hover:bg-[#2b8d8f] shadow transition"
+          className="rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
         >
           ← Volver
         </button>
         {/* Encabezado */}
         <div className="relative mb-6">
-          <h1 className="text-4xl text-center font-extrabold text-[#5dbfc1] drop-shadow-sm">
+          <h1 className="text-2xl text-center font-extrabold tracking-wide text-[#007e8f]">
             REGISTRO OPERATORIO
           </h1>
         </div>
 
         {/* Header */}
-        <header className="bg-white/90 rounded-2xl shadow-md p-6 mb-8 backdrop-blur-sm border border-gray-100">
+        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="mx-40 ">
               <img

@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function currentUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && currentUserDoc().data.rol == 'admin';
+    }
+
+    function isMedicoOrAdmin() {
+      return isAuthenticated() && currentUserDoc().data.rol in ['medico', 'admin'];
+    }
+
+    match /users/{userId} {
+      // Solo el usuario autenticado puede leer su propio documento.
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+
+      // Solo admin puede crear usuarios y solo con los campos esperados.
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'nombre',
+          'email',
+          'rol',
+          'createdAt',
+          'createdBy'
+        ])
+        && request.resource.data.nombre is string
+        && request.resource.data.email is string
+        && request.resource.data.rol in ['admin', 'medico', 'enfermera', 'asistente'];
+
+      allow update, delete: if false;
+    }
+
+    match /pacientes/{pacienteId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isMedicoOrAdmin();
+    }
+
+    // Cierre por defecto para cualquier colección no declarada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

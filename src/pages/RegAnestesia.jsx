@@ -211,17 +211,17 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-1">
+      <div className="relative mb-2">
       <button
           onClick={() => window.history.back()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#007e8f] text-white font-semibold py-1 px-3 rounded hover:bg-[#2b8d8f] shadow"
+          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
         >
           ← Volver
         </button>
-        <h1 className="text-2xl text-[#5dbfc1] font-bold  text-center">REGISTRO DE ANESTESIA</h1>
+        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">REGISTRO DE ANESTESIA</h1>
         </div>
       {/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++HEADER++++++++++++++++++++++++++++++++++++++++++ */}
-      <header className="bg-[#ffffff]/90 rounded-md p-1 shadow-md text-[#0E2942]">
+      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs items-start">
 
 

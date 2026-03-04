@@ -88,20 +88,20 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-1">
+      <div className="relative mb-2">
         <button
           onClick={() => window.history.back()}
           className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#4b6bb3] text-white py-1 px-3 font-semibold rounded hover:bg-[#2b8d8f] shadow"
         >
           ← Volver
         </button>
-        <h1 className="text-3xl text-[#5dbfc1] font-bold text-center">
+        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
           CONSENTIMIENTOS INFORMADOS
         </h1>
       </div>
 
       <div className=" min-h-screen bg-[#4e6fb5]/30 p-4">
-        <header className="bg-[#ffffff]/70 rounded-md p-4 shadow-md text-black">
+        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
           <p className="absolute left-40 top-40  text-lg font-bold  ">
             {formattedTime}
           </p>
@@ -200,3 +200,4 @@ useEffect(() => {
 };
 
 export default MedicalModuleConsen;
+
