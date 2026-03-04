@@ -1,92 +1,363 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-
-import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
+import { Card } from '@/components/ui/card';
+import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-
 import { toast } from '@/components/ui/use-toast';
+import Anamnesis from './Anamnesis';
+import Evolucion from './Evolucion';
+import Interconsulta from './Interconsulta';
+import Certificado from './Certificado';
+import Receta from './Receta';
+import Protocolo from './Protocolo';
+import RegAnestesia from './RegAnestesia';
+import MedicalModuleConsen from './Consentimientos';
 
-{/*const AllergyWarning = ({ allergy }) => (
-  <span className="allergy-warning text-[#FF0000] font-semibold">
-    <span className="allergy-icon">⚠️</span>
-    ALERGIAS: {allergy}
-  </span>
-);*/}
-
-const names = [
-  'EMERGENCIAS',
-  'ANAMNESIS',
-  'EVOLUCION DIARIA Y PRESCRIPCION',
-  'INTERCONSULTA',
-  'EPICRISIS',
-  'CERTIFICADO MEDICO',
-];
-const nombres = [
-  'CHEQUEO PREQUIRURGICO',
-  'REGISTRO ANESTESIA',
-  'PROTOCOLO OPERATORIO',
-  'RECETA',
-
-  'CONSENTIMIENTOS INFORMADOS',
-  'PEDIDO EXAMENES',
+const historialIngresos = [
+  { date: '03/03/2026', note: 'Actual - Hospitalizacion', active: true },
+  { date: '05/07/2024' },
+  { date: '05/02/2024' },
+  { date: '05/01/2024' },
+  { date: '21/12/2023' },
+  { date: '05/08/2023' },
+  { date: '15/10/2019' },
+  { date: '15/12/2015' },
+  { date: '10/08/2013' },
+  { date: '22/04/2011' },
 ];
 
-const nombresT = ['REVIT', 'EXAMEN FISICO RN', 'CHATBOT'];
+const resumenVitales = [
+  { label: 'P.A.', value: '120/70' },
+  { label: 'PULSO', value: '72 lpm' },
+  { label: 'TEMP.', value: '36.5 C' },
+  { label: 'SAT O2', value: '98%' },
+  { label: 'PESO', value: '70 KG' },
+  { label: 'F.R.', value: '23/min' },
+];
+
+const moduloMedicoSecciones = [
+  {
+    title: 'URGENTES - REQUIEREN ATENCION',
+    gridClass: 'md:grid-cols-2 xl:grid-cols-4',
+    modules: [
+      {
+        key: 'emergencias',
+        title: 'Emergencias',
+        description: 'Protocolo de emergencias medicas',
+        status: 'Activar protocolo',
+        icon: '🚨',
+        badge: 'URGENTE',
+        badgeClass: 'bg-red-100 text-red-700',
+        tone: 'danger',
+        modalKey: 'emergencias',
+      },
+      {
+        key: 'anamnesis',
+        title: 'Anamnesis',
+        description: 'Historia clinica y antecedentes',
+        status: 'Sin completar',
+        icon: '📝',
+        badge: 'Pendiente',
+        badgeClass: 'bg-red-100 text-red-700',
+        tone: 'danger',
+        modalKey: 'anamnesis',
+      },
+      {
+        key: 'evolucion',
+        title: 'Evolucion y Prescripcion',
+        description: 'Registro diario y ordenes medicas',
+        status: 'Ultima: ayer',
+        icon: '📈',
+        badge: 'Diario',
+        badgeClass: 'bg-amber-100 text-amber-700',
+        tone: 'warning',
+        modalKey: 'evolucion',
+      },
+      {
+        key: 'consentimientos',
+        title: 'Consentimientos Informados',
+        description: 'Firma y registro de consentimientos',
+        status: '1 pendiente',
+        icon: '✍️',
+        badge: 'Requiere firma',
+        badgeClass: 'bg-yellow-100 text-yellow-700',
+        tone: 'warning',
+        modalKey: 'consentimientos',
+      },
+    ],
+  },
+  {
+    title: 'EVALUACION CLINICA',
+    gridClass: 'md:grid-cols-2 xl:grid-cols-3',
+    modules: [
+      {
+        key: 'examen_fisico',
+        title: 'Examen Fisico RN',
+        description: 'Evaluacion fisica por sistemas',
+        status: 'Ver ultimo registro',
+        icon: '🔬',
+        tone: 'info',
+        modalKey: 'examen_fisico',
+      },
+      {
+        key: 'interconsulta',
+        title: 'Interconsulta',
+        description: 'Solicitud a otras especialidades',
+        status: '2 abiertas',
+        icon: '👥',
+        badge: 'En proceso',
+        badgeClass: 'bg-blue-100 text-blue-700',
+        tone: 'primary',
+        modalKey: 'interconsulta',
+      },
+      {
+        key: 'pedido_examenes',
+        title: 'Pedido de Examenes',
+        description: 'Laboratorio e imagenes diagnosticas',
+        status: '3 pendientes',
+        icon: '🧪',
+        badge: 'Pend.',
+        badgeClass: 'bg-violet-100 text-violet-700',
+        tone: 'teal',
+        modalKey: 'pedido_examenes',
+      },
+      {
+        key: 'receta',
+        title: 'Receta Medica',
+        description: 'Prescripcion DCI MSP 0031-2020',
+        status: 'Ultima: 01/03',
+        icon: '💊',
+        tone: 'success',
+        modalKey: 'receta',
+      },
+      {
+        key: 'certificado',
+        title: 'Certificado Medico',
+        description: 'Certificado unico de salud MSP',
+        status: 'Generar nuevo',
+        icon: '📄',
+        tone: 'primary',
+        modalKey: 'certificado',
+      },
+      {
+        key: 'epicrisis',
+        title: 'Epicrisis',
+        description: 'Resumen de alta hospitalaria',
+        status: 'Alta programada',
+        icon: '📋',
+        badge: 'Alta hoy',
+        badgeClass: 'bg-emerald-100 text-emerald-700',
+        tone: 'success',
+        modalKey: 'epicrisis',
+      },
+    ],
+  },
+  {
+    title: 'MODULO QUIRURGICO',
+    gridClass: 'md:grid-cols-2 xl:grid-cols-4',
+    modules: [
+      {
+        key: 'preq',
+        title: 'Chequeo Prequirurgico',
+        description: 'Checklist de seguridad quirurgica',
+        status: 'Pendiente',
+        icon: '✅',
+        tone: 'danger',
+        modalKey: 'preq',
+      },
+      {
+        key: 'anestesia',
+        title: 'Registro de Anestesia',
+        description: 'Hoja anestesica intraoperatoria',
+        status: 'Ver registro',
+        icon: '💉',
+        tone: 'neutral',
+        modalKey: 'anestesia',
+      },
+      {
+        key: 'protocolo',
+        title: 'Protocolo Operatorio',
+        description: 'Informe y tecnica quirurgica',
+        status: 'Sin registro',
+        icon: '⚕️',
+        tone: 'neutral',
+        modalKey: 'protocolo',
+      },
+      {
+        key: 'revit',
+        title: 'REVIT',
+        description: 'Visualizacion intraoperatoria 3D',
+        status: 'Ver planos',
+        icon: '🏗️',
+        tone: 'info',
+        modalKey: 'revit',
+      },
+    ],
+  },
+  {
+    title: 'HERRAMIENTAS CON IA',
+    gridClass: 'md:grid-cols-2',
+    modules: [
+      {
+        key: 'chatbot',
+        title: 'ChatBot Medico IA',
+        description: 'Soporte a decisiones clinicas en tiempo real',
+        status: 'En linea',
+        icon: '🤖',
+        badge: 'IA BETA',
+        badgeClass: 'bg-violet-100 text-violet-700',
+        tone: 'pink',
+        modalKey: 'chatbot',
+      },
+      {
+        key: 'auditoria',
+        title: 'Auditoria Clinica con IA',
+        description: 'Validacion CIE-10 y hallazgos automaticos',
+        status: '3 alertas detectadas',
+        icon: '🔍',
+        badge: 'Score 84',
+        badgeClass: 'bg-blue-100 text-blue-700',
+        tone: 'primary',
+        modalKey: 'auditoria',
+      },
+    ],
+  },
+];
+
+const cardToneClasses = {
+  danger: 'border-red-200 hover:border-red-400',
+  warning: 'border-amber-200 hover:border-amber-400',
+  primary: 'border-indigo-200 hover:border-indigo-400',
+  success: 'border-emerald-200 hover:border-emerald-400',
+  info: 'border-sky-200 hover:border-sky-400',
+  teal: 'border-teal-200 hover:border-teal-400',
+  pink: 'border-pink-200 hover:border-pink-400',
+  neutral: 'border-slate-200 hover:border-slate-400',
+};
+
+const inputClass =
+  'mt-1 w-full rounded-lg border border-[#007e8f]/30 bg-white px-3 py-2 text-sm text-[#1c3f6e] outline-none focus:border-[#007e8f]';
+
+const Section = ({ title, children }) => (
+  <div className="space-y-2">
+    <h4 className="border-b border-[#007e8f]/20 pb-1 text-xs font-bold uppercase tracking-wide text-[#1c3f6e]">
+      {title}
+    </h4>
+    {children}
+  </div>
+);
+
+const Field = ({ label, textarea = false }) => (
+  <label className="block text-xs font-semibold text-[#1c3f6e]">
+    {label}
+    {textarea ? (
+      <textarea className={`${inputClass} min-h-[90px]`} />
+    ) : (
+      <input className={inputClass} />
+    )}
+  </label>
+);
+
+const modalRegistry = {
+  emergencias: {
+    title: 'EMERGENCIAS',
+    showSave: true,
+    render: () => (
+      <div className="space-y-4">
+        <Section title="Clasificacion y datos">
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Triage" />
+            <Field label="Motivo" />
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            <Field label="Hora llegada" />
+            <Field label="P.A." />
+            <Field label="SAT O2" />
+          </div>
+        </Section>
+      </div>
+    ),
+  },
+  anamnesis: {
+    title: 'ANAMNESIS',
+    showSave: false,
+    pageComponent: Anamnesis,
+  },
+  evolucion: { title: 'EVOLUCION DIARIA Y PRESCRIPCION', showSave: false, pageComponent: Evolucion },
+  interconsulta: { title: 'INTERCONSULTA', showSave: false, pageComponent: Interconsulta },
+  epicrisis: { title: 'EPICRISIS', showSave: true, render: () => <Field label="Resumen de hospitalizacion" textarea /> },
+  certificado: { title: 'CERTIFICADO MEDICO', showSave: false, pageComponent: Certificado },
+  preq: { title: 'CHEQUEO PREQUIRURGICO', showSave: true, render: () => <Field label="Checklist prequirurgico" textarea /> },
+  anestesia: { title: 'REGISTRO ANESTESIA', showSave: false, pageComponent: RegAnestesia },
+  protocolo: { title: 'PROTOCOLO OPERATORIO', showSave: false, pageComponent: Protocolo },
+  receta: { title: 'RECETA', showSave: false, pageComponent: Receta },
+  consentimientos: { title: 'CONSENTIMIENTOS INFORMADOS', showSave: false, pageComponent: MedicalModuleConsen },
+  pedido_examenes: { title: 'PEDIDO EXAMENES', showSave: true, render: () => <Field label="Pedido de examenes" textarea /> },
+  revit: { title: 'REVIT', showSave: false, render: () => <p className="text-sm text-[#1c3f6e]">Visualizacion 3D del modulo quirurgico.</p> },
+  examen_fisico: { title: 'EXAMEN FISICO RN', showSave: true, render: () => <Field label="Examen fisico por sistemas" textarea /> },
+  chatbot: { title: 'CHATBOT', showSave: false, render: () => <Field label="Consulta al asistente clinico IA" textarea /> },
+  auditoria: {
+    title: 'AUDITORIA CLINICA CON IA',
+    showSave: true,
+    render: () => (
+      <div className="space-y-3">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-center">
+            <p className="text-2xl font-black text-emerald-600">84</p>
+            <p className="text-[10px] font-bold uppercase text-emerald-700">Score general</p>
+          </div>
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-center">
+            <p className="text-2xl font-black text-amber-600">3</p>
+            <p className="text-[10px] font-bold uppercase text-amber-700">Alertas</p>
+          </div>
+          <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 text-center">
+            <p className="text-2xl font-black text-sky-600">7</p>
+            <p className="text-[10px] font-bold uppercase text-sky-700">Dias auditados</p>
+          </div>
+        </div>
+        <Field label="Hallazgos de IA" textarea />
+      </div>
+    ),
+  },
+};
 
 const MedicalModulePanel = () => {
   const { mainId } = useParams();
   const [time, setTime] = useState(new Date());
-  const [admisiones, setAdmisiones] = useState(null); // <-- aquí se guardan los datos desde Firestore
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [admisiones, setAdmisiones] = useState(null);
+  const [edad, setEdad] = useState(0);
+  const [estancia, setEstancia] = useState(0);
+  const [historialActivo, setHistorialActivo] = useState(0);
+  const [moduloActivo, setModuloActivo] = useState('');
+  const [activeModalKey, setActiveModalKey] = useState(null);
 
-
-  // 📦 Traer admisiones desde Firestore
+  useEffect(() => {
+    const timer = window.setInterval(() => setTime(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchAdmisiones = async () => {
-      console.log('🧪 mainId recibido:', mainId);
-
       if (!mainId) {
-        console.warn('⚠️ mainId es undefined o null'); 
         setLoading(false);
         return;
       }
-      
 
       try {
-
         const ref = doc(db, 'admisiones', mainId);
-
         const snap = await getDoc(ref);
-
-        console.log('📄 Documento Firestore:', snap.data());
-        console.log('🧩 mainData:', snap.data()?.mainData);
-
         if (!snap.exists()) {
-          console.warn('❌ Documento no existe');
           setAdmisiones(null);
-
-          
-
           return;
         }
-
         const data = snap.data();
-           setAdmisiones({
-              id: snap.id,
-              ...data,
-              ...data.mainData,
-            });
-          
+        setAdmisiones({ id: snap.id, ...data, ...data.mainData });
       } catch (error) {
-        console.error('❌ Error al obtener admisiones:', error);
-        setAdmisiones(null);
+        console.error('Error al obtener admisiones:', error);
       } finally {
         setLoading(false);
       }
@@ -94,53 +365,50 @@ const MedicalModulePanel = () => {
     fetchAdmisiones();
   }, [mainId]);
 
-//AQUI CREO LA ESTANCIA DE CADA PACIOENTE SUMANDO LOS DIAS 
-const [estancia, setEstancia] = useState(0);
-useEffect(() => {
-  if (!admisiones?.createdAt) return;
+  useEffect(() => {
+    if (!admisiones?.createdAt) return;
+    const fechaIngreso = admisiones.createdAt.toDate();
+    const dias = Math.floor((new Date() - fechaIngreso) / (1000 * 60 * 60 * 24) + 1);
+    setEstancia(dias);
+  }, [admisiones]);
 
-  const fechaIngreso = admisiones.createdAt.toDate();
-  const hoy = new Date();
+  useEffect(() => {
+    if (!admisiones?.secondaryData?.dateOfBirth) return;
+    let fechaNacimiento = admisiones.secondaryData.dateOfBirth;
+    fechaNacimiento = fechaNacimiento.toDate ? fechaNacimiento.toDate() : new Date(fechaNacimiento);
+    const hoy = new Date();
+    let anios = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    if (
+      hoy.getMonth() < fechaNacimiento.getMonth() ||
+      (hoy.getMonth() === fechaNacimiento.getMonth() && hoy.getDate() < fechaNacimiento.getDate())
+    ) {
+      anios--;
+    }
+    setEdad(anios);
+  }, [admisiones]);
 
-  const dias = Math.floor(
-    (hoy - fechaIngreso) / (1000 * 60 * 60 * 24) + 1
-  );
+  useEffect(() => {
+    if (!activeModalKey) return;
+    const onEsc = (event) => event.key === 'Escape' && setActiveModalKey(null);
+    window.addEventListener('keydown', onEsc);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onEsc);
+      document.body.style.overflow = '';
+    };
+  }, [activeModalKey]);
 
-  setEstancia(dias);
-}, [admisiones]);
-//*******************************************************HASTA AQUI ESTANCIAS */
-//AQUI CREO LA edad DE CADA PACIOENTE SUMANDO LOS años 
-const [edad, setEdad] = useState(0);
-useEffect(() => {
-  if (!admisiones?.secondaryData?.dateOfBirth) return;
+  const openModule = (module) => {
+    setModuloActivo(module.title);
+    if (!module.modalKey || !modalRegistry[module.modalKey]) {
+      toast({ title: 'Esta funcion no esta implementada aun.' });
+      return;
+    }
+    setActiveModalKey(module.modalKey);
+  };
 
-  let fechaNacimiento = admisiones.secondaryData.dateOfBirth;
-   // 🔥 Si viene como Timestamp de Firestore
-   if (fechaNacimiento.toDate) {
-    fechaNacimiento = fechaNacimiento.toDate();
-  } else {
-    fechaNacimiento = new Date(fechaNacimiento);
-  }
-
-  const hoy = new Date();
-
-  let años = hoy.getFullYear() - fechaNacimiento.getFullYear();
-
-  const mesActual = hoy.getMonth();
-  const mesNacimiento = fechaNacimiento.getMonth();
-
-  // Si aún no cumple años este año
-  if (
-    mesActual < mesNacimiento ||
-    (mesActual === mesNacimiento && hoy.getDate() < fechaNacimiento.getDate())
-  ) {
-    años--;
-  }
-
-  setEdad(años);
-}, [admisiones]);
-//*******************************************************HASTA AQUI edad */
-
+  const activeModal = activeModalKey ? modalRegistry[activeModalKey] : null;
+  const ActiveModalPageComponent = activeModal?.pageComponent || null;
   const formattedDate = time.toLocaleDateString('es-ES', {
     weekday: 'long',
     year: 'numeric',
@@ -149,222 +417,194 @@ useEffect(() => {
   });
   const formattedTime = time.toLocaleTimeString('es-ES');
 
-  {
-    /*/encabezado inicio de la ventana /*/
-  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
       <div className="relative mb-2">
-        <button
-          onClick={() => window.history.back()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-        >
+        <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
           ← Volver
         </button>
-        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-          MODULO MEDICO
-        </h1>
+        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
       </div>
 
       <div className="min-h-screen bg-[#4b6bb3]/20 p-2">
-        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-{/**SE AGREGA COLUMNAS LUEGO DE LA IMAGEN  */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs leading-tight">
+        <header className="rounded-2xl border border-[#007e8f]/25 bg-white/85 p-3 shadow-md text-[#1c3f6e]">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
             <div className="rounded-xl bg-[#007e8f]/5 p-2">
-              {/*la imagen de la clinica atlas y su fecha */}
               <img
                 src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
                 alt="Logo Clinica Atlas"
                 className="w-36 h-auto"
               />
-              <p className="mt-1 text-sm font-bold text-[#1c3f6e]">{formattedTime}</p>
+              <p className="mt-1 text-sm font-bold">{formattedTime}</p>
               <p className="text-[10px] font-semibold uppercase tracking-wide text-[#007e8f]">
                 {formattedDate.toUpperCase()}
               </p>
             </div>
-
-            
-            
-
-            {/* 🔄 Mostrar datos del paciente ingresado de firebase se cargan los datos  */}
             {loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
+              <p>Cargando datos de admisiones...</p>
             ) : admisiones ? (
               <>
                 <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
-                  <p className="font-bold text-sm text-[#1c3f6e]">{admisiones.firstName} {admisiones.lastName}{' '}</p>
+                  <p className="font-bold text-sm">
+                    {admisiones.firstName} {admisiones.lastName}
+                  </p>
                   <p><strong>Identificacion:</strong> {admisiones.cedula}</p>
                   <p><strong>Edad:</strong> {edad}</p>
                   <p><strong>Medico:</strong> {admisiones.medico}</p>
-                  <p><strong>Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}</p>
                   <p><strong>Estancia:</strong> {estancia} dias</p>
                 </div>
                 <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
                   <p><strong>Servicio:</strong> {admisiones.servicio}</p>
                   <p><strong>Seguro:</strong> {admisiones.seguro}</p>
-                  <p><strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}</p>
-                  <p>{admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''}</p>
-                  <p>{admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}</p>
+                  <p><strong>Alertas:</strong> {admisiones.alergiaUno || 'No registrado'}</p>
                 </div>
-                <div className="rounded-xl bg-gradient-to-br from-[#ffffff] to-[#f3f8fc] border border-[#007e8f]/15 p-2 text-center font-semibold text-[#1c3f6e]">
+                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2 text-center font-semibold">
                   <p>PISO: {admisiones.ubicacion?.piso || 'No Reg'}</p>
                   <p>{admisiones.ubicacion?.habitacion || 'No Reg'}</p>
-                  <p className="mt-1 text-[10px] font-bold text-[#007e8f]">Turno Medico</p>
                 </div>
-                
               </>
             ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
+              <p className="text-red-600 font-bold">No se encontro informacion de admisiones.</p>
             )}
           </div>
-
         </header>
 
         <main className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white rounded-lg p-4 col-span-1 text-sm shadow">
-            <h2 className="font-semibold text-gray-800 mb-2">
-              HISTORIAL DE INGRESOS
-            </h2>
-            <div className="overflow-y-auto max-h-[250px] pr-2">
-              {' '}
-              {/* contenedor con scroll */}
-              <ul className="bg-[#E9F5F2] rounded-2xl p-4 mt-1 text-sm list-disc list-inside text-gray-700">
-                <li>21/12/2023</li>
-                <li>15/10/2019</li>
-                <li>15/12/2015</li>
-                <li>10/08/2013</li>
-                <li>22/04/2011</li>
-                <li>05/08/2024</li>
-                <li>05/07/2009</li>
-                <li>05/01/2024</li>
-                <li>05/02/2024</li>
-                <li>05/08/2023</li>
-                <li>05/07/2024</li>
-                <li>05/09/2009</li>
-                <li>05/06/2025</li>
-                <li>05/01/2025</li>
-                {/* puedes agregar más elementos sin que se desborde */}
-              </ul>
+          <Card className="bg-white rounded-lg p-0 col-span-1 text-sm shadow overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-white to-indigo-50/70">
+              <h2 className="font-semibold text-gray-800">HISTORIAL DE INGRESOS</h2>
             </div>
-            <div className="bg-[#d3efe9] rounded-lg p-4 mt-4 text-sm text-gray-700">
-              <p>
-                <strong>PESO:</strong> 70 KG
-              </p>
-              <p>
-                <strong>TALLA:</strong> 1.60
-              </p>
-              <p>
-                <strong>PULSO:</strong> 7
-              </p>
-              <p>
-                <strong>TEMPERATURA:</strong> 36.5
-              </p>
-              <p>
-                <strong>FRECUENCIA RESPIRATORIA:</strong> 23
-              </p>
-              <p>
-                <strong>PRESIÓN ARTERIAL:</strong> 120/70
-              </p>
+
+            <div className="overflow-y-auto max-h-[290px] pr-1">
+              <div className="p-2 space-y-1">
+                {historialIngresos.map((item, index) => (
+                  <button
+                    key={`${item.date}-${index}`}
+                    onClick={() => setHistorialActivo(index)}
+                    className={`w-full text-left rounded-lg px-3 py-2 transition border ${
+                      historialActivo === index
+                        ? 'bg-indigo-50 border-indigo-200'
+                        : 'bg-white border-transparent hover:bg-slate-50'
+                    }`}
+                  >
+                    <p className="font-semibold text-slate-700">{item.date}</p>
+                    {item.note ? <p className="text-xs text-indigo-700">{item.note}</p> : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="m-3 bg-[#d3efe9] rounded-lg p-4 text-sm text-gray-700">
+              <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {resumenVitales.map((vital) => (
+                  <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
+                    <p className="text-[10px] font-semibold uppercase">{vital.label}</p>
+                    <p className="text-xs font-bold">{vital.value}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </Card>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="w-full col-span-3 md:col-span-3 bg-white rounded-lg p-5 shadow mx-auto max-w-6xl"
+            className="w-full col-span-3 bg-white rounded-lg p-5 shadow"
           >
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold bg-[#162f5c] text-white inline-block px-4 py-2 rounded-full">
-                MODULO MEDICOS
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+              <h2 className="text-xl font-bold bg-[#162f5c] text-white inline-block px-4 py-2 rounded-full w-fit">
+                MODULO MEDICO
               </h2>
+              <Badge className="w-fit bg-[#4b6bb3] text-white hover:bg-[#4b6bb3]">
+                {moduloActivo ? `Modulo activo: ${moduloActivo}` : 'Selecciona un modulo'}
+              </Badge>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-center gap-12">
-              {/* Columna de los modulos pero la izquierda */}
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-9 mt-5 ">
-                {names.map((mod, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => {
-                      if (mod === 'EVOLUCION DIARIA Y PRESCRIPCION') {
-                        navigate(`/evolucion/${mainId}`);
-
-                      } else if (mod === 'ANAMNESIS') {
-                        navigate(`/anamnesis/${mainId}`);
-
-                      } else if (mod === 'CERTIFICADO MEDICO') {
-                        navigate(`/certificado/${mainId}`);
-                       
-                    } else if (mod === 'INTERCONSULTA') {
-                      navigate(`/interconsulta/${mainId}`);
-                    }
-                      else {
-                        toast({
-                          title: '🚧 Esta función no está implementada aún.',
-                        });
-                      }
-                    }}
-                    className="bg-[#dee6f1] text-[#1c396b] font-bold py-3 hover:bg-[#cfddec] transition rounded shadow"
-                  >
-                    {mod}
-                  </Button>
-                ))}
-              </div>
-
-              {/* Columna derecha */}
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-7 mt-5 ">
-                {nombres.map((mod, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => {
-                      if (mod === 'REGISTRO ANESTESIA') {
-                        navigate(`/modulo-medico/reganestesia/${mainId}`);
-                      } else if (mod === 'PROTOCOLO OPERATORIO') {
-                        navigate(`/protocolo/${mainId}`);
-                      } else if (mod === 'RECETA') {
-                        navigate(`/receta/${mainId}`);
-                      } else if (mod === 'CONSENTIMIENTOS INFORMADOS') {
-                        navigate(`/consentimientos/${mainId}`);
-                      } else if (mod === 'AGENDAMIENTO') {
-                        navigate('/registro');
-                      } else {
-                        toast({
-                          title: '🚧 Esta función no está implementada aún.',
-                        });
-                      }
-                    }}
-                    className="bg-[#dee6f1] text-[#1c396b] font-bold py-3 hover:bg-[#cfddec] transition rounded shadow"
-                  >
-                    {mod}
-                  </Button>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-7 mt-5 ">
-                {nombresT.map((mod, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => {
-                      if (mod === 'CHATBOT') {
-                        navigate('/chatbot');
-                      } else {
-                        toast({
-                          title: '🚧 Esta función no está implementada aún.',
-                        });
-                      }
-                    }}
-                    className="bg-[#dee6f1] text-[#1c396b] font-bold py-3 hover:bg-[#cfddec] transition rounded shadow"
-                  >
-                    {mod}
-                  </Button>
-                ))}
-              </div>
+            <div className="space-y-4">
+              {moduloMedicoSecciones.map((section) => (
+                <section key={section.title}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-[11px] font-bold tracking-wide text-slate-500 uppercase">
+                      {section.title}
+                    </h3>
+                    <span className="flex-1 h-px bg-slate-200" />
+                  </div>
+                  <div className={`grid grid-cols-1 ${section.gridClass} gap-3`}>
+                    {section.modules.map((module) => (
+                      <button
+                        key={module.key}
+                        type="button"
+                        onClick={() => openModule(module)}
+                        className={`rounded-xl border p-3 text-left transition hover:shadow-md bg-white ${
+                          cardToneClasses[module.tone] || cardToneClasses.primary
+                        } ${
+                          moduloActivo === module.title
+                            ? 'ring-2 ring-[#4b6bb3] ring-offset-1'
+                            : 'ring-0'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-2xl">{module.icon}</div>
+                          {module.badge ? (
+                            <Badge className={module.badgeClass}>
+                              {module.badge}
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <h4 className="mt-2 text-sm font-bold text-slate-800">{module.title}</h4>
+                        <p className="text-xs text-slate-500 mt-1 min-h-[32px]">{module.description}</p>
+                        <p className="text-[11px] font-semibold text-[#1c396b] mt-2">{module.status}</p>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
           </motion.div>
         </main>
       </div>
+
+      <AnimatePresence>
+        {activeModal ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/60 p-4 flex items-center justify-center" onClick={() => setActiveModalKey(null)}>
+            <motion.div initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.97 }} className="w-full max-w-[96vw] max-h-[95vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+              <div className="bg-[#1c3f6e] text-white px-5 py-4 flex items-center justify-between">
+                <h3 className="text-lg font-bold">{activeModal.title}</h3>
+                <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>
+              </div>
+              <div className="max-h-[84vh] overflow-y-auto bg-[#f8fcff]">
+                {ActiveModalPageComponent ? (
+                  <div className="embedded-modal-page">
+                    <style>{`
+                      .embedded-modal-page > .min-h-screen > .relative.mb-2 { display: none !important; }
+                      .embedded-modal-page > .min-h-screen > .min-h-screen > header { display: none !important; }
+                      .embedded-modal-page > .min-h-screen > .min-h-screen > main {
+                        margin-top: .5rem !important;
+                        grid-template-columns: 1fr !important;
+                      }
+                      .embedded-modal-page > .min-h-screen > .min-h-screen > main > :first-child {
+                        display: none !important;
+                      }
+                    `}</style>
+                    <ActiveModalPageComponent />
+                  </div>
+                ) : (
+                  <div className="p-5">{activeModal.render?.()}</div>
+                )}
+              </div>
+              <div className="border-t border-[#007e8f]/20 bg-white px-5 py-3 flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setActiveModalKey(null)}>Cerrar</Button>
+                {activeModal.showSave ? (
+                  <Button onClick={() => toast({ title: `Guardado: ${activeModal.title}` })} className="bg-[#007e8f] text-white hover:bg-[#1c3f6e]">
+                    Guardar
+                  </Button>
+                ) : null}
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 };
