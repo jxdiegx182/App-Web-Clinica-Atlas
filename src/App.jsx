@@ -12,6 +12,7 @@ import MedicalModule from '@/pages/MedicalModule';
 import Registro from '@/pages/Registro';
 import NursingModule from '@/pages/NursingModule';
 import Anamnesis from '@/pages/Anamnesis';
+import Emergencia from '@/pages/Emergencia';
 import Evolucion from '@/pages/Evolucion';
 import Interconsulta from '@/pages/Interconsulta';
 import Protocolo from '@/pages/Protocolo';
@@ -54,6 +55,12 @@ function App() {
               element={withAuth(<Dashboard />, ROUTE_ALLOWED_ROLES.DASHBOARD)}
             />
             <Route
+              path="/emergencia"
+              element={withAuth(<Emergencia />, [ROLES.ADMIN, ROLES.MEDICO])}
+            />
+            <Route path="/admin" element={withAuth(<AdminUsers />, [ROLES.ADMIN])} />
+
+            <Route
               path="/anamnesis"
               element={withAuth(<Anamnesis />, [ROLES.ADMIN, ROLES.MEDICO])}
             />
@@ -64,10 +71,8 @@ function App() {
               path="/modulo-medico/:mainId"
               element={withAuth(<MedicalModule />, ROUTE_ALLOWED_ROLES.MEDICAL_MODULE)}
             />
-            <Route
-              path="/anamnesis/:mainId"
-              element={withAuth(<Anamnesis />, [ROLES.ADMIN, ROLES.MEDICO])}
-            />
+            <Route path="/anamnesis/:mainId" element={withAuth(<Anamnesis />, [ROLES.ADMIN, ROLES.MEDICO])} />
+            <Route path="/emergencia/:mainId" element={withAuth(<Emergencia />, [ROLES.ADMIN, ROLES.MEDICO])} />
             <Route path="/evolucion/:mainId" element={withAuth(<Evolucion />)} />
             <Route path="/interconsulta/:mainId" element={withAuth(<Interconsulta />)} />
             <Route path="/protocolo/:mainId" element={withAuth(<Protocolo />)} />

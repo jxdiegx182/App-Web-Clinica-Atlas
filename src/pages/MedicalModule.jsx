@@ -8,6 +8,7 @@ import { db } from '../firebaseConfig';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 import Anamnesis from './Anamnesis';
+import Emergencia from './Emergencia';
 import Evolucion from './Evolucion';
 import Interconsulta from './Interconsulta';
 import Certificado from './Certificado';
@@ -264,28 +265,16 @@ const Field = ({ label, textarea = false }) => (
 const modalRegistry = {
   emergencias: {
     title: 'EMERGENCIAS',
-    showSave: true,
-    render: () => (
-      <div className="space-y-4">
-        <Section title="Clasificacion y datos">
-          <div className="grid gap-3 md:grid-cols-2">
-            <Field label="Triage" />
-            <Field label="Motivo" />
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            <Field label="Hora llegada" />
-            <Field label="P.A." />
-            <Field label="SAT O2" />
-          </div>
-        </Section>
-      </div>
-    ),
+    showSave: false,
+    pageComponent: Emergencia,
   },
+
   anamnesis: {
     title: 'ANAMNESIS',
     showSave: false,
     pageComponent: Anamnesis,
   },
+
   evolucion: { title: 'EVOLUCION DIARIA Y PRESCRIPCION', showSave: false, pageComponent: Evolucion },
   interconsulta: { title: 'INTERCONSULTA', showSave: false, pageComponent: Interconsulta },
   epicrisis: { title: 'EPICRISIS', showSave: true, render: () => <Field label="Resumen de hospitalizacion" textarea /> },
@@ -459,13 +448,13 @@ const MedicalModulePanel = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
       <div className="relative mb-2">
-        <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
+        <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69C9BA] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
           ← Volver
         </button>
-        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
+        <h1 className="text-2xl text-[#76C4D5] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
       </div>
 
-      <div className="min-h-screen bg-[#4b6bb3]/20 p-2">
+      <div className="min-h-screen bg-[#76c4d5]/40 p-2">
         <header className="rounded-2xl border border-[#007e8f]/25 bg-white/85 p-3 shadow-md text-[#1c3f6e]">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
             <div className="rounded-xl bg-[#007e8f]/5 p-2">
@@ -533,7 +522,7 @@ const MedicalModulePanel = () => {
               </div>
             </div>
 
-            <div className="m-3 bg-[#d3efe9] rounded-lg p-4 text-sm text-gray-700">
+            <div className="m-3 bg-[#4EA685]/40 rounded-lg p-4 text-sm text-gray-700">
               <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
               <div className="grid grid-cols-2 gap-2">
                 {dynamicResumenVitales.map((vital) => (
@@ -552,10 +541,10 @@ const MedicalModulePanel = () => {
             className="w-full col-span-3 bg-white rounded-lg p-5 shadow"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
-              <h2 className="text-xl font-bold bg-[#162f5c] text-white inline-block px-4 py-2 rounded-full w-fit">
+              <h2 className="text-xl font-bold bg-[#76C4D5] text-white inline-block px-4 py-2 rounded-full w-fit">
                 MODULO MEDICO
               </h2>
-              <Badge className="w-fit bg-[#4b6bb3] text-white hover:bg-[#4b6bb3]">
+              <Badge className="w-fit bg-[#595759] text-white hover:bg-[#69C9BA]">
                 {moduloActivo ? `Modulo activo: ${moduloActivo}` : 'Selecciona un modulo'}
               </Badge>
             </div>
@@ -608,7 +597,7 @@ const MedicalModulePanel = () => {
         {activeModal ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/60 p-4 flex items-center justify-center" onClick={() => setActiveModalKey(null)}>
             <motion.div initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.97 }} className="w-full max-w-[96vw] max-h-[95vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-              <div className="bg-[#1c3f6e] text-white px-5 py-4 flex items-center justify-between">
+              <div className="bg-[#76C4D5] text-white px-5 py-4 flex items-center justify-between">
                 <h3 className="text-lg font-bold">{activeModal.title}</h3>
                 <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>
               </div>
