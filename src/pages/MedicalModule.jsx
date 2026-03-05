@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { db } from '../firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 import Anamnesis from './Anamnesis';
 import Evolucion from './Evolucion';
@@ -334,6 +334,7 @@ const MedicalModulePanel = () => {
   const [historialActivo, setHistorialActivo] = useState(0);
   const [moduloActivo, setModuloActivo] = useState('');
   const [activeModalKey, setActiveModalKey] = useState(null);
+  const [latestVitals, setLatestVitals] = useState(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setTime(new Date()), 1000);
@@ -363,6 +364,32 @@ const MedicalModulePanel = () => {
       }
     };
     fetchAdmisiones();
+  }, [mainId]);
+
+  // 🆕 Cargar últimos signos vitales desde Firebase
+  useEffect(() => {
+    const loadLatestVitalSigns = async () => {
+      if (!mainId) return;
+
+      try {
+        const vitalSignsRef = collection(db, 'admisiones', mainId, 'vital_signs');
+        const q = query(vitalSignsRef, orderBy('createdAt', 'desc'), limit(1));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          console.log('📊 Módulo Médico: No hay signos vitales guardados');
+          return;
+        }
+
+        const latestVital = snapshot.docs[0].data();
+        console.log('✅ Módulo Médico: Últimos signos vitales cargados:', latestVital);
+        setLatestVitals(latestVital);
+      } catch (error) {
+        console.error('❌ Error cargando últimos signos vitales en MedicalModule:', error);
+      }
+    };
+
+    loadLatestVitalSigns();
   }, [mainId]);
 
   useEffect(() => {
@@ -416,6 +443,18 @@ const MedicalModulePanel = () => {
     day: 'numeric',
   });
   const formattedTime = time.toLocaleTimeString('es-ES');
+
+  // 🆕 Generar dinámicamente el resumen vitales desde Firebase
+  const dynamicResumenVitales = latestVitals
+    ? [
+        { label: 'P.A.', value: latestVitals.presion || '--' },
+        { label: 'PULSO', value: `${latestVitals.pulso || '--'} lpm` },
+        { label: 'TEMP.', value: `${latestVitals.temperatura || '--'} C` },
+        { label: 'SAT O2', value: `${latestVitals.satO2 || '--'}%` },
+        { label: 'PESO', value: `${latestVitals.peso || '--'} KG` },
+        { label: 'F.R.', value: `${latestVitals.fr || '--'}/min` },
+      ]
+    : resumenVitales; // Fallback a valores por defecto si no hay datos en Firebase
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
@@ -497,7 +536,7 @@ const MedicalModulePanel = () => {
             <div className="m-3 bg-[#d3efe9] rounded-lg p-4 text-sm text-gray-700">
               <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
               <div className="grid grid-cols-2 gap-2">
-                {resumenVitales.map((vital) => (
+                {dynamicResumenVitales.map((vital) => (
                   <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
                     <p className="text-[10px] font-semibold uppercase">{vital.label}</p>
                     <p className="text-xs font-bold">{vital.value}</p>

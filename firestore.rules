@@ -42,6 +42,49 @@ service cloud.firestore {
       allow create, update, delete: if isMedicoOrAdmin();
     }
 
+    // Colección de admisiones y sus subcolecciones clínicas
+    match /admisiones/{admissionId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isMedicoOrAdmin();
+
+      // Subcolecciones clínicas: signos vitales, notas de enfermería, medicamentos, etc.
+      match /vital_signs/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+
+      match /nursing_notes/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+
+      match /medication_records/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+
+      match /oxygen_records/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+
+      match /fluid_balance/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+
+      match /diet_orders/{docId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && currentUserDoc().data.rol in ['enfermera', 'medico', 'admin'];
+        allow update, delete: if isMedicoOrAdmin();
+      }
+    }
+
     // Cierre por defecto para cualquier colección no declarada.
     match /{document=**} {
       allow read, write: if false;
