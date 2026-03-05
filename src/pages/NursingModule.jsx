@@ -233,7 +233,7 @@ function createInitialForms() {
 
   const forms = {
     signos_vitales: {
-      values: VITALS_CONFIG.reduce((acc, item) => ({ ...acc, [item.id]: item.initial }), {}),
+      values: VITALS_CONFIG.reduce((acc, item) => ({ ...acc, [item.id]: '' }), {}),
       enfermera: 'ENF. PATRICIA GUAMAN',
       hora: horaActual,
       observaciones: '',
@@ -653,7 +653,24 @@ const NurseModulePanel = () => {
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
-          console.log('📊 No hay signos vitales guardados aún');
+          console.log('📊 No hay signos vitales guardados aún - vaciando formulario');
+          // Si no hay datos en Firebase, vaciar los campos
+          setForms((prev) => ({
+            ...prev,
+            signos_vitales: {
+              ...prev.signos_vitales,
+              values: {
+                presion: '',
+                pulso: '',
+                temperatura: '',
+                satO2: '',
+                glucosa: '',
+                peso: '',
+                fr: '',
+                diuresis: '',
+              },
+            },
+          }));
           return;
         }
 
@@ -779,12 +796,22 @@ const NurseModulePanel = () => {
         description: `Signos vitales guardados correctamente (${docRef.id})`,
       });
 
-      // Limpiar el formulario después de guardar
+      // 🆕 Mantener los valores guardados en los casilleros para que se vean automáticamente
+      // En lugar de vaciar el formulario
       setForms((prev) => ({
         ...prev,
         signos_vitales: {
           ...prev.signos_vitales,
-          values: VITALS_CONFIG.reduce((acc, item) => ({ ...acc, [item.id]: '' }), {}),
+          values: {
+            presion: vitals.presion || '',
+            pulso: vitals.pulso || '',
+            temperatura: vitals.temperatura || '',
+            satO2: vitals.satO2 || '',
+            glucosa: vitals.glucosa || '',
+            peso: vitals.peso || '',
+            fr: vitals.fr || '',
+            diuresis: vitals.diuresis || '',
+          },
         },
       }));
 

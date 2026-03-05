@@ -30,12 +30,12 @@ const historialIngresos = [
 ];
 
 const resumenVitales = [
-  { label: 'P.A.', value: '120/70' },
-  { label: 'PULSO', value: '72 lpm' },
-  { label: 'TEMP.', value: '36.5 C' },
-  { label: 'SAT O2', value: '98%' },
-  { label: 'PESO', value: '70 KG' },
-  { label: 'F.R.', value: '23/min' },
+  { label: 'P.A.', value: '--' },
+  { label: 'PULSO', value: '-- lpm' },
+  { label: 'TEMP.', value: '-- C' },
+  { label: 'SAT O2', value: '--%' },
+  { label: 'PESO', value: '-- KG' },
+  { label: 'F.R.', value: '--/min' },
 ];
 
 const moduloMedicoSecciones = [
