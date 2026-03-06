@@ -1,609 +1,1116 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { PlusCircle, Trash2, Activity } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { db } from '../firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
 
-const quickSymptoms = [
-  'Fiebre',
-  'Nausea',
-  'Mareo',
-  'Tos',
-  'Dolor torácico',
-  'Disnea',
-];
-
-const evaState = (eva) => {
-  if (eva <= 3) return { label: 'Leve', color: 'bg-emerald-500' };
-  if (eva <= 6) return { label: 'Moderado', color: 'bg-amber-500' };
-  return { label: 'Severo', color: 'bg-rose-600' };
-};
-
-const formatDateValue = (rawValue) => {
-  if (!rawValue) return 'No registrado';
-  if (rawValue?.toDate) return rawValue.toDate().toLocaleDateString('es-EC');
-  const parsed = new Date(rawValue);
-  if (Number.isNaN(parsed.getTime())) return String(rawValue);
-  return parsed.toLocaleDateString('es-EC');
-};
-
-export default function Anamnesis() {
-  const { mainId } = useParams();
-  const navigate = useNavigate();
-
-  const [time, setTime] = useState(new Date());
-  const [admisiones, setAdmisiones] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [estancia, setEstancia] = useState(0);
-  const [edad, setEdad] = useState(0);
-
-  const [consulta, setConsulta] = useState({
-    tipoConsulta: '',
-    servicio: '',
-    motivoConsulta: '',
-    localizacion: '',
-    inicio: '',
-    tipoDolor: '',
-    irradiacion: '',
+const Anamnesis = () => {
+  const [formData, setFormData] = useState({
+    // Paciente
+    establecimiento: '',
+    nombres: '',
+    apellidos: '',
+    sexo: '',
+    nroHistoria: '',
+    // Sección 1: Motivo
+    motivoPrincipal: '',
+    motivoSecundario: '',
+    observaciones: '',
+    notas: '',
+    // Datos gineco-obstétricos
+    menarquia: '',
+    menopausia: '',
+    ciclos: '',
+    vidaSexualActiva: '',
+    gestas: '',
+    partos: '',
+    abortos: '',
+    cesareas: '',
+    hijosVivos: '',
+    fum: '',
+    fup: '',
+    fuc: '',
+    metodoPlanificacion: '',
+    terapiaHormonal: '',
+    colposcopia: '',
+    mamografia: '',
+    biopsia: '',
+    // Sección 4: Enfermedad actual
     cronologia: '',
+    localizacion: '',
+    intensidad: '',
     factoresAgravantes: '',
-    factoresAtenuantes: '',
     sintomasAsociados: '',
+    medicamentos: '',
+    examenesAnteriores: '',
+    condicionActual: '',
+    // Sección 5: Hallazgos sistemas
+    hallazgosSistemas: '',
+    // Signos vitales
+    presionArterial: '',
+    frecCardíaca: '',
+    frecRespiratoria: '',
+    tempAxilar: '',
+    tempBucal: '',
+    peso: '',
+    talla: '',
+    perimetroCefalico: '',
+    // Sección 7: Hallazgos físicos
+    hallazgosFisicos: '',
+    // Sección 9
+    planDiagnostico: '',
+    planTerapeutico: '',
+    planEducacional: '',
+    planSeguimiento: '',
+    planInterconsultas: '',
+    planOtros: '',
+    nombreProfesional: '',
+    codigoProfesional: '',
+    fechaHoraPlan: '',
   });
 
-  const [eva, setEva] = useState(0);
-  const [activeSymptoms, setActiveSymptoms] = useState([]);
+  const [collapsedSections, setCollapsedSections] = useState({});
+  const [activeNav, setActiveNav] = useState('s0');
+  const [toast, setToast] = useState({ visible: false });
+  const [diagnosticos, setDiagnosticos] = useState([]);
+  const [antPersonalesChecked, setAntPersonalesChecked] = useState([]);
+  const [antFamiliaresChecked, setAntFamiliaresChecked] = useState([]);
+  const [sistemasStates, setSistemasStates] = useState({});
+  const [examenFisicoStates, setExamenFisicoStates] = useState({});
 
-  const [cirugias, setCirugias] = useState([
-    { procedimiento: '', anio: '', complicaciones: '' },
-  ]);
-  const [medicamentos, setMedicamentos] = useState([
-    { nombre: '', dosis: '', frecuencia: '' },
-  ]);
-  const [alergias, setAlergias] = useState([
-    { nombre: '', tipo: '', severidad: '' },
-  ]);
+  const antPersonalesData = [
+    { num: 1, label: 'Vacunas' }, { num: 2, label: 'Enf. Perinatal' }, { num: 3, label: 'Enf. Infancia' },
+    { num: 4, label: 'Enf. Adolescente' }, { num: 5, label: 'Enf. Alérgica' }, { num: 6, label: 'Enf. Cardíaca' },
+    { num: 7, label: 'Enf. Respiratoria' }, { num: 8, label: 'Enf. Digestiva' }, { num: 9, label: 'Enf. Neurológica' },
+    { num: 10, label: 'Enf. Metabólica' }, { num: 11, label: 'Enf. Hemo-Linfática' }, { num: 12, label: 'Enf. Urinaria' },
+    { num: 13, label: 'Enf. Traumatológica' }, { num: 14, label: 'Enf. Quirúrgica' }, { num: 15, label: 'Enf. Mental' },
+    { num: 16, label: 'Enf. T. Sexual' }, { num: 17, label: 'Tendencia Sexual' }, { num: 18, label: 'Riesgo Social' },
+    { num: 19, label: 'Riesgo Laboral' }, { num: 20, label: 'Riesgo Familiar' }, { num: 21, label: 'Actividad Física' },
+    { num: 22, label: 'Dieta y Hábitos' }, { num: 23, label: 'Religión y Cultura' }, { num: 24, label: 'Otro' },
+  ];
 
+  const antFamiliaresData = [
+    { num: 1, label: 'Cardiopatía' }, { num: 2, label: 'Diabetes' }, { num: 3, label: 'Enf. Cerebrovascular' },
+    { num: 4, label: 'Hipertensión' }, { num: 5, label: 'Cáncer' }, { num: 6, label: 'Tuberculosis' },
+    { num: 7, label: 'Enf. Mental' }, { num: 8, label: 'Enf. Infecciosa' }, { num: 9, label: 'Malformación' },
+    { num: 10, label: 'Otro' },
+  ];
+
+  const sistemasData = [
+    { num: 1, label: 'Órganos de los Sentidos' }, { num: 2, label: 'Respiratorio' },
+    { num: 3, label: 'Cardio-Vascular' }, { num: 4, label: 'Digestivo' }, { num: 5, label: 'Genital' },
+    { num: 6, label: 'Urinario' }, { num: 7, label: 'Músculo-Esquelético' }, { num: 8, label: 'Endocrino' },
+    { num: 9, label: 'Hemo-Linfático' }, { num: 10, label: 'Nervioso' },
+  ];
+
+  const examenFisicoData = [
+    { id: '1-R', label: 'Piel - Faneras' }, { id: '2-R', label: 'Cabeza' }, { id: '3-R', label: 'Ojos' },
+    { id: '4-R', label: 'Oídos' }, { id: '5-R', label: 'Nariz' }, { id: '6-R', label: 'Boca' },
+    { id: '7-R', label: 'Orofaringe' }, { id: '8-R', label: 'Cuello' }, { id: '9-R', label: 'Axilas - Mamas' },
+    { id: '10-R', label: 'Tórax' }, { id: '11-R', label: 'Abdomen' }, { id: '12-R', label: 'Columna Vertebral' },
+    { id: '13-R', label: 'Ingle - Periné' }, { id: '14-R', label: 'Miembros Superiores' },
+    { id: '15-R', label: 'Miembros Inferiores' }, { id: '1-S', label: 'Órganos de los Sentidos' },
+    { id: '2-S', label: 'Respiratorio' }, { id: '3-S', label: 'Cardio-Vascular' }, { id: '4-S', label: 'Digestivo' },
+    { id: '5-S', label: 'Genital' }, { id: '6-S', label: 'Urinario' }, { id: '7-S', label: 'Músculo-Esquelético' },
+    { id: '8-S', label: 'Endocrino' }, { id: '9-S', label: 'Hemo-Linfático' }, { id: '10-S', label: 'Neurológico' },
+  ];
+
+  // Inyectar estilos CSS
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    const styles = `
+      :root {
+        --bg: #eef2f7;
+        --surface: #f4f7fb;
+        --surface2: #ffffff;
+        --accent: #76c4d5;
+        --accent-mid: #76c4d5;
+        --accent-light: #76c4d5;
+        --accent2: #c8433a;
+        --accent3: #e8a020;
+        --accent-teal: #00838f;
+        --text: #1c2a3a;
+        --text-muted: #5a6a7a;
+        --border: #c8d8e8;
+        --border-strong: #8aaabf;
+        --section-bg: #76c4d5;
+        --section-text: #f0f6ff;
+        --input-bg: #f8fbff;
+        --shadow: 0 2px 12px rgba(10,61,98,0.08);
+        --shadow-hover: 0 6px 24px rgba(10,61,98,0.16);
+        --header-gradient: linear-gradient(135deg, #76c4d546 0%, #76c4d56b 100%);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      .app-header {
+        background: #ffffff;
+        padding: 28px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
+      }
+      .app-header h1 {
+        font-family: 'Montserrat';
+        font-size: 1.7rem;
+        color: #595759;
+        letter-spacing: -0.02em;
+      }
+      .app-header p {
+        font-size: 0.78rem;
+        color: rgb(33, 63, 92);
+        margin-top: 2px;
+        font-weight: 300;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .header-badge {
+        background: #76C4D5;
+        border: 1px solid #595759;
+        color: #ffffff;
+        padding: 8px 18px;
+        border-radius: 100px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+      }
+      .progress-nav {
+        background: #76c4d57f;
+        border-bottom: 1px solid rgb(27, 4, 4);
+        padding: 0 40px;
+        display: flex;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .progress-nav::-webkit-scrollbar { display: none; }
+      .nav-tab {
+        padding: 14px 20px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #595759;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-tab:hover { color: #fff; }
+      .nav-tab.active { color: #ffffff; border-bottom-color: #64b5f6; }
+      .nav-tab.completed { color: #80cbc4; }
+      .nav-tab.completed .tab-num { background: #00838f; color: white; }
+      .tab-num {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: rgb(255, 255, 255);
+        color: rgba(25, 79, 146, 0.8);
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .nav-tab.active .tab-num {
+        background: #4ea685;
+        color: #ffffff;
+      }
+      .app-body {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+      .patient-card {
+        background: var(--surface2);
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        border-top: 4px solid var(--accent-light);
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 120px 120px;
+        gap: 20px;
+        align-items: end;
+      }
+      .section-card {
+        background: var(--surface2);
+        border-radius: 16px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+      .section-card:hover { box-shadow: var(--shadow-hover); }
+      .section-card.collapsed .section-body { display: none; }
+      .section-header {
+        background: var(--header-gradient);
+        padding: 18px 28px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .section-num {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        background: rgba(118,196,213,0.9);
+        color: white;
+        font-family: 'Montserrat';
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .section-title {
+        font-family: 'Montserrat';
+        font-size: 1.15rem;
+        color: #595759;
+        letter-spacing: -0.01em;
+      }
+      .section-subtitle {
+        font-size: 0.72rem;
+        color: #4EA685;
+        font-weight: 300;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-top: 1px;
+      }
+      .section-toggle {
+        margin-left: auto;
+        width: 28px; height: 28px;
+        background: #595759;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        transition: transform 0.25s;
+      }
+      .section-card.collapsed .section-toggle { transform: rotate(-90deg); }
+      .section-body {
+      
+        padding: 28px 28px;
+        transition: all 0.3s ease;
+      }
+      .field-group {
+      
+        margin-bottom: 20px;
+      }
+      .field-label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #595759;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 7px;
+      }
+      .field-input, .field-textarea, .field-select {
+        width: 100%;
+        background: var(--input-bg);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-family: 'Montserrat';
+        font-size: 0.92rem;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        appearance: none;
+      }
+      .field-input:focus, .field-textarea:focus, .field-select:focus {
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 3px rgba(30,136,229,0.12);
+      }
+      .field-textarea {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.6;
+      }
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+      .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+      .check-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--input-bg);
+      }
+      .check-item:hover { border-color: var(--accent-light); background: rgba(30,136,229,0.05); }
+      .check-item.checked { border-color: var(--accent); background: rgba(10,61,98,0.07); }
+      .check-item input[type=checkbox] { display: none; }
+      .check-box {
+        width: 18px; height: 18px;
+        border: 2px solid var(--border-strong);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s;
+      }
+      .check-item.checked .check-box {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .check-mark {
+        color: white;
+        font-size: 0.7rem;
+        display: none;
+      }
+      .check-item.checked .check-mark { display: block; }
+      .check-label {
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: var(--text);
+        line-height: 1.3;
+      }
+      .check-num {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+      }
+      .sistemas-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        background: #69c9bb2b;
+      }
+      .sistema-card {
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--input-bg);
+      }
+      .sistema-name {
+        padding: 10px 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: center;
+        background: #76c4d52c;
+        color: #595759;
+        border-bottom: 1px solid var(--border);
+        line-height: 1.3;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sistema-toggle {
+        display: flex;
+        background: #ffffff;
+      }
+      .sis-btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        background: #76c4d57d;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+        transition: all 0.15s;
+        font-family: 'Montserrat';
+      }
+      .sis-btn:first-child { border-right: 1px solid var(--border); }
+      .sis-btn:hover { background: var(--border); }
+      .sis-btn.cp-active { background: #fde8e7; color: var(--accent2); }
+      .sis-btn.sp-active { background: #ffffff; color: var(--accent-light); }
+      .vitales-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+      }
+      .vital-card {
+        background: linear-gradient(135deg, #eef4fb, #f4f8ff);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 16px;
+        text-align: center;
+        border-top: 3px solid var(--accent-light);
+      }
+      .vital-icon { font-size: 1.5rem; margin-bottom: 8px; }
+      .vital-name { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
+      .vital-input {
+        width: 100%;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        background: white;
+        font-family: 'Montserrat';
+        outline: none;
+        color: var(--accent);
+        transition: border-color 0.2s;
+      }
+      .vital-input:focus { border-color: var(--accent-light); }
+      .vital-unit { font-size: 0.72rem; color: var(--text-muted); margin-top: 5px; }
+      .diag-row {
+        display: grid;
+        grid-template-columns: 1fr 120px auto auto;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .diag-badge {
+        display: inline-flex;
+        gap: 4px;
+      }
+      .badge-btn {
+        padding: 6px 14px;
+        border-radius: 100px;
+        border: 1.5px solid var(--border);
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: transparent;
+        font-family: 'Montserrat';
+        transition: all 0.15s;
+        letter-spacing: 0.04em;
+      }
+      .badge-btn.pre.active { background: var(--accent3); border-color: var(--accent3); color: white; }
+      .badge-btn.def.active { background: var(--accent-mid); border-color: var(--accent-mid); color: white; }
+      .badge-btn:hover { border-color: var(--border-strong); }
+      .add-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        background: transparent;
+        border: 1.5px dashed var(--border-strong);
+        border-radius: 10px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        cursor: pointer;
+        font-family: 'Montserrat';
+        transition: all 0.2s;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+      .add-btn:hover { border-color: var(--accent-light); color: var(--accent-light); background: rgba(30,136,229,0.05); }
+      .remove-btn {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        border: 1.5px solid #f8d7d6;
+        background: #fef5f5;
+        color: var(--accent2);
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        flex-shrink: 0;
+      }
+      .remove-btn:hover { background: var(--accent2); color: white; }
+      .save-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0; right: 0;
+        background: var(--surface2);
+        border-top: 1px solid var(--border);
+        padding: 16px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 99;
+        box-shadow: 0 -4px 20px rgba(10,61,98,0.1);
+      }
+      .save-info { font-size: 0.82rem; color: var(--text-muted); }
+      .save-info strong { color: var(--accent); }
+      .btn-save {
+        padding: 13px 32px;
+        background: #69c9bb98;
+        color: #595759;
+        border: none;
+        border-radius: 100px;
+        font-family: 'Montserrat';
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-save:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 16px rgb(10, 61, 98); }
+      .btn-print {
+        padding: 13px 24px;
+        background: transparent;
+        color: #595759;
+        border: 1.5px solid var(--accent);
+        border-radius: 100px;
+        font-family: 'Montserrat';
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-right: 12px;
+      }
+      .btn-print:hover { background: rgba(10,61,98,0.07); }
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      .field-note {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-style: italic;
+      }
+      .toast {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        background: var(--accent);
+        color: white;
+        padding: 14px 22px;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        box-shadow: 0 4px 20px rgba(10,61,98,0.3);
+        transform: translateY(-80px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 999;
+      }
+      .toast.show { transform: translateY(0); opacity: 1; }
+      @media (max-width: 700px) {
+        .app-header { padding: 18px 20px; }
+        .app-header h1 { font-size: 1.3rem; }
+        .progress-nav { padding: 0 12px; }
+        .app-body { padding: 24px 12px 80px; }
+        .patient-card { grid-template-columns: 1fr 1fr; }
+        .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        .sistemas-grid { grid-template-columns: repeat(2, 1fr); }
+        .section-body { padding: 20px 16px; }
+        .save-bar { padding: 12px 16px; }
+        .diag-row { grid-template-columns: 1fr; }
+      }
+      @media print {
+        .save-bar, .progress-nav, .app-header { display: none; }
+        .section-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+      }
+    `;
+
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+      document.head.removeChild(link);
+    };
   }, []);
 
-  useEffect(() => {
-    const fetchAdmisiones = async () => {
-      if (!mainId) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const ref = doc(db, 'admisiones', mainId);
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-          setAdmisiones(null);
-          return;
-        }
-
-        const data = snap.data();
-        setAdmisiones({
-          id: snap.id,
-          ...data,
-          ...data.mainData,
-        });
-      } catch (error) {
-        console.error('Error al obtener admisiones:', error);
-        setAdmisiones(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAdmisiones();
-  }, [mainId]);
-
-  useEffect(() => {
-    if (!admisiones?.createdAt?.toDate) return;
-    const fechaIngreso = admisiones.createdAt.toDate();
-    const dias = Math.floor((new Date() - fechaIngreso) / (1000 * 60 * 60 * 24)  + 1);
-    setEstancia(dias);
-  }, [admisiones]);
-
-  useEffect(() => {
-    if (!admisiones?.secondaryData?.dateOfBirth) return;
-    let fechaNacimiento = admisiones.secondaryData.dateOfBirth;
-    if (fechaNacimiento?.toDate) fechaNacimiento = fechaNacimiento.toDate();
-    else fechaNacimiento = new Date(fechaNacimiento);
-
-    const hoy = new Date();
-    let anios = hoy.getFullYear() - fechaNacimiento.getFullYear();
-    const mesDiff = hoy.getMonth() - fechaNacimiento.getMonth();
-    if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
-      anios -= 1;
-    }
-    setEdad(anios);
-  }, [admisiones]);
-
-  const formattedDate = time.toLocaleDateString('es-ES', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  const formattedTime = time.toLocaleTimeString('es-ES');
-
-  const completion = useMemo(() => {
-    const required = ['tipoConsulta', 'servicio', 'motivoConsulta'];
-    const ok = required.filter((field) => consulta[field]?.trim()).length;
-    return Math.round((ok / required.length) * 100);
-  }, [consulta]);
-
-  const handleConsultaChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setConsulta((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const toggleSymptom = (item) => {
-    const next = activeSymptoms.includes(item)
-      ? activeSymptoms.filter((s) => s !== item)
-      : [...activeSymptoms, item];
-
-    setActiveSymptoms(next);
-    setConsulta((prev) => ({
-      ...prev,
-      sintomasAsociados: next.join(', '),
-    }));
+  const toggleSection = (id) => {
+    setCollapsedSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const updateArrayItem = (setter, list, index, field, value) => {
-    const next = [...list];
-    next[index][field] = value;
-    setter(next);
+  const handleCheckboxChange = (type, num) => {
+    if (type === 'personales') {
+      setAntPersonalesChecked(prev =>
+        prev.includes(num) ? prev.filter(n => n !== num) : [...prev, num]
+      );
+    } else {
+      setAntFamiliaresChecked(prev =>
+        prev.includes(num) ? prev.filter(n => n !== num) : [...prev, num]
+      );
+    }
   };
 
-  const addArrayItem = (setter, list, payload) => setter([...list, payload]);
-  const removeArrayItem = (setter, list, index) => {
-    if (list.length === 1) return;
-    setter(list.filter((_, i) => i !== index));
+  const toggleSisBtn = (id, type) => {
+    setSistemasStates(prev => ({ ...prev, [id]: type }));
   };
 
-  const evaMeta = evaState(eva);
+  const toggleExamenFisicoBtn = (id, type) => {
+    setExamenFisicoStates(prev => ({ ...prev, [id]: type }));
+  };
+
+  const addDiagnostico = () => {
+    setDiagnosticos([...diagnosticos, { id: Date.now(), diagnostico: '', cie: '', pre: false, def: false }]);
+  };
+
+  const removeDiagnostico = (id) => {
+    setDiagnosticos(diagnosticos.filter(d => d.id !== id));
+  };
+
+  const toggleDiagBadge = (id, type) => {
+    setDiagnosticos(diagnosticos.map(d =>
+      d.id === id ? { ...d, pre: type === 'pre', def: type === 'def' } : d
+    ));
+  };
+
+  const updateDiagnostico = (id, field, value) => {
+    setDiagnosticos(diagnosticos.map(d =>
+      d.id === id ? { ...d, [field]: value } : d
+    ));
+  };
+
+  const guardarFormulario = () => {
+    setToast({ visible: true });
+    setTimeout(() => setToast({ visible: false }), 2800);
+  };
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveNav(id);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f6fcfc] via-[#e8f5f8] to-[#d9edf4] p-3 md:p-5">
-      <div className="relative mb-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 font-semibold text-white shadow transition hover:bg-[#007e8f]"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-center text-3xl font-extrabold tracking-wide text-[#007e8f]">
-          ANAMNESIS
-        </h1>
-      </div>
-
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/80 p-4 shadow-lg backdrop-blur">
-        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-4">
-          <div className="rounded-xl bg-[#007e8f]/5 p-3">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="h-auto w-44"
-            />
-            <p className="mt-2 text-lg font-bold text-[#1c3f6e]">{formattedTime}</p>
-            <p className="text-xs font-semibold uppercase text-[#007e8f]">
-              {formattedDate.toUpperCase()}
-            </p>
-          </div>
-
-          {loading ? (
-            <p className="text-gray-600">Cargando datos de admisiones...</p>
-          ) : admisiones ? (
-            <>
-              <div className="rounded-xl border border-[#007e8f]/15 text-[#1c3f6e] bg-white p-3">
-                <p className="text-base font-bold text-[#1c3f6e]">
-                  {admisiones.firstName} {admisiones.lastName}
-                </p>
-                <p>
-                  <strong>Identificación:</strong> {admisiones.cedula}
-                </p>
-                <p>
-                  <strong>Edad:</strong> {edad} años
-                </p>
-                <p>
-                  <strong>Médico:</strong> {admisiones.medico}
-                </p>
-                <p>
-                  <strong>Nacimiento:</strong>{' '}
-                  {formatDateValue(admisiones.secondaryData?.dateOfBirth)}
-                </p>
-              </div>
-              <div className="rounded-xl border text-[#1c3f6e] border-[#007e8f]/15 bg-white p-3">
-                <p>
-                  <strong>Servicio:</strong> {admisiones.servicio}
-                </p>
-                <p>
-                  <strong>Seguro:</strong> {admisiones.seguro}
-                </p>
-                <p>
-                  <strong>Estancia:</strong> {estancia} días
-                </p>
-                <p>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || ''} {admisiones.alergiaUno || 'No registrado'}
-                </p>
-                <p>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''}
-                </p>
-                <p>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                </p>
-              </div>
-              <div className="rounded-xl bg-gradient-to-br from-[#ffffff] to-[#ffffff] text-[#1c3f6e] p-3 text-center font-bold text-white">
-                <p>PISO: {admisiones.ubicacion?.piso || 'No Reg'}</p>
-                <p>{admisiones.ubicacion?.habitacion || 'No Reg'}</p>
-              </div>
-            </>
-          ) : (
-            <p className="font-bold text-red-600">No se encontró información de admisiones.</p>
-          )}
+    <>
+      <header className="app-header">
+        <div>
+          <h1>Anamnesis Clínica</h1>
+          <p>SNS-MSP · HCU-form.003 · 2008</p>
         </div>
+        <span className="header-badge">Historia Clínica</span>
       </header>
 
-      <main className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4">
-        <motion.aside
-          initial={{ opacity: 0, x: -18 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-4 rounded-2xl border border-[#007e8f]/20 bg-white/90 p-4 shadow-md"
-        >
-          <h2 className="rounded-lg bg-[#1c3f6e] px-4 py-2 text-center text-sm font-bold text-white">
-            NUEVA ANAMNESIS
-          </h2>
+      <nav className="progress-nav">
+        {[{ id: 's0', num: '★', label: 'Paciente' },
+          { id: 's1', num: '1', label: 'Motivo' },
+          { id: 's2', num: '2', label: 'Antec. Personales' },
+          { id: 's3', num: '3', label: 'Antec. Familiares' },
+          { id: 's4', num: '4', label: 'Enfermedad Actual' },
+          { id: 's5', num: '5', label: 'Órganos y Sistemas' },
+          { id: 's6', num: '6', label: 'Signos Vitales' },
+          { id: 's7', num: '7', label: 'Examen Físico' },
+          { id: 's8', num: '8', label: 'Diagnóstico' },
+          { id: 's9', num: '9', label: 'Planes' }].map(tab => (
+          <div key={tab.id} className={`nav-tab ${activeNav === tab.id ? 'active' : ''}`} onClick={() => scrollToSection(tab.id)}>
+            <span className="tab-num">{tab.num}</span> {tab.label}
+          </div>
+        ))}
+      </nav>
 
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <p className="font-semibold text-[#1c3f6e]">Progreso de llenado</p>
-              <span className="text-sm font-bold text-[#007e8f]">{completion}%</span>
+      <main className="app-body">
+        {/* PACIENTE */}
+        <div id="s0" className="patient-card">
+          <div className="field-group" style={{ margin: 0 }}>
+            <label className="field-label">Establecimiento</label>
+            <input className="field-input" type="text" name="establecimiento" value={formData.establecimiento} onChange={handleInputChange} placeholder="Nombre del establecimiento" />
+          </div>
+          <div className="field-group" style={{ margin: 0 }}>
+            <label className="field-label">Nombre(s)</label>
+            <input className="field-input" type="text" name="nombres" value={formData.nombres} onChange={handleInputChange} placeholder="Nombres del paciente" />
+          </div>
+          <div className="field-group" style={{ margin: 0 }}>
+            <label className="field-label">Apellidos</label>
+            <input className="field-input" type="text" name="apellidos" value={formData.apellidos} onChange={handleInputChange} placeholder="Apellidos del paciente" />
+          </div>
+          <div className="field-group" style={{ margin: 0 }}>
+            <label className="field-label">Sexo</label>
+            <select className="field-select" name="sexo" value={formData.sexo} onChange={handleInputChange}>
+              <option value="">—</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+            </select>
+          </div>
+          <div className="field-group" style={{ margin: 0 }}>
+            <label className="field-label">N° Historia</label>
+            <input className="field-input" type="text" name="nroHistoria" value={formData.nroHistoria} onChange={handleInputChange} placeholder="0000" />
+          </div>
+        </div>
+
+        {/* SECCIÓN 1 */}
+        <div id="s1" className={`section-card ${collapsedSections.s1 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s1')}>
+            <div className="section-num">1</div>
+            <div>
+              <div className="section-title">Motivo de Consulta</div>
+              <div className="section-subtitle">Versión del informante</div>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${completion}%` }}
-                className="h-2 rounded-full bg-gradient-to-r from-[#007e8f] to-[#1c3f6e]"
-              />
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div className="grid-2">
+              <div className="field-group">
+                <label className="field-label">A — Motivo Principal</label>
+                <textarea className="field-textarea" name="motivoPrincipal" value={formData.motivoPrincipal} onChange={handleInputChange} placeholder="Describa el motivo principal..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">C — Motivo Secundario</label>
+                <textarea className="field-textarea" name="motivoSecundario" value={formData.motivoSecundario} onChange={handleInputChange} placeholder="Otros motivos..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">B — Observaciones</label>
+                <textarea className="field-textarea" name="observaciones" value={formData.observaciones} onChange={handleInputChange} placeholder="Observaciones adicionales..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">D — Notas</label>
+                <textarea className="field-textarea" name="notas" value={formData.notas} onChange={handleInputChange} placeholder="Notas complementarias..."></textarea>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div className="rounded-xl border border-[#007e8f]/20 bg-[#eaf9fa] p-3 text-sm">
-            <p className="mb-2 font-bold text-[#1c3f6e]">Historial reciente</p>
-            <ul className="space-y-1 text-[#007e8f]">
-              <li>Dr. Delgado Zurita</li>
-              <li>Dr. Delgado Zurita</li>
-            </ul>
+        {/* SECCIÓN 2 */}
+        <div id="s2" className={`section-card ${collapsedSections.s2 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s2')}>
+            <div className="section-num">2</div>
+            <div>
+              <div className="section-title">Antecedentes Personales</div>
+              <div className="section-subtitle">Marque y describa con el número respectivo</div>
+            </div>
+            <div className="section-toggle">▾</div>
           </div>
-
-          <div className="rounded-xl bg-gradient-to-br from-[#007e8f] to-[#4cb6c4] p-4 text-sm text-white shadow">
-            <p><strong>PESO:</strong> 70 KG</p>
-            <p><strong>TALLA:</strong> 1.60</p>
-            <p><strong>PULSO:</strong> 70</p>
-            <p><strong>TEMPERATURA:</strong> 36.5</p>
-            <p><strong>FR:</strong> 23</p>
-            <p><strong>PA:</strong> 120/70</p>
-          </div>
-        </motion.aside>
-
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4 md:col-span-3"
-        >
-          <div className="rounded-2xl border border-[#007e8f]/20 bg-white/95 p-4 shadow-md">
-            <div className="mb-3 flex items-center gap-2">
-              <Activity className="h-5 w-5 text-[#007e8f]" />
-              <h2 className="text-lg font-bold text-[#1c3f6e]">Motivo de Consulta</h2>
+          <div className="section-body">
+            <div className="check-grid">
+              {antPersonalesData.map(item => (
+                <label key={item.num} className={`check-item ${antPersonalesChecked.includes(item.num) ? 'checked' : ''}`} onClick={() => handleCheckboxChange('personales', item.num)}>
+                  <input type="checkbox" checked={antPersonalesChecked.includes(item.num)} readOnly />
+                  <div className="check-box"><span className="check-mark">✓</span></div>
+                  <div>
+                    <div className="check-num">{item.num}</div>
+                    <div className="check-label">{item.label}</div>
+                  </div>
+                </label>
+              ))}
             </div>
-
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Tipo de Consulta *</label>
-                <select
-                  name="tipoConsulta"
-                  value={consulta.tipoConsulta}
-                  onChange={handleConsultaChange}
-                  className="mt-1 w-full rounded-lg border border-[#007e8f]/30 bg-white text-[#1c3f6e] px-3 py-2 outline-none focus:border-[#007e8f]"
-                >
-                  <option value="">Seleccionar...</option>
-                  <option value="primera_vez">Primera Vez</option>
-                  <option value="control">Control</option>
-                  <option value="urgencia">Urgencia</option>
-                  <option value="hospitalizacion">Hospitalización</option>
-                  <option value="interconsulta">Interconsulta</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Servicio / Especialidad *</label>
-                <select
-                  name="servicio"
-                  value={consulta.servicio}
-                  onChange={handleConsultaChange}
-                  className="mt-1 w-full rounded-lg border border-[#007e8f]/30 bg-white text-[#1c3f6e] px-3 py-2 outline-none focus:border-[#007e8f]"
-                >
-                  <option value="">Seleccionar...</option>
-                  <option value="medicina_general">Medicina General</option>
-                  <option value="pediatria">Pediatría</option>
-                  <option value="ginecologia">Ginecología y Obstetricia</option>
-                  <option value="cirugia">Cirugía General</option>
-                  <option value="traumatologia">Traumatología</option>
-                  <option value="cardiologia">Cardiología</option>
-                </select>
-              </div>
+            <div className="divider"></div>
+            <p className="field-label" style={{ marginBottom: '14px' }}>Datos gineco-obstétricos (si aplica)</p>
+            <div className="grid-4">
+              <div className="field-group"><label className="field-label">Menarquía (edad)</label><input className="field-input" type="number" name="menarquia" value={formData.menarquia} onChange={handleInputChange} placeholder="años" /></div>
+              <div className="field-group"><label className="field-label">Menopausia (edad)</label><input className="field-input" type="number" name="menopausia" value={formData.menopausia} onChange={handleInputChange} placeholder="años" /></div>
+              <div className="field-group"><label className="field-label">Ciclos</label><input className="field-input" type="text" name="ciclos" value={formData.ciclos} onChange={handleInputChange} placeholder="ej. 28/4" /></div>
+              <div className="field-group"><label className="field-label">Vida sexual activa</label><select className="field-select" name="vidaSexualActiva" value={formData.vidaSexualActiva} onChange={handleInputChange}><option>—</option><option>Sí</option><option>No</option></select></div>
+              <div className="field-group"><label className="field-label">Gestas</label><input className="field-input" type="number" name="gestas" value={formData.gestas} onChange={handleInputChange} placeholder="0" /></div>
+              <div className="field-group"><label className="field-label">Partos</label><input className="field-input" type="number" name="partos" value={formData.partos} onChange={handleInputChange} placeholder="0" /></div>
+              <div className="field-group"><label className="field-label">Abortos</label><input className="field-input" type="number" name="abortos" value={formData.abortos} onChange={handleInputChange} placeholder="0" /></div>
+              <div className="field-group"><label className="field-label">Cesáreas</label><input className="field-input" type="number" name="cesareas" value={formData.cesareas} onChange={handleInputChange} placeholder="0" /></div>
+              <div className="field-group"><label className="field-label">Hijos vivos</label><input className="field-input" type="number" name="hijosVivos" value={formData.hijosVivos} onChange={handleInputChange} placeholder="0" /></div>
+              <div className="field-group"><label className="field-label">FUM</label><input className="field-input" type="date" name="fum" value={formData.fum} onChange={handleInputChange} /></div>
+              <div className="field-group"><label className="field-label">FUP</label><input className="field-input" type="date" name="fup" value={formData.fup} onChange={handleInputChange} /></div>
+              <div className="field-group"><label className="field-label">FUC</label><input className="field-input" type="date" name="fuc" value={formData.fuc} onChange={handleInputChange} /></div>
             </div>
-
-            <div className="mt-3">
-              <label className="text-sm font-semibold text-[#1c3f6e]">
-                Motivo de Consulta (palabras del paciente) *
-              </label>
-              <textarea
-                name="motivoConsulta"
-                value={consulta.motivoConsulta}
-                onChange={handleConsultaChange}
-                rows={3}
-                className="mt-1 w-full rounded-lg border border-[#007e8f]/30 text-[#1c3f6e] bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                placeholder="Descripción del motivo de consulta..."
-              />
-            </div>
-
-            <div className="mt-4 rounded-xl border border-[#007e8f]/20 bg-[#f6fcfc] p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="font-semibold text-[#1c3f6e]">Intensidad del dolor (EVA)</p>
-                <span className={`rounded-full px-2 py-1 text-xs font-bold text-white ${evaMeta.color}`}>
-                  {eva}/10 {evaMeta.label}
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={eva}
-                onChange={(e) => setEva(Number(e.target.value))}
-                className="w-full accent-[#007e8f]"
-              />
-            </div>
-
-            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Localización</label>
-                <Input name="localizacion" value={consulta.localizacion} onChange={handleConsultaChange} />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Inicio / evolución</label>
-                <Input name="inicio" value={consulta.inicio} onChange={handleConsultaChange} />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Tipo / Calidad</label>
-                <Input name="tipoDolor" value={consulta.tipoDolor} onChange={handleConsultaChange} />
-              </div>
-            </div>
-
-            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Irradiación</label>
-                <Input name="irradiacion" value={consulta.irradiacion} onChange={handleConsultaChange} />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Cronología</label>
-                <select
-                  name="cronologia"
-                  value={consulta.cronologia}
-                  onChange={handleConsultaChange}
-                  className="mt-1 w-full rounded-lg border border-[#007e8f]/30 text-[#1c3f6e] bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                >
-                  <option value="">Seleccionar...</option>
-                  <option value="continuo">Continuo</option>
-                  <option value="intermitente">Intermitente</option>
-                  <option value="progresivo">Progresivo</option>
-                  <option value="episodico">Episódico</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-[#1c3f6e]">Factores Agravantes</label>
-                <Input
-                  name="factoresAgravantes"
-                  value={consulta.factoresAgravantes}
-                  onChange={handleConsultaChange}
-                  className="text-[#1c3f6e] bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                />
-              </div>
-            </div>
-
-            <div className="mt-3">
-              <label className="text-sm font-semibold text-[#1c3f6e]">Factores Atenuantes</label>
-              <Input
-                name="factoresAtenuantes"
-                value={consulta.factoresAtenuantes}
-                onChange={handleConsultaChange}
-                 className="text-[#1c3f6e] bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-              />
-            </div>
-
-            <div className="mt-4">
-              <p className="text-sm font-semibold text-[#1c3f6e]">Síntomas frecuentes (rápido)</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {quickSymptoms.map((item) => {
-                  const active = activeSymptoms.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleSymptom(item)}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                        active
-                          ? 'bg-[#007e8f] text-white shadow'
-                          : 'bg-[#eaf9fa] text-[#1c3f6e] hover:bg-[#d8f1f3]'
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
-              <textarea
-                name="sintomasAsociados"
-                value={consulta.sintomasAsociados}
-                onChange={handleConsultaChange}
-                rows={2}
-                className="mt-2 w-full rounded-lg border text-[#1c3f6e] border-[#007e8f]/30 bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                placeholder="Otros síntomas asociados..."
-              />
+            <div className="grid-4" style={{ marginTop: '8px' }}>
+              <div className="field-group"><label className="field-label">Método P. Familiar</label><input className="field-input" type="text" name="metodoPlanificacion" value={formData.metodoPlanificacion} onChange={handleInputChange} placeholder="Método usado" /></div>
+              <div className="field-group"><label className="field-label">Terapia hormonal</label><select className="field-select" name="terapiaHormonal" value={formData.terapiaHormonal} onChange={handleInputChange}><option>—</option><option>Sí</option><option>No</option></select></div>
+              <div className="field-group"><label className="field-label">Colposcopía</label><input className="field-input" type="date" name="colposcopia" value={formData.colposcopia} onChange={handleInputChange} /></div>
+              <div className="field-group"><label className="field-label">Mamografía</label><input className="field-input" type="date" name="mamografia" value={formData.mamografia} onChange={handleInputChange} /></div>
+              <div className="field-group"><label className="field-label">Biopsia</label><select className="field-select" name="biopsia" value={formData.biopsia} onChange={handleInputChange}><option>—</option><option>Sí</option><option>No</option></select></div>
             </div>
           </div>
+        </div>
 
-          <div className="rounded-2xl border border-[#007e8f]/20 bg-white/95 p-4 shadow-md">
-            <h3 className="mb-3 text-lg font-bold text-[#1c3f6e]">Antecedentes Quirúrgicos</h3>
-            {cirugias.map((item, index) => (
-              <div key={`cir-${index}`} className="mb-3 grid grid-cols-1 gap-2 rounded-xl border p-3 md:grid-cols-4">
-                <Input
-                  placeholder="Procedimiento"
-                  value={item.procedimiento}
-                  onChange={(e) =>
-                    updateArrayItem(setCirugias, cirugias, index, 'procedimiento', e.target.value)
-                  }
-                />
-                <Input
-                  type="number"
-                  min={1900}
-                  max={2099}
-                  placeholder="Año"
-                  value={item.anio}
-                  onChange={(e) => updateArrayItem(setCirugias, cirugias, index, 'anio', e.target.value)}
-                />
-                <Input
-                  placeholder="Complicaciones"
-                  value={item.complicaciones}
-                  onChange={(e) =>
-                    updateArrayItem(setCirugias, cirugias, index, 'complicaciones', e.target.value)
-                  }
-                />
-                <div className="flex items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-rose-300 text-rose-600 hover:bg-rose-50"
-                    onClick={() => removeArrayItem(setCirugias, cirugias, index)}
-                  >
-                    <Trash2 className="mr-1 h-4 w-4" /> Quitar
-                  </Button>
+        {/* SECCIÓN 3 */}
+        <div id="s3" className={`section-card ${collapsedSections.s3 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s3')}>
+            <div className="section-num">3</div>
+            <div>
+              <div className="section-title">Antecedentes Familiares</div>
+              <div className="section-subtitle">Seleccione y describa anotando el número</div>
+            </div>
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div className="check-grid">
+              {antFamiliaresData.map(item => (
+                <label key={item.num} className={`check-item ${antFamiliaresChecked.includes(item.num) ? 'checked' : ''}`} onClick={() => handleCheckboxChange('familiares', item.num)}>
+                  <input type="checkbox" checked={antFamiliaresChecked.includes(item.num)} readOnly />
+                  <div className="check-box"><span className="check-mark">✓</span></div>
+                  <div>
+                    <div className="check-num">{item.num}</div>
+                    <div className="check-label">{item.label}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* SECCIÓN 4 */}
+        <div id="s4" className={`section-card ${collapsedSections.s4 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s4')}>
+            <div className="section-num">4</div>
+            <div>
+              <div className="section-title">Enfermedad o Problema Actual</div>
+              <div className="section-subtitle">Cronología, localización, características, intensidad, causa aparente…</div>
+            </div>
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div className="grid-2">
+              <div className="field-group"><label className="field-label">Cronología e Inicio</label><textarea className="field-textarea" name="cronologia" value={formData.cronologia} onChange={handleInputChange} placeholder="¿Cuándo inició?..."></textarea></div>
+              <div className="field-group"><label className="field-label">Localización y Características</label><textarea className="field-textarea" name="localizacion" value={formData.localizacion} onChange={handleInputChange} placeholder="¿Dónde?..."></textarea></div>
+              <div className="field-group"><label className="field-label">Intensidad y Causa Aparente</label><textarea className="field-textarea" name="intensidad" value={formData.intensidad} onChange={handleInputChange} placeholder="Escala de dolor (1-10)..."></textarea></div>
+              <div className="field-group"><label className="field-label">Factores que Agravan / Mejoran</label><textarea className="field-textarea" name="factoresAgravantes" value={formData.factoresAgravantes} onChange={handleInputChange} placeholder="¿Qué lo empeora?..."></textarea></div>
+              <div className="field-group"><label className="field-label">Síntomas Asociados y Evolución</label><textarea className="field-textarea" name="sintomasAsociados" value={formData.sintomasAsociados} onChange={handleInputChange} placeholder="Síntomas concomitantes..."></textarea></div>
+              <div className="field-group"><label className="field-label">Medicamentos que Recibe</label><textarea className="field-textarea" name="medicamentos" value={formData.medicamentos} onChange={handleInputChange} placeholder="Nombre, dosis..."></textarea></div>
+              <div className="field-group"><label className="field-label">Resultados de Exámenes Anteriores</label><textarea className="field-textarea" name="examenesAnteriores" value={formData.examenesAnteriores} onChange={handleInputChange} placeholder="Exámenes previos..."></textarea></div>
+              <div className="field-group"><label className="field-label">Condición Actual</label><textarea className="field-textarea" name="condicionActual" value={formData.condicionActual} onChange={handleInputChange} placeholder="Estado general..."></textarea></div>
+            </div>
+          </div>
+        </div>
+
+        {/* SECCIÓN 5 */}
+        <div id="s5" className={`section-card ${collapsedSections.s5 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s5')}>
+            <div className="section-num">5</div>
+            <div>
+              <div className="section-title">Revisión Actual de Órganos y Sistemas</div>
+              <div className="section-subtitle">CP = Con Patología · SP = Sin Patología</div>
+            </div>
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div className="sistemas-grid">
+              {sistemasData.map(s => (
+                <div key={s.num} className="sistema-card">
+                  <div className="sistema-name">{s.num}. {s.label}</div>
+                  <div className="sistema-toggle">
+                    <button className={`sis-btn ${sistemasStates[`s${s.num}`] === 'cp' ? 'cp-active' : ''}`} onClick={() => toggleSisBtn(`s${s.num}`, 'cp')}>CP</button>
+                    <button className={`sis-btn ${sistemasStates[`s${s.num}`] === 'sp' ? 'sp-active' : ''}`} onClick={() => toggleSisBtn(`s${s.num}`, 'sp')}>SP</button>
+                  </div>
                 </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              onClick={() =>
-                addArrayItem(setCirugias, cirugias, { procedimiento: '', anio: '', complicaciones: '' })
-              }
-              className="bg-[#007e8f] text-white hover:bg-[#066e7c]"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" /> Agregar cirugía
-            </Button>
+              ))}
+            </div>
+            <div className="divider"></div>
+            <div className="field-group">
+              <label className="field-label">Descripción de hallazgos (CP)</label>
+              <textarea className="field-textarea" name="hallazgosSistemas" value={formData.hallazgosSistemas} onChange={handleInputChange} placeholder="Describa aquí los sistemas con patología..."></textarea>
+            </div>
           </div>
+        </div>
 
-          <div className="rounded-2xl border border-[#007e8f]/20 bg-white/95 p-4 shadow-md">
-            <h3 className="mb-3 text-lg font-bold text-[#1c3f6e]">Medicamentos Actuales</h3>
-            {medicamentos.map((item, index) => (
-              <div key={`med-${index}`} className="mb-3 grid grid-cols-1 gap-2 rounded-xl border p-3 md:grid-cols-4">
-                <Input
-                  placeholder="Medicamento"
-                  value={item.nombre}
-                  onChange={(e) => updateArrayItem(setMedicamentos, medicamentos, index, 'nombre', e.target.value)}
-                />
-                <Input
-                  placeholder="Dosis"
-                  value={item.dosis}
-                  onChange={(e) => updateArrayItem(setMedicamentos, medicamentos, index, 'dosis', e.target.value)}
-                />
-                <Input
-                  placeholder="Frecuencia"
-                  value={item.frecuencia}
-                  onChange={(e) =>
-                    updateArrayItem(setMedicamentos, medicamentos, index, 'frecuencia', e.target.value)
-                  }
-                />
-                <div className="flex items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-rose-300 text-rose-600 hover:bg-rose-50"
-                    onClick={() => removeArrayItem(setMedicamentos, medicamentos, index)}
-                  >
-                    <Trash2 className="mr-1 h-4 w-4" /> Quitar
-                  </Button>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              onClick={() => addArrayItem(setMedicamentos, medicamentos, { nombre: '', dosis: '', frecuencia: '' })}
-              className="bg-[#007e8f] text-white hover:bg-[#066e7c]"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" /> Agregar medicamento
-            </Button>
+        {/* SECCIÓN 6 */}
+        <div id="s6" className={`section-card ${collapsedSections.s6 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s6')}>
+            <div className="section-num">6</div>
+            <div>
+              <div className="section-title">Signos Vitales y Mediciones</div>
+              <div className="section-subtitle">Valores al momento del examen</div>
+            </div>
+            <div className="section-toggle">▾</div>
           </div>
+          <div className="section-body">
+            <div className="vitales-grid">
+              <div className="vital-card">
+                <div className="vital-icon">🩸</div>
+                <div className="vital-name">Presión Arterial</div>
+                <input className="vital-input" type="text" name="presionArterial" value={formData.presionArterial} onChange={handleInputChange} placeholder="120/80" />
+                <div className="vital-unit">mmHg</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">❤️</div>
+                <div className="vital-name">Frec. Cardíaca</div>
+                <input className="vital-input" type="number" name="frecCardíaca" value={formData.frecCardíaca} onChange={handleInputChange} placeholder="72" />
+                <div className="vital-unit">lpm</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">💨</div>
+                <div className="vital-name">Frec. Respiratoria</div>
+                <input className="vital-input" type="number" name="frecRespiratoria" value={formData.frecRespiratoria} onChange={handleInputChange} placeholder="16" />
+                <div className="vital-unit">rpm</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">🌡️</div>
+                <div className="vital-name">Temp. Axilar</div>
+                <input className="vital-input" type="number" step="0.1" name="tempAxilar" value={formData.tempAxilar} onChange={handleInputChange} placeholder="36.5" />
+                <div className="vital-unit">°C</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">🌡️</div>
+                <div className="vital-name">Temp. Bucal</div>
+                <input className="vital-input" type="number" step="0.1" name="tempBucal" value={formData.tempBucal} onChange={handleInputChange} placeholder="37.0" />
+                <div className="vital-unit">°C</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">⚖️</div>
+                <div className="vital-name">Peso</div>
+                <input className="vital-input" type="number" step="0.1" name="peso" value={formData.peso} onChange={handleInputChange} placeholder="70.0" />
+                <div className="vital-unit">kg</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">📏</div>
+                <div className="vital-name">Talla</div>
+                <input className="vital-input" type="number" step="0.01" name="talla" value={formData.talla} onChange={handleInputChange} placeholder="1.70" />
+                <div className="vital-unit">m</div>
+              </div>
+              <div className="vital-card">
+                <div className="vital-icon">🔵</div>
+                <div className="vital-name">Perímetro Cefálico</div>
+                <input className="vital-input" type="number" step="0.1" name="perimetroCefalico" value={formData.perimetroCefalico} onChange={handleInputChange} placeholder="54.0" />
+                <div className="vital-unit">cm</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <div className="rounded-2xl border border-[#007e8f]/20 bg-white/95 p-4 shadow-md">
-            <h3 className="mb-3 text-lg font-bold text-[#1c3f6e]">Alergias</h3>
-            {alergias.map((item, index) => (
-              <div key={`alg-${index}`} className="mb-3 grid grid-cols-1 gap-2 rounded-xl border p-3 md:grid-cols-4">
-                <Input
-                  placeholder="Alérgeno"
-                  value={item.nombre}
-                  onChange={(e) => updateArrayItem(setAlergias, alergias, index, 'nombre', e.target.value)}
-                />
-                <select
-                  value={item.tipo}
-                  onChange={(e) => updateArrayItem(setAlergias, alergias, index, 'tipo', e.target.value)}
-                  className="rounded-lg text-[#1c3f6e] border border-[#007e8f]/30 bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                >
-                  <option value="">Tipo de reacción</option>
-                  <option value="cutanea">Cutánea</option>
-                  <option value="anafilaxia">Anafilaxia</option>
-                  <option value="respiratoria">Respiratoria</option>
-                  <option value="digestiva">Digestiva</option>
-                </select>
-                <select
-                  value={item.severidad}
-                  onChange={(e) => updateArrayItem(setAlergias, alergias, index, 'severidad', e.target.value)}
-                  className="rounded-lg border text-[#1c3f6e] border-[#007e8f]/30 bg-white px-3 py-2 outline-none focus:border-[#007e8f]"
-                >
-                  <option value="">Severidad</option>
-                  <option value="leve">Leve</option>
-                  <option value="moderada">Moderada</option>
-                  <option value="grave">Grave</option>
-                </select>
-                <div className="flex items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-rose-300 text-rose-600 hover:bg-rose-50"
-                    onClick={() => removeArrayItem(setAlergias, alergias, index)}
-                  >
-                    <Trash2 className="mr-1 h-4 w-4" /> Quitar
-                  </Button>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              onClick={() => addArrayItem(setAlergias, alergias, { nombre: '', tipo: '', severidad: '' })}
-              className="bg-[#007e8f] text-white hover:bg-[#066e7c]"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" /> Agregar alergia
-            </Button>
+        {/* SECCIÓN 7 */}
+        <div id="s7" className={`section-card ${collapsedSections.s7 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s7')}>
+            <div className="section-num">7</div>
+            <div>
+              <div className="section-title">Examen Físico</div>
+              <div className="section-subtitle">Regional (R) y Sistémico (S) · CP/SP</div>
+            </div>
+            <div className="section-toggle">▾</div>
           </div>
-        </motion.section>
+          <div className="section-body">
+            <div className="sistemas-grid">
+              {examenFisicoData.map(item => (
+                <div key={item.id} className="sistema-card">
+                  <div className="sistema-name">{item.id} — {item.label}</div>
+                  <div className="sistema-toggle">
+                    <button className={`sis-btn ${examenFisicoStates[item.id] === 'cp' ? 'cp-active' : ''}`} onClick={() => toggleExamenFisicoBtn(item.id, 'cp')}>CP</button>
+                    <button className={`sis-btn ${examenFisicoStates[item.id] === 'sp' ? 'sp-active' : ''}`} onClick={() => toggleExamenFisicoBtn(item.id, 'sp')}>SP</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="divider"></div>
+            <div className="field-group">
+              <label className="field-label">Descripción de hallazgos del examen físico</label>
+              <textarea className="field-textarea" style={{ minHeight: '120px' }} name="hallazgosFisicos" value={formData.hallazgosFisicos} onChange={handleInputChange} placeholder="Describa los hallazgos..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        {/* SECCIÓN 8 */}
+        <div id="s8" className={`section-card ${collapsedSections.s8 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s8')}>
+            <div className="section-num">8</div>
+            <div>
+              <div className="section-title">Diagnóstico</div>
+              <div className="section-subtitle">PRE = Presuntivo · DEF = Definitivo · CIE</div>
+            </div>
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div id="diagnosticosList">
+              {diagnosticos.map(diag => (
+                <div key={diag.id} className="diag-row">
+                  <div className="field-group" style={{ margin: 0 }}>
+                    <label className="field-label">Diagnóstico {diagnosticos.indexOf(diag) + 1}</label>
+                    <input className="field-input" type="text" value={diag.diagnostico} onChange={(e) => updateDiagnostico(diag.id, 'diagnostico', e.target.value)} placeholder="Nombre del diagnóstico..." />
+                  </div>
+                  <div className="field-group" style={{ margin: 0 }}>
+                    <label className="field-label">CIE</label>
+                    <input className="field-input" type="text" value={diag.cie} onChange={(e) => updateDiagnostico(diag.id, 'cie', e.target.value)} placeholder="Código CIE" />
+                  </div>
+                  <div className="diag-badge">
+                    <button className={`badge-btn pre ${diag.pre ? 'active' : ''}`} onClick={() => toggleDiagBadge(diag.id, 'pre')}>PRE</button>
+                    <button className={`badge-btn def ${diag.def ? 'active' : ''}`} onClick={() => toggleDiagBadge(diag.id, 'def')}>DEF</button>
+                  </div>
+                  <button className="remove-btn" onClick={() => removeDiagnostico(diag.id)}>✕</button>
+                </div>
+              ))}
+            </div>
+            <button className="add-btn" onClick={addDiagnostico}>+ Agregar diagnóstico</button>
+          </div>
+        </div>
+
+        {/* SECCIÓN 9 */}
+        <div id="s9" className={`section-card ${collapsedSections.s9 ? 'collapsed' : ''}`}>
+          <div className="section-header" onClick={() => toggleSection('s9')}>
+            <div className="section-num">9</div>
+            <div>
+              <div className="section-title">Planes de Tratamiento</div>
+              <div className="section-subtitle">Diagnósticos, terapéuticos y educacionales</div>
+            </div>
+            <div className="section-toggle">▾</div>
+          </div>
+          <div className="section-body">
+            <div className="grid-2">
+              <div className="field-group">
+                <label className="field-label">Plan 1 — Diagnóstico</label>
+                <textarea className="field-textarea" name="planDiagnostico" value={formData.planDiagnostico} onChange={handleInputChange} placeholder="Plan diagnóstico..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">Plan 4 — Seguimiento</label>
+                <textarea className="field-textarea" name="planSeguimiento" value={formData.planSeguimiento} onChange={handleInputChange} placeholder="Seguimiento y control..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">Plan 2 — Terapéutico</label>
+                <textarea className="field-textarea" name="planTerapeutico" value={formData.planTerapeutico} onChange={handleInputChange} placeholder="Tratamiento..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">Plan 5 — Interconsultas</label>
+                <textarea className="field-textarea" name="planInterconsultas" value={formData.planInterconsultas} onChange={handleInputChange} placeholder="Referencias y consultas..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">Plan 3 — Educacional</label>
+                <textarea className="field-textarea" name="planEducacional" value={formData.planEducacional} onChange={handleInputChange} placeholder="Educación al paciente..."></textarea>
+              </div>
+              <div className="field-group">
+                <label className="field-label">Plan 6 — Otros</label>
+                <textarea className="field-textarea" name="planOtros" value={formData.planOtros} onChange={handleInputChange} placeholder="Otros planes..."></textarea>
+              </div>
+            </div>
+            <div className="divider"></div>
+            <div className="grid-3">
+              <div className="field-group">
+                <label className="field-label">Nombre del Profesional</label>
+                <input className="field-input" type="text" name="nombreProfesional" value={formData.nombreProfesional} onChange={handleInputChange} placeholder="Dr./Dra. Apellido Nombre" />
+              </div>
+              <div className="field-group">
+                <label className="field-label">Código</label>
+                <input className="field-input" type="text" name="codigoProfesional" value={formData.codigoProfesional} onChange={handleInputChange} placeholder="Código profesional" />
+              </div>
+              <div className="field-group">
+                <label className="field-label">Fecha y Hora</label>
+                <input className="field-input" type="datetime-local" name="fechaHoraPlan" value={formData.fechaHoraPlan} onChange={handleInputChange} />
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
-    </div>
+
+      <div className="save-bar">
+        <div className="save-info">
+          <strong>SNS-MSP · HCU-form.003 / 2008</strong><br />
+          Formulario de Historia Clínica Única — Anamnesis
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button className="btn-print" onClick={() => window.print()}>🖨️ Imprimir</button>
+          <button className="btn-save" onClick={guardarFormulario}>💾 Guardar Formulario</button>
+        </div>
+      </div>
+
+      <div className={`toast ${toast.visible ? 'show' : ''}`}>✓ Formulario guardado correctamente</div>
+    </>
   );
-}
+};
+
+export default Anamnesis;

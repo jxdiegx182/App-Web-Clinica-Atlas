@@ -9,6 +9,7 @@ import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebas
 import { toast } from '@/components/ui/use-toast';
 import Anamnesis from './Anamnesis';
 import Emergencia from './Emergencia';
+import Epicrisis from './Epicrisis';
 import Evolucion from './Evolucion';
 import Interconsulta from './Interconsulta';
 import Certificado from './Certificado';
@@ -277,7 +278,11 @@ const modalRegistry = {
 
   evolucion: { title: 'EVOLUCION DIARIA Y PRESCRIPCION', showSave: false, pageComponent: Evolucion },
   interconsulta: { title: 'INTERCONSULTA', showSave: false, pageComponent: Interconsulta },
-  epicrisis: { title: 'EPICRISIS', showSave: true, render: () => <Field label="Resumen de hospitalizacion" textarea /> },
+  epicrisis: { 
+    title: 'EPICRISIS', 
+    showSave: false, 
+    pageComponent: Epicrisis,
+  },
   certificado: { title: 'CERTIFICADO MEDICO', showSave: false, pageComponent: Certificado },
   preq: { title: 'CHEQUEO PREQUIRURGICO', showSave: true, render: () => <Field label="Checklist prequirurgico" textarea /> },
   anestesia: { title: 'REGISTRO ANESTESIA', showSave: false, pageComponent: RegAnestesia },

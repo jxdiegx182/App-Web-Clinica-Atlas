@@ -762,7 +762,7 @@ const FormGroup = ({ label, value, onChange, placeholder, type = 'text', mono = 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{ ...styles.textarea, minHeight, fontFamily: mono ? 'monospace' : 'inherit', fontWeight: mono ? 700 : 400 }}
+        style={{ ...styles.textarea, minHeight, fontFamily: mono ? 'Montserrat' : 'inherit', fontWeight: mono ? 700 : 400 }}
       />
     ) : (
       <input
@@ -770,7 +770,7 @@ const FormGroup = ({ label, value, onChange, placeholder, type = 'text', mono = 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{ ...styles.input, fontFamily: mono ? 'monospace' : 'inherit', fontWeight: mono ? 700 : 400, color: mono ? '#0a3d62' : 'inherit' }}
+        style={{ ...styles.input, fontFamily: mono ? 'Montserrat' : 'inherit', fontWeight: mono ? 700 : 400, color: mono ? '#0a3d62' : 'inherit' }}
         {...props}
       />
     )}
@@ -1054,7 +1054,7 @@ const DiagnosticoTable = ({ diags, onUpdate, onToggleStatus, onDelete, type }) =
               value={d.cie}
               onChange={(e) => onUpdate(type, d.id, 'cie', e.target.value)}
               placeholder="CIE"
-              style={{ ...styles.input, fontFamily: 'monospace', fontWeight: 700, color: '#0a3d62' }}
+              style={{ ...styles.input, fontFamily: 'Montserrat', fontWeight: 700, color: '#0a3d62' }}
             />
           </td>
           <td style={styles.diagTd}>
@@ -1242,7 +1242,7 @@ const styles = {
   },
   atlasFormSubtitle: {
     fontSize: '.6rem',
-    color: '#76C4D5',
+    color: '#595759',
     letterSpacing: '.08em'
   },
   btnPrint: {
@@ -1413,7 +1413,7 @@ const styles = {
   label: {
     fontSize: '0.68rem',
     fontWeight: 700,
-    color: '#76C4D5',
+    color: '#0000009e',
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
     marginBottom: '5px'
@@ -1741,9 +1741,9 @@ const styles = {
     width: '20px',
     height: '20px',
     borderRadius: '50%',
-    background: '#0a3d62',
+    background: '#76C4D5',
     border: '2px solid white',
-    boxShadow: '0 2px 6px rgba(10,61,98,0.35)',
+    boxShadow: '0 2px 6px rgb(105, 201, 187)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1782,14 +1782,14 @@ const styles = {
     fontWeight: 600
   },
   lesionTypeItemSelected: {
-    borderColor: '#1565a8',
-    background: '#e3f0fc'
+    borderColor: '#595759',
+    background: '#76c4d56b',
   },
   lesionTypeNum: {
     width: '22px',
     height: '22px',
     borderRadius: '6px',
-    background: '#1565a8',
+    background: '#76C4D5',
     color: 'white',
     fontSize: '0.72rem',
     fontWeight: 800,
@@ -1815,16 +1815,16 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    background: '#e3f0fc',
+    background: '#76c4d553',
     border: '1px solid #c8d8e8',
     borderRadius: '8px',
     padding: '8px 12px',
-    borderLeft: '4px solid #1565a8'
+    borderLeft: '4px solid #595759'
   },
   lesionLogNum: {
     width: '24px',
     height: '24px',
-    background: '#0a3d62',
+    background: '#76C4D5',
     color: 'white',
     borderRadius: '6px',
     fontSize: '0.75rem',
@@ -1839,12 +1839,12 @@ const styles = {
   },
   lesionLogText: {
     fontSize: '0.82rem',
-    color: '#1c2a3a',
+    color: '#595759',
     flex: 1
   },
   lesionLogZone: {
     fontSize: '0.75rem',
-    color: '#5a6a7a'
+    color: '#595759',
   },
   examGrid: {
     display: 'grid',
@@ -1892,7 +1892,7 @@ const styles = {
     marginBottom: '16px'
   },
   diagTableHead: {
-    background: '#0a3d62',
+    background: '#76C4D5',
     borderBottom: '2px solid #c8d8e8'
   },
   diagTh: {
@@ -1942,7 +1942,7 @@ const styles = {
   medNum: {
     width: '28px',
     height: '28px',
-    background: '#1565a8',
+    background: '#76C4D5',
     color: 'white',
     borderRadius: '7px',
     fontSize: '0.78rem',
