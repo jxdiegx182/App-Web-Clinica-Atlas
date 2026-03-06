@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import { PlusCircle } from 'lucide-react';
-import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
+import { FileText, Clock, MapPin, AlertCircle } from 'lucide-react';
+import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 
 const nombres = [
@@ -28,13 +26,12 @@ const nombres = [
   'CISTOSCOPIA',
   'LAMINECTOMIA',
   'ARTROSCOPIA',
-  'RTU',
 ];
 
 const MedicalModuleConsen = () => {
   const { mainId } = useParams();
   const [time, setTime] = useState(new Date());
-  const [admisiones, setAdmisiones] = useState(null); // <-- aquí se guardan los datos desde Firestore
+  const [admisiones, setAdmisiones] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -43,40 +40,38 @@ const MedicalModuleConsen = () => {
     return () => clearInterval(timer);
   }, []);
 
-//Aqui traigo de firebase para el encabezado
-useEffect(() => {
-  const fetchAdmisiones = async () => {
-    console.log('🧪 mainId recibido:', mainId);
+  useEffect(() => {
+    const fetchAdmisiones = async () => {
+      console.log('🧪 mainId recibido:', mainId);
 
-    if (!mainId) {
-      console.warn('⚠️ mainId es undefined o null'); 
-      setLoading(false);
-      return;
-    }
-    try {
-      const ref = doc(db, 'admisiones', mainId);
-      const snap = await getDoc(ref);
-         if (!snap.exists()) {
-        console.warn('❌ Documento no existe');
-        setAdmisiones(null);
+      if (!mainId) {
+        console.warn('⚠️ mainId es undefined o null');
+        setLoading(false);
         return;
       }
-      const data = snap.data();
-         setAdmisiones({
-            id: snap.id,
-            ...data,
-            ...data.mainData,
-          });
-        } catch (error) {
-      console.error('❌ Error al obtener admisiones:', error);
-      setAdmisiones(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchAdmisiones();
-}, [mainId]);
-//hasta aqui traigo de firebase
+      try {
+        const ref = doc(db, 'admisiones', mainId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          console.warn('❌ Documento no existe');
+          setAdmisiones(null);
+          return;
+        }
+        const data = snap.data();
+        setAdmisiones({
+          id: snap.id,
+          ...data,
+          ...data.mainData,
+        });
+      } catch (error) {
+        console.error('❌ Error al obtener admisiones:', error);
+        setAdmisiones(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAdmisiones();
+  }, [mainId]);
 
   const formattedDate = time.toLocaleDateString('es-ES', {
     weekday: 'long',
@@ -87,114 +82,55 @@ useEffect(() => {
   const formattedTime = time.toLocaleTimeString('es-ES');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-2">
-        <button
-          onClick={() => window.history.back()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#4b6bb3] text-white py-1 px-3 font-semibold rounded hover:bg-[#2b8d8f] shadow"
-        >
-          ← Volver
-        </button>
-        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-          CONSENTIMIENTOS INFORMADOS
+    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#76c4d5] p-4">
+      
+      {/* HEADER CON BOTÓN VOLVER */}
+      <div className="mb-6 flex items-center gap-4">
+       
+        <h1 className="text-3xl font-bold text-[#595759] flex items-center gap-2">
+          <FileText size={32} className="text-[#595759]" />
+          Consentimientos Informados
         </h1>
       </div>
 
-      <div className=" min-h-screen bg-[#4e6fb5]/30 p-4">
-        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-          <p className="absolute left-40 top-40  text-lg font-bold  ">
-            {formattedTime}
-          </p>
-          <p className="absolute left-24 top-48 text-sm uppercase tracking-wide">
-            {formattedDate.toUpperCase()}
-          </p>
+      {/* TARJETA PRINCIPAL CON INFORMACIÓN */}
+     
 
-          <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-9 text-sm">
-            <div className="max-w-6xl mx-auto p-4">
-              {/*la imagen de la clinica atlas y su fecha */}
-              <img
-                src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-                alt="Imagen médica decorativa"
-                className="w-48 h-auto mcx-auto mb-4"
-              />
-            </div>
-           
+      {/* SECCIÓN DE CONSENTIMIENTOS */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-2xl border border-[#007e8f]/20 shadow-lg p-6"
+      >
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-[#595759] to-[#595759]/90 text-white px-6 py-3 rounded-full inline-block">
+            Consentimientos Disponibles
+          </h2>
+        </div>
 
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {admisiones.seguro}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {admisiones.dias}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                   </div>
-                   <div className=" bg-[#4b6bb3]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-                
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-
-            {/*HASTA AQUI DE FIREBASE */}
-
-
-          </div>
-        </header>
-
-        <main className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="col-span-1 md:col-span-3 bg-white rounded-lg p-4 shadow"
-          >
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold bg-[#162f5c] text-white text-sm inline-block px-4 py-2 rounded-full">
-                CONSENTIMIENTOS INFORMADOS
-              </h2>
-            </div>
-            <div className=" grid grid-cols-2 md:grid-cols-6 gap-4 ">
-              {nombres.map((mod, index) => (
-                <Button
-                  key={index}
-                  onClick={() => {
-                    if (mod === '') {
-                      navigate('/registro');
-                    } else if (mod === '') {
-                      navigate('/registro');
-                    } else {
-                      toast({
-                        title: '🚧 Esta función no está implementada aún.',
-                      });
-                    }
-                  }}
-                  className="bg-[#dee6f1] text-[#1c396b] text-lg font-bold py-2 hover:bg-[#cfddec] transition rounded shadow"
-                >
-                  {mod}
-                </Button>
-              ))}
-            </div>
-          </motion.div>
-        </main>
-      </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {nombres.map((mod, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                onClick={() => {
+                  toast({
+                    title: `${mod}`,
+                    description: 'Esta función se implementará pronto.',
+                  });
+                }}
+                className="w-full bg-gradient-to-br from-[#76c4d5] to-[#76c4d5] text-[#ffffff] font-bold py-3 hover:from-[#4ea685] hover:to-[#76c4d5] transition-all shadow-md border border-[#007e8f]/20 rounded-lg text-xs md:text-sm"
+              >
+                {mod}
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 };

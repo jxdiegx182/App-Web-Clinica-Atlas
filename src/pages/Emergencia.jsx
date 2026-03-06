@@ -919,8 +919,18 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
     <div style={styles.lesionMapWrap}>
       <div style={styles.lesionMapTitle}>Mapa Corporal — Haga clic para marcar</div>
       <div style={styles.bodyMapFigures}>
+
+
+
+
+
+
+
+
+{/**Aqui empieza la parte frontal del MUÑECO */}
         <div style={styles.bodyMapContainer}>
           <div style={styles.bodyMapLabel}>FRONTAL</div>
+
           <svg
             viewBox="0 0 120 280"
             onClick={(e) => onPlaceMarker(e, 'front')}
@@ -929,6 +939,17 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
             <ellipse cx="60" cy="25" rx="22" ry="25" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
             <rect x="50" y="47" width="20" height="12" rx="3" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
             <path d="M28 59 Q20 62 18 90 L16 130 Q16 140 28 140 L92 140 Q104 140 104 130 L102 90 Q100 62 92 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+             <path d="M28 62 Q14 68 10 100 Q8 120 12 140 Q18 145 24 140 Q28 120 28 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M92 62 Q106 68 110 100 Q112 120 108 140 Q102 145 96 140 Q92 120 92 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M12 140 Q8 165 10 190 Q12 198 18 198 Q24 198 26 190 Q24 165 24 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M108 140 Q112 165 110 190 Q108 198 102 198 Q96 198 94 190 Q96 165 96 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <ellipse cx="16" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <ellipse cx="104" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M16 140 Q16 160 30 170 L90 170 Q104 160 104 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M30 170 Q22 195 22 220 Q26 232 36 232 Q46 230 46 220 Q44 195 46 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M90 170 Q98 195 98 220 Q94 232 84 232 Q74 230 74 220 Q76 195 74 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M22 232 Q20 255 22 275 Q26 280 34 280 Q42 278 42 270 Q42 248 36 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M98 232 Q100 255 98 275 Q94 280 86 280 Q78 278 78 270 Q78 248 84 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
             {lesions.filter(l => l.side === 'front').map(l => (
               <circle
                 key={l.id}
@@ -943,6 +964,9 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
               </circle>
             ))}
           </svg>
+
+
+
           {lesions.filter(l => l.side === 'front').length > 0 && (
             <div style={styles.lesionOverlay}>
               {lesions.filter(l => l.side === 'front').map(l => (
@@ -961,6 +985,92 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
             </div>
           )}
         </div>
+
+
+
+
+
+
+
+
+
+
+{/**Aqui empieza la parte POSTERIOR del MUÑECO */}
+
+<div style={styles.bodyMapContainer}>
+          <div style={styles.bodyMapLabel}>POSTERIOR</div>
+
+          <svg
+            viewBox="0 0 120 280"
+            onClick={(e) => onPlaceMarker(e, 'back')}
+            style={styles.bodySvg}
+          >
+            <ellipse cx="60" cy="25" rx="22" ry="25" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            <rect x="50" y="47" width="20" height="12" rx="3" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            <path d="M28 59 Q20 62 18 90 L16 130 Q16 140 28 140 L92 140 Q104 140 104 130 L102 90 Q100 62 92 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+             <path d="M28 62 Q14 68 10 100 Q8 120 12 140 Q18 145 24 140 Q28 120 28 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M92 62 Q106 68 110 100 Q112 120 108 140 Q102 145 96 140 Q92 120 92 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M12 140 Q8 165 10 190 Q12 198 18 198 Q24 198 26 190 Q24 165 24 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M108 140 Q112 165 110 190 Q108 198 102 198 Q96 198 94 190 Q96 165 96 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <ellipse cx="16" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <ellipse cx="104" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M16 140 Q16 160 30 170 L90 170 Q104 160 104 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M30 170 Q22 195 22 220 Q26 232 36 232 Q46 230 46 220 Q44 195 46 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M90 170 Q98 195 98 220 Q94 232 84 232 Q74 230 74 220 Q76 195 74 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M22 232 Q20 255 22 275 Q26 280 34 280 Q42 278 42 270 Q42 248 36 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+                <path d="M98 232 Q100 255 98 275 Q94 280 86 280 Q78 278 78 270 Q78 248 84 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+            {lesions.filter(l => l.side === 'front').map(l => (
+              <circle
+                key={l.id}
+                cx={l.posX * 1.2 - 60}
+                cy={l.posY * 1.4 - 140}
+                r="5"
+                fill="#c8433a"
+                stroke="white"
+                strokeWidth="2"
+              >
+                <title>{l.id}. {l.type.label} — {l.zone}</title>
+              </circle>
+            ))}
+          </svg>
+
+
+
+          {lesions.filter(l => l.side === 'back').length > 0 && (
+            <div style={styles.lesionOverlay}>
+              {lesions.filter(l => l.side === 'back').map(l => (
+                <div
+                  key={l.id}
+                  style={{
+                    ...styles.lesionMarker,
+                    left: `calc(${l.posX}% - 10px)`,
+                    top: `calc(${l.posY}% - 10px)`
+                  }}
+                  title={`${l.id}. ${l.type.label} — ${l.zone}`}
+                >
+                  {l.id}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       </div>
       <div style={styles.activeLesionDisplay}>Tipo: <strong style={{ color: '#0a3d62' }}>{activeLesionType ? `${activeLesionType.n}. ${activeLesionType.label}` : '— Seleccione tipo —'}</strong></div>
     </div>

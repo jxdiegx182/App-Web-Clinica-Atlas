@@ -147,15 +147,26 @@ const Anamnesis = () => {
         color: var(--text);
         min-height: 100vh;
       }
-      .app-header {
+        .app-header {
         background: #ffffff;
         padding: 28px 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        position: sticky;
+        
         top: 0;
         z-index: 100;
+        box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
+      }
+      .app-headerList {
+        background: #ffffff;
+        padding: 22px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 80;
         box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
       }
       .app-header h1 {
@@ -173,14 +184,14 @@ const Anamnesis = () => {
         text-transform: uppercase;
       }
       .header-badge {
-        background: #76C4D5;
+        background: #76c4d5a6;
         border: 1px solid #595759;
         color: #ffffff;
         padding: 8px 18px;
-        border-radius: 100px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.06em;
+        border-radius: 90px;
+        font-size: 0.02rem;
+        font-weight: 100;
+        letter-spacing: 0.01em;
       }
       .progress-nav {
         background: #76c4d57f;
@@ -703,10 +714,10 @@ const Anamnesis = () => {
           <h1>Anamnesis Clínica</h1>
           <p>SNS-MSP · HCU-form.003 · 2008</p>
         </div>
-        <span className="header-badge">Historia Clínica</span>
+        <span className="">Historia Clínica</span>
       </header>
 
-      <nav className="progress-nav">
+      <nav className="header-badge app-headerList">
         {[{ id: 's0', num: '★', label: 'Paciente' },
           { id: 's1', num: '1', label: 'Motivo' },
           { id: 's2', num: '2', label: 'Antec. Personales' },

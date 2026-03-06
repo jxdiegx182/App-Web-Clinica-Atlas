@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Stethoscope, Pill, Droplet, UtensilsCrossed, Heart, FileText, AlertCircle, Clock, Printer } from 'lucide-react';
 import { EvolucionPDF } from '../components/EvolucionPDF';
-import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
+import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 
 const AllergyWarning = ({ allergy }) => (
-  <span className="allergy-warning text-[#FF0000] font-semibold">
-    <span className="allergy-icon">⚠️</span>
+  <span className="allergy-warning text-[#FF0000] font-semibold flex items-center gap-2">
+    <AlertCircle size={16} />
     ALERGIAS: {allergy}
   </span>
 );
@@ -19,10 +20,10 @@ const AllergyWarning = ({ allergy }) => (
 const Evolucion = () => {
   const { mainId } = useParams();
   const [time, setTime] = useState(new Date());
-  const [admisiones, setAdmisiones] = useState(null); // <-- aquí se guardan los datos desde Firestore
+  const [admisiones, setAdmisiones] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  //agregado
+  
   const [evolucionTexto, setEvolucionTexto] = useState('');
   const [analisisTexto, setAnalisisTexto] = useState('');
   const [enfermeriaTexto, setEnfermeriaTexto] = useState('');
@@ -51,7 +52,6 @@ const Evolucion = () => {
   const [diagnosticoTexto, setDiagnosticoTexto] = useState('');
   const [codeTexto, setCodeTexto] = useState('');
 
-  
 const handleGeneratePDF =() => {
   EvolucionPDF({
     evolucionTexto,
@@ -86,19 +86,13 @@ const handleGeneratePDF =() => {
   });
 };
 
-//AQUI VIENE LA VENTANA DE VISUALIZACION
-
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-
-
-//Aqui traigo de firebase para el encabezado
 useEffect(() => {
   const fetchAdmisiones = async () => {
-    
     if (!mainId) {
       console.warn('⚠️ mainId es undefined o null'); 
       setLoading(false);
@@ -107,80 +101,54 @@ useEffect(() => {
     try {
       const ref = doc(db, 'admisiones', mainId);
       const snap = await getDoc(ref);
-         if (!snap.exists()) {
+      if (!snap.exists()) {
         console.warn('❌ Documento no existe');
         setAdmisiones(null);
         return;
       }
-      const data = snap.data(); //extrae documentos de firebase
-         setAdmisiones({
-            id: snap.id,
-            ...data,
-            ...data.mainData,
-          });
-
-          
-        } 
-          
-        catch (error) {
+      const data = snap.data();
+      setAdmisiones({
+        id: snap.id,
+        ...data,
+        ...data.mainData,
+      });
+    } catch (error) {
       console.error('❌ Error al obtener admisiones:', error);
       setAdmisiones(null);
     } finally {
       setLoading(false);
     }
-    
   };
   fetchAdmisiones();
 }, [mainId]);
-//*******************hasta aqui traigo de firebase****************//
 
-//*****************AQUI CREO LA ESTANCIA DE CADA PACIOENTE SUMANDO LOS DIAS **********************//
 const [estancia, setEstancia] = useState(0);
 useEffect(() => {
   if (!admisiones?.createdAt) return;
-
   const fechaIngreso = admisiones.createdAt.toDate();
   const hoy = new Date();
-
-  const dias = Math.floor(
-    (hoy - fechaIngreso) / (1000 * 60 * 60 * 24) + 1
-  );
-
+  const dias = Math.floor((hoy - fechaIngreso) / (1000 * 60 * 60 * 24) + 1);
   setEstancia(dias);
 }, [admisiones]);
-//*******************************HASTA AQUI ESTANCIAS **********************//
-//AQUI CREO LA edad DE CADA PACIOENTE SUMANDO LOS años 
+
 const [edad, setEdad] = useState(0);
 useEffect(() => {
   if (!admisiones?.secondaryData?.dateOfBirth) return;
-
   let fechaNacimiento = admisiones.secondaryData.dateOfBirth;
-   // 🔥 Si viene como Timestamp de Firestore
-   if (fechaNacimiento.toDate) {
+  if (fechaNacimiento.toDate) {
     fechaNacimiento = fechaNacimiento.toDate();
   } else {
     fechaNacimiento = new Date(fechaNacimiento);
   }
-
   const hoy = new Date();
-
   let años = hoy.getFullYear() - fechaNacimiento.getFullYear();
-
   const mesActual = hoy.getMonth();
   const mesNacimiento = fechaNacimiento.getMonth();
-
-  // Si aún no cumple años este año
-  if (
-    mesActual < mesNacimiento ||
-    (mesActual === mesNacimiento && hoy.getDate() < fechaNacimiento.getDate())
-  ) {
+  if (mesActual < mesNacimiento || (mesActual === mesNacimiento && hoy.getDate() < fechaNacimiento.getDate())) {
     años--;
   }
-
   setEdad(años);
 }, [admisiones]);
-//*******************************************************HASTA AQUI edad */
-
 
   const formattedDate = time.toLocaleDateString('es-ES', {
     weekday: 'long',
@@ -190,418 +158,362 @@ useEffect(() => {
   });
   const formattedTime = time.toLocaleTimeString('es-ES');
 
-
-  //inicia la ventana grafica
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-2">
-      <button
-        onClick={() => window.history.back()}
-        className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-      >
-        ← Volver
-      </button>
-
-      <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-        EVOLUCION Y PRESCRIPCIONES
-      </h1>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784] p-4">
+      
       {/* HEADER */}
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-sm">
-          <div className="max-w-6xl mx-auto ">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="w-44 h-auto"
-            />
+      <header className="rounded-2xl border border-[#007e8f]/25 bg-white/90 p-4 md:p-5 shadow-lg text-[#1c3f6e] backdrop-blur mb-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Stethoscope size={28} className="text-[#007e8f]" />
+              Evolución Clínica
+            </h1>
+            <p className="text-xs md:text-sm text-gray-600 mt-1">{formattedDate} - {formattedTime}</p>
           </div>
-              
-
-
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {edad}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {estancia}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                  </div>
-                  
-                <div className=" bg-[#4b6bb3]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-                
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-
-            {/*HASTA AQUI DE FIREBASE */}
-
-
-        </div>
-        {/*FECHA */}
-        <p className="absolute left-28 top-24  text-lg font-bold  ">
-          {formattedTime}
-        </p>
-        <p className="absolute left-12 top-32 text-sm uppercase tracking-wide font-bold">
-          {formattedDate.toUpperCase()}
-        </p>
-        
-        <div className="absolute right-11 top-28 z-20 ">
           <Button
             onClick={handleGeneratePDF}
-            className="bg-[#4b6bb3]/60 text-white px-7 py-2 rounded hover:bg-[#87D1D4] flex items-center"
+            className="bg-[#007e8f] hover:bg-[#005f70] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all"
             title="EvolucionPDF"
           >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/4659/4659495.png"
-              alt="Imprimir"
-              className="w-8 h-8"
-            />
+            <Printer size={18} />
+            <span className="hidden sm:inline">Imprimir PDF</span>
           </Button>
         </div>
-
-
-
       </header>
+
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 ">
-        {/* LEFT PANEL */}
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="bg-[#162f5c] text-white text-center text-sm font-bold px-4 py-2 rounded-t">
-            EVOLUCION Y PRESCRIPCION
-          </h2>
-
-          <button
-            onClick={() => console.log('Agregar nuevo registro')}
-            className=" absolute top-60 left-80 text-gray hover:text-[#FF5757] "
-            title="Agregar nuevo registro"
-          >
-            <PlusCircle className="w-5 h-5" />
-          </button>
-
-          <div className="border p-2 mt-2 text-sm">
-            <h3 className="text-[#010101] font-bold text-center mb-2">
-              HISTORIAL
-            </h3>
-            <ul className="text-[#3aa7aa] text-center">
-              <li>23/11/2025 11:15</li>
-              <li>23/11/2025 20:15</li>
-              <li>24/11/2025 11:15</li>
-            </ul>
-          </div>
-
-          <div className="bg-[#7cc4bc] text-white rounded-2xl p-4 mt-4 text-sm">
-            <p>
-              <strong>PESO:</strong> 70 KG
-            </p>
-            <p>
-              <strong>TALLA:</strong> 1.60
-            </p>
-            <p>
-              <strong>PULSO:</strong> 7
-            </p>
-            <p>
-              <strong>TEMPERATURA:</strong> 36.5
-            </p>
-            <p>
-              <strong>FRECUENCIA RESPIRATORIA:</strong> 23
-            </p>
-            <p>
-              <strong>PRESION ARTERIAL:</strong> 120/70
-            </p>
-          </div>
-        </div>
-
-        {/* RIGHT PANEL */}
+      <main className="grid grid-cols-1 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="md:col-span-3 bg-white p-4 rounded shadow"
+          className="bg-white p-6 rounded-xl shadow-lg border border-[#3aa7aa]/20"
         >
-          <div className="border border-[#3aa7aa] p-4 text-[#000000] text-xs">
-            {/* Aquí puedes construir las secciones del formulario con líneas horizontales */}
-            <div className=" ">
-              <label className="block font-bold">EVOLUCIÓN</label>
-              <textarea
-                value={evolucionTexto}
-                onChange={(e) => setEvolucionTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className="">
-              <label className="block font-bold">ANÁLISIS</label>
-              <textarea
-                value={analisisTexto}
-                onChange={(e) => setAnalisisTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className="">
-              <label className="block font-bold">ENFERMERÍA</label>
-              <textarea
-                value={enfermeriaTexto}
-                onChange={(e) => setEnfermeriaTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
+          <div className="space-y-6">
+            
+            {/* SECCIÓN EVALUACIÓN PRINCIPAL */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <Stethoscope size={24} className="text-[#007e8f]" />
+                Evaluación del Paciente
+              </h2>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                    <FileText size={18} className="text-[#007e8f]" />
+                    EVOLUCIÓN
+                  </label>
+                  <Input
+                    value={evolucionTexto}
+                    onChange={(e) => setEvolucionTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                    <FileText size={18} className="text-[#007e8f]" />
+                    ANÁLISIS
+                  </label>
+                  <Input
+                    value={analisisTexto}
+                    onChange={(e) => setAnalisisTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                    <Heart size={18} className="text-[#FF6B6B]" />
+                    ENFERMERÍA
+                  </label>
+                  <Input
+                    value={enfermeriaTexto}
+                    onChange={(e) => setEnfermeriaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 py-1 text-xs text-center ">
-              {/* ESTE ES EL INICIO DE PEQUEÑOS TEXTOS*/}
-              <div className="">
-                <label className="block font-bold">MEDICAMENTO</label>
-                <textarea
-                  value={medicamentoTexto}
-                  onChange={(e) => setMedicamentoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+            {/* SECCIÓN MEDICAMENTOS */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <Pill size={24} className="text-[#007e8f]" />
+                Medicamentos
+              </h2>
+              <div className="grid grid-cols-7 gap-2 text-xs">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">MEDICAMENTO</label>
+                  <Input
+                    value={medicamentoTexto}
+                    onChange={(e) => setMedicamentoTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <Droplet size={14} /> VIA ADM
+                  </label>
+                  <Input
+                    value={viaTexto}
+                    onChange={(e) => setViaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <Clock size={14} /> FRECUENCIA
+                  </label>
+                  <Input
+                    value={frecuenciaTexto}
+                    onChange={(e) => setFrecuenciaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">PRESENTACION</label>
+                  <Input
+                    value={presTexto}
+                    onChange={(e) => setPresTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">ADMINISTRA</label>
+                  <Input
+                    value={adminiTexto}
+                    onChange={(e) => setAdminiTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">CANTIDAD</label>
+                  <Input
+                    value={cantidadTexto}
+                    onChange={(e) => setCantidadTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <AlertCircle size={14} /> INDICACION
+                  </label>
+                  <Input
+                    value={indicaTexto}
+                    onChange={(e) => setIndicaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
               </div>
+            </div>
 
-              <div className="">
-                <label className="block font-bold">VIA ADM</label>
-                <textarea
-                  value={viaTexto}
-                  onChange={(e) => setViaTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">FRECUENCIA</label>
-                <textarea
-                  value={frecuenciaTexto}
-                  onChange={(e) => setFrecuenciaTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">PRESENTACION</label>
-                <textarea
-                  value={presTexto}
-                  onChange={(e) => setPresTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">ADMINISTRA</label>
-                <textarea
-                  value={adminiTexto}
-                  onChange={(e) => setAdminiTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">CANTIDAD</label>
-                <textarea
-                  value={cantidadTexto}
-                  onChange={(e) => setCantidadTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">INDICACION MEDICA</label>
-                <textarea
-                  value={indicaTexto}
-                  onChange={(e) => setIndicaTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+            {/* SECCIÓN INFUSIONES */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <Droplet size={24} className="text-[#4B8BBE]" />
+                Infusiones
+              </h2>
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">INFUSIONES</label>
+                  <Input
+                    value={insuTexto}
+                    onChange={(e) => setInsuTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <AlertCircle size={14} /> INDICACION
+                  </label>
+                  <Input
+                    value={indiTexto}
+                    onChange={(e) => setIndiTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <Clock size={14} /> FRECUENCIA
+                  </label>
+                  <Input
+                    value={freTexto}
+                    onChange={(e) => setFreTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-2  py-2 text-xs text-center">
-              <div className="">
-                <label className="block font-bold">INSUSIONES</label>
-                <textarea
-                  value={insuTexto}
-                  onChange={(e) => setInsuTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">INDICACION</label>
-                <textarea
-                  value={indiTexto}
-                  onChange={(e) => setIndiTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className="">
-                <label className="block font-bold">FRECUENCIA</label>
-                <textarea
-                  value={freTexto}
-                  onChange={(e) => setFreTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-            </div>
-            {/*otro bloque deita, obs, interconsulta*/}
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <div className=" ">
-                <label className="block font-bold">DIETA</label>
-                <textarea
-                  value={dietaTexto}
-                  onChange={(e) => setDietaTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">OBSERVACION</label>
-                <textarea
-                  value={obsTexto}
-                  onChange={(e) => setObsTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">INTERCONSULTA</label>
-                <textarea
-                  value={interTexto}
-                  onChange={(e) => setInterTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+
+            {/* SECCIÓN NUTRICIÓN */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <UtensilsCrossed size={24} className="text-[#FF9800]" />
+                Nutrición y Observaciones
+              </h2>
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">DIETA</label>
+                  <Input
+                    value={dietaTexto}
+                    onChange={(e) => setDietaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <AlertCircle size={14} /> OBSERVACION
+                  </label>
+                  <Input
+                    value={obsTexto}
+                    onChange={(e) => setObsTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <FileText size={14} /> INTERCONSULTA
+                  </label>
+                  <Input
+                    value={interTexto}
+                    onChange={(e) => setInterTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
               </div>
             </div>
-            {/*Ultimo grupo */}
-            <div className=" ">
-              <label className="block font-bold">SIGNOS VITALES</label>
-              <textarea
-                value={signosTexto}
-                onChange={(e) => setSignosTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className=" ">
-              <label className="block font-bold">ACTIVIDADES</label>
-              <textarea
-                value={activTexto}
-                onChange={(e) => setActivTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className=" ">
-              <label className="block font-bold">OBSERVACIONES</label>
-              <textarea
-                value={obseTexto}
-                onChange={(e) => setObseTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className=" ">
-              <label className="block font-bold">EXAMENES SOLICITADOS</label>
-              <textarea
-                value={examenTexto}
-                onChange={(e) => setExamenTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className="grid grid-cols-4 gap-2 py-2 text-xs">
-              <div className=" ">
-                <label className="block font-bold">CONDICION</label>
-                <textarea
-                  value={condiTexto}
-                  onChange={(e) => setCondiTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">ALERGIAS</label>
-                <textarea
-                  value={alergiaTexto}
-                  onChange={(e) => setAlergiaTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">OBSERVACION</label>
-                <textarea
-                  value={obserTexto}
-                  onChange={(e) => setObserTexto(e.target.value)}
-                  className="w-full h-7 text-sm text-center border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+
+            {/* SECCIÓN SIGNOS VITALES */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <Heart size={24} className="text-[#FF6B6B]" />
+                Signos Vitales y Actividades
+              </h2>
+              <div className="space-y-3">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                    <Heart size={18} className="text-[#FF6B6B]" />
+                    SIGNOS VITALES
+                  </label>
+                  <Input
+                    value={signosTexto}
+                    onChange={(e) => setSignosTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">ACTIVIDADES</label>
+                  <Input
+                    value={activTexto}
+                    onChange={(e) => setActivTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">OBSERVACIONES</label>
+                  <Input
+                    value={obseTexto}
+                    onChange={(e) => setObseTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                    <FileText size={18} className="text-[#007e8f]" />
+                    EXAMENES SOLICITADOS
+                  </label>
+                  <Input
+                    value={examenTexto}
+                    onChange={(e) => setExamenTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-5 gap-2 border-t border-[#3aa7aa] py-2 text-xs">
-              <div className=" ">
-                <label className="block font-bold">
-                  DIAGNOSTICO PRESUNTIVO
-                </label>
-                <textarea
-                  value={diagTexto}
-                  onChange={(e) => setDiagTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">CODIGO</label>
-                <textarea
-                  value={codigoTexto}
-                  onChange={(e) => setCodigoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">
-                  DIAGNOSTICO DEFINITIVO
-                </label>
-                <textarea
-                  value={diagnosticoTexto}
-                  onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">CODIGO</label>
-                <textarea
-                  value={codeTexto}
-                  onChange={(e) => setCodeTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+
+            {/* SECCIÓN ESTADO Y ALERGIAS */}
+            <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <AlertCircle size={24} className="text-[#FF0000]" />
+                Estado y Alergias
+              </h2>
+              <div className="grid grid-cols-4 gap-2 text-xs">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">CONDICION</label>
+                  <Input
+                    value={condiTexto}
+                    onChange={(e) => setCondiTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <AlertCircle size={14} className="text-[#FF0000]" /> ALERGIAS
+                  </label>
+                  <Input
+                    value={alergiaTexto}
+                    onChange={(e) => setAlergiaTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                    <AlertCircle size={14} className="text-[#FF0000]" /> ESPECIFICAR
+                  </label>
+                  <Input
+                    value={obserTexto}
+                    onChange={(e) => setObserTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* SECCIÓN DIAGNÓSTICOS */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+                <Stethoscope size={24} className="text-[#007e8f]" />
+                Diagnósticos
+              </h2>
+              <div className="grid grid-cols-5 gap-2 text-xs">
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">DIAGNOSTICO PRESUNTIVO</label>
+                  <Input
+                    value={diagTexto}
+                    onChange={(e) => setDiagTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">CODIGO</label>
+                  <Input
+                    value={codigoTexto}
+                    onChange={(e) => setCodigoTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">DIAGNOSTICO DEFINITIVO</label>
+                  <Input
+                    value={diagnosticoTexto}
+                    onChange={(e) => setDiagnosticoTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1c3f6e] mb-1">CODIGO</label>
+                  <Input
+                    value={codeTexto}
+                    onChange={(e) => setCodeTexto(e.target.value)}
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
         </motion.div>
       </main>
@@ -609,5 +521,4 @@ useEffect(() => {
   );
 };
 export default Evolucion;
-;
 
