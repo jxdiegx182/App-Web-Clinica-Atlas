@@ -11,7 +11,7 @@ import {
   orderBy,
   updateDoc,
 } from 'firebase/firestore';
-import GraficoPastelServicio from '../components/GraficoPastelServicio'; // el raficoPastelServicio se trae a esta pagina DASHBOARD
+import GraficoPastelServicio from '../components/GraficoPastelServicio';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { canAccessByRole, getAllowedRolesForDashboardModule } from '@/constants/accessControl';
+import { PatientCard, PatientSearchBar, PatientsGrid } from '@/modules/dashboard/components';
+import { getStatusColor } from '@/shared/theme/colors';
 import {
   LogOut,
   User,
@@ -35,15 +37,7 @@ import {
   ArrowBigUp,
 } from 'lucide-react';
 
-const estadosPaciente = {
-  Espera: { color: 'bg-gray-400', text: 'text-gray-700' },
-  Atención: { color: 'bg-green-500', text: 'text-blue-700' },
-  'Terapia Intensiva': { color: 'bg-orange-400', text: 'text-red-700' },
-  'Alta Médica': { color: 'bg-green-500', text: 'text-green-700' },
-  Procedimiento: { color: 'bg-yellow-500', text: 'text-yellow-700' },
-  Quirófano: { color: 'bg-red-500', text: 'text-purple-700' },
-};
-//constantes para agregar en el servicio del dashboard
+// ✅ NUEVO: Usar el sistema de colores centralizado
 const serviciosHospital = [
   'EMERGENCIA',
   'HOSPITAL DIA',
@@ -62,9 +56,20 @@ const Dashboard = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState(''); //BUSQUEDA DE TERMINOS
   const [estados, setEstados] = useState({});
+  const [servicios, setServicios] = useState({});
   const [mains, setMains] = useState([]);
   const [alertasEnfermeria, setAlertasEnfermeria] = useState({}); // Alertas activas por paciente
   const [fechaHoraActual, setFechaHoraActual] = useState(new Date()); //* aqui es la fecha comun*/
+
+  // ========== DEFINICIÓN DE ESTADOS DE PACIENTES ==========
+  const estadosPaciente = {
+    'Espera': { color: 'bg-gray-400', text: 'text-gray-700' },
+    'Atención': { color: 'bg-blue-500', text: 'text-blue-700' },
+    'Terapia Intensiva': { color: 'bg-red-500', text: 'text-red-700' },
+    'Alta Médica': { color: 'bg-green-500', text: 'text-green-700' },
+    'Procedimiento': { color: 'bg-yellow-500', text: 'text-yellow-700' },
+    'Quirófano': { color: 'bg-orange-500', text: 'text-orange-700' },
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -260,19 +265,6 @@ const Dashboard = () => {
     return modules;
   };
 
-  const getStatusColor = (estado) => {
-    switch (estado.toLowerCase()) {
-      case 'En Atención':
-        return 'bg-purple-100 text-black';
-      case 'alta':
-        return 'bg-gray-300 text-black';
-      case 'serv rx':
-        return 'bg-gray-400 text-white';
-      default:
-        return 'bg-gray-500 text-white';
-    }
-  };
-
   //BUSQUEDA
   const filteredMains = mains.filter(
     (main) =>
@@ -293,8 +285,6 @@ const Dashboard = () => {
 
   //ORDEN ASCENDENTE O DESCENDENTE
   const [orderAsc, setOrderAsc] = useState(true);
-  //agreo las constantes de servicios
-  const [servicios, setServicios] = useState({});
 
   const sortedMains = [...filteredMains].sort((a, b) => {
     const dateA = new Date(a.fechaIngreso);
