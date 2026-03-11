@@ -8,6 +8,7 @@ import { db } from '../firebaseConfig';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 import Anamnesis from './Anamnesis';
+import { Stethoscope, Building, } from 'lucide-react';
 import Emergencia from './Emergencia';
 import Epicrisis from './Epicrisis';
 import Evolucion from './Evolucion';
@@ -278,9 +279,9 @@ const modalRegistry = {
 
   evolucion: { title: 'EVOLUCION DIARIA Y PRESCRIPCION', showSave: false, pageComponent: Evolucion },
   interconsulta: { title: 'INTERCONSULTA', showSave: false, pageComponent: Interconsulta },
-  epicrisis: { 
-    title: 'EPICRISIS', 
-    showSave: false, 
+  epicrisis: {
+    title: 'EPICRISIS',
+    showSave: false,
     pageComponent: Epicrisis,
   },
   certificado: { title: 'CERTIFICADO MEDICO', showSave: false, pageComponent: Certificado },
@@ -441,17 +442,17 @@ const MedicalModulePanel = () => {
   // 🆕 Generar dinámicamente el resumen vitales desde Firebase
   const dynamicResumenVitales = latestVitals
     ? [
-        { label: 'P.A.', value: latestVitals.presion || '--' },
-        { label: 'PULSO', value: `${latestVitals.pulso || '--'} lpm` },
-        { label: 'TEMP.', value: `${latestVitals.temperatura || '--'} C` },
-        { label: 'SAT O2', value: `${latestVitals.satO2 || '--'}%` },
-        { label: 'PESO', value: `${latestVitals.peso || '--'} KG` },
-        { label: 'F.R.', value: `${latestVitals.fr || '--'}/min` },
-      ]
+      { label: 'P.A.', value: latestVitals.presion || '--' },
+      { label: 'PULSO', value: `${latestVitals.pulso || '--'} lpm` },
+      { label: 'TEMP.', value: `${latestVitals.temperatura || '--'} C` },
+      { label: 'SAT O2', value: `${latestVitals.satO2 || '--'}%` },
+      { label: 'PESO', value: `${latestVitals.peso || '--'} KG` },
+      { label: 'F.R.', value: `${latestVitals.fr || '--'}/min` },
+    ]
     : resumenVitales; // Fallback a valores por defecto si no hay datos en Firebase
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
+    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#ffffff] to-[#ffffff]">
       <div className="relative mb-2">
         <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69C9BA] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
           ← Volver
@@ -503,41 +504,54 @@ const MedicalModulePanel = () => {
         </header>
 
         <main className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white rounded-lg p-0 col-span-1 text-sm shadow overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-white to-indigo-50/70">
-              <h2 className="font-semibold text-gray-800">HISTORIAL DE INGRESOS</h2>
+
+          <Card className="bg-[#76c4d5]/20  rounded-lg p-0 col-span-1 text-sm shadow overflow-hidden">
+
+            <div className=" text-white p-2 flex items-center justify-between bg-gradient-to-r from-[#595759] to-[#7a7a7d]/40">
+
+              <div className="px-4 py-3 border-b border-slate-200 ">
+                <h3 className="text-[#ffffff] font-bold text-sm mb-3 flex items-center gap-2">
+                  <Stethoscope className="w-4 h-4" />HISTORIAL DE INGRESOS
+                </h3>
+              </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[290px] pr-1">
+            <div className="overflow-y-auto max-h-[290px] pr-1 bg-white">
               <div className="p-2 space-y-1">
-                {historialIngresos.map((item, index) => (
-                  <button
-                    key={`${item.date}-${index}`}
-                    onClick={() => setHistorialActivo(index)}
-                    className={`w-full text-left rounded-lg px-3 py-2 transition border ${
-                      historialActivo === index
-                        ? 'bg-indigo-50 border-indigo-200'
-                        : 'bg-white border-transparent hover:bg-slate-50'
-                    }`}
-                  >
-                    <p className="font-semibold text-slate-700">{item.date}</p>
-                    {item.note ? <p className="text-xs text-indigo-700">{item.note}</p> : null}
-                  </button>
-                ))}
+                <div className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold">
+                  <p> {admisiones?.admittedAt ? new Date(admisiones.admittedAt.toDate?.() || admisiones.admittedAt).toLocaleDateString('es-ES') : 'No Reg'}</p>
+                  
+                </div>
               </div>
+
+                   
+
             </div>
 
-            <div className="m-3 bg-[#4EA685]/40 rounded-lg p-4 text-sm text-gray-700">
-              <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {dynamicResumenVitales.map((vital) => (
-                  <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
-                    <p className="text-[10px] font-semibold uppercase">{vital.label}</p>
-                    <p className="text-xs font-bold">{vital.value}</p>
-                  </div>
-                ))}
+
+            {/* SIGNOS VITALES CARD */}
+            <motion.div
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="rounded-xl p-1"
+            >
+
+              <div className="m-3 bg-gradient-to-br from-[#4EA685]/30 to-[#76C4D5]/50 rounded-lg p-4 text-sm text-gray-700">
+                <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {dynamicResumenVitales.map((vital) => (
+                    <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
+                      <p className="text-[10px] font-semibold uppercase">{vital.label}</p>
+                      <p className="text-xs font-bold">{vital.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </motion.div>
+
+
+
           </Card>
 
           <motion.div
@@ -569,13 +583,11 @@ const MedicalModulePanel = () => {
                         key={module.key}
                         type="button"
                         onClick={() => openModule(module)}
-                        className={`rounded-xl border p-3 text-left transition hover:shadow-md bg-white ${
-                          cardToneClasses[module.tone] || cardToneClasses.primary
-                        } ${
-                          moduloActivo === module.title
+                        className={`rounded-xl border p-3 text-left transition hover:shadow-md bg-white ${cardToneClasses[module.tone] || cardToneClasses.primary
+                          } ${moduloActivo === module.title
                             ? 'ring-2 ring-[#4b6bb3] ring-offset-1'
                             : 'ring-0'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="text-2xl">{module.icon}</div>
@@ -602,7 +614,7 @@ const MedicalModulePanel = () => {
         {activeModal ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/60 p-4 flex items-center justify-center" onClick={() => setActiveModalKey(null)}>
             <motion.div initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.97 }} className="w-full max-w-[96vw] max-h-[95vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-              <div className="bg-[#76C4D5] text-white px-5 py-4 flex items-center justify-between">
+              <div className="bg-[#595759] text-[#ffffff]/80 px-5 py-3 flex items-center justify-between">
                 <h3 className="text-lg font-bold">{activeModal.title}</h3>
                 <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>
               </div>

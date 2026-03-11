@@ -84,14 +84,7 @@ const MedicalModuleConsen = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#76c4d5] p-4">
       
-      {/* HEADER CON BOTÓN VOLVER */}
-      <div className="mb-6 flex items-center gap-4">
-       
-        <h1 className="text-3xl font-bold text-[#595759] flex items-center gap-2">
-          <FileText size={32} className="text-[#595759]" />
-          Consentimientos Informados
-        </h1>
-      </div>
+      
 
       {/* TARJETA PRINCIPAL CON INFORMACIÓN */}
      

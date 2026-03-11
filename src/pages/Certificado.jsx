@@ -3,7 +3,18 @@ import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, CalendarDays } from 'lucide-react';
+import { 
+  PlusCircle, 
+  CalendarDays, 
+  FileText, 
+  AlertCircle, 
+  Heart, 
+  Clock,
+  CheckCircle,
+  Activity,
+  Save,
+  Edit3
+} from 'lucide-react';
 import { generarPDF } from '../components/generarPDF';
 import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
 import { doc, getDoc } from 'firebase/firestore';
@@ -112,348 +123,279 @@ useEffect(() => {
   //inicia la ventana grafica
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-2">
-      <button
-        onClick={() => window.history.back()}
-        className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-      >
-        ← Volver
-      </button>
-
-      <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-        CERTIFICADO MEDICO
-      </h1>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784] p-6">
+      
       {/* HEADER */}
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-        {/*FECHA */}
-        <p className="absolute left-40 top-36  text-lg font-bold  ">
-            {formattedTime}
-          </p>
-          
-          <p className="absolute left-24 top-44 text-sm uppercase tracking-wide">
-            {formattedDate.toUpperCase()}
-          </p>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-sm">
-          <div className="max-w-6xl mx-auto ">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="w-44 h-auto"
-            />
+       <header className="relative rounded-2xl border border-[#007e8f]/25 bg-gradient-to-r from-[#595759] to-[#595759]/40 p-4 md:p-6 shadow-lg backdrop-blur mb-6"><div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FileText className="w-8 h-8 text-[#fffffff]" />
+            <div>
+              <h1 className="text-2xl font-bold text-[#fffffff]">Certificado Médico</h1>
+              <p className="text-sm text-[#fffffff]">{formattedDate} • {formattedTime}</p>
+            </div>
           </div>
-
-          
-        
-          
-         
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {admisiones.seguro}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {admisiones.dias}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alergias:</strong> {admisiones.secondaryData?.numero || 'No registrado'}   <br/>
-                 </div>
-
-                 <div className=" bg-[#4b6bb3]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                 <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-               
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-            {/*HASTA AQUI DE FIREBASE */}
-
-
-          
-        </div>
-{/**IMPORTANTE AQUI ESTOS DOS TIPO TEXTO Y OBSERVACIONESTEXTO VAN A GENERAR EL PDF */}
-        <div className="absolute right-11 top-[158px] z-20 ">
-          <Button
+          <button
             onClick={() =>
               generarPDF({
                 tipoTexto,
                 observacionesTexto,
               })
             }
-            className="bg-[#4b6bb3]/60 text-white px-7 py-2 rounded hover:bg-[#87D1D4] flex items-center"
+            className="flex items-center gap-2 bg-gradient-to-r from-[#4b6bb3] to-[#007e8f] text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-semibold"
           >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/4659/4659495.png"
-              alt="Imprimir"
-              className="w-8 h-8"
-            />
-          </Button>
+            <FileText className="w-5 h-5" />
+            GENERAR PDF
+          </button>
         </div>
-{/**IMPORTANTE AQUI ESTOS DOS TIPO TEXTO Y OBSERVACIONESTEXTO VAN A GENERAR EL PDF */}
-
-
       </header>
+
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 ">
-        {/* LEFT PANEL */}
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="bg-[#4b6bb3] text-white text-center text-sm font-bold px-1 py-1 rounded-t">
-            HISTORIAL CERTIFICADOS
-            <button
-              onClick={() => console.log('Agregar nuevo registro')}
-              className=" absolute top-61 left-70 text-gray hover:text-[#FF5757] "
-              title="Agregar nuevo registro"
-            >
-              <PlusCircle className="w-5 h-5" />
-            </button>
-          </h2>
-
-          <div className="border p-2 mt-2 text-sm">
-            <h3 className="text-[#010101] font-bold text-center mb-2">
-              HISTORIAL DE CERTIFICADOS
-            </h3>
-            <ul className="text-[#3aa7aa] text-center">
-              <li>23/11/2025 11:15</li>
-              <li>23/11/2025 20:15</li>
-              <li>24/11/2025 11:15</li>
-            </ul>
-          </div>
-          
-        </div>
-
-        {/* RIGHT PANEL */}
+      <main className="mx-auto">
+        {/* FORMULARIO */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="md:col-span-3 bg-white p-4 rounded shadow"
+          className="bg-white rounded-xl shadow-lg overflow-hidden border border-[#007e8f]/10"
         >
-          <div className="border border-[#4b6bb3] p-4 text-[#000000] text-xs">
-            {/* Aquí puedes construir las secciones del formulario con líneas horizontales */}
-            <div className="grid grid-cols-3 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className="block font-bold">
-                  TIPO DE CERTIFICADO:{''}
-                </label>
-                <textarea
-                  value={certificadoTexto}
-                  onChange={(e) => setCertificadoTexto(e.target.value)}
-                  className="w-40 h-6 mb-2 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-            </div>
-{/**EJEMPLO DE EXPORTAR A PDF EL TIPO DE CONTINGENCIA TEXTO DE INTRODUCCION SE MUESTRA EN EL PDF */}
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className="block font-bold">
-                  TIPO DE CONTINGENCIA:{''}
-                </label>
-                <textarea
-                  value={tipoTexto}//CLAVE ESTOS NOMBRES
-                  onChange={(e) => setTipoTexto(e.target.value)}//CLAVE ESTOS DOS NOMBRES
-                  className="w-40 h-6 mb-2 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+          <div className="p-6 space-y-6">
+           
+            {/* SECCIÓN 1: TIPO DE CERTIFICADO */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#1a5784]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                INFORMACIÓN DEL CERTIFICADO
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">TIPO DE CERTIFICADO</label>
+                  <textarea
+                    value={certificadoTexto}
+                    onChange={(e) => setCertificadoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Ej: Incapacidad, Aptitud, etc."
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    TIPO DE CONTINGENCIA
+                  </label>
+                  <textarea
+                    value={tipoTexto}
+                    onChange={(e) => setTipoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Ingrese el tipo de contingencia"
+                    rows={2}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className=" block font-bold">SINTOMATOLOGÍA:</label>
+            {/* SECCIÓN 2: SINTOMATOLOGÍA Y DIAGNÓSTICO */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#007e8f]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <Heart className="w-5 h-5" />
+                DIAGNÓSTICO CLÍNICO
+              </h3>
+
+              <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">SINTOMATOLOGÍA</label>
                 <textarea
                   value={sintomaTexto}
                   onChange={(e) => setSintomaTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Describa los síntomas presentados"
                   rows={3}
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className=" block font-bold">DIAGNOSTICO CIE10:</label>
+
+              <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">DIAGNÓSTICO CIE10</label>
                 <textarea
                   value={diagnosticoTexto}
                   onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Ingrese el código CIE10"
                   rows={3}
                 />
               </div>
             </div>
 
-            {/*otro bloque deita, obs, interconsulta*/}
+            {/* SECCIÓN 3: FECHAS Y REPOSO */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#3aa7aa]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                PERÍODO DE INCAPACIDAD
+              </h3>
 
-            {/*Ultimo grupo */}
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className=" block font-bold">FECHA ATENCION:</label>
-                <textarea
-                  value={fechaTexto}
-                  onChange={(e) => setFechaTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-                <button
-                  onClick={() => console.log('Agregar nuevo registro')}
-                  className=" text-gray hover:text-[#FF5757] "
-                  title="Agregar una nueva prescripcion"
-                >
-                  <CalendarDays className="w-8 h-5" />
-                </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <CalendarDays className="w-4 h-4" />
+                    FECHA ATENCIÓN
+                  </label>
+                  <textarea
+                    value={fechaTexto}
+                    onChange={(e) => setFechaTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Ingrese la fecha"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">DÍAS DE REPOSO</label>
+                  <textarea
+                    value={diasTexto}
+                    onChange={(e) => setDiasTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Numero de días"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">DURACIÓN EN DÍAS</label>
+                  <textarea
+                    value={diassTexto}
+                    onChange={(e) => setDiassTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Duración"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">TIPO DE REPOSO</label>
+                  <textarea
+                    value={tiposTexto}
+                    onChange={(e) => setTiposTexto(e.target.value)}
+                    className="w-full h-10 text-sm border border-[#007e8f]/30 rounded p-2 focus:ring-2 focus:ring-[#007e8f]/60 text-black"
+                    placeholder="Reposo total/parcial"
+                    rows={2}
+                  />
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className=" block font-bold">DIAS REPOSO:</label>
-                <textarea
-                  value={diasTexto}
-                  onChange={(e) => setDiasTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-                <textarea
-                  value={diassTexto}
-                  onChange={(e) => setDiassTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-                <label className=" block font-bold">TIPO REPOSO:</label>
-                <textarea
-                  value={tiposTexto}
-                  onChange={(e) => setTiposTexto(e.target.value)}
-                  className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+
+            {/* SECCIÓN 4: RANGO DE FECHAS */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#7cc4bc]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                VALIDEZ DEL CERTIFICADO
+              </h3>
+
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg p-4 border border-[#007e8f]/20">
+                  <div className="flex gap-2 items-center">
+                    <label className="block font-bold text-[#1a5784] text-sm">DESDE:</label>
+                    <textarea
+                      value={desdeTexto}
+                      readOnly
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded p-2 bg-[#f0f0f0] text-black"
+                    />
+                    <CalendarDays
+                      className="w-6 h-6 cursor-pointer text-[#007e8f] hover:text-[#1a5784]"
+                      onClick={() => inputDesdeRef.current.showPicker()}
+                    />
+                    <textarea
+                      value={desdeTextoPalabras}
+                      readOnly
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded p-2 bg-[#f0f0f0] text-[#007e8f] italic"
+                    />
+                    <input
+                      type="date"
+                      ref={inputDesdeRef}
+                      className="hidden"
+                      onChange={(e) => {
+                        setDesdeTexto(e.target.value);
+                        setDesdeTextoPalabras(formatearFechaEnPalabras(e.target.value));
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-[#007e8f]/20">
+                  <div className="flex gap-2 items-center">
+                    <label className="block font-bold text-[#1a5784] text-sm">HASTA:</label>
+                    <textarea
+                      value={hastaTexto}
+                      readOnly
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded p-2 bg-[#f0f0f0] text-black"
+                    />
+                    <CalendarDays
+                      className="w-6 h-6 cursor-pointer text-[#007e8f] hover:text-[#1a5784]"
+                      onClick={() => inputHastaRef.current.showPicker()}
+                    />
+                    <textarea
+                      value={hastaTextoPalabras}
+                      readOnly
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded p-2 bg-[#f0f0f0] text-[#007e8f] italic"
+                    />
+                    <input
+                      type="date"
+                      ref={inputHastaRef}
+                      className="hidden"
+                      onChange={(e) => {
+                        setHastaTexto(e.target.value);
+                        setHastaTextoPalabras(formatearFechaEnPalabras(e.target.value));
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/*PENUltimo grupo */}
+            {/* SECCIÓN 5: OBSERVACIONES */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#FF6B6B]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                OBSERVACIONES ADICIONALES
+              </h3>
 
-            {/* Grupo DESDE */}
-      <div className="grid grid-cols-1 gap-1 text-xs">
-        <div className="flex gap-2 items-center">
-          <label className="block font-bold">DESDE:</label>
-
-          {/* Fecha numérica */}
-          <textarea
-            value={desdeTexto}
-            readOnly
-            className="flex-1 w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-          />
-
-          {/* Icono que abre el date picker */}
-          <CalendarDays
-            className="w-8 h-6 cursor-pointer text-blue-600"
-            onClick={() => inputDesdeRef.current.showPicker()}
-            
-          />
-
-          {/* Fecha en palabras */}
-          <textarea
-            value={desdeTextoPalabras}
-            readOnly
-            className="flex-1 w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-          />
-
-          {/* Input de fecha oculto */}
-          <input
-            type="date"
-            ref={inputDesdeRef}
-            className="text-white mt-1 ml-1"
-            onChange={(e) => {
-              setDesdeTexto(e.target.value);
-              setDesdeTextoPalabras(formatearFechaEnPalabras(e.target.value));
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Grupo HASTA */}
-      <div className="grid grid-cols-1 gap-1 mb-3 text-xs mt-3">
-        <div className="flex gap-2 items-center">
-          <label className="block font-bold">HASTA:</label>
-
-          {/* Fecha numérica */}
-          <textarea
-            value={hastaTexto}
-            readOnly
-            className="flex-1 w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-          />
-
-          {/* Icono que abre el date picker */}
-          <CalendarDays
-            className="w-8 h-6 cursor-pointer text-blue-600"
-            onClick={() => inputHastaRef.current.showPicker()}
-          />
-
-          {/* Fecha en palabras */}
-          <textarea
-            value={hastaTextoPalabras}
-            readOnly
-            className="flex-1 w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-          />
-          {/* Input de fecha oculto */}
-          <input
-            type="date"
-            ref={inputHastaRef}
-            className="text-white mt-1 ml-1"
-            onChange={(e) => {
-              setHastaTexto(e.target.value);
-              setHastaTextoPalabras(formatearFechaEnPalabras(e.target.value));
-            }}
-          />
-        </div>
-      </div>
-
-      
-            <div className="grid grid-cols-2 gap-1 text-xs">
-              <div className="flex gap-2">
-                <label className=" block font-bold">OBSERVACIONES:</label>
+              <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">OBSERVACIONES</label>
                 <textarea
                   value={observacionesTexto}
                   onChange={(e) => setObservacionesTexto(e.target.value)}
-                  className="w-full mb-1 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Agregue observaciones o notas importantes"
                   rows={3}
                 />
               </div>
             </div>
 
-            <div className="">
-              <label className="mt-10 block font-bold ">FIRMA Y SELLO: </label>
-            </div>
+            {/* SECCIÓN 6: FIRMA Y ACCIONES */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#595759]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                FIRMA Y SELLO
+              </h3>
 
-            <div className="">
-              <label className="block font-bold flex justify-end">
-                <div className="grid grid-cols-2 right-11 top-28 z-20 ">
-                  <Button
-                    type="button"
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-2"
-                    onClick={() => {}} // Función vacía (no hace nada)
-                  >
-                    EDITAR
-                  </Button>
-                  <Button
-                    type="button"
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-2"
-                    onClick={() => {}} // Función vacía (no hace nada)
-                  >
-                    GUARDAR
-                  </Button>
-                </div>{' '}
-              </label>
+              <p className="text-sm text-gray-600 italic">Espacio reservado para firma del médico y sello de la institución</p>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={() => {}}
+                  className="flex-1 bg-[#007e8f]/20 text-[#007e8f] hover:bg-[#007e8f]/30 px-6 py-2 rounded-lg transition-all font-semibold flex items-center justify-center gap-2"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  EDITAR
+                </Button>
+                <Button
+                  onClick={() => {}}
+                  className="flex-1 bg-green-500/20 text-green-700 hover:bg-green-500/30 px-6 py-2 rounded-lg transition-all font-semibold flex items-center justify-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  GUARDAR
+                </Button>
+              </div>
             </div>
           </div>
         </motion.div>

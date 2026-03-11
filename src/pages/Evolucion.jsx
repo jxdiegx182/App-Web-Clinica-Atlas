@@ -162,18 +162,18 @@ useEffect(() => {
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784] p-4">
       
       {/* HEADER */}
-      <header className="rounded-2xl border border-[#007e8f]/25 bg-white/90 p-4 md:p-5 shadow-lg text-[#1c3f6e] backdrop-blur mb-6">
+      <header className="rounded-2xl border border-[#007e8f]/25 bg-white/90 p-4 md:p-5 shadow-lg text-[#595759] backdrop-blur mb-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Stethoscope size={28} className="text-[#007e8f]" />
+              <Stethoscope size={28} className="text-[#69c9ba]" />
               Evolución Clínica
             </h1>
             <p className="text-xs md:text-sm text-gray-600 mt-1">{formattedDate} - {formattedTime}</p>
           </div>
           <Button
             onClick={handleGeneratePDF}
-            className="bg-[#007e8f] hover:bg-[#005f70] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all"
+            className="bg-[#76c4d5] hover:bg-[#69c9ba] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all"
             title="EvolucionPDF"
           >
             <Printer size={18} />
@@ -194,45 +194,45 @@ useEffect(() => {
             
             {/* SECCIÓN EVALUACIÓN PRINCIPAL */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
-                <Stethoscope size={24} className="text-[#007e8f]" />
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
+                <Stethoscope size={24} className="text-[#69c9ba]" />
                 Evaluación del Paciente
               </h2>
               
               <div className="space-y-3">
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
-                    <FileText size={18} className="text-[#007e8f]" />
+                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
+                    <FileText size={18} className="text-[#511259]" />
                     EVOLUCIÓN
                   </label>
                   <Input
                     value={evolucionTexto}
                     onChange={(e) => setEvolucionTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
                     <FileText size={18} className="text-[#007e8f]" />
                     ANÁLISIS
                   </label>
                   <Input
                     value={analisisTexto}
                     onChange={(e) => setAnalisisTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
                     <Heart size={18} className="text-[#FF6B6B]" />
                     ENFERMERÍA
                   </label>
                   <Input
                     value={enfermeriaTexto}
                     onChange={(e) => setEnfermeriaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -240,7 +240,7 @@ useEffect(() => {
 
             {/* SECCIÓN MEDICAMENTOS */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <Pill size={24} className="text-[#007e8f]" />
                 Medicamentos
               </h2>
@@ -250,7 +250,7 @@ useEffect(() => {
                   <Input
                     value={medicamentoTexto}
                     onChange={(e) => setMedicamentoTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -260,7 +260,7 @@ useEffect(() => {
                   <Input
                     value={viaTexto}
                     onChange={(e) => setViaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -270,7 +270,7 @@ useEffect(() => {
                   <Input
                     value={frecuenciaTexto}
                     onChange={(e) => setFrecuenciaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -278,7 +278,7 @@ useEffect(() => {
                   <Input
                     value={presTexto}
                     onChange={(e) => setPresTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -286,7 +286,7 @@ useEffect(() => {
                   <Input
                     value={adminiTexto}
                     onChange={(e) => setAdminiTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -294,7 +294,7 @@ useEffect(() => {
                   <Input
                     value={cantidadTexto}
                     onChange={(e) => setCantidadTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -304,7 +304,7 @@ useEffect(() => {
                   <Input
                     value={indicaTexto}
                     onChange={(e) => setIndicaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -312,7 +312,7 @@ useEffect(() => {
 
             {/* SECCIÓN INFUSIONES */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <Droplet size={24} className="text-[#4B8BBE]" />
                 Infusiones
               </h2>
@@ -322,7 +322,7 @@ useEffect(() => {
                   <Input
                     value={insuTexto}
                     onChange={(e) => setInsuTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -332,7 +332,7 @@ useEffect(() => {
                   <Input
                     value={indiTexto}
                     onChange={(e) => setIndiTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -342,7 +342,7 @@ useEffect(() => {
                   <Input
                     value={freTexto}
                     onChange={(e) => setFreTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -350,7 +350,7 @@ useEffect(() => {
 
             {/* SECCIÓN NUTRICIÓN */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <UtensilsCrossed size={24} className="text-[#FF9800]" />
                 Nutrición y Observaciones
               </h2>
@@ -360,7 +360,7 @@ useEffect(() => {
                   <Input
                     value={dietaTexto}
                     onChange={(e) => setDietaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -370,7 +370,7 @@ useEffect(() => {
                   <Input
                     value={obsTexto}
                     onChange={(e) => setObsTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -380,7 +380,7 @@ useEffect(() => {
                   <Input
                     value={interTexto}
                     onChange={(e) => setInterTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -388,47 +388,47 @@ useEffect(() => {
 
             {/* SECCIÓN SIGNOS VITALES */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <Heart size={24} className="text-[#FF6B6B]" />
                 Signos Vitales y Actividades
               </h2>
               <div className="space-y-3">
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
                     <Heart size={18} className="text-[#FF6B6B]" />
                     SIGNOS VITALES
                   </label>
                   <Input
                     value={signosTexto}
                     onChange={(e) => setSignosTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">ACTIVIDADES</label>
+                  <label className="block font-semibold text-[#595759] mb-1">ACTIVIDADES</label>
                   <Input
                     value={activTexto}
                     onChange={(e) => setActivTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">OBSERVACIONES</label>
+                  <label className="block font-semibold text-[#595759] mb-1">OBSERVACIONES</label>
                   <Input
                     value={obseTexto}
                     onChange={(e) => setObseTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-2">
+                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
                     <FileText size={18} className="text-[#007e8f]" />
                     EXAMENES SOLICITADOS
                   </label>
                   <Input
                     value={examenTexto}
                     onChange={(e) => setExamenTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -436,7 +436,7 @@ useEffect(() => {
 
             {/* SECCIÓN ESTADO Y ALERGIAS */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <AlertCircle size={24} className="text-[#FF0000]" />
                 Estado y Alergias
               </h2>
@@ -446,7 +446,7 @@ useEffect(() => {
                   <Input
                     value={condiTexto}
                     onChange={(e) => setCondiTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -456,7 +456,7 @@ useEffect(() => {
                   <Input
                     value={alergiaTexto}
                     onChange={(e) => setAlergiaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -466,7 +466,7 @@ useEffect(() => {
                   <Input
                     value={obserTexto}
                     onChange={(e) => setObserTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
@@ -474,7 +474,7 @@ useEffect(() => {
 
             {/* SECCIÓN DIAGNÓSTICOS */}
             <div className="space-y-4">
-              <h2 className="text-lg font-bold text-[#1c3f6e] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
                 <Stethoscope size={24} className="text-[#007e8f]" />
                 Diagnósticos
               </h2>
@@ -484,7 +484,7 @@ useEffect(() => {
                   <Input
                     value={diagTexto}
                     onChange={(e) => setDiagTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -492,7 +492,7 @@ useEffect(() => {
                   <Input
                     value={codigoTexto}
                     onChange={(e) => setCodigoTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -500,7 +500,7 @@ useEffect(() => {
                   <Input
                     value={diagnosticoTexto}
                     onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -508,7 +508,7 @@ useEffect(() => {
                   <Input
                     value={codeTexto}
                     onChange={(e) => setCodeTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>

@@ -4,7 +4,21 @@ import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle } from 'lucide-react';
+import { 
+  PlusCircle,
+  FileText,
+  TestTube,
+  Stethoscope,
+  Calendar,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  Zap,
+  Users,
+  Scissors,
+  Plus,
+  Trash2
+} from 'lucide-react';
 import { generarConstantesVitalesPDF } from '../components/generarConstantesVitalesPDF';
 import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
 import { doc, getDoc } from 'firebase/firestore';
@@ -205,150 +219,32 @@ useEffect(() => {
 
   //inicia la ventana grafica
   return (
-   <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 p-6">
-      <div className="relative mb-2">
-      <button
-        onClick={() => window.history.back()}
-        className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-      >
-        ← Volver 
-      </button>
-
-      <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-        PROTOCOLO OPERATORIO
-      </h1>
-      </div>
+   <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#76c4d5] p-6">
+      
       {/* HEADER */}
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-sm">
-          <div className="max-w-6xl mx-auto ">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="w-44 h-auto"
-            />
-          </div>
+      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-gradient-to-r from-[#595759] to-[#595759]/40 p-4 md:p-6 shadow-lg backdrop-blur mb-6">
+        <div className="flex items-center justify-between ">
+          <div className="flex items-center gap-3">
+            <Scissors className="w-8 h-8 text-[#ffffff]" />
+            <div>
+              <h1 className="text-2xl font-bold text-[#fffffff]">Protocolo Quirúrgico</h1>
              
-
-
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {edad}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {estancia}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                   </div>
-                   <div className=" bg-[#007e8f]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-                
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-
-            {/*HASTA AQUI DE FIREBASE */}
-
-
+            </div>
+          </div>
         </div>
-        {/*FECHA */}
-        <p className="absolute left-28 top-24  text-lg font-bold  ">
-          {formattedTime}
-        </p>
-        <p className="absolute left-12 top-32 text-sm uppercase tracking-wide font-bold">
-          {formattedDate.toUpperCase()}
-        </p>
-        
       </header>
 
-
-
-
-
-
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 ">
-        {/* LEFT PANEL */}
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="bg-[#162f5c] text-white text-center text-sm font-bold px-4 py-2 rounded-t">
-            NUEVO PROTOCOLO
-          </h2>
-
-          <button
-            onClick={() => console.log('Agregar nuevo registro')}
-            className=" absolute top-60 left-80 text-gray hover:text-[#FF5757] "
-            title="Agregar nuevo registro"
-          >
-            <PlusCircle className="w-5 h-5" />
-          </button>
-
-          <div className="border p-2 mt-2 text-sm">
-            <h1 className="text-[#010101] font-bold text-center mb-2">
-              HISTORIAL
-            </h1>
-           
-            <h1 className="text-[#3aa7aa] font-bold text-center mb-2">Doctor</h1>
-            
-            <ul className="text-[#3aa7aa] text-center">
-              <li>DELGADO ZURITA LUIS MIGUEL</li>
-           
-              <li>DELGADO ZURITA LUIS MIGUEL</li>
-            
-            </ul>
-          </div>
-
-          <div className="bg-[#7cc4bc] text-white rounded-2xl p-4 mt-4 text-sm">
-            <p>
-              <strong>PESO:</strong> 70 KG
-            </p>
-            <p>
-              <strong>TALLA:</strong> 1.60
-            </p>
-            <p>
-              <strong>PULSO:</strong> 7
-            </p>
-            <p>
-              <strong>TEMPERATURA:</strong> 36.5
-            </p>
-            <p>
-              <strong>FRECUENCIA RESPIRATORIA:</strong> 23
-            </p>
-            <p>
-              <strong>PRESION ARTERIAL:</strong> 120/70
-            </p>
-          </div>
-        </div>
-
-
-
-        {/* DESDE AQUIIIII++++++++++++++++++++++++++++++++++++++++++ RIGHT PANEL */}
+      <main className="grid grid-cols-1 md:grid-cols-1 gap-6">
        
-   {/* RIGHT PANEL */}
-<div className="col-span-3 space-y-6">
-
-{/* HEADER INTERNO */}
+   {/* CONTENIDO PRINCIPAL */}
+<div className="col-span-1 space-y-6">
 
 {/* CODIFICACIÓN */}
-<div className="bg-white rounded-2xl shadow-md p-6 border border-blue-100">
-  <h3 className="text-lg font-semibold text-[#007e8f] mb-4">
-    🔍 Codificación Diagnóstica
+<div className="bg-white rounded-2xl shadow-md p-6 border border-[#007e8f]/10">
+  <h3 className="text-lg font-semibold text-[#1a5784] mb-4 flex items-center gap-2">
+    <TestTube className="w-5 h-5" />
+    Codificación Diagnóstica
   </h3>
 
   <div className="grid md:grid-cols-2 gap-4">
@@ -398,15 +294,6 @@ useEffect(() => {
 
 
 
-
-
-
-
-
-
-
-
-
     <div>
       <label className="block text-sm font-medium text-[#007e8f] mb-1">
         CPT (Procedimiento)
@@ -436,9 +323,10 @@ useEffect(() => {
 
 
 {/** ++++++++++++++++++++++++++++++++++++++++++++++++++++++++DATOS DE LA CIRUGÍA++++++++++++++++++++++++++++++++++ */}
-<div className="bg-white rounded-2xl shadow-md p-5 border border-green-100">
-  <h3 className="text-lg font-semibold text-[#007e8f] mb-0.5">
-    🔬 Datos de la Cirugía
+<div className="bg-white rounded-2xl shadow-md p-5 border border-[#007e8f]/10">
+  <h3 className="text-lg font-semibold text-[#1a5784] mb-4 flex items-center gap-2">
+    <Scissors className="w-5 h-5" />
+    Datos de la Cirugía
   </h3>
 
   <div className="grid md:grid-cols-2 gap-2">
@@ -703,9 +591,10 @@ Materia Protésico
 
 
 {/* EQUIPO QUIRÚRGICO */}
-<div className="bg-white rounded-2xl shadow-md p-4 border border-purple-100">
-  <h3 className="text-lg font-semibold text-[#007e8f] mb-1">
-    👨‍⚕️ Equipo Quirúrgico
+<div className="bg-white rounded-2xl shadow-md p-4 border border-[#007e8f]/10">
+  <h3 className="text-lg font-semibold text-[#1a5784] mb-4 flex items-center gap-2">
+    <Users className="w-5 h-5" />
+    Equipo Quirúrgico
   </h3>
 
   <div className="grid md:grid-cols-3 gap-4">

@@ -45,7 +45,7 @@ function App() {
           />
         </Helmet>
 
-        <div className="min-h-screen w-full bg-gradient-to-bl from-[#1E3D5C] via-[#ffffff] to-[#1E3D5C]">
+        <div className="min-h-screen w-full bg-gradient-to-bl from-[#76c4d5] via-[#ffffff] to-[#76c4d5]">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
@@ -107,7 +107,7 @@ function App() {
           <Toaster />
         </div>
 
-        <footer className="grid grid-cols-7 md:grid-cols-7 bg-[#0b4f6c]/90">
+        <footer className="grid grid-cols-7 md:grid-cols-7 bg-[#595759]">
           <div className="ml-3 mt-2 font-bold">
             <img
               src="https://i.postimg.cc/9MHfPv55/Gemini-Generated-Image-4e7mun4e7mun4e7m.png"
@@ -122,7 +122,7 @@ function App() {
 
           <div className="font-bold" />
 
-          <div className="text-[9.5px] text-center font-medium text-white/90 bg-[#0b4f6c]/40 tracking-wide min-h-[10px] hover:text-[gray]/100">
+          <div className="text-[9.5px] text-center font-medium text-white/90 bg-[#76c4d5]/10 tracking-wide min-h-[10px] hover:text-[gray]/100">
             <h1>Clinicas Atlas © 2026 </h1>
             <p>Todos los Derechos Reservados</p>
           </div>

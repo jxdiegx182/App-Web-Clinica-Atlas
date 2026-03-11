@@ -3,7 +3,29 @@ import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { 
+  PlusCircle, 
+  FileText, 
+  Stethoscope, 
+  User, 
+  Calendar, 
+  Clock,
+  Heart,
+  Thermometer,
+  Wind,
+  Droplet,
+  AlertCircle,
+  ClipboardList,
+  Zap,
+  Pill,
+  CheckCircle,
+  Search,
+  Trash2,
+  Plus,
+  Building
+} from 'lucide-react';
 import { InterconsultaPDF } from '../components/InterconsultaPDF';
 import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
 import { doc, getDoc } from 'firebase/firestore';
@@ -181,463 +203,403 @@ useEffect(() => {
 
   //inicia la ventana grafica
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <div className="relative mb-2">
-      <button
-        onClick={() => window.history.back()}
-        className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-      >
-        ← Volver
-      </button>
-
-      <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-        INTERCONSULTA
-      </h1>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#76c4d5]/20 via-[#EAF4FB] to-[#76c4d5] p-6">
+     
       {/* HEADER */}
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-sm">
-          <div className="max-w-6xl mx-auto ">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="w-44 h-auto"
-            />
+      <header className="relative rounded-2xl border border-[#76c4d5]/25 bg-gradient-to-r from-white/90 to-[#76c4d5]/60 p-3 md:p-3 shadow-lg backdrop-blur mb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FileText className="w-8 h-8 text-[#1a5784]" />
+            <div>
+              <h1 className="text-xs font-bold text-[#595759]">Interconsulta</h1>
+              <p className="text-xs text-[#007e8f]">{formattedDate} • {formattedTime}</p>
+            </div>
           </div>
-             
-
-
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {edad}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {estancia}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                   </div>
-                   <div className=" bg-[#4b6bb3]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                   <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-                
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-
-            {/*HASTA AQUI DE FIREBASE */}
-
-
+          {admisiones && (
+            <div className="flex gap-6 text-right">
+              <div>
+                <p className="text-xs text-gray-500">Estancia</p>
+                <p className="text-xs font-bold text-[#1a5784]">{estancia} días</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Edad</p>
+                <p className="text-xs font-bold text-[#1a5784]">{edad} años</p>
+              </div>
+            </div>
+          )}
         </div>
-        {/*FECHA */}
-        <p className="absolute left-28 top-24  text-lg font-bold  ">
-          {formattedTime}
-        </p>
-        <p className="absolute left-12 top-32 text-sm uppercase tracking-wide font-bold">
-          {formattedDate.toUpperCase()}
-        </p>
-        
-        
-
-
-
       </header>
+
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 ">
-        {/* LEFT PANEL */}
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="bg-[#162f5c] text-white text-center text-sm font-bold px-4 py-2 rounded-t">
-            NUEVA INTERCONSULTA
-          </h2>
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT PANEL - Historial y Signos Vitales */}
+      
 
-          <button
-            onClick={() => console.log('Agregar nuevo registro')}
-            className=" absolute top-60 left-80 text-gray hover:text-[#FF5757] "
-            title="Agregar nuevo registro"
-          >
-            <PlusCircle className="w-5 h-5" />
-          </button>
-
-          <div className="border p-2 mt-2 text-sm">
-            <h1 className="text-[#010101] font-bold text-center mb-2">
-              HISTORIAL
-            </h1>
-           
-            <h1 className="text-[#3aa7aa] font-bold text-center mb-2">Doctor</h1>
-            
-            <ul className="text-[#3aa7aa] text-center">
-              <li>DELGADO ZURITA LUIS MIGUEL</li>
-           
-              <li>DELGADO ZURITA LUIS MIGUEL</li>
-            
-            </ul>
-          </div>
-
-          <div className="bg-[#7cc4bc] text-white rounded-2xl p-4 mt-4 text-sm">
-            <p>
-              <strong>PESO:</strong> 70 KG
-            </p>
-            <p>
-              <strong>TALLA:</strong> 1.60
-            </p>
-            <p>
-              <strong>PULSO:</strong> 7
-            </p>
-            <p>
-              <strong>TEMPERATURA:</strong> 36.5
-            </p>
-            <p>
-              <strong>FRECUENCIA RESPIRATORIA:</strong> 23
-            </p>
-            <p>
-              <strong>PRESION ARTERIAL:</strong> 120/70
-            </p>
-          </div>
-        </div>
-
-        {/* RIGHT PANEL */}
+        {/* RIGHT PANEL - Formulario Principal */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="md:col-span-3 bg-white p-4 rounded shadow"
+          className="lg:col-span-3 bg-white rounded-xl shadow-lg overflow-hidden border border-[#007e8f]/10"
         >
-          <div className="border border-[#3aa7aa] p-4 text-[#000000] text-xs">
+          <div className="p-6 space-y-6">
            
-            
-            
-           
-
- {/* Aquí puedes construir las secciones del formulario con líneas horizontales */}
-            <div className="grid grid-cols-5 gap-2  py-2 text-xs text-center">
+            {/* SECCIÓN 1: TIPO DE CONSULTA Y ESTABLECIMIENTOS */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#1a5784]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <Zap className="w-5 h-5" />
+                INFORMACIÓN DE CONSULTA
+              </h3>
               
-{/*tecnica seleccionar ""TIPO DE CONSULTA"" */}
-              <div className="col-span- flex items-center gap-1">
-                <label className="block font-bold">TIPO DE CONSULTA:</label>
-                {['NORMAL', 'URGENTE'].map((opt) => ( //aqui lo que hace map es recorrer los dos nombres para guardarlos en opt
-                  <label key={opt}> 
-                    <input
-                      type="radio"
-                      name="tecnica"
-                      value={opt}
-                      checked={formData.tecnica === opt}
-                      onChange={(e) =>
-                        setFormData({ ...formData, tecnica: e.target.value })
-                      }
-                      className="mr-1"
-                    />
-                    {opt}
-                  </label>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tipo de Consulta */}
+                <div>
+                  <Label className="block font-bold text-[#1a5784] text-sm mb-2">TIPO DE CONSULTA</Label>
+                  <div className="flex gap-4">
+                    {['NORMAL', 'URGENTE'].map((opt) => (
+                      <label key={opt} className="flex items-center gap-2 cursor-pointer hover:text-[#007e8f] transition">
+                        <input
+                          type="radio"
+                          name="tecnica"
+                          value={opt}
+                          checked={formData.tecnica === opt}
+                          onChange={(e) =>
+                            setFormData({ ...formData, tecnica: e.target.value })
+                          }
+                          className="w-4 h-4 cursor-pointer"
+                        />
+                        <span className="text-sm">{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Establecimiento */}
+                <div>
+                  <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <Building className="w-4 h-4" />
+                    ESTABLECIMIENTO
+                  </Label>
+                  <Input
+                    value={establecimientoTexto}
+                    onChange={(e) => setEstablecimientoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black"
+                    placeholder="Ingrese el establecimiento"
+                  />
+                </div>
               </div>
-                       {/*FIN tecnica seleccionar */}
-<div></div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Servicio Consultado */}
+                <div>
+                  <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <Stethoscope className="w-4 h-4" />
+                    SERVICIO CONSULTADO
+                  </Label>
+                  <Input
+                    value={servicioDosTexto}
+                    onChange={(e) => setServicioDosTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black"
+                    placeholder="Ingrese el servicio"
+                  />
+                </div>
 
-
-
-{/*ESTABLECIMIENTO */}
-              <div className="">
-                <label className="block font-bold">ESTABLECIMIENTO</label>
-                <textarea
-                  value={establecimientoTexto}
-                  onChange={(e) => setEstablecimientoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-
-
-
-
-
-
-
-              
-{/*servicioDosTexto */}
-              <div className="">
-                <label className="block font-bold">SERVICIO CONSULTADO</label>
-                <textarea
-                  value={servicioDosTexto}
-                  onChange={(e) => setServicioDosTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-               {/*servicioTresTexto */}
-              <div className="">
-                <label className="block font-bold">SERVICIO QUE SOLICITA</label>
-                <textarea
-                  value={servicioTresTexto}
-                  onChange={(e) => setServicioTresTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+                {/* Servicio que Solicita */}
+                <div>
+                  <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    SERVICIO QUE SOLICITA
+                  </Label>
+                  <Input
+                    value={servicioTresTexto}
+                    onChange={(e) => setServicioTresTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black"
+                    placeholder="Ingrese el servicio"
+                  />
+                </div>
               </div>
             </div>
 
+            {/* SECCIÓN 2: MÉDICO Y DESCRIPCIÓN */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#007e8f]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <User className="w-5 h-5" />
+                DATOS DEL MÉDICO
+              </h3>
 
-{/**********************2DO GRUPO******************************************* */}
-            <div className="grid grid-cols-4 gap-1 py-1 text-xs text-center ">
-              {/* ESTE ES EL INICIO DE PEQUEÑOS TEXTOS*/}
-               {/*medicoTexto */}
-              <div className="">
-                <label className="block font-bold">MEDICO INTERCONSULTADO</label>
-                <textarea
-                  value={medicoTexto}
-                  onChange={(e) => setMedicoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <Stethoscope className="w-4 h-4" />
+                    MÉDICO INTERCONSULTADO
+                  </Label>
+                  <Input
+                    value={medicoTexto}
+                    onChange={(e) => setMedicoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black"
+                    placeholder="Nombre del médico"
+                  />
+                </div>
+                <button className="flex items-center justify-center gap-2 bg-[#007e8f]/20 hover:bg-[#007e8f]/30 text-[#007e8f] rounded-lg h-10 transition-colors">
+                  <Search className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Buscar</span>
+                </button>
               </div>
 
-              <div>LUPA</div>
-              <div></div>
-{/**CAMBiAR LAS CONSTANTES A DESCRIPCION_MOTIVO */}
-{/*descTexto */}
-              <div className="">
-                <label className="block font-bold">DESCRIPCION DEL MOTIVO</label>
-                <textarea
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  DESCRIPCIÓN DEL MOTIVO
+                </Label>
+                <Input
                   value={descTexto}
                   onChange={(e) => setDescTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>             
-            </div>
-{/**************************2DO GRUPO*************************************** */}
-
-            {/*Ultimo grupo */}
-            <div className=" ">
-              <label className="block font-bold">CUADRO CLINICO ACTUAL</label>
-              <textarea
-                value={cuadroUnoTexto}
-                onChange={(e) => setCuadroUnoTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            <div className=" ">
-              <label className="block font-bold">EXAMENES Y PROCEDIMIENTOS DIAGNOSTICOS</label>
-              <textarea
-                value={examenesTexto}
-                onChange={(e) => setExamenesTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-
-
-           
-            <div className="grid grid-cols-7 gap-2 py-2 text-xs">
-              <div>aqui va un basurero</div>
-              <div className=" ">
-                <label className="block font-bold">DIAGNOSTICO</label>
-                <textarea
-                  value={diagUnoTexto}
-                  onChange={(e) => setDiagUnoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa el motivo de la interconsulta"
                 />
               </div>
-              <div className=" ">
-                <label className="block font-bold">CIE10</label>
-                <textarea
-                  value={cieUnoTexto}
-                  onChange={(e) => setCieUnoTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">PRE</label>
-                <textarea
-                  value={preUnoTexto}
-                  onChange={(e) => setPreUnoTexto(e.target.value)}
-                  className="w-full h-7 text-sm text-center border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div className=" ">
-                <label className="block font-bold">DEF</label>
-                <textarea
-                  value={defUnoTexto}
-                  onChange={(e) => setDefUnoTexto(e.target.value)}
-                  className="w-full h-7 text-sm text-center border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
-                />
-              </div>
-              <div>aqui va un boton mas</div>
-              <div></div>
             </div>
 
+            {/* SECCIÓN 3: INFORMACIÓN CLÍNICA */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#3aa7aa]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <ClipboardList className="w-5 h-5" />
+                INFORMACIÓN CLÍNICA INICIAL
+              </h3>
 
-            <div className=" ">
-              <label className="block font-bold">PLANES TERAPEUTICOS Y EDUCACIONALES REALIZADOS</label>
-              <textarea
-                value={planesTeTexto}
-                onChange={(e) => setPlanesTeTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-
-
-{/***AQUI VA EL BOTON QUE GENERA EL INTERCONSULTAPDF.JS */}
-         {/**¨¨¨¨¨¨¨¨¨¨¨¨¨¨****ESTA PARTE LE ESTABA DEJANDO PERO NO ME EXPORTA LAS CONSTANTES QUE QUIERO PARA MI PDF  
-            <Button
-            onClick={() =>
-              InterconsultaPDF({
-                establecimientoTexto, 
-                servicioDosTexto,
-                servicioTresTexto,
-                medicoTexto,
-                descTexto,
-                cuadroUnoTexto,
-                examenesTexto,
-              })
-            }
-            className="bg-[#4b6bb3]/60 text-white px-7 py-2 rounded hover:bg-[#87D1D4] flex items-center"
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/4659/4659495.png"
-              alt="Imprimir"
-              className="w-8 h-8"
-            />
-          </Button>
-          
-  *****************************************************       BORRAR SI SALE MAL */}  
-<br/>
-
-          <div className=" right-11 top-28 z-20 ">
-          <Button
-            onClick={handleGeneratePDF}
-            className="bg-[#4b6bb3]/60 text-white px-7 py-2 rounded hover:bg-[#87D1D4] flex items-center"
-            title="InterconsultaPDF"
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/4659/4659495.png"
-              alt="Imprimir"
-              className="w-8 h-8"
-            />
-          </Button>
-        </div>
-{/***AQUI VA EL BOTON QUE GENERA EL INTERCONSULTAPDF.JS */}
-
-            <div className=" ">
-              <label className="block font-bold">CUADRO CLINICO DE INTERCONSULTA</label>
-              <textarea
-                value={cuadroTexto}
-                onChange={(e) => setCuadroTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-
-            <div className=" ">
-              <label className="block font-bold">RESUMEN DE CRITERIO CLINICO</label>
-              <textarea
-                value={resumenTexto}
-                onChange={(e) => setResumenTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-
-           
-
-
-            <div className="grid grid-cols-7 gap-2 py-2 text-xs">
-              <div>aqui va un basurero</div>
-              <div className=" ">
-                <label className="block font-bold">DIAGNOSTICOS</label>
-                <textarea
-                  value={diagDosTexto}
-                  onChange={(e) => setDiagDosTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2">CUADRO CLÍNICO ACTUAL</Label>
+                <Input
+                  value={cuadroUnoTexto}
+                  onChange={(e) => setCuadroUnoTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa el cuadro clínico"
                 />
               </div>
-              <div className=" ">
-                <label className="block font-bold">CIE10</label>
-                <textarea
-                  value={cieDosTexto}
-                  onChange={(e) => setCieDosTexto(e.target.value)}
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
+
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  EXÁMENES Y PROCEDIMIENTOS DIAGNÓSTICOS
+                </Label>
+                <Input
+                  value={examenesTexto}
+                  onChange={(e) => setExamenesTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa los exámenes realizados"
                 />
               </div>
-              <div className=" ">
-                <label className="block font-bold">PRE</label>
-                <textarea
-                  value={preTexto}
-                  onChange={(e) => setPreTexto(e.target.value)}
-                  className="w-full h-7 text-sm text-center border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
+
+              <div className="bg-white rounded-lg p-4 border border-[#007e8f]/20">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    PRIMER DIAGNÓSTICO
+                  </h4>
+                  <button className="text-red-500 hover:text-red-700 transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <div className="md:col-span-2">
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">DIAGNÓSTICO</Label>
+                    <Input
+                      value={diagUnoTexto}
+                      onChange={(e) => setDiagUnoTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="Diagnóstico"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">CIE10</Label>
+                    <Input
+                      value={cieUnoTexto}
+                      onChange={(e) => setCieUnoTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="CIE10"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">PRE</Label>
+                    <Input
+                      value={preUnoTexto}
+                      onChange={(e) => setPreUnoTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="PRE"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">DEF</Label>
+                    <Input
+                      value={defUnoTexto}
+                      onChange={(e) => setDefUnoTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="DEF"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button className="w-full flex items-center justify-center gap-2 bg-[#3aa7aa]/20 hover:bg-[#3aa7aa]/30 text-[#3aa7aa] py-2 rounded-lg transition-colors font-semibold text-sm">
+                <Plus className="w-4 h-4" />
+                AGREGAR OTRO DIAGNÓSTICO
+              </button>
+            </div>
+
+            {/* SECCIÓN 4: PLANES TERAPÉUTICOS */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#7cc4bc]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <Pill className="w-5 h-5" />
+                PLANES TERAPÉUTICOS
+              </h3>
+
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2">PLANES TERAPÉUTICOS Y EDUCACIONALES REALIZADOS</Label>
+                <Input
+                  value={planesTeTexto}
+                  onChange={(e) => setPlanesTeTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa los planes terapéuticos"
                 />
               </div>
-              <div className=" ">
-                <label className="block font-bold">DEF</label>
-                <textarea
-                  value={defTexto}
-                  onChange={(e) => setDefTexto(e.target.value)}
-                  className="w-full h-7 text-sm text-center border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                  rows={3}
+            </div>
+
+            {/* SECCIÓN 5: INTERCONSULTA */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#595759]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                DATOS DE INTERCONSULTA
+              </h3>
+
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2">CUADRO CLÍNICO DE INTERCONSULTA</Label>
+                <Input
+                  value={cuadroTexto}
+                  onChange={(e) => setCuadroTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa el cuadro clínico"
                 />
               </div>
-              <div>aqui va un boton mas</div>
-              <div></div>
+
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  RESUMEN DE CRITERIO CLÍNICO
+                </Label>
+                <Input
+                  value={resumenTexto}
+                  onChange={(e) => setResumenTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Resumen del criterio clínico"
+                />
+              </div>
+
+              <div className="bg-white rounded-lg p-4 border border-[#007e8f]/20">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    DIAGNÓSTICOS FINALES
+                  </h4>
+                  <button className="text-red-500 hover:text-red-700 transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <div className="md:col-span-2">
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">DIAGNÓSTICO</Label>
+                    <Input
+                      value={diagDosTexto}
+                      onChange={(e) => setDiagDosTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="Diagnóstico"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">CIE10</Label>
+                    <Input
+                      value={cieDosTexto}
+                      onChange={(e) => setCieDosTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="CIE10"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">PRE</Label>
+                    <Input
+                      value={preTexto}
+                      onChange={(e) => setPreTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="PRE"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-gray-600 text-xs font-semibold mb-1">DEF</Label>
+                    <Input
+                      value={defTexto}
+                      onChange={(e) => setDefTexto(e.target.value)}
+                      className="w-full h-9 text-sm border-[#007e8f]/30 rounded text-black"
+                      placeholder="DEF"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button className="w-full flex items-center justify-center gap-2 bg-[#3aa7aa]/20 hover:bg-[#3aa7aa]/30 text-[#3aa7aa] py-2 rounded-lg transition-colors font-semibold text-sm">
+                <Plus className="w-4 h-4" />
+                AGREGAR OTRO DIAGNÓSTICO
+              </button>
             </div>
 
+            {/* SECCIÓN 6: PLANES PROPUESTOS */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#FF6B6B]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <ClipboardList className="w-5 h-5" />
+                PLANES PROPUESTOS
+              </h3>
 
-            <div className=" ">
-              <label className="block font-bold">PLAN DE DIAGNOSTICO PROPUESTO</label>
-              <textarea
-                value={planDiagTexto}
-                onChange={(e) => setPlanDiagTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  PLAN DE DIAGNÓSTICO PROPUESTO
+                </Label>
+                <Input
+                  value={planDiagTexto}
+                  onChange={(e) => setPlanDiagTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa el plan de diagnóstico"
+                />
+              </div>
+
+              <div>
+                <Label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                  <Pill className="w-4 h-4" />
+                  PLAN DE TRATAMIENTO PROPUESTO
+                </Label>
+                <Input
+                  value={planTratamientoTexto}
+                  onChange={(e) => setPlanTratamientoTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 shadow-sm focus:ring-2 focus:ring-[#007e8f]/60 rounded text-black p-3 resize-none"
+                  placeholder="Describa el plan de tratamiento"
+                />
+              </div>
             </div>
 
-
-
-            <div className=" ">
-              <label className="block font-bold">PLAN DE TRATAMIENTO PROPUESTO</label>
-              <textarea
-                value={planTratamientoTexto}
-                onChange={(e) => setPlanTratamientoTexto(e.target.value)}
-                className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
+            {/* BOTÓN GENERAR PDF */}
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={handleGeneratePDF}
+                className="flex-1 bg-gradient-to-r from-[#76c4d5] to-[#595759]/90 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 font-semibold"
+              >
+                <FileText className="w-5 h-5" />
+                Generar PDF de Interconsulta
+              </Button>
+              
             </div>
-
-
-
-
           </div>
-
-          
         </motion.div>
       </main>
     </div>
   );
 };
 export default Interconsulta;
-;
 

@@ -2,11 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { FileDown } from 'lucide-react';
-import { PlusCircle, Search, CalendarCheck} from 'lucide-react';
+import { 
+  FileDown,
+  Pill,
+  AlertCircle,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+  MapPin,
+  FileText,
+  Search,
+  Calendar
+} from 'lucide-react';
+import { PlusCircle, CalendarCheck } from 'lucide-react';
 import { db } from '../firebaseConfig'; // 👈 AJUSTAr la ruta si es necesario
 import { doc, getDoc } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
@@ -271,373 +283,255 @@ useEffect(() => {
   const formattedTime = time.toLocaleTimeString('es-ES');
   //inicia la ventana grafica
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784]">
-      <button
-        onClick={() => window.history.back()}
-        className="absolute left-5 top-1 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
-      >
-        ← Volver
-      </button>
+    <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784] p-6">
 
-      <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">
-        RECETA
-      </h1>
+     
       {/* HEADER */}
-      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-sm">
-          <div className="max-w-6xl mx-auto ">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo Clinica Atlas"
-              className="w-44 h-auto"
-            />
+      <header className="relative rounded-2xl border border-[#007e8f]/25 bg-gradient-to-r from-[#595759] to-[#595759]/40 p-4 md:p-6 shadow-lg backdrop-blur mb-6"><div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Pill className="w-8 h-8 text-[#fffff]" />
+            <div>
+              <h1 className="text-2xl font-bold text-[#fffffff]">Receta Médica</h1>
+              <p className="text-sm text-[#fffffff]">{formattedDate} • {formattedTime}</p>
+            </div>
           </div>
-        
-          
-{/* 🔄 Mostrar datos del citas o cargando */}
-{loading ? (
-              <p className="text-gray-600">Cargando datos de admisiones...</p>
-            ) : admisiones ? (
-              <>
-                <div>
-                  <strong>{admisiones.firstName} {admisiones.lastName}{' '} </strong><br/>
-                  <strong>Identificacion:</strong> {admisiones.cedula}<br/>
-                  <strong>Edad:</strong> {admisiones.seguro}<br/>
-                   <strong>Médico:</strong> {admisiones.medico}<br/>
-                   <strong>Fecha Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}   <br/>
-                   <strong>Días de estancia:</strong> {admisiones.dias}<br/>
-                  
-                </div>
-                <div>
-                <strong>Servicio:</strong> {admisiones.servicio}<br/>
-                  <strong>Seguro:</strong> {admisiones.seguro}<br/>
-                  <strong>Alertas:</strong> {admisiones.alergiaIconUno || 'No registrado'} {admisiones.alergiaUno || 'No registrado'}   <br/>
-                  {admisiones.alergiaIconDos || ''} {admisiones.alergiaDos || ''} <br/>
-                  {admisiones.alergiaIconTres || ''} {admisiones.alergiaTres || ''}
-                   </div>
-                   <div className=" bg-[#4b6bb3]/60 absolute rounded text-center p-4 text-white font-bold top-30 right-10">
-                <strong>PISO:</strong> {admisiones.ubicacion.piso ||'No Reg'} <br/>
-                  <strong></strong> {admisiones.ubicacion.habitacion ||'No Reg'} <br/>
-                </div>
-                
-              </>
-            ) : (
-              <p className="text-red-600 font-bold">
-                ❌ No se encontró información de admisiones.estoy arto
-              </p>
-            )}
-
-            {/*HASTA AQUI DE FIREBASE */}
-
-
-
-
-
-
-</div>
-        {/*FECHA */}
-        <p className="absolute left-28 top-24  text-lg font-bold  ">
-          {formattedTime}
-        </p>
-        <p className="absolute left-12 top-32 text-sm uppercase tracking-wide font-bold">
-          {formattedDate.toUpperCase()}
-        </p>
-        
-        <div className="absolute right-32 top-24 z-20 ">
           <Button
             onClick={handleGeneratePDF}
-            className="bg-[#4b6bb3]/60 text-white px-7 py-2 rounded hover:bg-[#87D1D4] flex items-center"
+            className="flex items-center gap-2 bg-gradient-to-r from-[#4b6bb3] to-[#007e8f] text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all font-semibold"
             title="Imprimir PDF"
           >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/4659/4659495.png"
-              alt="Imprimir"
-              className="w-8 h-8"
-            />
+            <FileDown className="w-5 h-5" />
+            GENERAR PDF
           </Button>
         </div>
       </header>
+
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 ">
-        {/* LEFT PANEL */}
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="bg-[#4b6bb3] text-white text-center text-sm font-bold px-4 py-2 rounded-t">
-            HISTORIAL RECETAS
-            <button
-            onClick={() => console.log('Agregar nuevo registro')}
-            className=" absolute top-61 left-70 text-gray hover:text-[#FF5757] "
-            title="Agregar nuevo registro"
-          >
-            <PlusCircle className="w-5 h-5" />
-          </button>
-          </h2>
-
-          <div className="overflow-y-auto max-h-[250px] pr-2">
-              {' '}
-              {/* contenedor con scroll */}
-              <ul className="bg-[#E9F5F2] text-center rounded-2xl p-4 mt-1 text-sm list-disc list-inside text-gray-700">
-                <li>21/12/2023</li>
-                <li>15/10/2019</li>
-                <li>15/12/2015</li>
-                <li>10/08/2013</li>
-                <li>22/04/2011</li>
-                <li>05/08/2024</li>
-                <li>05/07/2009</li>
-                <li>05/01/2024</li>
-                <li>05/02/2024</li>
-                <li>05/08/2023</li>
-                <li>05/07/2024</li>
-                <li>05/09/2009</li>
-                <li>05/06/2025</li>
-                <li>05/01/2025</li>
-                {/* puedes agregar más elementos sin que se desborde */}
-              </ul>
-            </div>
-
-          
-        </div>
-
-        {/* RIGHT PANEL */}
+      <main className="mx-auto">
+        {/* FORMULARIO */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="md:col-span-3 bg-white p-4 rounded shadow"
+          className="bg-white rounded-xl shadow-lg overflow-hidden border border-[#007e8f]/10"
         >
-          <div className="border border-[#4b6bb3] p-4 text-[#000000] text-xs">
-            {/* Aquí puedes construir las secciones del formulario con líneas horizontales */}
-            <div className="grid grid-cols-3 gap-1 mb-5  text-xs">
-              <div className="flex gap-2">
-                  <label className="block font-bold">
-                    NUMERO RECETA:{' 0001'}
-                  </label>
-                  
-              </div>
-            </div>
-            <label className="block font-bold">
-                    CARGAR PLANTILLA:{' '}
-                  </label>
-            <div className="grid grid-cols-3 gap-1 text-xs">
-             <div className="flex gap-1">
-                   <textarea
-                    value={recetaTexto}
-                    onChange={(e) => setRecetaTexto(e.target.value)}
-                    className="w-60 h-9 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                    placeholder="---"
-                    rows={3}
-                  />
-                 <div className="ml-1">
-                 <Button 
-                                type="button" 
-                                className="px-2 bg-[#9DD9EC] text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-2"
-                                onClick={() => {}} // Función vacía (no hace nada)
-                              ><Search className="w-5 h-5" />
-                                
-                              </Button>
+          <div className="p-6 space-y-6">
+           
+            {/* SECCIÓN 1: INFORMACIÓN DE LA RECETA */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#1a5784]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                INFORMACIÓN DE LA RECETA
+              </h3>
               
-              </div>  
-              </div>
-             
-              <div className="">
-                   <textarea
-                    value={recetaTexto}
-                    onChange={(e) => setRecetaTexto(e.target.value)}
-                    className="w-40 h-9 mb-2 ml-2 text-sm ml-10 border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                    placeholder="Copiar última receta"
-                    rows={3}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">Nº RECETA</label>
+                  <Input
+                    value="0001"
+                    readOnly
+                    className="w-full h-10 bg-gray-100 text-[#1a5784] font-bold border-[#007e8f]/30 rounded"
                   />
-              </div>
-              <div className="">
-                   <textarea
-                    value={recetaTexto}
-                    onChange={(e) => setRecetaTexto(e.target.value)}
-                    className="w-40 h-9 mb-2 text-sm ml-0 border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                    placeholder="Es plantilla"
-                    rows={3}
-                  />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-1 text-xs">
-            <div className="flex gap-2">
-            <label className="flex-1 block font-bold">
-                    CIUDAD :{' '}
-                  </label>
-                  <label className="flex-1 ml-10 mb-1 block font-bold">
-                    PROXIMA CITA:{' '}
-                  </label>
-                  <label className="flex-1 ml-9 block font-bold">
-                    SIGNOS DE ALARMA:{' '}
-                  </label>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">CARGAR PLANTILLA</label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={recetaTexto}
+                      onChange={(e) => setRecetaTexto(e.target.value)}
+                      className="flex-1 h-10 text-sm border-[#007e8f]/30 rounded"
+                      placeholder="Seleccione una plantilla"
+                    />
+                    <Button className="bg-[#007e8f]/20 text-[#007e8f] hover:bg-[#007e8f]/30 px-4">
+                      <Search className="w-4 h-4" />
+                    </Button>
                   </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-1 mb-1 text-xs">
-            <div className="flex gap-2">
-            <textarea
-                value={diagnosticoTexto}
-                onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                className="flex-1 w-full mb-3 h-7 text-sm border border-[#7cc4bc] mr-9 bg-[#4b6bb3]/10 rounded text-black"
-                placeholder="QUITO"
-                rows={3}
-              />
-              <textarea
-                value={diagnosticoTexto}
-                onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                className="flex-1 w-full mb-2  h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                placeholder="Próxima cita"
-                rows={3}
-                
-              />
-<CalendarCheck className="w-5 h-5" />
-              <textarea
-                value={diagnosticoTexto}
-                onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                className="flex-1 w-full mb-3 ml-9 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                placeholder="Signos de alarma"
-                rows={3}
-              />
-            </div>
-            
-            </div>
-
-            <div className="grid grid-cols-2 gap-1 text-xs">
-            <div className="flex gap-2">
-              <label className=" block font-bold">
-                ALERGIAS FARMACOLOGICAS:
-              </label>
-              <textarea
-                value={diagnosticoTexto}
-                onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                className="flex-1 w-full mb-3 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                placeholder=" No refiere alergias farmacológicas"
-                rows={3}
-              />
-            </div>
-            </div>
-            <div className="grid grid-cols-2 gap-1 text-xs">
-            <div className="flex gap-2">
-              <label className=" block font-bold">
-                DIAGNOSTICO CIE10:
-              </label>
-              <textarea
-                value={diagnosticoTexto}
-                onChange={(e) => setDiagnosticoTexto(e.target.value)}
-                className="flex-1 w-full mb-2 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-            </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2 text-xs">
-                <div className=""><label className="block font-bold ">PRESCRIPCION:{' '}</label></div>
-                <div className=""><label className="block font-bold ">CANTIDAD:{' '}</label></div>
-                <div className=""><label className="block font-bold ">INDICACION:{' '}</label></div>
-                <button onClick={() => console.log('Agregar nuevo registro')}
-                      className=" text-gray hover:text-[#FF5757] "
-                      title="Agregar una nueva prescripcion">
-                      <PlusCircle className="w-8 h-5" />
-                    </button>
-            </div>
-
-     <div className="grid grid-cols-5 gap-2 text-xs">
-      
-              {/* Selector de medicamento */}
-              <div>
-                <select
-                  value={medicamento}
-                  onChange={handleMedicamentoChange}
-                  className="w-full mb-3 h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                >
-                  <option value="">Seleccionar medicamento</option>
-                  <option value="Paracetamol 500 mg">Paracetamol 500 mg</option>
-                  <option value="Paracetamol 1 gramo">Paracetamol 1 gramo</option>
-                </select>
+                </div>
               </div>
 
-              {/* Stock disponible */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">COPIAR ÚLTIMA RECETA</label>
+                  <Input
+                    value={recetaTexto}
+                    onChange={(e) => setRecetaTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                    placeholder="Copia de receta anterior"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">ES PLANTILLA</label>
+                  <Input
+                    value={recetaTexto}
+                    onChange={(e) => setRecetaTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                    placeholder="Marcar si es plantilla"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 2: UBICACIÓN Y CITA */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#007e8f]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                DATOS DE LOCALIZACIÓN
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">CIUDAD</label>
+                  <Input
+                    value={diagnosticoTexto}
+                    onChange={(e) => setDiagnosticoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                    placeholder="QUITO"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    PRÓXIMA CITA
+                  </label>
+                  <Input
+                    value={diagnosticoTexto}
+                    onChange={(e) => setDiagnosticoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                    placeholder="Próxima cita"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    SIGNOS DE ALARMA
+                  </label>
+                  <Input
+                    value={diagnosticoTexto}
+                    onChange={(e) => setDiagnosticoTexto(e.target.value)}
+                    className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                    placeholder="Signos de alarma"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 3: MEDICAMENTOS */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#3aa7aa]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <Pill className="w-5 h-5" />
+                PRESCRIPCIÓN DE MEDICAMENTOS
+              </h3>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block font-bold text-[#1a5784] text-sm mb-2">SELECCIONAR MEDICAMENTO</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={medicamento}
+                      onChange={handleMedicamentoChange}
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded px-3"
+                    >
+                      <option value="">-- Seleccionar medicamento --</option>
+                      <option value="Paracetamol 500 mg">Paracetamol 500 mg</option>
+                      <option value="Paracetamol 1 gramo">Paracetamol 1 gramo</option>
+                    </select>
+                  </div>
+                </div>
+
+                {advertencia && (
+                  <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 flex gap-2 items-start">
+                    <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-yellow-800">{advertencia}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-[#007e8f] font-semibold">STOCK ACTUAL</label>
+                    <Input
+                      value={stockActual}
+                      readOnly
+                      className="w-full h-10 bg-blue-50 text-[#007e8f] font-bold border-[#007e8f]/30 rounded"
+                      placeholder="Stock actual"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-[#007e8f] font-semibold">DIAGNÓSTICO</label>
+                    <Input
+                      value={diagnosticoTexto}
+                      onChange={(e) => setDiagnosticoTexto(e.target.value)}
+                      className="w-full h-10 text-sm border-[#007e8f]/30 rounded"
+                      placeholder="Código CIE10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 4: INDICACIONES Y OBSERVACIONES */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#7cc4bc]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                INSTRUCCIONES
+              </h3>
+
               <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">PRESCRIPCIÓN</label>
                 <textarea
-                  value={stockActual}
-                  readOnly
-                  placeholder="Stock"
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
+                  value={presTexto}
+                  onChange={(e) => setPresTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Indicaciones detalladas"
                   rows={3}
                 />
               </div>
-        {/* Advertencia */}
-        {advertencia && (
-                <div className="col-span-1 text-red-600 text-xs mt-1">{advertencia}</div>
-              )}
-              {/* Otro campo (ej: indicaciones) */}
+
               <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">RECOMENDACIONES</label>
                 <textarea
-                  placeholder="Indicaciones"
-                  className="w-full h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
+                  value={recomendacionTexto}
+                  onChange={(e) => setRecomendacionTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Recomendaciones adicionales"
                   rows={3}
                 />
               </div>
 
-      
-    </div>
-
-            
-            {/*otro bloque deita, obs, interconsulta*/}
-            
-            {/*Ultimo grupo */}
-            <div className=" flex gap-2 ">
-              <label className="block font-bold">RECOMENDACION NO FARMACOLOGICA:</label>
-              <textarea
-                value={recomendacionTexto}
-                onChange={(e) => setRecomendacionTexto(e.target.value)}
-                className="w-40 h-7 mb-3 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
+              <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">OBSERVACIONES</label>
+                <textarea
+                  value={obsTexto}
+                  onChange={(e) => setObsTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Notas importantes"
+                  rows={3}
+                />
+              </div>
             </div>
-            <div className="flex gap-2">
-              <label className="block font-bold">
-                OBSERVACIONES:{' '}
-              </label>
-              <textarea
-                value={obsTexto}
-                onChange={(e) => setObsTexto(e.target.value)}
-                className="w-2xl h-7 text-sm border border-[#7cc4bc] bg-[#4b6bb3]/10 rounded text-black"
-                rows={3}
-              />
-              <br/>
+
+            {/* SECCIÓN 5: INDICACIONES */}
+            <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#FF6B6B]">
+              <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                INDICACIONES FINALES
+              </h3>
+
+              <div>
+                <label className="block font-bold text-[#1a5784] text-sm mb-2">INDICACIONES</label>
+                <textarea
+                  value={indicaTexto}
+                  onChange={(e) => setIndicaTexto(e.target.value)}
+                  className="w-full h-20 text-sm border border-[#007e8f]/30 rounded p-3 focus:ring-2 focus:ring-[#007e8f]/60 text-black resize-none"
+                  placeholder="Instrucciones finales para el paciente"
+                  rows={3}
+                />
+              </div>
             </div>
-              <div className="">
-              <label className="mt-10 block font-bold ">
-                FIRMA Y SELLO:{' '}
-              </label>
-             </div>
-
-
-             <div className="">
-              <label className="block font-bold flex justify-end">
-                <div className="grid grid-cols-2 right-11 top-28 z-20 ">
-                            <Button 
-                                type="button" 
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-2"
-                                onClick={() => {}} // Función vacía (no hace nada)
-                              >
-                                
-                                EDITAR
-                              </Button>
-                              <Button 
-                                type="button" 
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 mr-2"
-                                onClick={() => {}} // Función vacía (no hace nada)
-                              >
-                                GUARDAR
-                              </Button>
-                  
-                </div>{' '}
-              </label>
-             </div>
-            
-            
-            
           </div>
         </motion.div>
       </main>

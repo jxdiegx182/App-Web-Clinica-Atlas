@@ -438,7 +438,7 @@ const totalTerapiaIntensiva = mains.filter(
           className="bg-white shadow p-1"
         >
           <div className="max-w-9xl mx-auto flex justify-between items-center">
-            <div className="text-[#008C8C] font-bold text-3xl -translate-x-[-80px] text-center  w-full">
+            <div className="text-[#69c9ba] font-bold text-3xl -translate-x-[-80px] text-center  w-full">
               RACK HOSPITALARIO
             </div>
             <div className="flex items-center gap-2">
@@ -450,7 +450,7 @@ const totalTerapiaIntensiva = mains.filter(
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-[#007e8f] bg-[#007e8f] text-white hover:bg-[#007e8f]"
+                className="border-[#69c9ba] bg-[#69c9ba] text-white hover:bg-[#76c4d5]"
               >
                 <LogOut className=" w-4 h-4 mr-2" /> Salir
               </Button>
@@ -604,7 +604,7 @@ const totalTerapiaIntensiva = mains.filter(
           <div className="flex flex-col items-end gap-4">
             <div className="flex gap-4">
               <Button
-                className="text-white h-10 px-5 rounded-xl bg-[#007e8f] hover:bg-[#16324a] shadow-md"
+                className="text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
                 onClick={() => navigate('/Parte-Operatorio')}
               >
                 <Activity className="text-white w-4 h-4 mr-2" />
@@ -612,7 +612,7 @@ const totalTerapiaIntensiva = mains.filter(
               </Button>
 
               <Button
-                className=" text-white h-10 px-5 rounded-xl bg-[#007e8f] hover:bg-[#16324a] shadow-md"
+                className=" text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
                 onClick={() => navigate('/admision')}
               >
                 <Stethoscope className="w-4 h-4 mr-2" />
@@ -642,7 +642,7 @@ const totalTerapiaIntensiva = mains.filter(
         <div className="max-w-9xl mx-auto p-2">
           <Card className="border border-[#007e8f]/30 overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-[#007e8f] text-white uppercase text-xs tracking-wider">
+              <thead className="bg-[#76c4d5] text-white uppercase text-xs tracking-wider">
                 {/*turqueza encabezado */}
                 <tr>
                   <th

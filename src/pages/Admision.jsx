@@ -75,6 +75,7 @@ function Admision() {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [docId, setDocId] = useState(null);
+  const [ingresoHistorial, setIngresoHistorial] = useState([]);
 //handleMainChange
   const handleMainChange = (e) => {
     const { name, value } = e.target;
@@ -186,9 +187,21 @@ function Admision() {
       return;
     }
     try {
+      // Actualizar documento principal
       await updateDoc(doc(db, 'admisiones', docId), {
         admitido: true,
         admittedAt: serverTimestamp(),
+      });
+
+      // Guardar en historial de ingresos (sub-colección)
+      const ingresoHistorialRef = collection(db, 'admisiones', docId, 'ingreso_historial');
+      await addDoc(ingresoHistorialRef, {
+        admitido: true,
+        admittedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        servicio: mainData.servicio || '',
+        medico: mainData.medico || '',
+        ubicacion: mainData.ubicacion || {},
       });
 
       alert('✅ Paciente admitido correctamente');
@@ -229,6 +242,35 @@ function Admision() {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // 🆕 Cargar historial de ingresos desde Firebase
+  useEffect(() => {
+    const loadIngresoHistorial = async () => {
+      if (!docId) return;
+
+      try {
+        const ingresoHistorialRef = collection(db, 'admisiones', docId, 'ingreso_historial');
+        const q = query(ingresoHistorialRef, orderBy('admittedAt', 'desc'));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          console.log('📋 Historial de Ingresos: No hay registros');
+          setIngresoHistorial([]);
+          return;
+        }
+
+        const historial = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('✅ Historial de Ingresos cargado:', historial);
+        setIngresoHistorial(historial);
+      } catch (error) {
+        console.error('Error al cargar historial de ingresos:', error);
+      }
+    };
+    loadIngresoHistorial();
+  }, [docId]);
 
   const handleDayClick = (day) => {
     navigate(`/cita?day=${day}&year=${selectedYear}`);

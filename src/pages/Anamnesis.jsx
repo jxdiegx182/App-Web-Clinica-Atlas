@@ -142,7 +142,7 @@ const Anamnesis = () => {
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        font-family: 'DM Sans', sans-serif;
+         font-family: 'Montserrat';
         background: var(--bg);
         color: var(--text);
         min-height: 100vh;
@@ -159,7 +159,7 @@ const Anamnesis = () => {
         box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
       }
       .app-headerList {
-        background: #ffffff;
+        
         padding: 22px 30px;
         display: flex;
         justify-content: space-between;
@@ -171,12 +171,12 @@ const Anamnesis = () => {
       }
       .app-header h1 {
         font-family: 'Montserrat';
-        font-size: 1.7rem;
+        font-size: 1.6rem;
         color: #595759;
         letter-spacing: -0.02em;
       }
       .app-header p {
-        font-size: 0.78rem;
+        font-size: 0.69rem;
         color: rgb(33, 63, 92);
         margin-top: 2px;
         font-weight: 300;
@@ -188,8 +188,8 @@ const Anamnesis = () => {
         border: 1px solid #595759;
         color: #ffffff;
         padding: 8px 18px;
-        border-radius: 90px;
-        font-size: 0.02rem;
+        border-radius: 6px;
+        font-size: 0.01rem;
         font-weight: 100;
         letter-spacing: 0.01em;
       }
@@ -204,20 +204,20 @@ const Anamnesis = () => {
       }
       .progress-nav::-webkit-scrollbar { display: none; }
       .nav-tab {
-        padding: 14px 20px;
-        font-size: 0.82rem;
+        padding: 14px 2px;
+        font-size: 0.69rem;
         font-weight: 500;
         color: #595759;
         cursor: pointer;
-        border-bottom: 3px solid transparent;
+        border-bottom: 2px solid transparent;
         white-space: nowrap;
         transition: all 0.2s;
         display: flex;
         align-items: center;
         gap: 8px;
       }
-      .nav-tab:hover { color: #fff; }
-      .nav-tab.active { color: #ffffff; border-bottom-color: #64b5f6; }
+      .nav-tab:hover { color: #4ea685; }
+      .nav-tab.active { color: #4ea685; border-bottom-color: #64b5f6; }
       .nav-tab.completed { color: #80cbc4; }
       .nav-tab.completed .tab-num { background: #00838f; color: white; }
       .tab-num {
@@ -225,7 +225,7 @@ const Anamnesis = () => {
         border-radius: 50%;
         background: rgb(255, 255, 255);
         color: rgba(25, 79, 146, 0.8);
-        font-size: 0.7rem;
+        font-size: 0.69rem;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -233,13 +233,13 @@ const Anamnesis = () => {
         transition: all 0.2s;
       }
       .nav-tab.active .tab-num {
-        background: #4ea685;
+        background: #24517b;
         color: #ffffff;
       }
       .app-body {
         max-width: 960px;
         margin: 0 auto;
-        padding: 40px 24px 80px;
+        padding: 30px 24px 80px;
       }
       .patient-card {
         background: var(--surface2);
@@ -266,7 +266,7 @@ const Anamnesis = () => {
       .section-card:hover { box-shadow: var(--shadow-hover); }
       .section-card.collapsed .section-body { display: none; }
       .section-header {
-        background: var(--header-gradient);
+        background: #595759;
         padding: 18px 28px;
         display: flex;
         align-items: center;
@@ -277,10 +277,10 @@ const Anamnesis = () => {
       .section-num {
         width: 36px; height: 36px;
         border-radius: 10px;
-        background: rgba(118,196,213,0.9);
-        color: white;
+        background: #76c4d5;
+        color: #ffffff;
         font-family: 'Montserrat';
-        font-size: 1.1rem;
+        font-size: 0.69rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -288,13 +288,13 @@ const Anamnesis = () => {
       }
       .section-title {
         font-family: 'Montserrat';
-        font-size: 1.15rem;
-        color: #595759;
+        font-size: 0.99rem;
+        color: #ffffff;
         letter-spacing: -0.01em;
       }
       .section-subtitle {
-        font-size: 0.72rem;
-        color: #4EA685;
+        font-size: 0.69rem;
+        color: #ffffff;
         font-weight: 300;
         letter-spacing: 0.06em;
         text-transform: uppercase;
@@ -303,13 +303,13 @@ const Anamnesis = () => {
       .section-toggle {
         margin-left: auto;
         width: 28px; height: 28px;
-        background: #595759;
+        background: #ffffff;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 1rem;
+        color: #595759;
+        font-size: 0.69rem;
         transition: transform 0.25s;
       }
       .section-card.collapsed .section-toggle { transform: rotate(-90deg); }
@@ -324,7 +324,7 @@ const Anamnesis = () => {
       }
       .field-label {
         display: block;
-        font-size: 0.78rem;
+        font-size: 0.69rem;
         font-weight: 600;
         color: #595759;
         text-transform: uppercase;
@@ -338,7 +338,7 @@ const Anamnesis = () => {
         border-radius: 10px;
         padding: 11px 14px;
         font-family: 'Montserrat';
-        font-size: 0.92rem;
+        font-size: 0.69rem;
         color: var(--text);
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
@@ -392,18 +392,18 @@ const Anamnesis = () => {
       }
       .check-mark {
         color: white;
-        font-size: 0.7rem;
+        font-size: 0.69rem;
         display: none;
       }
       .check-item.checked .check-mark { display: block; }
       .check-label {
-        font-size: 0.83rem;
+        font-size: 0.69rem;
         font-weight: 500;
         color: var(--text);
         line-height: 1.3;
       }
       .check-num {
-        font-size: 0.7rem;
+        font-size: 0.69rem;
         color: var(--text-muted);
       }
       .sistemas-grid {
@@ -420,7 +420,7 @@ const Anamnesis = () => {
       }
       .sistema-name {
         padding: 10px 12px;
-        font-size: 0.75rem;
+        font-size: 0.69rem;
         font-weight: 600;
         text-align: center;
         background: #76c4d52c;
@@ -439,7 +439,7 @@ const Anamnesis = () => {
       .sis-btn {
         flex: 1;
         padding: 10px 8px;
-        font-size: 0.72rem;
+        font-size: 0.69rem;
         font-weight: 700;
         text-align: center;
         cursor: pointer;
@@ -467,14 +467,14 @@ const Anamnesis = () => {
         text-align: center;
         border-top: 3px solid var(--accent-light);
       }
-      .vital-icon { font-size: 1.5rem; margin-bottom: 8px; }
-      .vital-name { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
+      .vital-icon { font-size: 0.69rem; margin-bottom: 8px; }
+      .vital-name { font-size: 0.69rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
       .vital-input {
         width: 100%;
         border: 1.5px solid var(--border);
         border-radius: 8px;
         padding: 8px 10px;
-        font-size: 1.1rem;
+        font-size: 0.69rem;
         font-weight: 600;
         text-align: center;
         background: white;
@@ -709,15 +709,8 @@ const Anamnesis = () => {
 
   return (
     <>
-      <header className="app-header">
-        <div>
-          <h1>Anamnesis Clínica</h1>
-          <p>SNS-MSP · HCU-form.003 · 2008</p>
-        </div>
-        <span className="">Historia Clínica</span>
-      </header>
-
-      <nav className="header-badge app-headerList">
+     
+      <nav className="app-headerList bg-gradient-to-br from-[#76c4d5]/20 via-[#EAF4FB] to-[#76c4d5]">
         {[{ id: 's0', num: '★', label: 'Paciente' },
           { id: 's1', num: '1', label: 'Motivo' },
           { id: 's2', num: '2', label: 'Antec. Personales' },
