@@ -330,6 +330,7 @@ const MedicalModulePanel = () => {
   const [moduloActivo, setModuloActivo] = useState('');
   const [activeModalKey, setActiveModalKey] = useState(null);
   const [latestVitals, setLatestVitals] = useState(null);
+  const [latestIngresos, setLatestIngresos] = useState(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setTime(new Date()), 1000);
@@ -386,6 +387,33 @@ const MedicalModulePanel = () => {
 
     loadLatestVitalSigns();
   }, [mainId]);
+
+ // 🆕 Cargar TODOS los ingresos admisiones desde Firebase
+  useEffect(() => {
+    const loadLatestIngresos = async () => {
+      if (!mainId) return;
+
+      try {
+        const historialAdmisionesRef = collection(db, 'admisiones', mainId, 'ingreso_historial');
+        const que = query(historialAdmisionesRef, orderBy('createdAt', 'desc'));
+        const snapshotIngreso = await getDocs(que);
+
+        if (snapshotIngreso.empty) {
+          console.log('📊 Módulo Médico: No hay ingresos guardados');
+          return;
+        }
+
+        const todosIngresos = snapshotIngreso.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        console.log('✅ Módulo Médico: Todos los ingresos cargados:', todosIngresos);
+        setLatestIngresos(todosIngresos);
+      } catch (error) {
+        console.error('❌ Error cargando ingresos en MedicalModule:', error);
+      }
+    };
+
+    loadLatestIngresos();
+  }, [mainId]);
+
 
   useEffect(() => {
     if (!admisiones?.createdAt) return;
@@ -510,7 +538,7 @@ const MedicalModulePanel = () => {
             <div className=" text-white p-2 flex items-center justify-between bg-gradient-to-r from-[#595759] to-[#7a7a7d]/40">
 
               <div className="px-4 py-3 border-b border-slate-200 ">
-                <h3 className="text-[#ffffff] font-bold text-sm mb-3 flex items-center gap-2">
+                <h3 className="text-[#ffffff] font-bold text-xl mb-3 flex items-center gap-2">
                   <Stethoscope className="w-4 h-4" />HISTORIAL DE INGRESOS
                 </h3>
               </div>
@@ -518,14 +546,20 @@ const MedicalModulePanel = () => {
 
             <div className="overflow-y-auto max-h-[290px] pr-1 bg-white">
               <div className="p-2 space-y-1">
-                <div className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold">
-                  <p> {admisiones?.admittedAt ? new Date(admisiones.admittedAt.toDate?.() || admisiones.admittedAt).toLocaleDateString('es-ES') : 'No Reg'}</p>
-                  
-                </div>
+                {latestIngresos && Array.isArray(latestIngresos) && latestIngresos.length > 0 ? (
+                  latestIngresos.map((ingreso, index) => (
+                    <div key={ingreso.id || index} className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold hover:bg-[#007e8f]/5 transition">
+                      <p className="text-sm">{new Date(ingreso.createdAt?.toDate?.() || ingreso.createdAt).toLocaleDateString('es-ES')}</p>
+                      {ingreso.nota && <p className="text-[10px] mt-1 text-gray-600">{ingreso.nota}</p>}
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold">
+                    <p>No hay ingresos registrados</p>
+                  </div>
+                )}
               </div>
-
-                   
-
+  
             </div>
 
 
