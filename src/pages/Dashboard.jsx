@@ -10,6 +10,7 @@ import {
   where,
   orderBy,
   updateDoc,
+  limit,
 } from 'firebase/firestore';
 import GraficoPastelServicio from '../components/GraficoPastelServicio';
 import { motion } from 'framer-motion';
@@ -60,7 +61,7 @@ const Dashboard = () => {
   const [mains, setMains] = useState([]);
   const [alertasEnfermeria, setAlertasEnfermeria] = useState({}); // Alertas activas por paciente
   const [fechaHoraActual, setFechaHoraActual] = useState(new Date()); //* aqui es la fecha comun*/
-
+  const [vitalSignsByPatient, setVitalSignsByPatient] = useState({}); // Signos vitales por paciente
   // ========== DEFINICIÓN DE ESTADOS DE PACIENTES ==========
   const estadosPaciente = {
     'Espera': { color: 'bg-gray-400', text: 'text-gray-700' },
@@ -425,6 +426,83 @@ const totalTerapiaIntensiva = mains.filter(
   };
   //++++++++++++++++++++++++++++++++++++
 
+
+const resumenVitales = [
+  { label: 'P.A.', value: '--' },
+  { label: 'PULSO', value: '-- lpm' },
+  { label: 'TEMP.', value: '-- C' },
+  { label: 'SAT O2', value: '--%' },
+  { label: 'PESO', value: '-- KG' },
+  { label: 'F.R.', value: '--/min' },
+];
+
+ // 🆕 Cargar últimos signos vitales desde Firebase para cada paciente (en tiempo real)
+  useEffect(() => {
+    if (!mains || mains.length === 0) {
+      console.log('📊 No hay pacientes para cargar signos vitales');
+      return;
+    }
+
+    const unsubscribers = [];
+
+    mains.forEach((main) => {
+      try {
+        const vitalSignsRef = collection(db, 'admisiones', main.id, 'vital_signs');
+        const q = query(vitalSignsRef, orderBy('createdAt', 'desc'), limit(1));
+
+        // Usar onSnapshot para escuchar cambios en tiempo real
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            if (!snapshot.empty) {
+              const latestVital = snapshot.docs[0].data();
+              console.log(`✅ Signos vitales cargados para ${main.nombre}:`, latestVital);
+              
+              // Actualizar el estado solo si hay datos
+              setVitalSignsByPatient((prev) => ({
+                ...prev,
+                [main.id]: latestVital,
+              }));
+            } else {
+              console.log(`📊 No hay signos vitales para ${main.nombre}`);
+            }
+          },
+          (error) => {
+            console.error(`❌ Error escuchando signos vitales para ${main.nombre}:`, error);
+          }
+        );
+
+        unsubscribers.push(unsubscribe);
+      } catch (error) {
+        console.error(`❌ Error configurando listener para ${main.nombre}:`, error);
+      }
+    });
+
+    // Limpiar los listeners cuando se desmonta o cambian los mains
+    return () => {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [mains]);
+
+
+  // 🆕 Generar dinámicamente el resumen vitales desde Firebase
+  const getDynamicResumenVitales = (mainId) => {
+    const patientVitals = vitalSignsByPatient[mainId];
+    
+    if (patientVitals) {
+      return [
+        { label: 'P.A.', value: patientVitals.presion || '--' },
+        { label: 'PULSO', value: `${patientVitals.pulso || '--'} lpm` },
+        { label: 'TEMP.', value: `${patientVitals.temperatura || '--'} C` },
+        { label: 'SAT O2', value: `${patientVitals.satO2 || '--'}%` },
+        { label: 'PESO', value: `${patientVitals.peso || '--'} KG` },
+        { label: 'F.R.', value: `${patientVitals.fr || '--'}/min` },
+      ];
+    }
+    
+    return resumenVitales; // Fallback a valores por defecto
+  };
+
   return (
     <>
       <Helmet>
@@ -639,9 +717,9 @@ const totalTerapiaIntensiva = mains.filter(
         {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
         {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
 
-        <div className="max-w-9xl mx-auto p-2">
-          <Card className="border border-[#007e8f]/30 overflow-hidden">
-            <table className="w-full text-sm">
+        <div className="max-w-9xl mx-auto p-2 pb-72">
+          <Card className="border border-[#007e8f]/30 overflow-visible">
+            <table className="w-full text-sm relative">
               <thead className="bg-[#76c4d5] text-white uppercase text-xs tracking-wider">
                 {/*turqueza encabezado */}
                 <tr>
@@ -681,9 +759,6 @@ const totalTerapiaIntensiva = mains.filter(
                   >
 
 
-
-
-
                     {/**Aqui inicia el encabezado del dashboard */}
                     <td className="px-4 py-3 text-center text-[#000d5b] bg-[#f1f5f9] ">
                       {main.fechaIngreso}
@@ -704,34 +779,32 @@ const totalTerapiaIntensiva = mains.filter(
 
                         {/* Tooltip */}
                         <div
-                          className="
-        pointer-events-none
-        absolute bottom-full left-1/2 z-50
-        w-64 -translate-x-[-80px] -translate-y-[-60px] 
-        scale-95 opacity-0
-        group-hover:scale-100 group-hover:opacity-90
-        transition-all duration-200
-        rounded-xl bg-white border border-gray-300
-        shadow-xl p-3 text-xs text-gray-800
-      "
+                          className="pointer-events-none absolute top-full left-1/2 z-[100] w-80 -translate-x-1/2 mt-2
+        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 rounded-lg bg-white border border-gray-200
+        shadow-2xl p-4 text-xs text-gray-800"
                         >
-                          <p className="font-semibold text-[#007e8f] mb-2 flex items-center gap-1">
+                          <p className="font-semibold text-[#007e8f] mb-3 flex items-center gap-1">
                             🩺 Signos vitales
                           </p>
 
-                          <ul className="space-y-1/2">
-                            <li> Presión Arterial: --</li>
-                            <li>🌡️ Temperatura: --</li>
-                            <li>🩺 Frecuencia Respiratoria: --</li>
-                          </ul>
+                        
+                           <div className="bg-gradient-to-br from-[#4EA685]/20 to-[#76C4D5]/30 rounded-lg p-3 text-sm text-gray-700">
+                <h3 className="font-semibold text-slate-700 mb-2 text-center">ÚLTIMOS SIGNOS VITALES</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {getDynamicResumenVitales(main.id).map((vital) => (
+                    <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700 text-center border border-gray-200">
+                      <p className="text-[9px] font-semibold uppercase text-[#007e8f]">{vital.label}</p>
+                      <p className="text-xs font-bold text-gray-800">{vital.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
                           {/* Flechita */}
                           <div
-                            className="
-          absolute left-1 top-full
-          -translate-x-4 -translate-y-10
+                            className="absolute left-1/2 -translate-x-1/2 -top-2
           w-3 h-3 bg-white
-          border-r border-b border-gray-300
+          border-l border-t border-gray-200
           rotate-45
         "
                           />

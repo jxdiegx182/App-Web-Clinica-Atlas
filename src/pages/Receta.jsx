@@ -78,7 +78,7 @@ const Receta = () => {
   const [advertencia, setAdvertencia] = useState("");
   const stock = {
     "Paracetamol 500 mg": 60,
-    "Paracetamol 1 gramo": 10,
+    "Amoxisilina 1 gramo": 10,
   };
 
   //los medicamentos y el stock 
@@ -419,6 +419,10 @@ useEffect(() => {
               </div>
             </div>
 
+
+
+
+
             {/* SECCIÓN 3: MEDICAMENTOS */}
             <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#3aa7aa]">
               <h3 className="font-bold text-[#1a5784] text-sm flex items-center gap-2">
@@ -433,11 +437,11 @@ useEffect(() => {
                     <select
                       value={medicamento}
                       onChange={handleMedicamentoChange}
-                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 rounded px-3"
+                      className="flex-1 h-10 text-sm border border-[#007e8f]/30 text-[#595759] rounded px-3"
                     >
                       <option value="">-- Seleccionar medicamento --</option>
                       <option value="Paracetamol 500 mg">Paracetamol 500 mg</option>
-                      <option value="Paracetamol 1 gramo">Paracetamol 1 gramo</option>
+                      <option value="Amoxisilina 1 gramo">Amoxisilina 1 gramo</option>
                     </select>
                   </div>
                 </div>
@@ -469,9 +473,28 @@ useEffect(() => {
                       placeholder="Código CIE10"
                     />
                   </div>
+
+                  
+
                 </div>
+                <div className=" fsec-title text-[#76c4d5]">Medicamentos</div>
+      <table className="vtable text-[#76c4d5]">
+        <thead><tr><th>#</th><th>Medicamento (DCI)</th><th>Presentación</th><th>Dosis</th><th>Frec.</th><th>Días</th></tr></thead>
+        <tbody>
+          <tr><td style={{textAlign:'center',fontWeight:800}}>1</td><td><input placeholder="Amoxicilina"/></td><td><input placeholder="Tableta"/></td><td><input placeholder="500mg" style={{width:65}}/></td><td><input placeholder="c/8h" style={{width:60}}/></td><td><input type="number" placeholder="7" style={{width:50}}/></td></tr>
+          <tr><td style={{textAlign:'center',fontWeight:800}}>2</td><td><input placeholder="Paracetamol"/></td><td><input placeholder="Tableta"/></td><td><input placeholder="1g" style={{width:65}}/></td><td><input placeholder="c/6h" style={{width:60}}/></td><td><input type="number" placeholder="5" style={{width:50}}/></td></tr>
+        </tbody>
+      </table>
+      <div className="frow g1"><div className="field"><label>Indicaciones</label><textarea rows="2" placeholder="Tomar con alimentos..."></textarea></div></div>
+
+
               </div>
+              
             </div>
+
+
+
+
 
             {/* SECCIÓN 4: INDICACIONES Y OBSERVACIONES */}
             <div className="bg-[#f8f9fa] rounded-lg p-5 space-y-4 border-l-4 border-[#7cc4bc]">
@@ -534,6 +557,34 @@ useEffect(() => {
             </div>
           </div>
         </motion.div>
+
+
+
+
+
+
+
+
+
+<div style={{background:'var(--ctxl)',border:'1px solid var(--ctl)',borderRadius:8,padding:'9px 13px',marginBottom:13,fontSize:11,color:'var(--ctdd)',fontWeight:600}}>⚕️ Prescripción obligatoria por DCI — Acuerdo MSP 0031-2020</div>
+      <div className="frow g2">
+        <div className="field"><label>N° Receta</label><input defaultValue="REC-20260303-4821" readOnly style={{background:'var(--cbg)',fontWeight:700}}/></div>
+        <div className="field"><label>Alergias <span className="req">*</span></label><input defaultValue="Sin alergias conocidas"/></div>
+      </div>
+      <div className="frow g1"><div className="field"><label>Diagnóstico CIE-10 <span className="req">*</span></label><input placeholder="I10 — Hipertensión esencial"/></div></div>
+      
+      
+      
+
+
+
+
+
+
+
+
+
+
       </main>
     </div>
   );

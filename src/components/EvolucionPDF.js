@@ -8,13 +8,7 @@ import autoTable from 'jspdf-autotable';
   evolucionTexto = '',
   analisisTexto = '',
   enfermeriaTexto = '',
-  medicamentoTexto = '',
-  viaTexto = '',
-  frecuenciaTexto = '',
-  presTexto = '',
-  adminiTexto = '',
-  cantidadTexto = '',
-  indicaTexto = '',
+  medicamentos = [],
   insuTexto = '',
   indiTexto = '',
   freTexto = '',
@@ -154,6 +148,15 @@ import autoTable from 'jspdf-autotable';
 
   // Tabla de prescripciones
   const filasVacias = Array.from({ length: 35 }, () => ['', '']);
+  
+  // Preparar filas de medicamentos
+  const filasMedicamentos = medicamentos.map((med) => [
+    `${med.medicamento} ${med.presentacion} - ${med.via} - ${med.frecuencia}`,
+    `${med.cantidad} - ${med.indicacion}`,
+  ]);
+
+  const filasCompletas = [...filasMedicamentos, ...filasVacias.slice(0, Math.max(0, 35 - filasMedicamentos.length))];
+
   autoTable(doc, {
     startY: 31,
     margin: { left: 120 }, // <-- mueve la tabla hacia la derecha (ajusta este valor según lo que necesites)
@@ -174,7 +177,7 @@ import autoTable from 'jspdf-autotable';
       fontStyle: 'semibold',
       fontSize: 6,
     },
-    body: filasVacias,
+    body: filasCompletas,
     bodyStyles: {
       halign: 'center',
       fontSize: 6,

@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Stethoscope, Pill, Droplet, UtensilsCrossed, Heart, FileText, AlertCircle, Clock, Printer } from 'lucide-react';
+import { PlusCircle, Stethoscope, Pill, Droplet, UtensilsCrossed, Heart, FileText, AlertCircle, Clock, Printer, Save } from 'lucide-react';
 import { EvolucionPDF } from '../components/EvolucionPDF';
 import { db } from '../firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 
 const AllergyWarning = ({ allergy }) => (
@@ -23,54 +23,103 @@ const Evolucion = () => {
   const [admisiones, setAdmisiones] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
+  // Estados para medicamentos dinámicos
+  const [medicamentos, setMedicamentos] = useState([
+    {
+      id: 1,
+      medicamento: '',
+      via: '',
+      frecuencia: '',
+      presentacion: '',
+      administra: '',
+      cantidad: '',
+      indicacion: '',
+    },
+  ]);
+  const [nextMedicamentoId, setNextMedicamentoId] = useState(2);
   const [evolucionTexto, setEvolucionTexto] = useState('');
   const [analisisTexto, setAnalisisTexto] = useState('');
   const [enfermeriaTexto, setEnfermeriaTexto] = useState('');
-  const [medicamentoTexto, setMedicamentoTexto] = useState('');
-  const [viaTexto, setViaTexto] = useState('');
-  const [frecuenciaTexto, setFrecuenciaTexto] = useState('');
-  const [presTexto, setPresTexto] = useState('');
-  const [adminiTexto, setAdminiTexto] = useState('');
-  const [cantidadTexto, setCantidadTexto] = useState('');
-  const [indicaTexto, setIndicaTexto] = useState('');
   const [insuTexto, setInsuTexto] = useState('');
   const [indiTexto, setIndiTexto] = useState('');
   const [freTexto, setFreTexto] = useState('');
   const [dietaTexto, setDietaTexto] = useState('');
+  // Funciones para manejar medicamentos
+  const handleMedicamentoChange = (id, field, value) => {
+    setMedicamentos((prev) =>
+      prev.map((med) => (med.id === id ? { ...med, [field]: value } : med))
+    );
+  };
+  const addMedicamento = () => {
+    setMedicamentos((prev) => [
+      ...prev,
+      {
+        id: nextMedicamentoId,
+        medicamento: '',
+        via: '',
+        frecuencia: '',
+        presentacion: '',
+        administra: '',
+        cantidad: '',
+        indicacion: '',
+      },
+    ]);
+    setNextMedicamentoId((prev) => prev + 1);
+  };
+
+  const removeMedicamento = (id) => {
+    if (medicamentos.length > 1) {
+      setMedicamentos((prev) => prev.filter((med) => med.id !== id));
+    }
+  };
   const [obsTexto, setObsTexto] = useState('');
   const [interTexto, setInterTexto] = useState('');
-  const [signosTexto, setSignosTexto] = useState('');
+  
+  // Estado para signos vitales con turnos
+  const [signosVitales, setSignosVitales] = useState({
+    temperatura: { manana: '', tarde: '', noche: '' },
+    presionArterial: { manana: '', tarde: '', noche: '' },
+    frecuenciaCardiaca: { manana: '', tarde: '', noche: '' },
+    satO2: { manana: '', tarde: '', noche: '' },
+  });
+
+  // Función para actualizar signos vitales
+  const handleSignoVitalChange = (signo, turno, value) => {
+    setSignosVitales((prev) => ({
+      ...prev,
+      [signo]: {
+        ...prev[signo],
+        [turno]: value,
+      },
+    }));
+  };
+
   const [activTexto, setActivTexto] = useState('');
   const [obseTexto, setObseTexto] = useState('');
   const [examenTexto, setExamenTexto] = useState('');
-  const [condiTexto, setCondiTexto] = useState('ESTABLE');
-  const [alergiaTexto, setAlergiaTexto] = useState('SI');
-  const [obserTexto, setObserTexto] = useState('PENICILINA');
+  const [condiTexto, setCondiTexto] = useState('');
+  const [alergiaTexto, setAlergiaTexto] = useState('');
+  const [obserTexto, setObserTexto] = useState('');
   const [diagTexto, setDiagTexto] = useState('');
   const [codigoTexto, setCodigoTexto] = useState('');
   const [diagnosticoTexto, setDiagnosticoTexto] = useState('');
   const [codeTexto, setCodeTexto] = useState('');
+
+const [isSaving, setIsSaving] = useState(false);
 
 const handleGeneratePDF =() => {
   EvolucionPDF({
     evolucionTexto,
     analisisTexto,
     enfermeriaTexto,
-    medicamentoTexto,
-    viaTexto,
-    frecuenciaTexto,
-    presTexto,
-    adminiTexto,
-    cantidadTexto,
-    indicaTexto,
+    medicamentos,
     insuTexto,
     indiTexto,
     freTexto,
     dietaTexto,
     obsTexto,
     interTexto,
-    signosTexto,
+    signosVitales,
     activTexto,
     obseTexto,
     examenTexto,
@@ -84,6 +133,98 @@ const handleGeneratePDF =() => {
     admisiones,
     edad,
   });
+};
+
+const handleSaveEvolucion = async () => {
+  if (!mainId) {
+    toast({
+      title: "Error",
+      description: "No se pudo identificar el paciente",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsSaving(true);
+  try {
+    // Crear un ID único para cada registro de evolución basado en timestamp
+    const timestamp = new Date();
+    const formattedDate = timestamp.toISOString();
+    
+    // Datos a guardar en la subcolección
+    const evolucionData = {
+      // Sección Evaluación Principal
+      evolucion: evolucionTexto,
+      analisis: analisisTexto,
+      enfermeria: enfermeriaTexto,
+
+      // Medicamentos
+      medicamentos: medicamentos,
+
+      // Infusiones
+      infusiones: {
+        infusiones: insuTexto,
+        indicacion: indiTexto,
+        frecuencia: freTexto,
+      },
+
+      // Nutrición
+      nutricion: {
+        dieta: dietaTexto,
+        observacion: obsTexto,
+        interconsulta: interTexto,
+      },
+
+      // Signos Vitales
+      signosVitales: signosVitales,
+      actividades: activTexto,
+      observacionesSV: obseTexto,
+      examenesSolicitados: examenTexto,
+
+      // Estado y Alergias
+      condicion: condiTexto,
+      alergias: alergiaTexto,
+      especificarAlergias: obserTexto,
+
+      // Diagnósticos
+      diagnosticoPresuntivo: diagTexto,
+      codigoPresuntivo: codigoTexto,
+      diagnosticoDefinitivo: diagnosticoTexto,
+      codigoDefinitivo: codeTexto,
+
+      // Metadata
+      createdAt: serverTimestamp(),
+      formattedDate: formattedDate,
+      guardadoPor: 'Sistema', // Puedes cambiar esto para capturar el usuario actual
+    };
+
+    // Guardar en la subcolección clinical_evolution
+    const clinicalEvolutionRef = doc(
+      db,
+      'admisiones',
+      mainId,
+      'clinical_evolution',
+      `registro_${timestamp.getTime()}`
+    );
+
+    await setDoc(clinicalEvolutionRef, evolucionData);
+
+    toast({
+      title: "Éxito",
+      description: "Evolución clínica guardada correctamente",
+      variant: "success",
+    });
+
+  } catch (error) {
+    console.error('❌ Error al guardar evolución:', error);
+    toast({
+      title: "Error",
+      description: "No se pudo guardar la evolución clínica: " + error.message,
+      variant: "destructive",
+    });
+  } finally {
+    setIsSaving(false);
+  }
 };
 
   useEffect(() => {
@@ -171,14 +312,25 @@ useEffect(() => {
             </h1>
             <p className="text-xs md:text-sm text-gray-600 mt-1">{formattedDate} - {formattedTime}</p>
           </div>
-          <Button
-            onClick={handleGeneratePDF}
-            className="bg-[#76c4d5] hover:bg-[#69c9ba] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all"
-            title="EvolucionPDF"
-          >
-            <Printer size={18} />
-            <span className="hidden sm:inline">Imprimir PDF</span>
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleSaveEvolucion}
+              disabled={isSaving}
+              className="bg-[#28a745] hover:bg-[#218838] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all disabled:opacity-50"
+              title="Guardar Evolución"
+            >
+              <Save size={18} />
+              <span className="hidden sm:inline">{isSaving ? 'Guardando...' : 'Guardar'}</span>
+            </Button>
+            <Button
+              onClick={handleGeneratePDF}
+              className="bg-[#76c4d5] hover:bg-[#69c9ba] text-white px-6 py-2 rounded-lg shadow-md flex items-center gap-2 transition-all"
+              title="EvolucionPDF"
+            >
+              <Printer size={18} />
+              <span className="hidden sm:inline">Imprimir PDF</span>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -240,74 +392,129 @@ useEffect(() => {
 
             {/* SECCIÓN MEDICAMENTOS */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
-                <Pill size={24} className="text-[#007e8f]" />
-                Medicamentos
-              </h2>
-              <div className="grid grid-cols-7 gap-2 text-xs">
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">MEDICAMENTO</label>
-                  <Input
-                    value={medicamentoTexto}
-                    onChange={(e) => setMedicamentoTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
-                    <Droplet size={14} /> VIA ADM
-                  </label>
-                  <Input
-                    value={viaTexto}
-                    onChange={(e) => setViaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
-                    <Clock size={14} /> FRECUENCIA
-                  </label>
-                  <Input
-                    value={frecuenciaTexto}
-                    onChange={(e) => setFrecuenciaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">PRESENTACION</label>
-                  <Input
-                    value={presTexto}
-                    onChange={(e) => setPresTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">ADMINISTRA</label>
-                  <Input
-                    value={adminiTexto}
-                    onChange={(e) => setAdminiTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1">CANTIDAD</label>
-                  <Input
-                    value={cantidadTexto}
-                    onChange={(e) => setCantidadTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
-                    <AlertCircle size={14} /> INDICACION
-                  </label>
-                  <Input
-                    value={indicaTexto}
-                    onChange={(e) => setIndicaTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
+                  <Pill size={24} className="text-[#007e8f]" />
+                  Medicamentos
+                </h2>
+                <Button
+                  onClick={addMedicamento}
+                  className="bg-[#007e8f] hover:bg-[#005f7f] text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                >
+                  <PlusCircle size={18} />
+                  Agregar Medicamento
+                </Button>
               </div>
+
+              {/* Lista de medicamentos */}
+              {medicamentos.map((med, index) => (
+                <motion.div
+                  key={med.id}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-r from-[#f0f7f7] to-white p-4 rounded-lg border-2 border-[#7cc4bc] space-y-3"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-[#007e8f]">Medicamento #{index + 1}</span>
+                    {medicamentos.length > 1 && (
+                      <Button
+                        onClick={() => removeMedicamento(med.id)}
+                        variant="destructive"
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1"
+                      >
+                        Eliminar
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-2 text-xs">
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1">MEDICAMENTO</label>
+                      <Input
+                        value={med.medicamento}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'medicamento', e.target.value)
+                        }
+                        placeholder="Ej: Paracetamol"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <Droplet size={14} /> VIA ADM
+                      </label>
+                      <Input
+                        value={med.via}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'via', e.target.value)
+                        }
+                        placeholder="Ej: Oral"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <Clock size={14} /> FRECUENCIA
+                      </label>
+                      <Input
+                        value={med.frecuencia}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'frecuencia', e.target.value)
+                        }
+                        placeholder="Ej: C/8hrs"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1">PRESENTACION</label>
+                      <Input
+                        value={med.presentacion}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'presentacion', e.target.value)
+                        }
+                        placeholder="Ej: 500mg"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1">ADMINISTRA</label>
+                      <Input
+                        value={med.administra}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'administra', e.target.value)
+                        }
+                        placeholder="Ej: Enfermera"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1">CANTIDAD</label>
+                      <Input
+                        value={med.cantidad}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'cantidad', e.target.value)
+                        }
+                        placeholder="Ej: 2 tab"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <AlertCircle size={14} /> INDICACION
+                      </label>
+                      <Input
+                        value={med.indicacion}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'indicacion', e.target.value)
+                        }
+                        placeholder="Ej: Dolor"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
 
             {/* SECCIÓN INFUSIONES */}
@@ -388,28 +595,206 @@ useEffect(() => {
 
             {/* SECCIÓN SIGNOS VITALES */}
             <div className="space-y-4 pb-6 border-b-2 border-[#007e8f]/20">
-              <h2 className="text-lg font-bold text-[#595759] flex items-center gap-2">
-                <Heart size={24} className="text-[#FF6B6B]" />
+              <h2 className="text-lg font-bold text-[#8A2C2C] flex items-center gap-2">
+                <Heart size={24} className="text-[#D93636]" />
                 Signos Vitales y Actividades
               </h2>
-              <div className="space-y-3">
-                <div>
-                  <label className="block font-semibold text-[#595759] mb-1 flex items-center gap-2">
-                    <Heart size={18} className="text-[#FF6B6B]" />
-                    SIGNOS VITALES
-                  </label>
-                  <Input
-                    value={signosTexto}
-                    onChange={(e) => setSignosTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
-                  />
-                </div>
+
+              {/* Tabla de Signos Vitales */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse border-2 border-[#007e8f]">
+                  <thead>
+                    <tr className="bg-[#76c4d5] text-white">
+                      <th className="border-2 border-[#ffffff] px-4 py-2 text-left font-bold">Signo Vital</th>
+                      <th className="border-2 border-[#ffffff] px-4 py-2 text-center font-bold">Mañana</th>
+                      <th className="border-2 border-[#ffffff] px-4 py-2 text-center font-bold">Tarde</th>
+                      <th className="border-2 border-[#ffffff] px-4 py-2 text-center font-bold">Noche</th>
+                      <th className="border-2 border-[#ffffff] px-4 py-2 text-center font-bold">Unidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Temperatura */}
+                    <tr className="hover:bg-gray-100">
+                      <td className="border-2 border-[#ffffff] px-4 py-2 font-semibold text-[#1c3f6e]">
+                        <Heart size={16} className="inline mr-2 text-red-500" />
+                        Temperatura
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="36.5"
+                          step="0.1"
+                          value={signosVitales.temperatura.manana}
+                          onChange={(e) =>
+                            handleSignoVitalChange('temperatura', 'manana', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="36.8"
+                          step="0.1"
+                          value={signosVitales.temperatura.tarde}
+                          onChange={(e) =>
+                            handleSignoVitalChange('temperatura', 'tarde', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="36.6"
+                          step="0.1"
+                          value={signosVitales.temperatura.noche}
+                          onChange={(e) =>
+                            handleSignoVitalChange('temperatura', 'noche', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 text-[#595759] border-[#ffffff] px-4 py-2 text-center font-semibold">°C</td>
+                    </tr>
+
+                    {/* Presión Arterial */}
+                    <tr className="hover:bg-gray-100 bg-[#f0f7f7]">
+                      <td className="border-2 border-[#ffffff] px-4 py-2 font-semibold text-[#1c3f6e]">
+                        <Heart size={16} className="inline mr-2 text-red-500" />
+                        P. Arterial
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="text"
+                          placeholder="120/70"
+                          value={signosVitales.presionArterial.manana}
+                          onChange={(e) =>
+                            handleSignoVitalChange('presionArterial', 'manana', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="text"
+                          placeholder="118/72"
+                          value={signosVitales.presionArterial.tarde}
+                          onChange={(e) =>
+                            handleSignoVitalChange('presionArterial', 'tarde', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="text"
+                          placeholder="115/68"
+                          value={signosVitales.presionArterial.noche}
+                          onChange={(e) =>
+                            handleSignoVitalChange('presionArterial', 'noche', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 text-[#595759] border-[#ffffff] px-4 py-2 text-center font-semibold">mmHg</td>
+                    </tr>
+
+                    {/* Frecuencia Cardíaca */}
+                    <tr className="hover:bg-gray-100">
+                      <td className="border-2 border-[#ffffff] px-4 py-2 font-semibold text-[#1c3f6e]">
+                        <Heart size={16} className="inline mr-2 text-red-500" />
+                        Fr. Cardíaca
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="72"
+                          value={signosVitales.frecuenciaCardiaca.manana}
+                          onChange={(e) =>
+                            handleSignoVitalChange('frecuenciaCardiaca', 'manana', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="75"
+                          value={signosVitales.frecuenciaCardiaca.tarde}
+                          onChange={(e) =>
+                            handleSignoVitalChange('frecuenciaCardiaca', 'tarde', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="70"
+                          value={signosVitales.frecuenciaCardiaca.noche}
+                          onChange={(e) =>
+                            handleSignoVitalChange('frecuenciaCardiaca', 'noche', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="text-[#595759] border-2 border-[#ffffff] px-4 py-2 text-center font-semibold">lpm</td>
+                    </tr>
+
+                    {/* SAT O2 */}
+                    <tr className="hover:bg-gray-100 bg-[#f0f7f7]">
+                      <td className="border-2 border-[#ffffff] px-4 py-2 font-semibold text-[#1c3f6e]">
+                        <Heart size={16} className="inline mr-2 text-red-500" />
+                        SAT O₂
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="98"
+                          value={signosVitales.satO2.manana}
+                          onChange={(e) =>
+                            handleSignoVitalChange('satO2', 'manana', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="97"
+                          value={signosVitales.satO2.tarde}
+                          onChange={(e) =>
+                            handleSignoVitalChange('satO2', 'tarde', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="border-2 border-[#ffffff] px-4 py-2">
+                        <Input
+                          type="number"
+                          placeholder="98"
+                          value={signosVitales.satO2.noche}
+                          onChange={(e) =>
+                            handleSignoVitalChange('satO2', 'noche', e.target.value)
+                          }
+                          className="w-full h-8 text-sm border-2 border-[#ffffff] rounded text-black focus:border-[#007e8f]"
+                        />
+                      </td>
+                      <td className="text-[#595759] border-2 border-[#ffffff] px-4 py-2 text-center font-semibold">%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Actividades */}
+              <div className="space-y-3 mt-6">
                 <div>
                   <label className="block font-semibold text-[#595759] mb-1">ACTIVIDADES</label>
                   <Input
                     value={activTexto}
                     onChange={(e) => setActivTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -417,7 +802,7 @@ useEffect(() => {
                   <Input
                     value={obseTexto}
                     onChange={(e) => setObseTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
                 <div>
@@ -428,7 +813,7 @@ useEffect(() => {
                   <Input
                     value={examenTexto}
                     onChange={(e) => setExamenTexto(e.target.value)}
-                    className="w-full h-8 text-sm border-2 border-[#7cc4bc]  rounded text-black focus:border-[#007e8f]"
+                    className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
                   />
                 </div>
               </div>
