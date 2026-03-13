@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { EpicrisisPDF } from '../components/EpicrisisPDF';
+import { Button } from '@/components/ui/button';
 
 const Epicrisis = () => {
   const [formData, setFormData] = useState({
@@ -457,6 +459,38 @@ const Epicrisis = () => {
           <button className="btn btn-outline" style={{ color: '#595759', borderColor: 'rgb(0, 0, 0)' }} onClick={limpiarFormulario}>
             🗑 Limpiar
           </button>
+
+
+          <div className="flex justify-end">
+            <Button
+              onClick={async () => {
+          
+                  // 1️⃣ abrir pestaña vacía primero
+                const newWindow = window.open("", "_blank");
+                 // 2️⃣ generar PDF
+                const pdfBytes = await EpicrisisPDF({
+                  formData,
+                });
+                      // 3️⃣ crear blob
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                  // 4️⃣ cargar PDF en la nueva pestaña
+                newWindow.location.href = url;
+          
+                 // 5️⃣ imprimir cuando cargue
+                newWindow.onload = () => {
+                  newWindow.print();
+                };
+          
+              }}
+              className="bg-[#76c4d5] hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+            >
+              🖨️ Imprimir
+            </Button>
+          </div>
+          
+
+          
           <button className="btn btn-success" onClick={guardarFormulario}>
             💾 Guardar Epicrisis
           </button>

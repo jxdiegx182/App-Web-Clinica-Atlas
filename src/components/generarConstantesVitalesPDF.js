@@ -39,22 +39,22 @@ for (let y = 0; y < height; y += 20) {
 */}
 
   // 2️⃣ Escribir encima sin alterar estructura
-  firstPage.drawText(datos.cieDiag || "", {
-    x: 40,
-    y: height - 54,
+  firstPage.drawText(String(datos.cieDiag || ""), {
+    x: 10,
+    y: height - 34,
     size: 8,
     font,
     color: rgb(0, 0, 0),
   });
 
-  firstPage.drawText(datos.admisiones?.lastName || "", {
+  firstPage.drawText(`${datos.admisiones?.lastName || ""}`, {
     x: 50,
     y: height - 54,
     size: 6,
     font,
   });
   
-  firstPage.drawText(datos.admisiones?.firstName || "", {
+  firstPage.drawText(`${datos.admisiones?.firstName || ""}`, {
     x: 158,
     y: height - 54,
     size: 6,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import { AnamnesisPDF } from '../components/AnamnesisPDF';
+import { Button } from '@/components/ui/button';
 const Anamnesis = () => {
   const [formData, setFormData] = useState({
     // Paciente
@@ -1107,7 +1108,39 @@ const Anamnesis = () => {
           Formulario de Historia Clínica Única — Anamnesis
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <button className="btn-print" onClick={() => window.print()}>🖨️ Imprimir</button>
+
+         
+<div className="flex justify-end">
+  <Button
+    onClick={async () => {
+
+        // 1️⃣ abrir pestaña vacía primero
+      const newWindow = window.open("", "_blank");
+       // 2️⃣ generar PDF
+      const pdfBytes = await AnamnesisPDF({
+        formData,
+      });
+            // 3️⃣ crear blob
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+        // 4️⃣ cargar PDF en la nueva pestaña
+      newWindow.location.href = url;
+
+       // 5️⃣ imprimir cuando cargue
+      newWindow.onload = () => {
+        newWindow.print();
+      };
+
+    }}
+    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+  >
+    🖨️ Imprimir
+  </Button>
+</div>
+
+
+
+          
           <button className="btn-save" onClick={guardarFormulario}>💾 Guardar Formulario</button>
         </div>
       </div>

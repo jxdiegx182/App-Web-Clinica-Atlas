@@ -64,6 +64,10 @@ const Protocolo = () => {
     );
   };
 //CIE-10+++++++++++++++++++++++++++++++++++++++++++++
+  const cieTexto = cieDiag
+  .map(item => item.valor)
+  .filter(v => v !== "")
+  .join(", ");
   const [planTratamientoTexto, setPlanTratamientoTexto] = useState('');
   const [planDiagTexto, setPlanDiagTexto] = useState('');
   const [defTexto, setDefTexto] = useState('');
@@ -231,6 +235,21 @@ useEffect(() => {
              
             </div>
           </div>
+          <div className="flex justify-end">
+  <Button
+    onClick={async () => {
+      await generarConstantesVitalesPDF({
+        cieDiag: cieTexto,
+        edad,
+        estancia,
+        admisiones, // 👈 ENVÍAS TODO EL OBJETO FIREBASE
+      });
+    }}
+    className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+  >
+    Generar PDF
+  </Button>
+</div>
         </div>
       </header>
 
@@ -621,14 +640,12 @@ Materia Protésico
   <Button
     onClick={async () => {
       await generarConstantesVitalesPDF({
-        cieDiag,
+        cieDiag: cieTexto,
         edad,
         estancia,
         admisiones, // 👈 ENVÍAS TODO EL OBJETO FIREBASE
       });
     }}
-  
-
     className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
   >
     Generar PDF

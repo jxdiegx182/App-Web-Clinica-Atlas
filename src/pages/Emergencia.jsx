@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-
+import { EmergenciaPDF } from '../components/EmergenciaPDF';
+import { Button } from '@/components/ui/button';
 
  const Emergencia = () => {
   // ========== ESTADO PRINCIPAL ==========
@@ -52,31 +53,49 @@ import { doc, getDoc } from 'firebase/firestore';
   });
 
   const [lesionCount, setLesionCount] = useState(0);
-  const [diagIngCount, setDiagIngCount] = useState(0);
-  const [diagAltaCount, setDiagAltaCount] = useState(0);
-  const [medCount, setMedCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [glasgowTotal, setGlasgowTotal] = useState(0);
 
-  // Inicializar fecha y hora
+  // Inicializar fecha y hora, diagnósticos y medicamentos
   useEffect(() => {
     const now = new Date();
-    setFormData(prev => ({
-      ...prev,
-      fechaAdmision: now.toISOString().slice(0, 16),
-      horaAtencion: now.toTimeString().slice(0, 5),
-      fechaAlta: now.toISOString().slice(0, 10),
-      horaAlta: now.toTimeString().slice(0, 5)
-    }));
-
-    // Inicializar 3 diagnósticos de ingreso y alta, 4 medicamentos
-    for (let i = 0; i < 3; i++) {
-      addDiag('ing');
-      addDiag('alta');
-    }
-    for (let i = 0; i < 4; i++) {
-      addMed();
-    }
+    setFormData(prev => {
+      // Solo inicializar si está vacío
+      if (prev.diagIngreso.length === 0 && prev.diagAlta.length === 0 && prev.medicamentos.length === 0) {
+        return {
+          ...prev,
+          fechaAdmision: now.toISOString().slice(0, 16),
+          horaAtencion: now.toTimeString().slice(0, 5),
+          fechaAlta: now.toISOString().slice(0, 10),
+          horaAlta: now.toTimeString().slice(0, 5),
+          // Inicializar 3 diagnósticos de ingreso y alta
+          diagIngreso: [
+            { id: `diag-ing-${now.getTime()}-1`, num: 1, nombre: '', cie: '', status: null },
+            { id: `diag-ing-${now.getTime()}-2`, num: 2, nombre: '', cie: '', status: null },
+            { id: `diag-ing-${now.getTime()}-3`, num: 3, nombre: '', cie: '', status: null }
+          ],
+          diagAlta: [
+            { id: `diag-alta-${now.getTime()}-1`, num: 1, nombre: '', cie: '', status: null },
+            { id: `diag-alta-${now.getTime()}-2`, num: 2, nombre: '', cie: '', status: null },
+            { id: `diag-alta-${now.getTime()}-3`, num: 3, nombre: '', cie: '', status: null }
+          ],
+          // Inicializar 4 medicamentos
+          medicamentos: [
+            { id: `med-${now.getTime()}-1`, num: 1, nombre: '', posologia: '' },
+            { id: `med-${now.getTime()}-2`, num: 2, nombre: '', posologia: '' },
+            { id: `med-${now.getTime()}-3`, num: 3, nombre: '', posologia: '' },
+            { id: `med-${now.getTime()}-4`, num: 4, nombre: '', posologia: '' }
+          ]
+        };
+      }
+      return {
+        ...prev,
+        fechaAdmision: prev.fechaAdmision || now.toISOString().slice(0, 16),
+        horaAtencion: prev.horaAtencion || now.toTimeString().slice(0, 5),
+        fechaAlta: prev.fechaAlta || now.toISOString().slice(0, 10),
+        horaAlta: prev.horaAlta || now.toTimeString().slice(0, 5)
+      };
+    });
   }, []);
 
   // Calcular Glasgow
@@ -256,34 +275,29 @@ import { doc, getDoc } from 'firebase/firestore';
   };
 
   // ========== DIAGNÓSTICOS ==========
+  // Helper para reasignar números secuenciales
+  const reassignNumbers = (items) => {
+    return items.map((item, index) => ({ ...item, num: index + 1 }));
+  };
+
   const addDiag = (type) => {
-    if (type === 'ing') {
-      setDiagIngCount(prev => prev + 1);
-      const newNum = diagIngCount + 1;
-      setFormData(prev => ({
+    setFormData(prev => {
+      const key = type === 'ing' ? 'diagIngreso' : 'diagAlta';
+      const currentArray = prev[key];
+      const newNum = currentArray.length + 1;
+      const newId = `diag-${type}-${Date.now()}-${newNum}`;
+      
+      return {
         ...prev,
-        diagIngreso: [...prev.diagIngreso, {
-          id: `diag-ing-${newNum}`,
+        [key]: [...currentArray, {
+          id: newId,
           num: newNum,
           nombre: '',
           cie: '',
           status: null
         }]
-      }));
-    } else {
-      setDiagAltaCount(prev => prev + 1);
-      const newNum = diagAltaCount + 1;
-      setFormData(prev => ({
-        ...prev,
-        diagAlta: [...prev.diagAlta, {
-          id: `diag-alta-${newNum}`,
-          num: newNum,
-          nombre: '',
-          cie: '',
-          status: null
-        }]
-      }));
-    }
+      };
+    });
   };
 
   const updateDiag = (type, id, field, value) => {
@@ -306,25 +320,33 @@ import { doc, getDoc } from 'firebase/firestore';
 
   const deleteDiag = (type, id) => {
     const key = type === 'ing' ? 'diagIngreso' : 'diagAlta';
-    setFormData(prev => ({
-      ...prev,
-      [key]: prev[key].filter(d => d.id !== id)
-    }));
+    setFormData(prev => {
+      const filtered = prev[key].filter(d => d.id !== id);
+      const renumbered = reassignNumbers(filtered);
+      return {
+        ...prev,
+        [key]: renumbered
+      };
+    });
   };
 
   // ========== MEDICAMENTOS ==========
   const addMed = () => {
-    setMedCount(prev => prev + 1);
-    const newNum = medCount + 1;
-    setFormData(prev => ({
-      ...prev,
-      medicamentos: [...prev.medicamentos, {
-        id: `med-${newNum}`,
-        num: newNum,
-        nombre: '',
-        posologia: ''
-      }]
-    }));
+    setFormData(prev => {
+      const currentArray = prev.medicamentos;
+      const newNum = currentArray.length + 1;
+      const newId = `med-${Date.now()}-${newNum}`;
+      
+      return {
+        ...prev,
+        medicamentos: [...currentArray, {
+          id: newId,
+          num: newNum,
+          nombre: '',
+          posologia: ''
+        }]
+      };
+    });
   };
 
   const updateMed = (id, field, value) => {
@@ -337,10 +359,14 @@ import { doc, getDoc } from 'firebase/firestore';
   };
 
   const deleteMed = (id) => {
-    setFormData(prev => ({
-      ...prev,
-      medicamentos: prev.medicamentos.filter(m => m.id !== id)
-    }));
+    setFormData(prev => {
+      const filtered = prev.medicamentos.filter(m => m.id !== id);
+      const renumbered = reassignNumbers(filtered);
+      return {
+        ...prev,
+        medicamentos: renumbered
+      };
+    });
   };
 
   // ========== GUARDAR ==========
@@ -384,7 +410,37 @@ import { doc, getDoc } from 'firebase/firestore';
             <div style={styles.atlasFormSubtitle}>SNS-MSP · HCU-form.008/2008 · Clínicas Atlas · Ecuador</div>
           </div>
            <div style={styles.urgencyBadge}><span style={styles.urgencyDot}></span> EN ATENCIÓN</div>
-          <button onClick={() => window.print()} style={styles.btnPrint}>🖨️ Imprimir</button>
+  
+<div className="flex justify-end">
+  <Button
+    onClick={async () => {
+
+        // 1️⃣ abrir pestaña vacía primero
+      const newWindow = window.open("", "_blank");
+       // 2️⃣ generar PDF
+      const pdfBytes = await EmergenciaPDF({
+        formData,
+      });
+            // 3️⃣ crear blob
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+        // 4️⃣ cargar PDF en la nueva pestaña
+      newWindow.location.href = url;
+
+       // 5️⃣ imprimir cuando cargue
+      newWindow.onload = () => {
+        newWindow.print();
+      };
+
+    }}
+    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+  >
+    🖨️ Imprimir
+  </Button>
+</div>
+
+
+
           <button onClick={guardar} style={styles.btnSave}>💾 Guardar</button>
         </div>
       </header>
@@ -394,12 +450,9 @@ import { doc, getDoc } from 'firebase/firestore';
         <div style={styles.headerInner}>
           <div style={styles.headerBrand}>
           
-           
           </div>
           <div style={styles.headerMeta}>
            
-            
-          
           </div>
         </div>
       </div>
@@ -729,7 +782,35 @@ import { doc, getDoc } from 'firebase/firestore';
           <StatItem label="Lesiones" value={formData.lesiones.length.toString()} />
         </div>
         <div style={styles.bbBtns}>
-          <button onClick={() => window.print()} style={styles.btnPrintBar}>🖨️ Imprimir</button>
+           
+<div className="flex justify-end">
+  <Button
+    onClick={async () => {
+
+        // 1️⃣ abrir pestaña vacía primero
+      const newWindow = window.open("", "_blank");
+       // 2️⃣ generar PDF
+      const pdfBytes = await EmergenciaPDF({
+        formData,
+      });
+            // 3️⃣ crear blob
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+        // 4️⃣ cargar PDF en la nueva pestaña
+      newWindow.location.href = url;
+
+       // 5️⃣ imprimir cuando cargue
+      newWindow.onload = () => {
+        newWindow.print();
+      };
+
+    }}
+    className="bg-[#76c4d5]/40 hover:bg-teal-700 text-black px-6 py-2 rounded-2xl shadow-lg"
+  >
+    🖨️ Imprimir
+  </Button>
+</div>
+
           <button onClick={guardar} style={styles.btnSaveBar}>💾 Guardar Registro</button>
         </div>
       </div>
