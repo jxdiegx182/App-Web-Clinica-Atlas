@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { auth, db } from '@/firebaseConfig';
-import { collection, addDoc, doc, getDoc, serverTimestamp, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, setDoc, serverTimestamp, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -89,6 +89,77 @@ const CARD_TONE_CLASSES = {
 };
 
 const MODAL_INPUT_CLASS = 'mt-1 w-full rounded-lg border border-[#007e8f]/25 bg-white px-3 py-2 text-sm text-[#1c3f6e] outline-none focus:border-[#007e8f]';
+
+const MEDICATION_SOURCE_COLLECTIONS = [
+  { name: 'prescriptions', label: 'Prescripcion' },
+  { name: 'medical_prescriptions', label: 'Prescripcion' },
+  { name: 'recetas', label: 'Receta' },
+];
+
+const sanitizeMedicationKeyPart = (value) =>
+  String(value || 'sin_dato')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'sin_dato';
+
+const buildMedicationKey = (medicamento, horaPrimeraToma, proximaToma) =>
+  `${sanitizeMedicationKeyPart(medicamento)}_${sanitizeMedicationKeyPart(horaPrimeraToma)}_${sanitizeMedicationKeyPart(proximaToma)}`;
+
+const normalizeMedicationEntry = (entry, sourceLabel) => {
+  const medicamento = String(entry?.medicamento || entry?.nombre || entry?.farmaco || entry?.descripcion || '').trim();
+  if (!medicamento) return null;
+
+  const horaPrimeraToma = String(
+    entry?.horaPrimeraToma ||
+      entry?.horaPrimera ||
+      entry?.horaInicial ||
+      entry?.hora ||
+      entry?.hora_toma ||
+      ''
+  ).trim();
+
+  const proximaToma = String(
+    entry?.proximaToma ||
+      entry?.horaProximaToma ||
+      entry?.siguienteToma ||
+      entry?.hora_proxima ||
+      ''
+  ).trim();
+
+  return {
+    key: buildMedicationKey(medicamento, horaPrimeraToma || '--', proximaToma || '--'),
+    medicamento,
+    horaPrimeraToma: horaPrimeraToma || '--',
+    proximaToma: proximaToma || '--',
+    source: sourceLabel,
+  };
+};
+
+const extractMedicationEntries = (docData, sourceLabel) => {
+  const result = [];
+  const rawItems = [];
+
+  if (Array.isArray(docData?.medicamentos)) rawItems.push(...docData.medicamentos);
+  if (Array.isArray(docData?.prescripciones)) rawItems.push(...docData.prescripciones);
+  if (Array.isArray(docData?.items)) rawItems.push(...docData.items);
+  if (docData?.medicamento && rawItems.length === 0) rawItems.push(docData);
+
+  rawItems.forEach((item) => {
+    const normalized = normalizeMedicationEntry(item, sourceLabel);
+    if (normalized) result.push(normalized);
+  });
+
+  return result;
+};
+
+const getMedicationScheduleHours = (item) => {
+  const scheduleHours = [item?.horaPrimeraToma, item?.proximaToma]
+    .map((hour) => String(hour || '').trim())
+    .filter((hour) => hour && hour !== '--');
+  return Array.from(new Set(scheduleHours));
+};
 
 const FORM_MODAL_CONFIG = {
   registro_med: {
@@ -447,6 +518,77 @@ function SignosVitalesContent({ forms, updateField, updateVitalValue, onSendAler
   );
 }
 
+function RegistroMedicacionContent({
+  medicationOrders,
+  medicationChecks,
+  onToggleMedicationCheck,
+  loadingMedicationOrders,
+}) {
+  if (loadingMedicationOrders) {
+    return (
+      <ModalSection title="Registro y Administracion de Medicacion" icon={Pill} iconClass="text-blue-600" iconBgClass="bg-blue-100">
+        <p className="text-sm text-slate-600">Cargando medicamentos desde el modulo medico...</p>
+      </ModalSection>
+    );
+  }
+
+  return (
+    <ModalSection title="Registro y Administracion de Medicacion" icon={Pill} iconClass="text-blue-600" iconBgClass="bg-blue-100">
+      {medicationOrders.length === 0 ? (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+          No hay medicamentos registrados en evolucion o prescripcion.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {medicationOrders.map((item) => {
+            const scheduleHours = getMedicationScheduleHours(item);
+            return (
+              <div key={item.id} className="grid grid-cols-1 gap-3 rounded-lg border border-[#007e8f]/20 bg-white p-3 md:grid-cols-[1.3fr_1fr_1fr_1.4fr]">
+                <div>
+                  <p className="text-sm font-bold text-[#1c3f6e]">{item.medicamento}</p>
+                  <p className="text-[11px] text-slate-500">{item.source}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase text-slate-500">Primera toma</p>
+                  <p className="text-sm font-semibold text-[#1c3f6e]">{item.horaPrimeraToma}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase text-slate-500">Proxima toma</p>
+                  <p className="text-sm font-semibold text-[#1c3f6e]">{item.proximaToma}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[11px] font-bold uppercase text-slate-500">Checks por hora</p>
+                  {scheduleHours.length === 0 ? (
+                    <p className="text-xs text-amber-700">Sin horario programado</p>
+                  ) : (
+                    scheduleHours.map((hour) => {
+                      const isChecked = Boolean(medicationChecks[item.id]?.horas?.[hour]?.confirmada);
+                      return (
+                        <label key={`${item.id}-${hour}`} className="flex items-center justify-between gap-2 rounded-md border border-[#007e8f]/15 px-2 py-1 text-sm font-semibold text-[#1c3f6e]">
+                          <span>{hour}</span>
+                          <span className="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 accent-[#007e8f]"
+                              checked={isChecked}
+                              onChange={(event) => onToggleMedicationCheck(item.id, hour, event.target.checked)}
+                            />
+                            Administrado
+                          </span>
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </ModalSection>
+  );
+}
+
 function AlertComposerContent({ forms, updateField, onSendAlert, alertHistory }) {
   const section = forms.enviar_alerta;
 
@@ -578,7 +720,7 @@ function AlertCenterContent({ forms, updateField, systemAlerts, onResolveAlert }
 
 const MODALS = {
   signos_vitales: { title: 'Signos Vitales', icon: HeartPulse, iconClass: 'text-red-600', iconBgClass: 'bg-red-100', content: SignosVitalesContent, showSave: true },
-  registro_med: { title: 'Registro Medicacion', icon: Pill, iconClass: 'text-blue-600', iconBgClass: 'bg-blue-100', content: GenericModalContent, showSave: true },
+  registro_med: { title: 'Registro Medicacion', icon: Pill, iconClass: 'text-blue-600', iconBgClass: 'bg-blue-100', content: RegistroMedicacionContent, showSave: true },
   descargo_med: { title: 'Descargo Medicacion', icon: ClipboardList, iconClass: 'text-purple-600', iconBgClass: 'bg-purple-100', content: GenericModalContent, showSave: true },
   ingesta_eliminacion: { title: 'Ingesta y Eliminacion', icon: Droplets, iconClass: 'text-sky-600', iconBgClass: 'bg-sky-100', content: GenericModalContent, showSave: true },
   hidratacion: { title: 'Hidratacion IV', icon: Syringe, iconClass: 'text-blue-600', iconBgClass: 'bg-blue-100', content: GenericModalContent, showSave: true },
@@ -609,6 +751,9 @@ const NurseModulePanel = () => {
   const [alertHistory, setAlertHistory] = useState(createInitialAlertHistory);
   const [firebaseDraft, setFirebaseDraft] = useState({});
   const [isSavingFirebase, setIsSavingFirebase] = useState(false);
+  const [medicationOrders, setMedicationOrders] = useState([]);
+  const [medicationChecks, setMedicationChecks] = useState({});
+  const [loadingMedicationOrders, setLoadingMedicationOrders] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -700,6 +845,125 @@ const NurseModulePanel = () => {
     };
 
     loadLatestVitalSigns();
+  }, [mainId]);
+
+  const loadMedicationOrders = async () => {
+    if (!mainId) {
+      setMedicationOrders([]);
+      setMedicationChecks({});
+      return;
+    }
+
+    setLoadingMedicationOrders(true);
+    try {
+      const clinicalEvolutionRef = collection(db, 'admisiones', mainId, 'clinical_evolution');
+      const clinicalEvolutionQuery = query(clinicalEvolutionRef, orderBy('createdAt', 'desc'), limit(1));
+      const clinicalSnapshot = await getDocs(clinicalEvolutionQuery);
+      const prescriptionResults = await Promise.allSettled(
+        MEDICATION_SOURCE_COLLECTIONS.map((source) =>
+          getDocs(query(collection(db, 'admisiones', mainId, source.name), limit(5)))
+        )
+      );
+
+      const mergedMedications = new Map();
+
+      clinicalSnapshot.docs.forEach((docSnap) => {
+        const entries = extractMedicationEntries(docSnap.data(), 'Evolucion');
+        entries.forEach((entry) => {
+          mergedMedications.set(entry.key, { ...entry, id: entry.key });
+        });
+      });
+
+      prescriptionResults.forEach((result, index) => {
+        if (result.status !== 'fulfilled') {
+          console.warn(`⚠️ No se pudo leer la colección opcional ${MEDICATION_SOURCE_COLLECTIONS[index].name}`, result.reason);
+          return;
+        }
+        const snapshot = result.value;
+        const sourceLabel = MEDICATION_SOURCE_COLLECTIONS[index].label;
+        snapshot.docs.forEach((docSnap) => {
+          const entries = extractMedicationEntries(docSnap.data(), sourceLabel);
+          entries.forEach((entry) => {
+            const existing = mergedMedications.get(entry.key);
+            if (existing) {
+              const sources = new Set([existing.source, sourceLabel]);
+              mergedMedications.set(entry.key, { ...existing, source: Array.from(sources).join(' + ') });
+            } else {
+              mergedMedications.set(entry.key, { ...entry, id: entry.key });
+            }
+          });
+        });
+      });
+
+      const nextMedicationOrders = Array.from(mergedMedications.values());
+      setMedicationOrders(nextMedicationOrders);
+
+      const storedChecks = {};
+      try {
+        const confirmationsSnapshot = await getDocs(
+          query(collection(db, 'admisiones', mainId, 'medication_records'), limit(250))
+        );
+        confirmationsSnapshot.docs.forEach((docSnap) => {
+          const data = docSnap.data();
+          const medicationKey = data.medicationKey || docSnap.id;
+          storedChecks[medicationKey] = {
+            horas: data.administracionesPorHora && typeof data.administracionesPorHora === 'object'
+              ? data.administracionesPorHora
+              : {},
+            legacyConfirmada: Boolean(data.confirmada),
+            legacyConfirmationTime: data.confirmationTime || '',
+            legacyConfirmadoPor: data.confirmadoPor || '',
+          };
+        });
+      } catch (error) {
+        console.warn('⚠️ No se pudieron leer confirmaciones previas de medicacion:', error);
+      }
+
+      const nextChecks = {};
+      nextMedicationOrders.forEach((item) => {
+        const saved = storedChecks[item.id] || {};
+        const scheduleHours = getMedicationScheduleHours(item);
+        const hoursChecks = {};
+
+        scheduleHours.forEach((hour) => {
+          const savedHour = saved.horas?.[hour];
+          if (savedHour) {
+            hoursChecks[hour] = {
+              confirmada: Boolean(savedHour.confirmada),
+              confirmationTime: savedHour.confirmationTime || '',
+              confirmadoPor: savedHour.confirmadoPor || '',
+            };
+            return;
+          }
+
+          if (saved.legacyConfirmada) {
+            hoursChecks[hour] = {
+              confirmada: true,
+              confirmationTime: saved.legacyConfirmationTime || '',
+              confirmadoPor: saved.legacyConfirmadoPor || '',
+            };
+            return;
+          }
+
+          hoursChecks[hour] = { confirmada: false };
+        });
+
+        nextChecks[item.id] = { horas: hoursChecks };
+      });
+      setMedicationChecks(nextChecks);
+    } catch (error) {
+      console.error('❌ Error cargando registro de medicacion:', error);
+      toast({
+        title: 'Error',
+        description: 'No fue posible cargar los medicamentos del modulo medico.',
+      });
+    } finally {
+      setLoadingMedicationOrders(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMedicationOrders();
   }, [mainId]);
 
   useEffect(() => {
@@ -901,10 +1165,104 @@ const NurseModulePanel = () => {
     }));
   };
 
+  const onToggleMedicationCheck = (medicationId, hour, checked) => {
+    setMedicationChecks((prev) => ({
+      ...prev,
+      [medicationId]: {
+        ...prev[medicationId],
+        horas: {
+          ...(prev[medicationId]?.horas || {}),
+          [hour]: {
+            ...(prev[medicationId]?.horas?.[hour] || {}),
+            confirmada: checked,
+            confirmationTime: checked ? new Date().toISOString() : '',
+          },
+        },
+      },
+    }));
+  };
+
+  const saveMedicationAdministration = async () => {
+    if (!mainId) {
+      toast({ title: 'Error', description: 'No se encontro la admision activa.' });
+      return false;
+    }
+
+    if (medicationOrders.length === 0) {
+      toast({ title: 'Sin datos', description: 'No hay medicamentos para registrar.' });
+      return false;
+    }
+
+    setIsSavingFirebase(true);
+    try {
+      const nurseName = profile?.nombre || user?.displayName || 'Enfermera Sin Nombre';
+      const nowIso = new Date().toISOString();
+
+      const writes = medicationOrders.map((item) => {
+        const checkByHour = medicationChecks[item.id]?.horas || {};
+        const ref = doc(db, 'admisiones', mainId, 'medication_records', item.id);
+        const scheduleHours = getMedicationScheduleHours(item);
+        const administracionesPorHora = {};
+
+        scheduleHours.forEach((hour) => {
+          const check = checkByHour[hour] || { confirmada: false };
+          administracionesPorHora[hour] = {
+            confirmada: Boolean(check.confirmada),
+            confirmationTime: check.confirmada ? check.confirmationTime || nowIso : null,
+            confirmadoPor: check.confirmada ? nurseName : '',
+            nurseUid: check.confirmada ? user?.uid || null : null,
+          };
+        });
+
+        const allConfirmed =
+          scheduleHours.length > 0 &&
+          scheduleHours.every((hour) => Boolean(administracionesPorHora[hour]?.confirmada));
+
+        return setDoc(
+          ref,
+          {
+            medicationKey: item.id,
+            medicamento: item.medicamento,
+            horaPrimeraToma: item.horaPrimeraToma === '--' ? '' : item.horaPrimeraToma,
+            proximaToma: item.proximaToma === '--' ? '' : item.proximaToma,
+            source: item.source,
+            horariosProgramados: scheduleHours,
+            administracionesPorHora,
+            confirmada: allConfirmed,
+            confirmationTime: allConfirmed ? nowIso : null,
+            confirmadoPor: allConfirmed ? nurseName : '',
+            nurseUid: allConfirmed ? user?.uid || null : null,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+      });
+
+      await Promise.all(writes);
+      toast({
+        title: 'Exito',
+        description: 'Registro de medicacion actualizado correctamente.',
+      });
+      return true;
+    } catch (error) {
+      console.error('❌ Error guardando registro de medicacion:', error);
+      toast({
+        title: 'Error',
+        description: 'No fue posible guardar la confirmacion de medicacion.',
+      });
+      return false;
+    } finally {
+      setIsSavingFirebase(false);
+    }
+  };
+
   const openModal = (modalId, moduleTitle) => {
     if (!MODALS[modalId]) {
       toast({ title: 'Modal no configurado.' });
       return;
+    }
+    if (modalId === 'registro_med') {
+      loadMedicationOrders();
     }
     setModuloActivo(moduleTitle || MODALS[modalId].title);
     setActiveModalId(modalId);
@@ -965,6 +1323,14 @@ const NurseModulePanel = () => {
     // Si es signos vitales, guardar en Firebase
     if (activeModalId === 'signos_vitales') {
       const success = await saveVitalSigns();
+      if (success) {
+        closeModal();
+      }
+      return;
+    }
+
+    if (activeModalId === 'registro_med') {
+      const success = await saveMedicationAdministration();
       if (success) {
         closeModal();
       }
@@ -1164,6 +1530,10 @@ const NurseModulePanel = () => {
                     forms={forms}
                     updateField={updateField}
                     updateVitalValue={updateVitalValue}
+                    medicationOrders={medicationOrders}
+                    medicationChecks={medicationChecks}
+                    onToggleMedicationCheck={onToggleMedicationCheck}
+                    loadingMedicationOrders={loadingMedicationOrders}
                     systemAlerts={systemAlerts}
                     alertHistory={alertHistory}
                     onResolveAlert={onResolveAlert}

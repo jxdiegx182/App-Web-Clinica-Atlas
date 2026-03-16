@@ -290,4 +290,4 @@ Si encuentras problemas:
 
 **Versión:** 1.0  
 **Última actualización:** 2026-03-04  
-**Desarrollador:** Sistema Clínico Atlas
+**Desarrollador:** Juan Diego Malitaxi Urresta

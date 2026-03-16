@@ -17,6 +17,31 @@ const AllergyWarning = ({ allergy }) => (
   </span>
 );
 
+const MINUTOS_POR_DIA = 24 * 60;
+
+const calcularProximaToma = (horaPrimeraToma, intervaloHoras) => {
+  if (!horaPrimeraToma || !intervaloHoras) return '';
+
+  const [horas, minutos] = horaPrimeraToma.split(':').map(Number);
+  const intervalo = Number(intervaloHoras);
+
+  if (
+    Number.isNaN(horas) ||
+    Number.isNaN(minutos) ||
+    Number.isNaN(intervalo) ||
+    intervalo <= 0
+  ) {
+    return '';
+  }
+
+  const minutosTotales = horas * 60 + minutos;
+  const minutosProximaToma = (minutosTotales + intervalo * 60) % MINUTOS_POR_DIA;
+  const horasProximaToma = String(Math.floor(minutosProximaToma / 60)).padStart(2, '0');
+  const minutosProximaTomaFormateados = String(minutosProximaToma % 60).padStart(2, '0');
+
+  return `${horasProximaToma}:${minutosProximaTomaFormateados}`;
+};
+
 const Evolucion = () => {
   const { mainId } = useParams();
   const [time, setTime] = useState(new Date());
@@ -34,6 +59,9 @@ const Evolucion = () => {
       administra: '',
       cantidad: '',
       indicacion: '',
+      horaPrimeraToma: '',
+      intervaloHoras: '',
+      proximaToma: '',
     },
   ]);
   const [nextMedicamentoId, setNextMedicamentoId] = useState(2);
@@ -47,7 +75,19 @@ const Evolucion = () => {
   // Funciones para manejar medicamentos
   const handleMedicamentoChange = (id, field, value) => {
     setMedicamentos((prev) =>
-      prev.map((med) => (med.id === id ? { ...med, [field]: value } : med))
+      prev.map((med) => {
+        if (med.id !== id) return med;
+
+        const medicamentoActualizado = { ...med, [field]: value };
+        if (field === 'horaPrimeraToma' || field === 'intervaloHoras') {
+          medicamentoActualizado.proximaToma = calcularProximaToma(
+            medicamentoActualizado.horaPrimeraToma,
+            medicamentoActualizado.intervaloHoras
+          );
+        }
+
+        return medicamentoActualizado;
+      })
     );
   };
   const addMedicamento = () => {
@@ -62,6 +102,9 @@ const Evolucion = () => {
         administra: '',
         cantidad: '',
         indicacion: '',
+        horaPrimeraToma: '',
+        intervaloHoras: '',
+        proximaToma: '',
       },
     ]);
     setNextMedicamentoId((prev) => prev + 1);
@@ -428,7 +471,7 @@ useEffect(() => {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-7 gap-2 text-xs">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2 text-xs">
                     <div>
                       <label className="block font-semibold text-[#1c3f6e] mb-1">MEDICAMENTO</label>
                       <Input
@@ -464,6 +507,46 @@ useEffect(() => {
                         }
                         placeholder="Ej: C/8hrs"
                         className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <Clock size={14} /> HORA INICIAL
+                      </label>
+                      <Input
+                        type="time"
+                        value={med.horaPrimeraToma}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'horaPrimeraToma', e.target.value)
+                        }
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <Clock size={14} /> CADA (HORAS)
+                      </label>
+                      <Input
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={med.intervaloHoras}
+                        onChange={(e) =>
+                          handleMedicamentoChange(med.id, 'intervaloHoras', e.target.value)
+                        }
+                        placeholder="Ej: 8"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black focus:border-[#007e8f]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-[#1c3f6e] mb-1 flex items-center gap-1">
+                        <Clock size={14} /> PRÓXIMA TOMA
+                      </label>
+                      <Input
+                        value={med.proximaToma}
+                        readOnly
+                        placeholder="Automático"
+                        className="w-full h-8 text-sm border-2 border-[#7cc4bc] rounded text-black bg-gray-100"
                       />
                     </div>
                     <div>
