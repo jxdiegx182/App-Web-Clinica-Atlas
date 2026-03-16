@@ -52,7 +52,6 @@ import { Button } from '@/components/ui/button';
     egresa: '', causaMuerte: '', codigoMuerte: '', fechaAlta: '', horaAlta: '', profesional: '', numeroHoja: ''
   });
 
-  const [lesionCount, setLesionCount] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [glasgowTotal, setGlasgowTotal] = useState(0);
 
@@ -187,19 +186,21 @@ import { Button } from '@/components/ui/button';
 
   const BODY_ZONES = [
     { name: 'Cabeza', x: [38, 82], y: [0, 50] },
-    { name: 'Cuello', x: [46, 74], y: [50, 62] },
-    { name: 'Tórax', x: [18, 102], y: [62, 130] },
-    { name: 'Brazo Der', x: [6, 28], y: [62, 140] },
-    { name: 'Brazo Izq', x: [92, 114], y: [62, 140] },
-    { name: 'Antebrazo Der', x: [8, 28], y: [140, 198] },
-    { name: 'Antebrazo Izq', x: [92, 112], y: [140, 198] },
-    { name: 'Mano Der', x: [6, 26], y: [198, 222] },
-    { name: 'Mano Izq', x: [94, 114], y: [198, 222] },
-    { name: 'Cadera/Pelvis', x: [18, 102], y: [130, 170] },
-    { name: 'Muslo Der', x: [22, 50], y: [170, 232] },
-    { name: 'Muslo Izq', x: [70, 98], y: [170, 232] },
-    { name: 'Pierna Der', x: [20, 44], y: [232, 280] },
-    { name: 'Pierna Izq', x: [76, 100], y: [232, 280] }
+    { name: 'Cuello', x: [50, 70], y: [47, 59] },
+    { name: 'Tórax', x: [35, 85], y: [59, 140] },
+    { name: 'Brazo Izq', x: [15, 35], y: [70, 140] },
+    { name: 'Brazo Der', x: [85, 105], y: [70, 140] },
+    { name: 'Antebrazo Izq', x: [12, 25], y: [130, 190] },
+    { name: 'Antebrazo Der', x: [95, 108], y: [130, 190] },
+    { name: 'Mano Izq', x: [9, 25], y: [183, 207] },
+    { name: 'Mano Der', x: [95, 111], y: [183, 207] },
+    { name: 'Pelvis/Abdomen', x: [40, 80], y: [140, 195] },
+    { name: 'Muslo Izq', x: [42, 58], y: [180, 250] },
+    { name: 'Muslo Der', x: [62, 78], y: [180, 250] },
+    { name: 'Pierna Izq', x: [42, 58], y: [240, 280] },
+    { name: 'Pierna Der', x: [62, 78], y: [240, 280] },
+    { name: 'Pie Izq', x: [39, 53], y: [275, 300] },
+    { name: 'Pie Der', x: [67, 81], y: [275, 300] }
   ];
 
   const getZoneName = (x, y) => {
@@ -225,14 +226,31 @@ import { Button } from '@/components/ui/button';
     const svg = event.currentTarget;
     const rect = svg.getBoundingClientRect();
     const svgW = rect.width, svgH = rect.height;
-    const vbW = 120, vbH = 280;
+    const vbW = 120, vbH = 300;
     const scaleX = vbW / svgW, scaleY = vbH / svgH;
     const svgX = (event.clientX - rect.left) * scaleX;
     const svgY = (event.clientY - rect.top) * scaleY;
     const zoneName = getZoneName(svgX, svgY);
 
-    const newId = lesionCount + 1;
-    setLesionCount(newId);
+    // Verificar si hay una lesión existente muy cerca (radio de 8 unidades)
+    const existingLesion = formData.lesiones.find(l => 
+      l.side === side && 
+      Math.hypot(l.posX - svgX, l.posY - svgY) < 8
+    );
+
+    if (existingLesion) {
+      // Si existe, eliminarla (toggle) y renumerar las restantes
+      setFormData(prev => {
+        const filtered = prev.lesiones.filter(l => l.id !== existingLesion.id);
+        // Renumerar lesiones para que sean secuenciales (1, 2, 3...)
+        const renumbered = filtered.map((l, idx) => ({ ...l, id: idx + 1 }));
+        return { ...prev, lesiones: renumbered };
+      });
+      return;
+    }
+
+    // Si no existe, crear una nueva con ID secuencial basado en cantidad actual
+    const newId = formData.lesiones.length + 1;
     
     setFormData(prev => ({
       ...prev,
@@ -241,17 +259,22 @@ import { Button } from '@/components/ui/button';
         type: formData.activeLesionType,
         zone: zoneName,
         side,
-        posX: ((event.clientX - rect.left) / svgW) * 100,
-        posY: ((event.clientY - rect.top) / svgH) * 100
+        posX: svgX,
+        posY: svgY
       }]
     }));
   };
 
   const deleteLesion = (id) => {
-    setFormData(prev => ({
-      ...prev,
-      lesiones: prev.lesiones.filter(l => l.id !== id)
-    }));
+    setFormData(prev => {
+      const filtered = prev.lesiones.filter(l => l.id !== id);
+      // Renumerar lesiones para que sean secuenciales (1, 2, 3...)
+      const renumbered = filtered.map((l, idx) => ({ ...l, id: idx + 1 }));
+      return {
+        ...prev,
+        lesiones: renumbered
+      };
+    });
   };
 
   // ========== EXÁMENES ==========
@@ -433,7 +456,7 @@ import { Button } from '@/components/ui/button';
       };
 
     }}
-    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-4py-2 rounded-2xl shadow-lg"
   >
     🖨️ Imprimir
   </Button>
@@ -1013,29 +1036,50 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
           <div style={styles.bodyMapLabel}>FRONTAL</div>
 
           <svg
-            viewBox="0 0 120 280"
+            viewBox="0 0 120 300"
             onClick={(e) => onPlaceMarker(e, 'front')}
             style={styles.bodySvg}
           >
+            {/* CABEZA */}
             <ellipse cx="60" cy="25" rx="22" ry="25" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            {/* CUELLO */}
             <rect x="50" y="47" width="20" height="12" rx="3" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
-            <path d="M28 59 Q20 62 18 90 L16 130 Q16 140 28 140 L92 140 Q104 140 104 130 L102 90 Q100 62 92 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
-             <path d="M28 62 Q14 68 10 100 Q8 120 12 140 Q18 145 24 140 Q28 120 28 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M92 62 Q106 68 110 100 Q112 120 108 140 Q102 145 96 140 Q92 120 92 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M12 140 Q8 165 10 190 Q12 198 18 198 Q24 198 26 190 Q24 165 24 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M108 140 Q112 165 110 190 Q108 198 102 198 Q96 198 94 190 Q96 165 96 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <ellipse cx="16" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <ellipse cx="104" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M16 140 Q16 160 30 170 L90 170 Q104 160 104 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M30 170 Q22 195 22 220 Q26 232 36 232 Q46 230 46 220 Q44 195 46 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M90 170 Q98 195 98 220 Q94 232 84 232 Q74 230 74 220 Q76 195 74 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M22 232 Q20 255 22 275 Q26 280 34 280 Q42 278 42 270 Q42 248 36 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M98 232 Q100 255 98 275 Q94 280 86 280 Q78 278 78 270 Q78 248 84 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
+            {/* TORAX CENTRAL */}
+            <path d="M35 59 Q33 75 35 100 L40 140 L80 140 L85 100 Q87 75 85 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            {/* LINEAS DE SEPARACION TORAX-BRAZOS */}
+            <line x1="35" y1="59" x2="30" y2="70" stroke="#c9b99a" strokeWidth="1" />
+            <line x1="85" y1="59" x2="90" y2="70" stroke="#c9b99a" strokeWidth="1" />
+            {/* BRAZO IZQUIERDO - CILINDRICO */}
+            <path d="M30 70 Q20 75 15 95 L15 130 Q18 140 25 140 Q30 135 35 100 Q33 85 35 70 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* BRAZO DERECHO - CILINDRICO */}
+            <path d="M90 70 Q100 75 105 95 L105 130 Q102 140 95 140 Q90 135 85 100 Q87 85 85 70 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* ANTEBRAZO IZQUIERDO */}
+            <path d="M15 130 Q12 150 12 170 Q15 180 22 180 Q25 170 25 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* ANTEBRAZO DERECHO */}
+            <path d="M105 130 Q108 150 108 170 Q105 180 98 180 Q95 170 95 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MANO IZQUIERDA */}
+            <ellipse cx="17" cy="195" rx="8" ry="12" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MANO DERECHA */}
+            <ellipse cx="103" cy="195" rx="8" ry="12" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PELVIS Y ABDOMEN */}
+            <path d="M40 140 L38 180 Q60 190 82 180 L80 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MUSLO IZQUIERDO */}
+            <path d="M45 180 Q40 210 42 240 Q50 250 58 248 Q55 220 50 180 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MUSLO DERECHO */}
+            <path d="M75 180 Q80 210 78 240 Q70 250 62 248 Q65 220 70 180 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIERNA IZQUIERDA */}
+            <path d="M42 240 Q40 260 42 280 Q50 280 58 275 Q55 260 50 240 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIERNA DERECHA */}
+            <path d="M78 240 Q80 260 78 280 Q70 280 62 275 Q65 260 70 240 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIE IZQUIERDO */}
+            <ellipse cx="46" cy="285" rx="7" ry="10" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIE DERECHO */}
+            <ellipse cx="74" cy="285" rx="7" ry="10" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
             {lesions.filter(l => l.side === 'front').map(l => (
               <circle
                 key={l.id}
-                cx={l.posX * 1.2 - 60}
-                cy={l.posY * 1.4 - 140}
+                cx={l.posX}
+                cy={l.posY}
                 r="5"
                 fill="#c8433a"
                 stroke="white"
@@ -1055,8 +1099,8 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
                   key={l.id}
                   style={{
                     ...styles.lesionMarker,
-                    left: `calc(${l.posX}% - 10px)`,
-                    top: `calc(${l.posY}% - 10px)`
+                    left: `calc(${(l.posX / 120) * 100}% - 10px)`,
+                    top: `calc(${(l.posY / 300) * 100}% - 10px)`
                   }}
                   title={`${l.id}. ${l.type.label} — ${l.zone}`}
                 >
@@ -1073,38 +1117,60 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
 
 
 
-
-
-
 {/**Aqui empieza la parte POSTERIOR del MUÑECO */}
 
 <div style={styles.bodyMapContainer}>
           <div style={styles.bodyMapLabel}>POSTERIOR</div>
 
           <svg
-            viewBox="0 0 120 280"
+            viewBox="0 0 120 300"
             onClick={(e) => onPlaceMarker(e, 'back')}
             style={styles.bodySvg}
           >
+            {/* CABEZA */}
             <ellipse cx="60" cy="25" rx="22" ry="25" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            {/* CUELLO */}
             <rect x="50" y="47" width="20" height="12" rx="3" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
-            <path d="M28 59 Q20 62 18 90 L16 130 Q16 140 28 140 L92 140 Q104 140 104 130 L102 90 Q100 62 92 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
-             <path d="M28 62 Q14 68 10 100 Q8 120 12 140 Q18 145 24 140 Q28 120 28 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M92 62 Q106 68 110 100 Q112 120 108 140 Q102 145 96 140 Q92 120 92 90 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M12 140 Q8 165 10 190 Q12 198 18 198 Q24 198 26 190 Q24 165 24 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M108 140 Q112 165 110 190 Q108 198 102 198 Q96 198 94 190 Q96 165 96 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <ellipse cx="16" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <ellipse cx="104" cy="208" rx="10" ry="13" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M16 140 Q16 160 30 170 L90 170 Q104 160 104 140 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M30 170 Q22 195 22 220 Q26 232 36 232 Q46 230 46 220 Q44 195 46 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M90 170 Q98 195 98 220 Q94 232 84 232 Q74 230 74 220 Q76 195 74 170 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M22 232 Q20 255 22 275 Q26 280 34 280 Q42 278 42 270 Q42 248 36 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-                <path d="M98 232 Q100 255 98 275 Q94 280 86 280 Q78 278 78 270 Q78 248 84 232 Z" fill="#f0e8d8" stroke="#c9b99a" stroke-width="1.5"/>
-            {lesions.filter(l => l.side === 'front').map(l => (
+            {/* ESPALDA CENTRAL */}
+            <path d="M35 59 Q33 75 35 100 L40 140 L80 140 L85 100 Q87 75 85 59 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5" />
+            {/* LINEA VERTEBRAL */}
+            <line x1="60" y1="59" x2="60" y2="140" stroke="#c9b99a" strokeWidth="1" strokeDasharray="2" />
+            {/* LINEAS DE SEPARACION ESPALDA-BRAZOS */}
+            <line x1="35" y1="59" x2="30" y2="70" stroke="#c9b99a" strokeWidth="1" />
+            <line x1="85" y1="59" x2="90" y2="70" stroke="#c9b99a" strokeWidth="1" />
+            {/* BRAZO IZQUIERDO POSTERIOR - CILINDRICO */}
+            <path d="M30 70 Q20 75 15 95 L15 130 Q18 140 25 140 Q30 135 35 100 Q33 85 35 70 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* BRAZO DERECHO POSTERIOR - CILINDRICO */}
+            <path d="M90 70 Q100 75 105 95 L105 130 Q102 140 95 140 Q90 135 85 100 Q87 85 85 70 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* ANTEBRAZO IZQUIERDO */}
+            <path d="M15 130 Q12 150 12 170 Q15 180 22 180 Q25 170 25 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* ANTEBRAZO DERECHO */}
+            <path d="M105 130 Q108 150 108 170 Q105 180 98 180 Q95 170 95 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MANO IZQUIERDA */}
+            <ellipse cx="17" cy="195" rx="8" ry="12" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MANO DERECHA */}
+            <ellipse cx="103" cy="195" rx="8" ry="12" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PELVIS POSTERIOR */}
+            <path d="M40 140 L38 180 Q60 190 82 180 L80 140 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* LINEA SACRA */}
+            <line x1="60" y1="140" x2="60" y2="180" stroke="#c9b99a" strokeWidth="1" strokeDasharray="2" />
+            {/* MUSLO IZQUIERDO */}
+            <path d="M45 180 Q40 210 42 240 Q50 250 58 248 Q55 220 50 180 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* MUSLO DERECHO */}
+            <path d="M75 180 Q80 210 78 240 Q70 250 62 248 Q65 220 70 180 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIERNA IZQUIERDA */}
+            <path d="M42 240 Q40 260 42 280 Q50 280 58 275 Q55 260 50 240 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIERNA DERECHA */}
+            <path d="M78 240 Q80 260 78 280 Q70 280 62 275 Q65 260 70 240 Z" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIE IZQUIERDO */}
+            <ellipse cx="46" cy="285" rx="7" ry="10" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {/* PIE DERECHO */}
+            <ellipse cx="74" cy="285" rx="7" ry="10" fill="#f0e8d8" stroke="#c9b99a" strokeWidth="1.5"/>
+            {lesions.filter(l => l.side === 'back').map(l => (
               <circle
                 key={l.id}
-                cx={l.posX * 1.2 - 60}
-                cy={l.posY * 1.4 - 140}
+                cx={l.posX}
+                cy={l.posY}
                 r="5"
                 fill="#c8433a"
                 stroke="white"
@@ -1124,8 +1190,8 @@ const LesionMap = ({ lesions, activeLesionType, onPlaceMarker, lesionTypes, onSe
                   key={l.id}
                   style={{
                     ...styles.lesionMarker,
-                    left: `calc(${l.posX}% - 10px)`,
-                    top: `calc(${l.posY}% - 10px)`
+                    left: `calc(${(l.posX / 120) * 100}% - 10px)`,
+                    top: `calc(${(l.posY / 300) * 100}% - 10px)`
                   }}
                   title={`${l.id}. ${l.type.label} — ${l.zone}`}
                 >
@@ -1555,13 +1621,13 @@ const styles = {
     transition: 'all 0.2s'
   },
   appBody: {
-    maxWidth: '1280px',
+    maxWidth: '1360px',
     margin: '0 auto',
     padding: '28px 24px 100px',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px'
+    gap: '12px'
   },
   card: {
     background: 'white',
@@ -1651,38 +1717,38 @@ const styles = {
     fontSize: '1rem',
     fontWeight: 600,
     color: '#76C4D5',
-    marginBottom: '16px',
+    marginBottom: '10px',
     marginTop: 0
   },
   gridFlex2: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '14px',
-    marginBottom: '14px'
+    marginBottom: '10px'
   },
   gridFlex3: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '14px',
-    marginBottom: '14px'
+    marginBottom: '10px'
   },
   gridFlex4: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
     gap: '14px',
-    marginBottom: '14px'
+    marginBottom: '10px'
   },
   gridFlex5: {
     display: 'grid',
     gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '14px',
-    marginBottom: '14px'
+    marginBottom: '10px'
   },
   gridFlex6: {
     display: 'grid',
     gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '14px',
-    marginBottom: '14px'
+    gap: '10px',
+    marginBottom: '1px'
   },
   gridFlex8: {
     display: 'grid',
@@ -1693,7 +1759,7 @@ const styles = {
   chipGroup: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '8px',
+    gap: '22px',
     marginBottom: '14px'
   },
   chipGroupRow: {

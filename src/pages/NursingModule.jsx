@@ -998,46 +998,46 @@ const NurseModulePanel = () => {
       <div className="relative mb-2">
         <button
           onClick={() => window.history.back()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#1c3f6e] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]"
+          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69c9ba] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#4ea685]"
         >
           ← Volver
         </button>
-        <h1 className="text-2xl text-[#007e8f] font-extrabold tracking-wide text-center">MODULO ENFERMERIA</h1>
+        <h1 className="text-2xl text-[#69c9ba] font-extrabold tracking-wide text-center">MODULO ENFERMERIA</h1>
       </div>
 
-      <div className="min-h-screen bg-[#4b6bb3]/20 p-2">
-        <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-2 md:p-3 shadow-md text-[#1c3f6e] backdrop-blur">
+      <div className="min-h-screen bg-gradient-to-b from-[#69c9ba]/10 to-transparent p-2">
+        <header className="relative rounded-2xl border border-[#69c9ba]/40 bg-white/90 p-2 md:p-3 shadow-lg text-[#595759] backdrop-blur">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs leading-tight">
-            <div className="rounded-xl bg-[#007e8f]/5 p-2">
+            <div className="rounded-xl bg-[#69c9ba]/8 p-2">
               <img
                 src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
                 alt="Logo Clinica Atlas"
                 className="w-36 h-auto"
               />
-              <p className="mt-1 text-sm font-bold text-[#1c3f6e]">{formattedTime}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#007e8f]">{formattedDate.toUpperCase()}</p>
+              <p className="mt-1 text-sm font-bold text-[#595759]">{formattedTime}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#69c9ba]">{formattedDate.toUpperCase()}</p>
             </div>
             {loading ? (
               <p className="text-gray-600">Cargando datos de admisiones...</p>
             ) : admisiones ? (
               <>
-                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
-                  <p className="font-bold text-sm text-[#1c3f6e]">{admisiones.firstName} {admisiones.lastName}</p>
+                <div className="rounded-xl border border-[#69c9ba]/30 bg-white p-2">
+                  <p className="font-bold text-sm text-[#595759]">{admisiones.firstName} {admisiones.lastName}</p>
                   <p><strong>Identificacion:</strong> {admisiones.cedula}</p>
                   <p><strong>Edad:</strong> {admisiones.seguro}</p>
                   <p><strong>Medico:</strong> {admisiones.medico}</p>
                   <p><strong>Nacimiento:</strong> {admisiones.secondaryData?.dateOfBirth || 'No registrado'}</p>
                   <p><strong>Estancia:</strong> {admisiones.dias}</p>
                 </div>
-                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
+                <div className="rounded-xl border border-[#4ea685]/30 bg-white p-2">
                   <p><strong>Servicio:</strong> {admisiones.servicio}</p>
                   <p><strong>Seguro:</strong> {admisiones.seguro}</p>
                   <p><strong>Alergias:</strong> {admisiones.secondaryData?.numero || 'No registrado'}</p>
                 </div>
-                <div className="rounded-xl bg-gradient-to-br from-[#ffffff] to-[#f3f8fc] border border-[#007e8f]/15 p-2 text-center font-semibold text-[#1c3f6e]">
+                <div className="rounded-xl bg-gradient-to-br from-[#ffffff] to-[#f0fbf9] border border-[#69c9ba]/30 p-2 text-center font-semibold text-[#595759]">
                   <p>PISO 2</p>
                   <p>HAB 201</p>
-                  <p className="mt-1 text-[10px] font-bold text-[#007e8f]">Turno Enfermeria</p>
+                  <p className="mt-1 text-[10px] font-bold text-[#69c9ba]">Turno Enfermeria</p>
                 </div>
               </>
             ) : (
@@ -1047,9 +1047,9 @@ const NurseModulePanel = () => {
         </header>
 
         <main className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white rounded-lg p-0 col-span-1 text-sm shadow overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-200 bg-gradient-to-r from-white to-indigo-50/70">
-              <h2 className="font-semibold text-gray-800">HISTORIAL DE INGRESOS</h2>
+          <Card className="bg-white rounded-lg p-0 col-span-1 text-sm shadow-md overflow-hidden border border-[#69c9ba]/30">
+            <div className="px-4 py-3 border-b border-[#69c9ba]/20 bg-gradient-to-r from-[#595759] to-[#595759]/90">
+              <h2 className="font-semibold text-white">HISTORIAL DE INGRESOS</h2>
             </div>
             <div className="overflow-y-auto max-h-[290px] pr-1">
               <div className="p-2 space-y-1">
@@ -1057,18 +1057,18 @@ const NurseModulePanel = () => {
                   <button
                     key={`${item.date}-${index}`}
                     onClick={() => setHistorialActivo(index)}
-                    className={`w-full text-left rounded-lg px-3 py-2 transition border ${historialActivo === index ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-transparent hover:bg-slate-50'}`}
+                    className={`w-full text-left rounded-lg px-3 py-2 transition border ${historialActivo === index ? 'bg-[#69c9ba]/20 border-[#69c9ba]/40' : 'bg-white border-transparent hover:bg-[#69c9ba]/5'}`}
                   >
-                    <p className="font-semibold text-slate-700">{item.date}</p>
-                    {item.note ? <p className="text-xs text-indigo-700">{item.note}</p> : null}
+                    <p className="font-semibold text-[#595759]">{item.date}</p>
+                    {item.note ? <p className="text-xs text-[#4ea685]">{item.note}</p> : null}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="m-3 bg-[#d3efe9] rounded-lg p-4 text-sm text-gray-700">
+            <div className="m-3 bg-gradient-to-br from-[#69c9ba]/15 to-[#76c4d5]/10 rounded-lg p-4 text-sm text-gray-700 border border-[#69c9ba]/30">
               <div className="mb-2 flex items-center justify-between gap-2">
-                <h3 className="font-semibold text-slate-700">SIGNOS VITALES</h3>
-                <button type="button" className="rounded-md bg-[#1c3f6e] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#007e8f]" onClick={() => openModal('signos_vitales', 'Signos Vitales')}>
+                <h3 className="font-semibold text-[#595759]">SIGNOS VITALES</h3>
+                <button type="button" className="rounded-md bg-gradient-to-r from-[#69c9ba] to-[#4ea685] px-2 py-1 text-[11px] font-bold text-white hover:shadow-md transition" onClick={() => openModal('signos_vitales', 'Signos Vitales')}>
                   + Registrar
                 </button>
               </div>
@@ -1080,7 +1080,7 @@ const NurseModulePanel = () => {
                       key={vital.id}
                       type="button"
                       onClick={() => openModal('signos_vitales', 'Signos Vitales')}
-                      className={`rounded-md px-2 py-1.5 text-left ${vital.alert ? 'bg-red-100 text-red-700' : 'bg-white text-slate-700'}`}
+                      className={`rounded-md px-2 py-1.5 text-left transition border ${vital.alert ? 'bg-red-100 text-red-700 border-red-300' : 'bg-white text-[#595759] border-[#69c9ba]/30 hover:bg-[#69c9ba]/10'}`}
                     >
                       <p className="flex items-center gap-1 text-[10px] font-semibold uppercase">
                         <span className={`inline-flex h-4 w-4 items-center justify-center rounded-sm ${vital.iconBgClass}`}>
@@ -1104,8 +1104,8 @@ const NurseModulePanel = () => {
           >
             <div className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                <h2 className="text-xl font-bold bg-[#162f5c] text-white inline-block px-4 py-2 rounded-full w-fit">MODULO ENFERMERIA</h2>
-                <Badge className="w-fit bg-[#4b6bb3] text-white hover:bg-[#4b6bb3]">{moduloActivo ? `Modulo activo: ${moduloActivo}` : 'Selecciona un modulo'}</Badge>
+                <h2 className="text-xl font-bold bg-gradient-to-r from-[#69c9ba] to-[#4ea685] text-white inline-block px-4 py-2 rounded-full w-fit">MODULO ENFERMERIA</h2>
+                <Badge className="w-fit bg-[#595759] text-white hover:bg-[#4ea685] transition">{moduloActivo ? `Modulo activo: ${moduloActivo}` : 'Selecciona un modulo'}</Badge>
               </div>
 
               {MODULO_ENFERMERIA_SECCIONES.map((section) => (
@@ -1122,7 +1122,7 @@ const NurseModulePanel = () => {
                           type="button"
                           key={module.key}
                           onClick={() => openModal(module.modalId, module.title)}
-                          className={`rounded-xl border p-3 text-left transition hover:shadow-md bg-white ${CARD_TONE_CLASSES[module.tone] || CARD_TONE_CLASSES.primary} ${moduloActivo === module.title ? 'ring-2 ring-[#4b6bb3] ring-offset-1' : 'ring-0'}`}
+                          className={`rounded-xl border p-3 text-left transition hover:shadow-lg bg-white ${CARD_TONE_CLASSES[module.tone] || CARD_TONE_CLASSES.primary} ${moduloActivo === module.title ? 'ring-2 ring-[#69c9ba] ring-offset-1 border-[#69c9ba]/50' : 'ring-0'}`}
                         >
                           <div className="flex items-center justify-between gap-2">
                             <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${module.iconBgClass || 'bg-slate-100'}`}>
@@ -1148,16 +1148,16 @@ const NurseModulePanel = () => {
         {activeModal ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={closeModal}>
             <motion.div initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.98 }} className="w-full max-w-[96vw] max-h-[95vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-              <div className="flex items-center justify-between bg-[#1c3f6e] px-5 py-4 text-white">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#595759] to-[#595759]/90 px-5 py-4 text-white rounded-t-2xl">
                 <h3 className="flex items-center gap-2 text-lg font-bold">
                   <span className={`inline-flex h-8 w-8 items-center justify-center rounded-md ${activeModal.iconBgClass || 'bg-white/20'}`}>
                     <ActiveModalIcon className={`h-4 w-4 ${activeModal.iconClass || 'text-white'}`} />
                   </span>
                   {activeModal.title}
                 </h3>
-                <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={closeModal}>✕</button>
+                <button type="button" className="rounded-md bg-white/20 px-2 py-1 text-sm hover:bg-white/30 transition" onClick={closeModal}>✕</button>
               </div>
-              <div className="max-h-[84vh] overflow-y-auto bg-[#f8fcff] p-5">
+              <div className="max-h-[84vh] overflow-y-auto bg-gradient-to-b from-[#f0fbf9] to-white p-5">
                 {ActiveModalContent ? (
                   <ActiveModalContent
                     modalId={activeModalId}
@@ -1171,15 +1171,15 @@ const NurseModulePanel = () => {
                   />
                 ) : null}
               </div>
-              <div className="flex justify-between gap-2 border-t border-[#007e8f]/20 bg-white px-5 py-3">
+              <div className="flex justify-between gap-2 border-t border-[#69c9ba]/20 bg-white px-5 py-3">
                 <span className="text-[11px] text-slate-500">Draft Firebase listo: {Object.keys(firebaseDraft.payload?.forms || {}).length} secciones en memoria.</span>
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={closeModal} disabled={isSavingFirebase}>Cerrar</Button>
+                  <Button variant="outline" onClick={closeModal} disabled={isSavingFirebase} className="border-[#69c9ba] text-[#595759] hover:bg-[#69c9ba]/10">Cerrar</Button>
                   {activeModal.showSave ? (
                     <Button
                       onClick={handleSaveModal}
                       disabled={isSavingFirebase}
-                      className="bg-[#007e8f] text-white hover:bg-[#1c3f6e] disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="bg-gradient-to-r from-[#69c9ba] to-[#4ea685] text-white hover:shadow-lg transition disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {isSavingFirebase ? '⏳ Guardando...' : 'Guardar'}
                     </Button>

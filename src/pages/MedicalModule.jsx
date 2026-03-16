@@ -485,11 +485,11 @@ const MedicalModulePanel = () => {
         <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69C9BA] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
           ← Volver
         </button>
-        <h1 className="text-2xl text-[#76C4D5] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
+        <h1 className="text-2xl text-[#69c9ba] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
       </div>
 
       <div className="min-h-screen bg-[#76c4d5]/40 p-2">
-        <header className="rounded-2xl border border-[#007e8f]/25 bg-white/85 p-3 shadow-md text-[#1c3f6e]">
+        <header className="rounded-2xl border border-[#69c9ba]/25 bg-white/85 p-3 shadow-md text-[#595759]">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
             <div className="rounded-xl bg-[#007e8f]/5 p-2">
               <img
@@ -571,8 +571,8 @@ const MedicalModulePanel = () => {
               className="rounded-xl p-1"
             >
 
-              <div className="m-3 bg-gradient-to-br from-[#4EA685]/30 to-[#76C4D5]/50 rounded-lg p-4 text-sm text-gray-700">
-                <h3 className="font-semibold text-slate-700 mb-2">SIGNOS VITALES</h3>
+              <div className="m-3 bg-gradient-to-br from-[#76c4d5]/20 to-[#69c9ba]/15 rounded-lg p-4 text-sm text-gray-700 border border-[#76c4d5]/30">
+                <h3 className="font-semibold text-[#595759] mb-2">SIGNOS VITALES</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {dynamicResumenVitales.map((vital) => (
                     <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
