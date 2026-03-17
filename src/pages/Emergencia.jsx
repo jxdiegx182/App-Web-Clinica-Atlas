@@ -435,7 +435,7 @@ import { Button } from '@/components/ui/button';
            <div style={styles.urgencyBadge}><span style={styles.urgencyDot}></span> EN ATENCIÓN</div>
   
 <div className="flex justify-end">
-  <Button
+  <button
     onClick={async () => {
 
         // 1️⃣ abrir pestaña vacía primero
@@ -456,10 +456,10 @@ import { Button } from '@/components/ui/button';
       };
 
     }}
-    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-4py-2 rounded-2xl shadow-lg"
+    className="bg-[#76c4d5]/40 hover:bg-[#76c4d5] text-[#595759] px-3 py-1 rounded-2xl shadow-lg"
   >
     🖨️ Imprimir
-  </Button>
+  </button>
 </div>
 
 
@@ -469,16 +469,7 @@ import { Button } from '@/components/ui/button';
       </header>
 
       {/* MAIN HEADER */}
-      <div style={styles.appHeader}>
-        <div style={styles.headerInner}>
-          <div style={styles.headerBrand}>
-          
-          </div>
-          <div style={styles.headerMeta}>
-           
-          </div>
-        </div>
-      </div>
+     
 
       {/* BODY */}
       <main style={styles.appBody}>
@@ -828,7 +819,7 @@ import { Button } from '@/components/ui/button';
       };
 
     }}
-    className="bg-[#76c4d5]/40 hover:bg-teal-700 text-black px-6 py-2 rounded-2xl shadow-lg"
+    className="bg-[#76c4d5]/30 hover:bg-teal-700 text-[#595759] px-3 py-1 rounded-2xl shadow-lg"
   >
     🖨️ Imprimir
   </Button>
@@ -1454,8 +1445,8 @@ const styles = {
   },
   atlasHeader: {
     background: 'white',
-    borderBottom: '2px solid #595759',
-    padding: '11px 28px',
+    borderBottom: '3px solid #76c4d5',
+    padding: '3px 21px',
     position: 'sticky',
     top: 0,
     zIndex: 500,
@@ -1464,7 +1455,7 @@ const styles = {
   atlasHeaderContent: {
     display: 'flex',
     alignItems: 'center',
-    gap: '16px'
+    gap: '18px'
   },
   atlasLogo: {
     display: 'flex',
@@ -1486,7 +1477,7 @@ const styles = {
   },
   atlasInfo: {
     flex: 1,
-    marginLeft: '16px',
+    marginLeft: '12px',
     
   },
   atlasFormTitle: {
@@ -1530,7 +1521,7 @@ const styles = {
     position: 'sticky',
     top: '67px',
     zIndex: 200,
-    boxShadow: '0 1px 10px rgba(85,87,89,0.35)'
+    boxShadow: '0 3px 10px rgba(85,87,89,0.35)'
   },
   headerInner: {
     display: 'flex',
@@ -1623,7 +1614,7 @@ const styles = {
   appBody: {
     maxWidth: '1360px',
     margin: '0 auto',
-    padding: '28px 24px 100px',
+    padding: '12px 24px 100px',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -2243,12 +2234,12 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(6, 1fr)',
     gap: '10px',
-    marginBottom: '18px'
+    marginBottom: '12px'
   },
   altaOption: {
     border: '2px solid #c8d8e8',
-    borderRadius: '10px',
-    padding: '14px 10px',
+    borderRadius: '14px',
+    padding: '3px 9px',
     textAlign: 'center',
     cursor: 'pointer',
     background: '#f4f7fb',
@@ -2267,7 +2258,7 @@ const styles = {
   },
   aoIcon: {
     fontSize: '1.5rem',
-    marginBottom: '6px'
+    marginBottom: '3px'
   },
   aoName: {
     fontSize: '0.75rem',
@@ -2297,9 +2288,9 @@ const styles = {
     bottom: 0,
     left: 0,
     right: 0,
-    background: '#76c4d55a',
-    borderTop: '2px solid rgba(255,255,255,0.1)',
-    padding: '12px 32px',
+    background: '#ffffff',
+    borderTop: '1px solid rgba(255,255,255,0.1)',
+    padding: '1px 12px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -2308,7 +2299,7 @@ const styles = {
   },
   bbInfo: {
     display: 'flex',
-    gap: '24px',
+    gap: '18px',
     alignItems: 'center'
   },
   bbStat: {
@@ -2325,7 +2316,7 @@ const styles = {
   },
   bbStatVal: {
     fontFamily: 'Montserrat',
-    fontSize: '0.88rem',
+    fontSize: '0.58rem',
     color: '#595759',
     fontWeight: 700
   },
@@ -2334,26 +2325,26 @@ const styles = {
     gap: '10px'
   },
   btnPrintBar: {
-    padding: '11px 20px',
+    padding: '1px 10px',
     background: '#ffffff',
     color: 'rgba(85, 87, 89, 1)',
-    border: '1.5px solid rgba(118,196,213,0.9)',
+    border: '1px solid rgba(118,196,213,0.9)',
     borderRadius: '100px',
     fontFamily: 'Montserrat',
-    fontSize: '0.88rem',
+    fontSize: '0.68rem',
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'all 0.2s'
   },
   btnSaveBar: {
-    padding: '11px 28px',
+    padding: '1px 10px',
     background: '#ffffff',
     color: '#595759',
     border: '1.5px solid rgba(118,196,213,0.9)',
     borderRadius: '100px',
     fontFamily: 'Montserrat',
-    fontSize: '0.88rem',
-    fontWeight: 700,
+    fontSize: '0.68rem',
+    fontWeight: 600,
     cursor: 'pointer',
     letterSpacing: '0.02em',
     transition: 'all 0.2s',

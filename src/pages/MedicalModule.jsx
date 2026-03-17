@@ -94,6 +94,7 @@ const moduloMedicoSecciones = [
   },
   {
     title: 'EVALUACION CLINICA',
+    
     gridClass: 'md:grid-cols-2 xl:grid-cols-3',
     modules: [
       {
@@ -286,7 +287,7 @@ const modalRegistry = {
   },
   certificado: { title: 'CERTIFICADO MEDICO', showSave: false, pageComponent: Certificado },
   preq: { title: 'CHEQUEO PREQUIRURGICO', showSave: true, render: () => <Field label="Checklist prequirurgico" textarea /> },
-  anestesia: { title: 'REGISTRO ANESTESIA', showSave: false, pageComponent: RegAnestesia },
+  anestesia: { title: 'REGISTRO ANESTESIA', showSave: true, pageComponent: RegAnestesia },
   protocolo: { title: 'PROTOCOLO OPERATORIO', showSave: false, pageComponent: Protocolo },
   receta: { title: 'RECETA', showSave: false, pageComponent: Receta },
   consentimientos: { title: 'CONSENTIMIENTOS INFORMADOS', showSave: false, pageComponent: MedicalModuleConsen },
@@ -647,12 +648,12 @@ const MedicalModulePanel = () => {
       <AnimatePresence>
         {activeModal ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/60 p-4 flex items-center justify-center" onClick={() => setActiveModalKey(null)}>
-            <motion.div initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.97 }} className="w-full max-w-[96vw] max-h-[95vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-              <div className="bg-[#595759] text-[#ffffff]/80 px-5 py-3 flex items-center justify-between">
+            <motion.div initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.97 }} className="w-full max-w-[90vw] max-h-[100vh] overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+              <div className="bg-[#595759] text-[#ffffff]/80 px-5 py-2 flex items-center justify-between">
                 <h3 className="text-lg font-bold">{activeModal.title}</h3>
-                <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>
+                <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>{/* aquie es la X de cerrar */}
               </div>
-              <div className="max-h-[84vh] overflow-y-auto bg-[#f8fcff]">
+              <div className="max-h-[68vh] overflow-y-auto bg-[#f8fcff]"> {/**tamaño del cerrar */}
                 {ActiveModalPageComponent ? (
                   <div className="embedded-modal-page">
                     <style>{`
@@ -672,10 +673,11 @@ const MedicalModulePanel = () => {
                   <div className="p-5">{activeModal.render?.()}</div>
                 )}
               </div>
-              <div className="border-t border-[#007e8f]/20 bg-white px-5 py-3 flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setActiveModalKey(null)}>Cerrar</Button>
+              <div className="border-t border-[#007e8f]/90 bg-white px-5 py-1 flex justify-end gap-2">
+              
+                <Button variant="outline" onClick={() => setActiveModalKey(null)}className="bg-[#76c4d5]/40 text-black hover:bg-[#76c4d5]">Cerrar</Button>
                 {activeModal.showSave ? (
-                  <Button onClick={() => toast({ title: `Guardado: ${activeModal.title}` })} className="bg-[#007e8f] text-white hover:bg-[#1c3f6e]">
+                  <Button onClick={() => toast({ title: `Guardado: ${activeModal.title}` })} className="bg-[#76c4d5]/40 text-black hover:bg-[#76c4d5]">
                     Guardar
                   </Button>
                 ) : null}

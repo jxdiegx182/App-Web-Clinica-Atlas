@@ -124,9 +124,9 @@ const Anamnesis = () => {
         --bg: #eef2f7;
         --surface: #f4f7fb;
         --surface2: #ffffff;
-        --accent: #76c4d5;
-        --accent-mid: #76c4d5;
-        --accent-light: #76c4d5;
+        --accent: #76c4d58b;
+        --accent-mid: #76c4d55f;
+        --accent-light: #76c4d569;
         --accent2: #c8433a;
         --accent3: #e8a020;
         --accent-teal: #00838f;
@@ -146,7 +146,7 @@ const Anamnesis = () => {
          font-family: 'Montserrat';
         background: var(--bg);
         color: var(--text);
-        min-height: 100vh;
+        min-height: 90vh;
       }
         .app-header {
         background: #ffffff;
@@ -159,16 +159,16 @@ const Anamnesis = () => {
         z-index: 100;
         box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
       }
-      .app-headerList {
-        
-        padding: 22px 30px;
+      .app-headerList { 
+      background: #f6f8f8ed;       
+        padding: 12px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: sticky;
         top: 0;
         z-index: 80;
-        box-shadow: 0 4px 20px rgba(105, 201, 187, 0.6);
+        box-shadow: 0 2px 20px rgba(85, 87, 89, 0.36);
       }
       .app-header h1 {
         font-family: 'Montserrat';
@@ -180,12 +180,12 @@ const Anamnesis = () => {
         font-size: 0.69rem;
         color: rgb(33, 63, 92);
         margin-top: 2px;
-        font-weight: 300;
+        font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
       .header-badge {
-        background: #76c4d5a6;
+        background: #76c4d5;
         border: 1px solid #595759;
         color: #ffffff;
         padding: 8px 18px;
@@ -204,29 +204,30 @@ const Anamnesis = () => {
         scrollbar-width: none;
       }
       .progress-nav::-webkit-scrollbar { display: none; }
+
       .nav-tab {
-        padding: 14px 2px;
+        padding: 7px 3px;
         font-size: 0.69rem;
-        font-weight: 500;
         color: #595759;
         cursor: pointer;
         border-bottom: 2px solid transparent;
         white-space: nowrap;
         transition: all 0.2s;
         display: flex;
+        font-weight: 700;
         align-items: center;
-        gap: 8px;
+        gap: 2px;
       }
       .nav-tab:hover { color: #4ea685; }
-      .nav-tab.active { color: #4ea685; border-bottom-color: #64b5f6; }
+      .nav-tab.active { color: #08a2c5; border-bottom-color: #595759; }
       .nav-tab.completed { color: #80cbc4; }
       .nav-tab.completed .tab-num { background: #00838f; color: white; }
       .tab-num {
         width: 22px; height: 22px;
         border-radius: 50%;
         background: rgb(255, 255, 255);
-        color: rgba(25, 79, 146, 0.8);
-        font-size: 0.69rem;
+        color: rgba(4, 25, 56, 0.8);
+        font-size: 0.79rem;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -234,18 +235,18 @@ const Anamnesis = () => {
         transition: all 0.2s;
       }
       .nav-tab.active .tab-num {
-        background: #24517b;
+        background: #595759;
         color: #ffffff;
       }
       .app-body {
         max-width: 960px;
         margin: 0 auto;
-        padding: 30px 24px 80px;
+        padding: 12px 24px 80px;
       }
       .patient-card {
         background: var(--surface2);
         border-radius: 16px;
-        padding: 28px 32px;
+        padding: 12px 32px;
         margin-bottom: 32px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
@@ -268,7 +269,7 @@ const Anamnesis = () => {
       .section-card.collapsed .section-body { display: none; }
       .section-header {
         background: #595759;
-        padding: 18px 28px;
+        padding: 6px 21px;
         display: flex;
         align-items: center;
         gap: 14px;
@@ -278,8 +279,8 @@ const Anamnesis = () => {
       .section-num {
         width: 36px; height: 36px;
         border-radius: 10px;
-        background: #76c4d5;
-        color: #ffffff;
+        background: #ffffff;
+        color: #595759;
         font-family: 'Montserrat';
         font-size: 0.69rem;
         display: flex;
@@ -316,12 +317,12 @@ const Anamnesis = () => {
       .section-card.collapsed .section-toggle { transform: rotate(-90deg); }
       .section-body {
       
-        padding: 28px 28px;
+        padding: 9px 21px;
         transition: all 0.3s ease;
       }
       .field-group {
       
-        margin-bottom: 20px;
+        margin-bottom: 1px;
       }
       .field-label {
         display: block;
@@ -330,14 +331,14 @@ const Anamnesis = () => {
         color: #595759;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        margin-bottom: 7px;
+        margin-bottom: 2px;
       }
       .field-input, .field-textarea, .field-select {
-        width: 100%;
+        width: 100%; 
         background: var(--input-bg);
         border: 1.5px solid var(--border);
         border-radius: 10px;
-        padding: 11px 14px;
+        padding: 3px 15px;
         font-family: 'Montserrat';
         font-size: 0.69rem;
         color: var(--text);
@@ -351,7 +352,7 @@ const Anamnesis = () => {
       }
       .field-textarea {
         resize: vertical;
-        min-height: 90px;
+        min-height: 50px;
         line-height: 1.6;
       }
       .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -367,7 +368,7 @@ const Anamnesis = () => {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 12px 14px;
+        padding: 3px 14px;
         border: 1.5px solid var(--border);
         border-radius: 10px;
         cursor: pointer;
@@ -516,7 +517,7 @@ const Anamnesis = () => {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 18px;
+        padding: 3px 18px;
         background: transparent;
         border: 1.5px dashed var(--border-strong);
         border-radius: 10px;
@@ -548,48 +549,50 @@ const Anamnesis = () => {
         position: fixed;
         bottom: 0;
         left: 0; right: 0;
-        background: var(--surface2);
+        background: #ffffff;
         border-top: 1px solid var(--border);
-        padding: 16px 40px;
+        padding: 1px 21px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         z-index: 99;
-        box-shadow: 0 -4px 20px rgba(10,61,98,0.1);
+        box-shadow: 0 -4px 20px rgb(85, 87, 89);
       }
-      .save-info { font-size: 0.82rem; color: var(--text-muted); }
-      .save-info strong { color: var(--accent); }
+      .save-info { font-size: 0.72rem; color: var(--text-muted); }
+      .save-info strong { color: #76c4d5; }
       .btn-save {
-        padding: 13px 32px;
-        background: #69c9bb98;
-        color: #595759;
-        border: none;
-        border-radius: 100px;
+        padding: 6px 21px;
+        background: #76c4d587;
+        color: #3a393a;
+        border: 1.5px solid var(--accent);
+        border-radius: 50px;
         font-family: 'Montserrat';
-        font-size: 0.9rem;
-        font-weight: 600;
+        font-size: 0.72rem;
+        font-weight: 700;
         cursor: pointer;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.01em;
         transition: all 0.2s;
         display: flex;
         align-items: center;
         gap: 8px;
       }
-      .btn-save:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 16px rgb(10, 61, 98); }
+      .btn-save:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 16px rgb(170, 193, 210); }
       .btn-print {
-        padding: 13px 24px;
-        background: transparent;
-        color: #595759;
+        padding: 6px 21px;
+        background: #76c4d576;
+        color: #3a393a;
         border: 1.5px solid var(--accent);
-        border-radius: 100px;
+        border-radius: 50px;
         font-family: 'Montserrat';
-        font-size: 0.9rem;
-        font-weight: 600;
+        font-size: 0.72rem;
+        font-weight: 700;
         cursor: pointer;
         transition: all 0.2s;
+        display: flex;
         margin-right: 12px;
+        gap: 8px;
       }
-      .btn-print:hover { background: rgba(10,61,98,0.07); }
+      .btn-print:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 16px rgb(181, 202, 216); }
       .divider {
         height: 1px;
         background: var(--border);
@@ -711,7 +714,7 @@ const Anamnesis = () => {
   return (
     <>
      
-      <nav className="app-headerList bg-gradient-to-br from-[#76c4d5]/20 via-[#EAF4FB] to-[#76c4d5]">
+      <nav className="app-headerList">
         {[{ id: 's0', num: '★', label: 'Paciente' },
           { id: 's1', num: '1', label: 'Motivo' },
           { id: 's2', num: '2', label: 'Antec. Personales' },
@@ -1007,7 +1010,7 @@ const Anamnesis = () => {
             <div className="divider"></div>
             <div className="field-group">
               <label className="field-label">Descripción de hallazgos del examen físico</label>
-              <textarea className="field-textarea" style={{ minHeight: '120px' }} name="hallazgosFisicos" value={formData.hallazgosFisicos} onChange={handleInputChange} placeholder="Describa los hallazgos..."></textarea>
+              <textarea className="field-textarea" style={{ minHeight: '60px' }} name="hallazgosFisicos" value={formData.hallazgosFisicos} onChange={handleInputChange} placeholder="Describa los hallazgos..."></textarea>
             </div>
           </div>
         </div>
@@ -1105,13 +1108,13 @@ const Anamnesis = () => {
       <div className="save-bar">
         <div className="save-info">
           <strong>SNS-MSP · HCU-form.003 / 2008</strong><br />
-          Formulario de Historia Clínica Única — Anamnesis
+          
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
 
          
 <div className="flex justify-end">
-  <Button
+  <button
     onClick={async () => {
 
         // 1️⃣ abrir pestaña vacía primero
@@ -1132,10 +1135,10 @@ const Anamnesis = () => {
       };
 
     }}
-    className="bg-[#76c4d5] hover:bg-teal-700 text-white px-6 py-2 rounded-2xl shadow-lg"
+    className="btn-print"
   >
     🖨️ Imprimir
-  </Button>
+  </button>
 </div>
 
 
