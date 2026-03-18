@@ -12,8 +12,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 //IMPORTS CREADOS PARA PESTAÑAS
 import HojaDeAnestecia from '@/components/pestañas/HojaDeAnestecia';
-import RegistroAnestesico from '@/components/pestañas/RegistroAnestesico';
-import RegistroInfusiones from '@/components/pestañas/RegistroInfusiones';
 
 
 export const RegAnestesia = () => {
@@ -22,11 +20,6 @@ export const RegAnestesia = () => {
   const [admisiones, setAdmisiones] = useState(null); // <-- aquí se guardan los datos desde Firestore
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  //CONSTANTE PARA ACTIVAR Y DESCATIVAR PESTAÑAS
-  const [activeTab, setActiveTab] = useState('hojaA');
-  //agregado 
-
-  const [agentesTexto, setAgentesTexto] = useState('sdas');
 
 
   //SE GENERA UN PDF
@@ -218,6 +211,7 @@ export const RegAnestesia = () => {
       <header className="relative rounded-2xl border border-[#007e8f]/25 bg-white/85 p-1 md:p-1 shadow-md text-[#1c3f6e] backdrop-blur">
 
         <div className="flex justify-end mt-1 gap-2">
+         {/** aqui le quito el botn de imprimir del primer registro de ANESTESIA ++++++++++++++++++++++++++++++++++++++++++++PILAS  
           <Button
             onClick={handleGeneratePDF}
             className="bg-[#76c4d5]/40 font-bold text-[#595759] px-7 py-2 rounded hover:bg-[#76c4d5] flex items-center"
@@ -228,88 +222,20 @@ export const RegAnestesia = () => {
               alt="Imprimir"
               className="w-6 h-6"
             />
-            Imprmir
+             Imprmir
           </Button>
+        */}
         
         
-          <Button
-            onClick={() => console.log("Editar")}
-            className="px-1 py-1 text-sx bg-[#76c4d5]/40 font-bold text-[#595759] rounded hover:bg-[76c4d5]/60"
-          >
-            ✎ EDITAR
-          </Button>
-          <Button
-            onClick={() => console.log("Guardar")}
-            className="px-3 py-1 text-sx bg-[#76c4d5]/40 text-[#595759] font-bold rounded hover:bg-[#76c4d5]/60"
-          >
-            💾 GUARDAR
-          </Button>
         </div>
       </header>
 
 
       {/* MAIN PANEL */}
-      <main className="grid grid-cols-1 md:grid-cols-6 gap-2 mt-2 ">
-
-       {/* ++++++++++++++++++++++++++++++++++++++++++++++++++RIGHT PANEL +++++++++++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* RIGHT PANEL */}
-        <div className="md:col-span-6 bg-[#76c4d5]/10 rounded shadow p-1">
-          {/* CONTENEDOR FLEX */}
-          <div className="flex">
-            {/* CONTENIDO DINÁMICO */}
-            <div className="flex-1 pr-1">
-              {activeTab === 'hojaA' && <HojaDeAnestecia />}
-              {activeTab === 'registroAnestesico' && <RegistroAnestesico />}
-              {activeTab === 'registroInfusiones' && <RegistroInfusiones />}
-
-            </div>
-            {/* PESTAÑAS VERTICALES */}
-            <div className="w-48 border-l pl-3 flex flex-col text-black gap-2">
-              <button
-                onClick={() => setActiveTab('hojaA')}
-                className={`px-5 py-5 text-xs font-bold rounded transition ${activeTab === 'hojaA'
-                  ? 'bg-gradient-to-r from-[#007e8f] via-[#007090]/90 to-[#0080ff]/10 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-              >
-                📋 Hoja de Anestesia
-              </button>
-              <button
-                onClick={() => setActiveTab('registroAnestesico')}
-                className={`px-1 py-5 text-xs font-bold rounded transition ${activeTab === 'registroAnestesico'
-                  ? 'bg-gradient-to-r from-[#007e8f] via-[#007090]/90 to-[#0080ff]/10 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-              >
-                🩺 Registro Anestesico
-              </button>
-              <button
-                onClick={() => setActiveTab('registroInfusiones')}
-                className={`px-5 py-5 text-xs font-bold rounded transition ${activeTab === 'registroInfusiones'
-                  ? 'bg-gradient-to-r from-[#007e8f] via-[#007090]/90 to-[#0080ff]/10 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-              >
-                ⚖️ Riesgo Infusiones
-              </button>
-
-            </div>
-          </div>
+      <main className="grid grid-cols-1 gap-2 mt-2 ">
+        <div className="bg-[#76c4d5]/10 rounded shadow p-1">
+          <HojaDeAnestecia />
         </div>
-        {/* ++++++++++++++++hasta aqui++++++++++++++++++++++++++++++++++RIGHT PANEL +++++++++++++++++++++++++++++++++++++++++++++++++++ */}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       </main>
     </div>

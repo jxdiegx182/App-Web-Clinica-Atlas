@@ -1,0 +1,2601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Anestesia — Clínicas Atlas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dde7f0;--bg-grad-from:#c5d5e5;--bg-grad-to:#e8edf5;--white:#ffffff;--surface:#f0f5fa;--surface2:#e8edf5;--border:#b0c4d8;--border2:#90aac4;--text:#1a2c3d;--muted:#5a7a96;--dim:#8baabf;--teal:#76c4d5;--teal-d:#76c4d5;--teal-l:#d8f2ef;--teal-mid:#ffffff;--navy:#595759e9;--navy-d:#0f2440;--navy-l:#e8f0f8;--navy-mid:#2a5278;--red:#c53030;--red-l:#fff0f0;--red-mid:#fc8181;--green:#276749;--green-l:#f0fff4;--amber:#b7791f;--amber-l:#fffaf0;--yellow:#d69e2e;--blue:#3182ce;--purple:#553c9a;--shadow-sm:0 1px 4px rgba(26,58,92,.09);--shadow:0 2px 12px rgba(26,58,92,.12);--shadow-lg:0 6px 28px rgba(26,58,92,.16);--accent:var(--teal);--accent4:var(--teal-mid);--text-muted:var(--muted);--text-dim:var(--dim);--surface3:var(--surface2);--s1:var(--white);--s2:var(--surface);--s3:var(--surface2);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;background:linear-gradient(160deg,var(--bg-grad-from) 0%,var(--bg-grad-to) 100%);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:var(--surface);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--teal);}
+.atlas-main-header{background:rgb(85, 87, 89);border-bottom:2px solid var(--navy-d)!important;padding:11px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:500;box-shadow:0 3px 16px rgba(85,87,89,.1);}
+.atlas-main-header *{color:white!important;}
+.brand-name-text{font-family:'Montserrat',serif;font-size:1.12rem;font-weight:700;color:white!important;}
+.brand-name-text span{color:var(--teal-mid)!important;}
+.brand-sub-text{font-size:.58rem;color:rgba(255,255,255,.5)!important;letter-spacing:.1em;text-transform:uppercase;}
+.doc-title-text{font-size:.95rem;font-weight:800;color:var(--teal-mid)!important;letter-spacing:.06em;text-transform:uppercase;}
+.doc-sub-text{font-size:.6rem;color:rgba(255,255,255,.45)!important;letter-spacing:.08em;}
+#atl-clock{font-family:'Montserrat',sans-serif;font-size:.7rem;color:rgba(255,255,255,.55)!important;text-align:right;line-height:1.7;}
+.hdr-btn-outline{padding:8px 15px;background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:7px;color:white!important;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;}
+.hdr-btn-outline:hover{border-color:var(--teal-mid);color:var(--teal-mid)!important;}
+.hdr-btn-primary{padding:8px 15px;background:var(--teal);border:none;border-radius:7px;color:white!important;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;}
+.hdr-btn-primary:hover{background:var(--teal-d);}
+header.header{display:none;}
+.app-body{max-width:1280px;margin:0 auto;padding:16px 20px 100px;display:flex;flex-direction:column;gap:12px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .2s;}
+.card:hover{box-shadow:var(--shadow);}
+.card-header{padding:9px 16px;background:var(--navy);border-bottom:1px solid var(--navy-d);display:flex;align-items:center;gap:10px;}
+.card-header *{color:white!important;}
+.card-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:rgba(255,255,255,.12);}
+.card-title{font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:white!important;letter-spacing:.06em;text-transform:uppercase;}
+.card-body{padding:14px 16px;}
+.field-label{display:block;font-size:.7rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+.field-input,.field-select,.field-textarea{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:8px 12px;font-family:'Montserrat',sans-serif;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.13);}
+.field-input::placeholder,.field-textarea::placeholder{color:var(--dim);}
+.field-select option{background:white;color:var(--text);}
+.field-textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.field-group{margin-bottom:0;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;}
+.patient-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 1.5fr;gap:14px;align-items:end;}
+.staff-grid-5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:14px;}
+.technique-panel{display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.tech-col{border-right:1px solid var(--border);padding:14px;background:var(--white);}
+.tech-col:last-child{border-right:none;}
+.tech-col-title{font-size:.72rem;font-weight:700;color:var(--teal-d);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.radio-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;transition:background .15s;margin-bottom:4px;border:1px solid transparent;}
+.radio-item:hover{background:var(--teal-l);border-color:var(--teal);}
+.radio-item input{display:none;}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.radio-dot-inner{width:7px;height:7px;border-radius:50%;background:var(--teal);display:none;}
+.radio-item.selected .radio-dot{border-color:var(--teal);}
+.radio-item.selected .radio-dot-inner{display:block;}
+.radio-item.selected{background:var(--teal-l);border-color:var(--teal);}
+.radio-label{font-size:.83rem;color:var(--text);}
+.monitor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.monitor-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1.5px solid var(--border);transition:all .15s;background:var(--white);}
+.monitor-item:hover{border-color:var(--teal);}
+.monitor-item.active{border-color:var(--teal);background:var(--teal-l);}
+.monitor-item input{display:none;}
+.monitor-box{width:16px;height:16px;border-radius:4px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.monitor-item.active .monitor-box{background:var(--teal);border-color:var(--teal);}
+.monitor-mark{color:white;font-size:.65rem;display:none;font-weight:700;}
+.monitor-item.active .monitor-mark{display:block;}
+.monitor-label{font-size:.8rem;color:var(--text);}
+.position-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.position-card{border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;cursor:pointer;background:var(--white);transition:all .15s;position:relative;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.position-card:hover{border-color:var(--teal);background:var(--teal-l);}
+.position-card.selected{border-color:var(--teal);background:var(--teal-l);box-shadow:0 0 0 2px rgba(42,157,143,.2);}
+.position-card input{display:none;}
+.pos-icon{font-size:1rem;flex-shrink:0;}
+.pos-name{font-size:.8rem;font-weight:700;color:var(--text);}
+.pos-desc{display:none;}
+.pos-check{display:none;color:var(--teal);font-size:.75rem;font-weight:800;margin-left:2px;}
+.position-card.selected .pos-check{display:inline;}
+.cie-search-box{position:relative;margin-bottom:14px;}
+.cie-search-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:10px 40px 10px 13px;font-family:'Montserrat',sans-serif;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.cie-search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.13);}
+.cie-search-input::placeholder{color:var(--dim);}
+.cie-search-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.cie-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:9px;max-height:220px;overflow-y:auto;z-index:50;display:none;box-shadow:var(--shadow-lg);}
+.cie-dropdown.open{display:block;}
+.cie-option{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--surface2);transition:background .15s;display:flex;align-items:flex-start;gap:10px;}
+.cie-option:last-child{border-bottom:none;}
+.cie-option:hover{background:var(--teal-l);}
+.cie-code{font-family:'Montserrat',monospace;font-size:.78rem;font-weight:700;color:var(--navy);min-width:60px;flex-shrink:0;}
+.cie-desc-text{font-size:.82rem;color:var(--text);line-height:1.3;}
+.cie-selected-list{display:flex;flex-wrap:wrap;gap:8px;min-height:38px;padding:6px 0;}
+.cie-tag{display:flex;align-items:center;gap:6px;background:var(--navy-l);border:1px solid var(--border);border-radius:100px;padding:5px 12px 5px 10px;font-size:.78rem;}
+.cie-tag-code{font-family:'Montserrat',monospace;font-weight:700;color:var(--navy);}
+.cie-tag-name{color:var(--text);}
+.cie-tag-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0;transition:color .15s;}
+.cie-tag-del:hover{color:var(--red);}
+.events-timeline{position:relative;padding-left:32px;}
+.events-timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--teal),var(--navy),var(--amber));border-radius:1px;}
+.event-row{display:grid;grid-template-columns:200px 120px 1fr auto;gap:10px;align-items:center;margin-bottom:10px;position:relative;animation:fadeSlideIn .3s ease;}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.event-name-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:.82rem;font-weight:600;color:var(--text);}
+.event-emoji{font-size:1rem;flex-shrink:0;}
+.event-time-input{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Montserrat',monospace;font-size:.9rem;color:var(--navy);outline:none;width:100%;transition:border-color .2s;text-align:center;}
+.event-time-input:focus{border-color:var(--teal);}
+.event-note-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Montserrat',sans-serif;font-size:.83rem;color:var(--text);outline:none;transition:border-color .2s;}
+.event-note-input:focus{border-color:var(--border2);}
+.event-now-btn{padding:7px 11px;background:var(--teal-l);border:1px solid var(--teal);border-radius:6px;color:var(--teal-d);font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .15s;white-space:nowrap;}
+.event-now-btn:hover{background:var(--teal);color:white;}
+.add-event-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);align-items:end;}
+.agents-table{width:100%;border-collapse:collapse;font-size:.83rem;}
+.agents-table th{padding:10px 12px;background:var(--navy);color:white;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-bottom:none;text-align:left;}
+.agents-table td{padding:8px 10px;border-bottom:1px solid var(--surface2);}
+.agents-table tr:last-child td{border-bottom:none;}
+.agents-table tr:hover td{background:var(--teal-l);}
+.agents-table .field-input{padding:7px 10px;font-size:.82rem;}
+.chart-container{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.chart-legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted);font-weight:500;}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+canvas#vitalChart{width:100%!important;height:270px!important;cursor:crosshair;}
+.chart-input-row{display:grid;grid-template-columns:80px 100px 100px 100px 100px 100px auto;gap:10px;align-items:end;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:14px;}
+.chart-input-row .field-input{text-align:center;font-family:'Montserrat',monospace;font-size:.9rem;}
+.btn-add-vital{padding:9px 16px;background:var(--teal);border:none;color:white;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-add-vital:hover{background:var(--teal-d);transform:translateY(-1px);}
+.btn-add-row{display:flex;align-items:center;gap:8px;padding:10px 16px;background:transparent;border:1.5px dashed var(--teal);border-radius:8px;color:var(--teal-d);font-size:.82rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:10px;}
+.btn-add-row:hover{background:var(--teal-l);}
+.btn-del{width:28px;height:28px;border-radius:6px;background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.btn-del:hover{background:var(--red);color:white;}
+.fluids-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fluid-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.fluid-title{font-size:.78rem;font-weight:700;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.fluid-item{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.fluid-name{font-size:.82rem;color:var(--text);min-width:130px;}
+.fluid-input{width:100px;background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Montserrat',monospace;font-size:.88rem;color:var(--navy);text-align:right;outline:none;transition:border-color .2s;}
+.fluid-input:focus{border-color:var(--teal);}
+.fluid-unit{font-size:.72rem;color:var(--muted);width:24px;}
+.fluid-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.total-label{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.total-value{font-family:'Montserrat',monospace;font-size:1.1rem;font-weight:700;color:var(--teal-d);}
+.duration-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dur-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.dur-title{font-size:.76rem;font-weight:700;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.dur-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.apgar-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.apgar-card{background:var(--white);border:1px solid var(--border);border-radius:9px;padding:8px 12px;text-align:center;display:flex;align-items:center;gap:8px;}
+.apgar-label{font-size:.7rem;color:var(--teal-d);font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.apgar-input{width:62px;background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:6px 6px;font-family:'Montserrat',monospace;font-size:1.1rem;font-weight:700;text-align:center;color:var(--navy);outline:none;transition:border-color .2s;}
+.apgar-input:focus{border-color:var(--teal);}
+.toggle-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:background .15s;}
+.toggle-item:hover{background:var(--teal-l);}
+.toggle-item input{display:none;}
+.toggle-switch{width:36px;height:20px;background:var(--border2);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-switch::after{content:'';width:14px;height:14px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .2s;}
+.toggle-item.on .toggle-switch{background:var(--teal);}
+.toggle-item.on .toggle-switch::after{transform:translateX(16px);}
+.toggle-label{font-size:.83rem;color:var(--text);font-weight:500;}
+/* ── Botones tipo cirugía ── */
+.cx-type-btn{display:flex;align-items:center;gap:9px;padding:9px 20px;border-radius:9px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.84rem;font-weight:700;transition:all .2s;color:var(--muted);user-select:none;}
+.cx-type-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.cx-type-btn .cx-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:all .2s;flex-shrink:0;}
+.cx-type-btn.cx-emergencia.active{border-color:var(--red);background:var(--red-l);color:var(--red);box-shadow:0 0 0 3px rgba(197,48,48,.12);}
+.cx-type-btn.cx-emergencia.active .cx-dot{background:var(--red);box-shadow:0 0 6px rgba(197,48,48,.6);}
+.cx-type-btn.cx-emergencia:not(.active):hover{border-color:var(--red-mid);color:var(--red);}
+.cx-type-btn.cx-programada.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);box-shadow:0 0 0 3px rgba(42,157,143,.12);}
+.cx-type-btn.cx-programada.active .cx-dot{background:var(--teal);box-shadow:0 0 6px rgba(42,157,143,.5);}
+.cx-type-btn.cx-programada:not(.active):hover{border-color:var(--teal);color:var(--teal-d);}
+#cx-type-banner{display:none;padding:4px 14px;border-radius:6px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:10px;}
+#cx-type-banner.emergencia{background:var(--red);color:white;animation:pulseBanner 1.8s infinite;}
+#cx-type-banner.programada{background:var(--teal);color:white;}
+@keyframes pulseBanner{0%,100%{opacity:1}50%{opacity:.65}}
+.feto-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:9px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--muted);transition:all .2s;justify-content:center;width:100%;margin-top:6px;}
+.feto-btn:hover{border-color:var(--red-mid);color:var(--red);}
+.feto-btn.active{border-color:var(--red);background:var(--red-l);color:var(--red);box-shadow:0 0 0 3px rgba(197,48,48,.1);}
+.feto-dot{width:9px;height:9px;border-radius:50%;background:var(--border2);transition:all .2s;}
+.feto-btn.active .feto-dot{background:var(--red);}
+.apgar-card.feto-off input{opacity:.35;pointer-events:none;}
+.apgar-card.feto-off{background:repeating-linear-gradient(45deg,var(--surface),var(--surface) 5px,var(--white) 5px,var(--white) 10px);}
+.vital-rows-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:14px;}
+.vital-rows-table th{padding:9px 10px;background:var(--navy);color:white;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-bottom:none;text-align:center;}
+.vital-rows-table td{padding:7px 10px;border-bottom:1px solid var(--surface2);text-align:center;font-family:'Montserrat',sans-serif;font-size:.8rem;color:var(--text);}
+.vital-rows-table tr:hover td{background:var(--teal-l);}
+.pill-pa{color:#c53030;font-weight:700;}.pill-fc{color:var(--blue);}.pill-fr{color:var(--amber);}.pill-t{color:var(--teal);}.pill-spo2{color:var(--teal-d);}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--navy-d);padding:13px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(15,36,64,.3);}
+.bar-info{display:flex;gap:24px;align-items:center;}
+.bar-stat{display:flex;flex-direction:column;gap:1px;}
+.bar-stat-label{font-size:.62rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.bar-stat-val{font-family:'Montserrat',sans-serif;font-size:.86rem;color:var(--teal-mid);font-weight:700;}
+.bar-buttons{display:flex;gap:10px;}
+.btn-outline{padding:8px 16px;background:transparent;color:rgba(255,255,255,.75);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--teal-mid);color:var(--teal-mid);}
+.btn-primary{padding:9px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--teal-d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,157,143,.4);}
+.toast,#toast,#atl-global-toast{position:fixed;top:78px;right:22px;background:var(--teal)!important;color:white!important;padding:11px 18px;border-radius:9px;font-size:.82rem;font-weight:700;box-shadow:var(--shadow-lg);transform:translateX(140%);transition:transform .3s ease;z-index:9999;font-family:'Montserrat',sans-serif;}
+.toast.show,#atl-global-toast.show{transform:translateX(0);}
+.section-label{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+#infusionesRows .fluid-item{background:transparent;}
+
+@keyframes pulseMonitor{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+/* ── EQUIPOS ── */
+.equip-tab-btn{padding:6px 13px;border:1.5px solid var(--border);border-radius:7px;background:var(--white);font-family:'Montserrat',sans-serif;font-size:.76rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;}
+.equip-tab-btn:hover{border-color:var(--teal);color:var(--teal-d);}
+.equip-tab-btn.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);}
+.equip-section-title{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:6px;}
+/* ── BUSCADOR DE MÉDICOS ── */
+.doc-search-wrap{position:relative;}
+.doc-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:8px;max-height:180px;overflow-y:auto;z-index:60;display:none;box-shadow:var(--shadow-lg);}
+.doc-dropdown.open{display:block;}
+.doc-option{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--surface2);transition:background .12s;display:flex;flex-direction:column;gap:1px;}
+.doc-option:last-child{border-bottom:none;}
+.doc-option:hover{background:var(--teal-l);}
+.doc-opt-name{font-size:.83rem;font-weight:600;color:var(--text);}
+.doc-opt-esp{font-size:.7rem;color:var(--muted);}
+@media print{.doc-dropdown{display:none!important;}.doc-search-wrap .field-input{border:1px solid #ccc!important;}}
+.equip-check-grid{display:flex;flex-wrap:wrap;gap:4px;}
+.equip-chk{padding:3px 9px;border:1.5px solid var(--border);border-radius:20px;font-size:.75rem;font-weight:500;color:var(--text);cursor:pointer;background:var(--white);transition:all .15s;user-select:none;white-space:nowrap;}
+.equip-chk:hover{border-color:var(--teal);background:var(--teal-l);}
+.equip-chk.on{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);font-weight:700;}
+.equip-chk.on::before{content:'✓ ';color:var(--teal);}
+/* ── MONITOR LOG CARDS ── */
+.mon-log-card{background:var(--white);border:1.5px solid var(--border);border-radius:11px;overflow:hidden;}
+.mon-log-header{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--border);}
+.mon-log-title{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;}
+.mon-log-dot{width:9px;height:9px;border-radius:50%;animation:pulseMonitor 2s infinite;}
+.mon-log-body{padding:10px 12px;}
+.mon-log-input-row{display:flex;gap:6px;align-items:flex-end;margin-bottom:8px;}
+.mon-log-input-row .field-input{font-family:'Montserrat',sans-serif;font-size:.82rem;text-align:center;padding:6px 8px;}
+.mon-log-table{width:100%;border-collapse:collapse;font-size:.76rem;}
+.mon-log-table th{padding:5px 8px;background:var(--surface2);font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);}
+.mon-log-table td{padding:5px 8px;border-bottom:1px solid var(--surface2);text-align:center;font-family:'Montserrat',sans-serif;}
+.mon-log-empty{font-size:.75rem;color:var(--dim);text-align:center;padding:10px 0;font-style:italic;}
+/* ── HEMORRAGIA ── */
+.hem-grado-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .18s;}
+.hem-grado-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.hem-grado-btn.sel{box-shadow:0 0 0 3px rgba(197,48,48,.15);}
+.hem-grado-num{font-size:.9rem;font-weight:800;line-height:1;}
+.hem-grado-rango{font-size:.62rem;color:var(--muted);text-align:center;line-height:1.2;}
+.hem-tag-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:20px;background:var(--white);font-family:'Montserrat',sans-serif;font-size:.74rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.hem-tag-btn:hover{border-color:var(--red-mid);color:var(--red);}
+.hem-tag-btn.on{border-color:var(--red);background:var(--red-l);color:var(--red);}
+/* ── REGISTRO DE CAMBIOS DE POSICIÓN ── */
+.pos-log-row{display:grid;grid-template-columns:90px 1fr 1fr auto;gap:8px;align-items:center;padding:9px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:9px;animation:posIn .25s ease;}
+@keyframes posIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .patient-row{grid-template-columns:1fr 1fr 1fr;}
+  .staff-grid-5{grid-template-columns:1fr 1fr;}
+  .technique-panel{grid-template-columns:1fr 1fr;}
+  .fluids-panel,.duration-panel{grid-template-columns:1fr;}
+  .apgar-row{grid-template-columns:1fr 1fr;}
+  .chart-input-row{grid-template-columns:1fr 1fr 1fr;}
+  .bottom-bar{padding:10px 16px;}
+  .bar-info{gap:12px;}
+  .position-grid{grid-template-columns:repeat(2,1fr);}
+  .pos-log-row{grid-template-columns:80px 1fr;}
+}
+@media print{
+/* ══ RESET GENERAL ══ */
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important;}
+@page{margin:0.7cm 0.9cm;size:A4 portrait;}
+html,body{background:white!important;font-size:8.5pt!important;color:#000!important;}
+
+/* ══ OCULTAR CONTROLES ══ */
+.bottom-bar,.atlas-main-header,
+.btn-add-vital,.btn-add-row,.btn-del,.btn-outline,.btn-primary,
+.hdr-btn-outline,.hdr-btn-primary,
+.cie-search-box,.cie-dropdown,.cie-search-icon,
+.add-event-row,.event-now-btn,
+#monitor-status-bar,#monitor-logs-panel,
+.chart-input-row,#chart-legend-row,
+.equip-tab-btn,
+#equip-panel-via>div>div:last-child,
+.hem-tag-btn,#hem-grado-grid,#hem-grado-desc,#hem-resumen,
+#hem-toggle-label,
+.pos-log-row .btn-del,
+#pos-change-form,
+.add-event-row,
+.newEventName,.newEventTime,
+.toast,#toast,#atl-global-toast,
+.section-label::after,
+input[type="time"]+button,
+.event-now-btn,
+.feto-btn,
+.monitor-logs-panel
+{display:none!important;}
+
+/* ══ LAYOUT ══ */
+.app-body{padding:4px 0 0!important;gap:5px!important;max-width:100%!important;}
+.card{border:1px solid #bbb!important;border-radius:4px!important;box-shadow:none!important;break-inside:avoid;margin-bottom:4px!important;page-break-inside:avoid;}
+.card-header{padding:4px 10px!important;background:#595759!important;min-height:0!important;}
+.card-icon{width:16px!important;height:16px!important;font-size:.6rem!important;}
+.card-title{font-size:7.5pt!important;letter-spacing:.04em!important;}
+.card-body{padding:6px 10px!important;}
+
+/* ══ TIPOGRAFÍA ══ */
+.field-label{font-size:6.5pt!important;margin-bottom:2px!important;letter-spacing:.04em!important;}
+.field-input,.field-select,.field-textarea{font-size:8pt!important;padding:3px 6px!important;border-radius:3px!important;border:1px solid #ccc!important;background:transparent!important;box-shadow:none!important;}
+.field-textarea{min-height:0!important;resize:none!important;overflow:visible!important;}
+
+/* ══ GRIDS MÁS COMPACTOS ══ */
+.patient-row{grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 1.2fr!important;gap:5px!important;}
+.staff-grid-5{grid-template-columns:1fr 1fr 1fr 1fr 1fr!important;gap:5px!important;}
+.grid-2{gap:6px!important;}
+.grid-3{gap:6px!important;}
+.grid-4{gap:6px!important;}
+
+/* ══ TECHNIQUE PANEL ══ */
+/* ══ TÉCNICA ANESTÉSICA — fila horizontal compacta ══ */
+.technique-panel{display:flex!important;flex-wrap:wrap!important;gap:6px!important;border:none!important;border-radius:0!important;overflow:visible!important;}
+.tech-col{border:1px solid #bbb!important;border-radius:4px!important;padding:4px 8px!important;flex:0 0 auto!important;min-width:0!important;}
+.tech-col.print-no-sel{display:none!important;}
+.tech-col-title{font-size:6pt!important;font-weight:700!important;color:#555!important;margin-bottom:3px!important;padding-bottom:2px!important;border-bottom:1px solid #ddd!important;text-transform:uppercase!important;letter-spacing:.05em!important;}
+/* Solo el radio seleccionado, inline */
+.radio-item:not(.selected){display:none!important;}
+.radio-item.selected{display:inline-flex!important;padding:2px 5px!important;margin:0!important;background:#dff0ee!important;border:1px solid #2a9d8f!important;border-radius:3px!important;}
+.radio-dot,.radio-dot-inner{display:none!important;}
+.radio-label{font-size:7pt!important;font-weight:700!important;color:#1a3a5c!important;}
+/* Campos extra de cada columna — solo si tienen valor */
+.tech-col .field-group{margin-top:3px!important;}
+.tech-col .field-label{font-size:5.5pt!important;margin-bottom:1px!important;}
+.tech-col .field-input,.tech-col .field-select{font-size:7pt!important;padding:2px 5px!important;border-radius:2px!important;}
+/* Monitores activos inline */
+.monitor-grid{display:flex!important;flex-wrap:wrap!important;gap:3px!important;}
+.monitor-item:not(.active){display:none!important;}
+.monitor-item.active{display:inline-flex!important;padding:2px 6px!important;border-radius:3px!important;border:1px solid #2a9d8f!important;background:#dff0ee!important;}
+.monitor-box,.monitor-mark{display:none!important;}
+.monitor-label{font-size:6.5pt!important;font-weight:700!important;color:#1a3a5c!important;}
+.monitor-grid{gap:3px!important;}
+.monitor-item{padding:3px 6px!important;border-radius:4px!important;}
+.monitor-label{font-size:7pt!important;}
+.monitor-box{width:10px!important;height:10px!important;}
+
+/* ══ EQUIPOS ══ */
+.equip-check-grid{gap:2px!important;}
+.equip-chk{padding:2px 6px!important;font-size:6.5pt!important;border-radius:10px!important;}
+.equip-section-title{font-size:6pt!important;margin-bottom:3px!important;}
+#equip-resumen{padding:4px 8px!important;font-size:7pt!important;margin-top:4px!important;}
+
+/* ══ POSICIÓN ══ */
+.position-card{padding:3px 7px!important;font-size:7pt!important;}
+.pos-icon{font-size:.7rem!important;}
+.pos-name{font-size:7pt!important;}
+
+/* ══ CIE TAGS ══ */
+.cie-selected-list{min-height:0!important;padding:2px 0!important;gap:4px!important;}
+.cie-tag{padding:2px 7px!important;font-size:7pt!important;}
+
+/* ══ EVENTOS ══ */
+.events-timeline{padding-left:18px!important;}
+.events-timeline::before{left:5px!important;}
+.event-row{grid-template-columns:150px 90px 1fr!important;gap:5px!important;margin-bottom:4px!important;}
+.event-name-badge{padding:4px 7px!important;font-size:7pt!important;}
+.event-time-input{font-size:8pt!important;padding:4px 6px!important;}
+.event-note-input{font-size:7.5pt!important;padding:4px 6px!important;}
+
+/* ══ AGENTES ══ */
+.agents-table{font-size:7.5pt!important;}
+.agents-table th{padding:4px 6px!important;font-size:6.5pt!important;}
+.agents-table td{padding:3px 6px!important;}
+.agents-table .field-input{padding:2px 5px!important;font-size:7.5pt!important;}
+
+/* ══ SIGNOS VITALES ══ */
+#vitalChart{height:130px!important;}
+.vital-rows-table{font-size:7pt!important;margin-top:5px!important;}
+.vital-rows-table th{padding:3px 5px!important;font-size:6.5pt!important;}
+.vital-rows-table td{padding:2px 5px!important;}
+
+/* ══ LÍQUIDOS ══ */
+.fluids-panel{gap:8px!important;}
+.fluid-card{padding:8px!important;}
+.fluid-title{font-size:7pt!important;margin-bottom:6px!important;padding-bottom:4px!important;}
+.fluid-item{margin-bottom:3px!important;}
+.fluid-name{font-size:7.5pt!important;min-width:100px!important;}
+.fluid-input{width:70px!important;padding:3px 6px!important;font-size:8pt!important;}
+.fluid-unit{font-size:7pt!important;}
+.fluid-total{margin-top:5px!important;padding-top:4px!important;}
+.total-label{font-size:6.5pt!important;}
+.total-value{font-size:9pt!important;}
+
+/* ══ HEMORRAGIA ══ */
+#hem-detail{padding:0!important;}
+.hem-grado-btn{padding:4px 2px!important;}
+.hem-grado-num{font-size:.75rem!important;}
+.hem-grado-rango{font-size:.55rem!important;}
+
+/* ══ POSICIÓN CAMBIOS ══ */
+.pos-log-row{padding:4px 8px!important;gap:5px!important;}
+#pos-timeline{gap:4px!important;}
+
+/* ══ CPT / ASA ══ */
+.asa-btn{padding:6px 4px!important;}
+#asa-resultado{padding:7px!important;}
+#cie-selected-list,.cie-selected-list{gap:3px!important;}
+.cpt-cat-btns{gap:3px!important;}
+.hem-tag-btn{padding:2px 6px!important;font-size:7pt!important;}
+
+/* ══ DURACIÓN / APGAR ══ */
+.duration-panel{gap:8px!important;}
+.dur-card{padding:7px!important;}
+.dur-title{font-size:7pt!important;margin-bottom:6px!important;padding-bottom:4px!important;}
+.apgar-row{gap:5px!important;}
+.apgar-card{padding:5px 8px!important;}
+.apgar-label{font-size:6.5pt!important;}
+.apgar-input{font-size:1rem!important;padding:4px!important;}
+
+/* ══ COMPLICACIONES ══ */
+.grid-2 .field-textarea{min-height:40px!important;}
+
+/* ══ SECTION LABEL ══ */
+.section-label{font-size:6.5pt!important;margin-bottom:4px!important;}
+
+/* ══ TÉCNICA — ocultar radios no seleccionados ══ */
+.radio-item:not(.selected){display:none!important;}
+/* Ocultar columnas técnicas sin selección (marcadas por JS) */
+.tech-col.print-no-sel{display:none!important;}
+/* Técnica panel sin grid cuando hay columnas ocultas */
+.technique-panel{display:flex!important;flex-wrap:wrap!important;border:none!important;}
+.tech-col{border:1px solid #ccc!important;border-radius:4px!important;margin-right:4px!important;flex:0 0 auto!important;}
+
+/* ══ EQUIPOS — solo panel activo ══ */
+.equip-panel{display:none!important;}
+.equip-panel.print-active{display:block!important;}
+/* Dentro del panel: ocultar chips no seleccionados */
+.equip-chk:not(.on){display:none!important;}
+/* Ocultar sub-columnas de equipos sin nada seleccionado */
+.equip-sub-col.print-no-sel{display:none!important;}
+
+/* ══ POSICIÓN — solo la seleccionada, visible ══ */
+.position-card:not(.selected){display:none!important;}
+.position-card.selected{display:inline-flex!important;border:1.5px solid var(--teal)!important;background:var(--teal-l)!important;padding:3px 9px!important;font-size:7pt!important;break-inside:avoid;}
+.pos-icon{font-size:.85rem!important;}
+.pos-name{font-size:7.5pt!important;font-weight:700!important;}
+
+/* ══ STAFF — solo texto, sin recuadros ══ */
+.staff-grid-5{grid-template-columns:1fr 1fr 1fr 1fr!important;gap:4px 10px!important;}
+.staff-grid-5 .field-input{border:none!important;border-bottom:1px solid #ddd!important;border-radius:0!important;background:transparent!important;padding:1px 0!important;font-size:7.5pt!important;font-weight:600!important;color:var(--navy)!important;box-shadow:none!important;}
+.staff-grid-5 .field-label{font-size:5.5pt!important;margin-bottom:1px!important;}
+.doc-search-wrap{display:contents!important;}
+.doc-dropdown{display:none!important;}
+/* Ocultar staff vacío */
+.staff-grid-5 .field-group:has(input:placeholder-shown){display:none!important;}
+.monitor-item:not(.active){display:none!important;}
+.monitor-grid{gap:3px!important;}
+
+/* ══ CPT — solo tags seleccionados ══ */
+#cpt-cat-btns,#cpt-cat-list,#cpt-cat-section{display:none!important;}
+#cptSelected .cie-tag{display:inline-flex!important;}
+
+/* ══ ASA — solo resultado seleccionado ══ */
+.asa-btn{display:none!important;}
+#asa-E-btn{display:none!important;}
+#asa-resultado{display:block!important;}
+#asa-resultado[style*="display:none"]{display:none!important;}
+
+/* ══ BALANCE — ocultar filas vacías (marcadas por JS) ══ */
+.fluid-item.print-empty{display:none!important;}
+.fluid-total{margin-top:4px!important;padding-top:3px!important;}
+
+.cx-type-btn:not(.active){display:none!important;}
+.cx-type-btn.active{cursor:default!important;transform:none!important;box-shadow:none!important;pointer-events:none!important;padding:4px 10px!important;font-size:7.5pt!important;}
+.cx-dot{display:none!important;}
+#cx-type-banner{font-size:7pt!important;padding:2px 8px!important;}
+
+/* ══ ELEMENTOS VACÍOS — ocultar ══ */
+.print-empty{display:none!important;}
+
+/* ══ PLACEHOLDERS — ocultar inputs vacíos ══ */
+input:placeholder-shown:not([type="time"]),
+select:not([data-filled]){border-bottom:1px solid #ddd!important;border-top:none!important;border-left:none!important;border-right:none!important;border-radius:0!important;background:transparent!important;}
+input:placeholder-shown::placeholder{color:transparent!important;}
+
+/* ══ ASA result compacto ══ */
+#asa-resultado{display:block!important;}
+#asa-resultado[style*="display:none"]{display:none!important;}
+
+/* ══ pos-empty ocultar ══ */
+#pos-empty{display:none!important;}
+
+/* ══ APGAR cards vacías ══ */
+.apgar-card.feto-off{display:none!important;}
+
+/* ══ CAMBIOS DE POSICIÓN — mostrar solo el timeline con datos, ocultar form ══ */
+#pos-changes-section .section-label{font-size:6.5pt!important;margin-bottom:3px!important;}
+#pos-changes-section > div:first-of-type + div{display:none!important;}
+/* Ocultar el formulario de agregar cambio (el div con grid y botones) */
+#pos-changes-section > div > div:first-child{display:none!important;}
+#pos-empty{display:none!important;}
+.pos-log-row .btn-del{display:none!important;}
+.pos-log-row{padding:4px 8px!important;gap:4px!important;border:1px solid #ccc!important;border-radius:4px!important;}
+/* Si el timeline está vacío, ocultar toda la sección */
+#pos-changes-section:not(:has(.pos-log-row)){display:none!important;}
+
+/* ══ CPT — ocultar texto descriptivo ══ */
+#cpt-desc-text{display:none!important;}
+
+/* ══ APGAR vacío — dur+apgar en 1 columna, duración ancha ══ */
+#dur-apgar-row.apgar-empty{grid-template-columns:1fr!important;}
+#dur-apgar-row.apgar-empty #apgar-card-wrap{display:none!important;}
+#dur-apgar-row.apgar-empty #dur-card-wrap{grid-column:1/-1!important;}
+
+/* ══ DURACIÓN — compacto horizontal cuando hay espacio ══ */
+.duration-panel{display:flex!important;gap:8px!important;}
+.dur-card{flex:1!important;padding:5px 8px!important;}
+.dur-title{font-size:6.5pt!important;margin-bottom:4px!important;padding-bottom:3px!important;}
+.dur-row{gap:5px!important;}
+#dur-anest,#dur-cir{font-size:.9rem!important;}
+
+/* ══ APGAR compacto ══ */
+.apgar-row{gap:4px!important;}
+.apgar-card{padding:3px 8px!important;}
+.apgar-label{font-size:6pt!important;}
+.apgar-input{font-size:.85rem!important;padding:3px!important;width:48px!important;}
+
+/* ══ ESPACIADO GLOBAL PRINT ══ */
+.card-body{padding:5px 8px!important;}
+.section-label{margin-bottom:3px!important;font-size:6pt!important;}
+.field-group+.field-group{margin-top:3px!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="atlas-main-header">
+ 
+  
+  <div style="flex:1;">
+    <div class="doc-title-text">REGISTRO DE ANESTESIA</div>
+    
+  </div>
+  <div id="atl-clock"></div>
+  <button class="hdr-btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+  <button class="hdr-btn-primary" onclick="guardar()">💾 Guardar</button>
+</div>
+
+<div id="atl-global-toast">✓ Guardado correctamente</div>
+
+<script>
+(function(){
+  function tick(){var n=new Date();var d=n.toLocaleDateString('es-EC',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'}).toUpperCase();var h=n.toTimeString().slice(0,8);var el=document.getElementById('atl-clock');if(el)el.innerHTML=d+'<br>'+h;}
+  tick();setInterval(tick,1000);
+})();
+</script>
+
+<main class="app-body">
+
+  <!-- 2. EQUIPO MÉDICO -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">🩺</div><span class="card-title">Equipo Médico</span></div>
+    <div class="card-body">
+      <div class="staff-grid-5">
+        <div class="field-group"><label class="field-label">Cirujano 1</label><div class="doc-search-wrap" data-field="cir1"><input class="field-input doc-search-input" id="staff-cir1" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('cir1',this.value)" onfocus="openDocDrop('cir1')" onblur="setTimeout(()=>closeDocDrop('cir1'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-cir1"></div></div></div>
+        <div class="field-group"><label class="field-label">Cirujano 2</label><div class="doc-search-wrap" data-field="cir2"><input class="field-input doc-search-input" id="staff-cir2" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('cir2',this.value)" onfocus="openDocDrop('cir2')" onblur="setTimeout(()=>closeDocDrop('cir2'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-cir2"></div></div></div>
+        <div class="field-group"><label class="field-label">Ayudante 1</label><div class="doc-search-wrap" data-field="ayu1"><input class="field-input doc-search-input" id="staff-ayu1" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('ayu1',this.value)" onfocus="openDocDrop('ayu1')" onblur="setTimeout(()=>closeDocDrop('ayu1'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-ayu1"></div></div></div>
+        <div class="field-group"><label class="field-label">Ayudante 2</label><div class="doc-search-wrap" data-field="ayu2"><input class="field-input doc-search-input" id="staff-ayu2" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('ayu2',this.value)" onfocus="openDocDrop('ayu2')" onblur="setTimeout(()=>closeDocDrop('ayu2'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-ayu2"></div></div></div>
+        <div class="field-group"><label class="field-label">Anestesiólogo</label><div class="doc-search-wrap" data-field="anest"><input class="field-input doc-search-input" id="staff-anest" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('anest',this.value)" onfocus="openDocDrop('anest')" onblur="setTimeout(()=>closeDocDrop('anest'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-anest"></div></div></div>
+        <div class="field-group"><label class="field-label">Aux. Anestesiólogo</label><input class="field-input" id="staff-aux" type="text" placeholder="Dr. Apellido Nombre"></div>
+        <div class="field-group"><label class="field-label">Pediatra</label><div class="doc-search-wrap" data-field="ped"><input class="field-input doc-search-input" id="staff-ped" type="text" placeholder="Dr. Apellido Nombre" oninput="searchDoctor('ped',this.value)" onfocus="openDocDrop('ped')" onblur="setTimeout(()=>closeDocDrop('ped'),200)" autocomplete="off"><div class="doc-dropdown" id="doc-drop-ped"></div></div></div>
+        <div class="field-group"><label class="field-label">Cirugía a Realizar</label><input class="field-input" type="text" placeholder="Descripción del procedimiento"></div>
+      </div>
+
+      <!-- Diagnósticos con buscador CIE-10 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+
+        <!-- Diagnóstico Preoperatorio -->
+        <div>
+          <label class="field-label" style="margin-bottom:6px;display:block;">Diagnóstico Preoperatorio</label>
+          <div class="cie-search-box" style="margin-bottom:8px;">
+            <input class="cie-search-input" id="dxPreSearch" type="text"
+              placeholder="Buscar CIE-10 o descripción..."
+              oninput="searchDX('pre',this.value)"
+              onfocus="openDX('pre')"
+              onblur="setTimeout(()=>closeDX('pre'),200)"
+              autocomplete="off">
+            <span class="cie-search-icon">🔍</span>
+            <div class="cie-dropdown" id="dxPreDropdown"></div>
+          </div>
+          <div class="cie-selected-list" id="dxPreSelected" style="min-height:32px;">
+            <span style="font-size:.78rem;color:var(--dim);">Sin diagnóstico preoperatorio</span>
+          </div>
+        </div>
+
+        <!-- Diagnóstico Postoperatorio -->
+        <div>
+          <label class="field-label" style="margin-bottom:6px;display:block;">Diagnóstico Postoperatorio</label>
+          <div class="cie-search-box" style="margin-bottom:8px;">
+            <input class="cie-search-input" id="dxPostSearch" type="text"
+              placeholder="Buscar CIE-10 o descripción..."
+              oninput="searchDX('post',this.value)"
+              onfocus="openDX('post')"
+              onblur="setTimeout(()=>closeDX('post'),200)"
+              autocomplete="off">
+            <span class="cie-search-icon">🔍</span>
+            <div class="cie-dropdown" id="dxPostDropdown"></div>
+          </div>
+          <div class="cie-selected-list" id="dxPostSelected" style="min-height:32px;">
+            <span style="font-size:.78rem;color:var(--dim);">Sin diagnóstico postoperatorio</span>
+          </div>
+        </div>
+
+      </div>
+      <div style="margin-top:14px;display:flex;gap:14px;align-items:center;">
+        <label class="field-label" style="margin:0;white-space:nowrap">Tipo de cirugía:</label>
+        <button class="cx-type-btn cx-emergencia" id="btn-emergencia" onclick="selCxType('emergencia')">
+          <span class="cx-dot"></span>🚨 EMERGENCIA
+        </button>
+        <button class="cx-type-btn cx-programada" id="btn-programada" onclick="selCxType('programada')">
+          <span class="cx-dot"></span>📅 PROGRAMADA
+        </button>
+        <span id="cx-type-banner"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. TÉCNICA ANESTÉSICA -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">⚗️</div><span class="card-title">Técnica Anestésica</span></div>
+    <div class="card-body">
+      <div class="technique-panel">
+        <div class="tech-col">
+          <div class="tech-col-title">General</div>
+          <label class="radio-item" onclick="selRadio(this,'general')"><input type="radio" name="tecnica" value="TIVA"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">TIVA</span></label>
+          <label class="radio-item" onclick="selRadio(this,'general')"><input type="radio" name="tecnica" value="BALANCEADA"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Balanceada</span></label>
+          <label class="radio-item" onclick="selRadio(this,'general')"><input type="radio" name="tecnica" value="MANEJO_VIA"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Manejo Vía Aérea</span></label>
+          <div style="margin-top:14px;"><label class="field-label">Monitoreo</label><input class="field-input" type="text" placeholder="Especifique..."></div>
+        </div>
+        <div class="tech-col">
+          <div class="tech-col-title">Conductiva</div>
+          <label class="radio-item" onclick="selRadio(this,'conductiva')"><input type="radio" name="tecnica" value="RAQUIDEA"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Raquídea</span></label>
+          <label class="radio-item" onclick="selRadio(this,'conductiva')"><input type="radio" name="tecnica" value="EPIDURAL"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Epidural</span></label>
+          <label class="radio-item" onclick="selRadio(this,'conductiva')"><input type="radio" name="tecnica" value="SIMPLE"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Simple</span></label>
+          <label class="radio-item" onclick="selRadio(this,'conductiva')"><input type="radio" name="tecnica" value="CONTINUA"><div class="radio-dot"><div class="radio-dot-inner"></div></div><span class="radio-label">Continua</span></label>
+          <div style="margin-top:12px;"><label class="field-label">Altura Punción</label><input class="field-input" type="text" placeholder="Ej: L3-L4"></div>
+          <div style="margin-top:10px;"><label class="field-label">Aguja</label><input class="field-input" type="text" placeholder="Tipo y calibre"></div>
+          <div style="margin-top:10px;"><label class="field-label">Isobara / Hiperbara</label><select class="field-select"><option value="">—</option><option>Isobara</option><option>Hiperbara</option></select></div>
+        </div>
+        <div class="tech-col">
+          <div class="tech-col-title">Bloqueo Nervioso Periférico</div>
+          <input class="field-input" type="text" placeholder="Especifique bloqueo..." onfocus="autoTabBloqueo()">
+          <div style="margin-top:10px;"><label class="field-label">Infusiones</label>
+            <div id="infusionesRows"><div class="fluid-item" style="margin-bottom:8px"><input class="field-input" style="flex:1" type="text" placeholder="Agente / fármaco"><input class="fluid-input" type="number" placeholder="cc"><span class="fluid-unit">cc</span></div></div>
+            <button class="btn-add-row" onclick="addInfusion()" style="padding:6px 12px;font-size:.78rem;margin-top:6px;">+ Agregar</button>
+          </div>
+        </div>
+        <div class="tech-col">
+          <div class="tech-col-title">Monitoreo</div>
+          <div class="monitor-grid">
+            <div class="monitor-item" data-monitor="ecg"   onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">ECG</span></div>
+            <div class="monitor-item" data-monitor="spo2"  onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">SpO₂</span></div>
+            <div class="monitor-item" data-monitor="nibp"  onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">NIBP</span></div>
+            <div class="monitor-item" data-monitor="capno" onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">Capno</span></div>
+            <div class="monitor-item" data-monitor="temp"  onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">Temp.</span></div>
+            <div class="monitor-item" data-monitor="bis"   onclick="toggleMonitor(this)"><div class="monitor-box"><span class="monitor-mark">✓</span></div><span class="monitor-label">BIS</span></div>
+          </div>
+          <div style="margin-top:12px"><label class="field-label">Conducido a</label><input class="field-input" type="text" placeholder="UCPA / UCI / Piso..."></div>
+        </div>
+      </div>
+
+      <!-- ══ EQUIPOS UTILIZADOS ══ -->
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+          <span class="section-label" style="margin:0;flex-shrink:0;">Equipos</span>
+          <button class="equip-tab-btn active" id="etab-via" data-tab="via" onclick="selEquipTab(this)">🫁 Vía Aérea</button>
+          <button class="equip-tab-btn" id="etab-conductiva" data-tab="conductiva" onclick="selEquipTab(this)">💉 Conductiva</button>
+          <button class="equip-tab-btn" id="etab-bloqueo" data-tab="bloqueo" onclick="selEquipTab(this)">🎯 Bloqueo</button>
+        </div>
+
+        <!-- VÍA AÉREA -->
+        <div id="equip-panel-via" class="equip-panel" style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#3b82f6;">🫁 Dispositivo</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="tei">Tubo ET Oral</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="tef">Tubo ET Nasal</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="ml">ML Clásica</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mla">ML Articulada</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="proseal">ML ProSeal</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="igel">i-gel</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mlclas">Máscara Laríngea</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="airtraq">Airtraq</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mfv">Mascarilla Facial</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="combitube">Combitube</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-tubo-nr" type="text" placeholder="N° tubo" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-cuff" type="number" placeholder="Cuff" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#8b5cf6;">🔦 Laringoscopía</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mac">Macintosh</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="miller">Miller</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="vl">Videolaringoscopio</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="glidescope">GlideScope</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="cmac">C-MAC</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mcgrath">McGrath</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="fob">Fibroscopio</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="awd">Vía Aérea Difícil</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-hoja-nr" type="text" placeholder="N° hoja" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-intentos" type="number" placeholder="Intentos" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#2a9d8f;">🔧 Accesorios</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="guia">Guía/Estilete</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bougie">Bougie</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="dce">Detector CO₂</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="mayo">Cánula Guedel</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="nasal">Cánula Nasal</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="jet">Jet Ventilación</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="tco">Traqueostomía</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="cpap">CPAP/BiPAP</div>
+              </div>
+              <input class="field-input" id="eq-via-obs" type="text" placeholder="Obs. (Cormack-Lehane...)" style="font-size:.75rem;padding:4px 7px;margin-top:6px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- CONDUCTIVA -->
+        <div id="equip-panel-conductiva" class="equip-panel" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#ef4444;">💉 Agujas</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="quincke">Quincke</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="whitacre">Whitacre</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="sprotte">Sprotte</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="tuohy">Tuohy</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="crawford">Crawford</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="weiss">Weiss</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-aguja-g" type="text" placeholder="Calibre" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-aguja-mm" type="text" placeholder="Long." style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#f59e0b;">🩺 Catéter Epidural</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="cat-std">Estándar</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="cat-wire">Con guía</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="cat-multi">Multiorificio</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="filtro">Filtro antibacteriano</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bomba-ep">Bomba infusión</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-cat-prof" type="number" placeholder="Prof. cm" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-espacio" type="text" placeholder="Espacio" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#276749;">🔧 Accesorios</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="loc-drop">LOR suero</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="loc-aire">LOR aire</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="epi-test">Dosis test</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="neuroestim-c">Neuroestimulador</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="ecografia-c">Ecografía</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="csea">CSEA</div>
+              </div>
+              <input class="field-input" id="eq-cond-obs" type="text" placeholder="Observaciones..." style="font-size:.75rem;padding:4px 7px;margin-top:6px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- BLOQUEO -->
+        <div id="equip-panel-bloqueo" class="equip-panel" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#7c3aed;">🎯 Tipo de Bloqueo</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bplexo">Plexo braquial</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bfemoral">Femoral</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bciatico">Ciático</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bfascia">Fascia iliaca</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="badductor">Aductor</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="binterscal">Interescalénico</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bsupraclav">Supraclavicular</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="binfraclav">Infraclavicular</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="baxilar">Axilar</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bpopliteo">Poplíteo</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="btap">TAP Block</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bpecs">PECS Block</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="berector">Erector spinae</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="bserratus">Serrato ant.</div>
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#c53030;">💉 Aguja</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-50">50 mm</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-80">80 mm</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-100">100 mm</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-150">150 mm</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-stimuplex">Stimuplex</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-pajunk">Pajunk</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="blq-cat">Con catéter</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-blq-g" type="text" placeholder="Calibre" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-blq-vol" type="number" placeholder="Vol ml" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+            </div>
+            <div class="equip-sub-col">
+              <div class="equip-section-title" style="color:#1a3a5c;">🔧 Guía</div>
+              <div class="equip-check-grid">
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="eco-blq">Ecografía (USG)</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="neuro-blq">Neuroestimulador</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="eco-neuro">USG + Neuroestim.</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="transductor-lin">Transductor lineal</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="transductor-curv">Transductor curvo</div>
+                <div class="equip-chk" onclick="toggleEquip(this)" data-key="funda-eco">Funda estéril</div>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px;">
+                <input class="field-input" id="eq-ma" type="number" step="0.1" placeholder="mA" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+                <input class="field-input" id="eq-hz" type="number" placeholder="Hz" style="font-size:.75rem;padding:4px 7px;font-family:'Montserrat',sans-serif;">
+              </div>
+              <input class="field-input" id="eq-blq-obs" type="text" placeholder="Observaciones..." style="font-size:.75rem;padding:4px 7px;margin-top:5px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen -->
+        <div id="equip-resumen" style="display:none;margin-top:8px;padding:7px 12px;background:var(--navy-l);border:1.5px solid var(--border);border-radius:8px;font-size:.76rem;color:var(--navy);line-height:1.7;"></div>
+
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <!-- ═══ POSICIÓN DEL PACIENTE + REGISTRO CAMBIOS ═══ -->
+      <div class="card-header"><div class="card-icon">🛏️</div><span class="card-title">Posición del Paciente</span></div>
+      <div class="card-body">
+
+        <div class="section-label">Posición Inicial</div>
+        <div class="position-grid" id="positionGrid">
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="SUPINO"><span class="pos-icon">🧍</span><span class="pos-name">Supino</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="PRONO"><span class="pos-icon">🫃</span><span class="pos-name">Prono</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="LATERAL_DER"><span class="pos-icon">🤸</span><span class="pos-name">Lateral Der.</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="LATERAL_IZQ"><span class="pos-icon">🤸</span><span class="pos-name">Lateral Izq.</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="TRENDELENBURG"><span class="pos-icon">📐</span><span class="pos-name">Trendelenburg</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="ANTI_TREND"><span class="pos-icon">📏</span><span class="pos-name">Anti-Trend.</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="LITOTOMIA"><span class="pos-icon">🦵</span><span class="pos-name">Litotomía</span><span class="pos-check">✓</span></label>
+          <label class="position-card" onclick="selPosition(this)"><input type="radio" name="posicion" value="SENTADO"><span class="pos-icon">🪑</span><span class="pos-name">Sentado</span><span class="pos-check">✓</span></label>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label class="field-label">Observación de posición inicial</label>
+          <input class="field-input" type="text" placeholder="Detalles adicionales de posicionamiento...">
+        </div>
+
+        <!-- ══ NUEVO: REGISTRO DE CAMBIOS DE POSICIÓN ══ -->
+        <div id="pos-changes-section" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
+          <div class="section-label">Cambios de Posición Durante la Cirugía</div>
+
+          <!-- Formulario de registro -->
+          <div style="display:grid;grid-template-columns:1fr 95px 1fr 1fr auto;gap:8px;align-items:end;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;">
+            <div class="field-group">
+              <label class="field-label">Nueva Posición</label>
+              <select class="field-select" id="pos-change-name">
+                <option value="">— Seleccionar —</option>
+                <option>Supino</option><option>Prono</option>
+                <option>Lateral Derecho</option><option>Lateral Izquierdo</option>
+                <option>Trendelenburg</option><option>Anti-Trendelenburg</option>
+                <option>Litotomía</option><option>Sentado</option>
+                <option>Fowler</option><option>Jackknife</option><option>Otro</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Hora</label>
+              <input class="field-input" id="pos-change-time" type="time" style="font-family:'Montserrat',sans-serif;text-align:center;padding:8px 6px;">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Observación</label>
+              <input class="field-input" id="pos-change-note" type="text" placeholder="Motivo, tolerancia, cuidados...">
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:5px;">
+              <button class="event-now-btn" onclick="setPosNow()" style="height:38px;padding:0 9px;" title="Hora actual">⏱</button>
+              <button class="btn-add-vital" onclick="addPosChange()" style="height:38px;padding:0 12px;">+ Agregar</button>
+            </div>
+          </div>
+
+          <!-- Timeline de cambios -->
+          <div id="pos-timeline" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
+            <div id="pos-empty" style="font-size:.8rem;color:var(--dim);padding:12px;text-align:center;border:1.5px dashed var(--border);border-radius:9px;background:var(--surface);">
+              Sin cambios registrados — aparecerán aquí cronológicamente
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CPT ANESTESIA + ASA -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+
+    <!-- CPT ANESTESIA -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon">📋</div><span class="card-title">Códigos CPT — Anestesia</span></div>
+      <div class="card-body">
+        <p id="cpt-desc-text" style="font-size:.8rem;color:var(--muted);margin-bottom:14px;">Seleccione o busque el código CPT correspondiente al procedimiento anestésico.</p>
+
+        <!-- Buscador CPT -->
+        <div class="cie-search-box">
+          <input class="cie-search-input" id="cptSearch" type="text" placeholder="Buscar por código o procedimiento... ej: 00400, columna" oninput="searchCPT(this.value)" onfocus="openCPT()" onblur="setTimeout(closeCPT,200)" autocomplete="off">
+          <span class="cie-search-icon">🔍</span>
+          <div class="cie-dropdown" id="cptDropdown"></div>
+        </div>
+
+        <!-- Tags seleccionados -->
+        <div style="margin-bottom:8px;">
+          <label class="field-label">Códigos seleccionados</label>
+          <div class="cie-selected-list" id="cptSelected"><span style="font-size:.8rem;color:var(--dim);padding:6px 0;">Ningún código seleccionado</span></div>
+        </div>
+
+        <!-- Acceso rápido por categoría -->
+        <div id="cpt-cat-section" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <label class="field-label">Acceso rápido por categoría</label>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;" id="cpt-cat-btns">
+            <button class="hem-tag-btn" onclick="filterCPTCat('cabeza')">Cabeza/Cuello</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('torax')">Tórax</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('abdomen')">Abdomen</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('columna')">Columna</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('extremidades')">Extremidades</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('perineal')">Perineal/Pelvis</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('cardiaco')">Cardíaco</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('pediatrico')">Pediátrico</button>
+            <button class="hem-tag-btn" onclick="filterCPTCat('otro')">Otro</button>
+          </div>
+          <div id="cpt-cat-list" style="display:none;margin-top:8px;border:1.5px solid var(--border);border-radius:9px;max-height:160px;overflow-y:auto;"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ASA -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon">⭐</div><span class="card-title">Clasificación ASA</span></div>
+      <div class="card-body">
+
+        <!-- Botones ASA compactos -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px;">
+          <div class="asa-btn" data-asa="I" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #68d391;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#276749;">I</div>
+          </div>
+          <div class="asa-btn" data-asa="II" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #93c5fd;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#1d4ed8;">II</div>
+          </div>
+          <div class="asa-btn" data-asa="III" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #f6ad55;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#b7791f;">III</div>
+          </div>
+          <div class="asa-btn" data-asa="IV" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #fc8181;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#c53030;">IV</div>
+          </div>
+          <div class="asa-btn" data-asa="V" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #c4b5fd;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#6d28d9;">V</div>
+          </div>
+          <div class="asa-btn" data-asa="VI" onclick="selASA(this)"
+            style="padding:12px 6px;border:2px solid #f0abfc;border-radius:10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;">
+            <div style="font-size:1.3rem;font-weight:800;color:#86198f;">VI</div>
+          </div>
+        </div>
+
+        <!-- Modificador E -->
+        <div style="margin-bottom:12px;">
+          <div class="asa-btn" id="asa-E-btn" data-asa="E" onclick="selASAE(this)"
+            style="display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;border:2px solid var(--border);border-radius:9px;cursor:pointer;background:var(--white);transition:all .2s;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--red-l);border:2px solid var(--red-mid);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:var(--red);flex-shrink:0;">E</div>
+            <span style="font-size:.8rem;font-weight:700;color:var(--text);">Modificador E — Emergencia</span>
+          </div>
+        </div>
+
+        <!-- Resultado -->
+        <div id="asa-resultado" style="display:none;border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px;">Clasificación seleccionada</div>
+          <div id="asa-resultado-text" style="font-size:2rem;font-weight:800;"></div>
+          <div id="asa-resultado-desc" style="font-size:.75rem;margin-top:4px;"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 6. EVENTOS QUIRÚRGICOS -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">⏱️</div><span class="card-title">Eventos Quirúrgicos</span></div>
+    <div class="card-body">
+      <div class="events-timeline" id="eventsTimeline"></div>
+      <div class="add-event-row">
+        <div class="field-group"><label class="field-label">Nombre del evento personalizado</label><input class="field-input" id="newEventName" type="text" placeholder="Ej: Torniquete, Posicionamiento, Reversión..."></div>
+        <div class="field-group"><label class="field-label">Hora</label><input class="field-input" id="newEventTime" type="time"></div>
+        <div style="display:flex;align-items:flex-end;"><button class="btn-add-vital" onclick="addCustomEvent()">+ Agregar Evento</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. AGENTES Y FÁRMACOS -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">💊</div><span class="card-title">Agentes y Fármacos</span></div>
+    <div class="card-body">
+      <table class="agents-table" id="agentsTable">
+        <thead><tr><th>Fármaco / Agente</th><th>Dosis Total</th><th>Unidad</th><th>Vía</th><th>Hora</th><th>Observación</th><th></th></tr></thead>
+        <tbody id="agentsBody"></tbody>
+      </table>
+      <button class="btn-add-row" onclick="addAgent()">+ Agregar agente / fármaco</button>
+    </div>
+  </div>
+
+  <!-- 7. SIGNOS VITALES -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">📈</div><span class="card-title">Registro Trans-Anestésico — Signos Vitales</span></div>
+    <div class="card-body">
+      <!-- Monitores activos -->
+      <div id="monitor-status-bar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;margin-bottom:14px;">
+        <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);white-space:nowrap;">Monitores activos:</span>
+        <div id="monitor-badges" style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
+          <span style="font-size:.78rem;color:var(--dim);font-style:italic;">Ninguno seleccionado — activa los monitores en Técnica Anestésica</span>
+        </div>
+      </div>
+
+      <!-- ══ REGISTRO INDIVIDUAL POR MONITOR ══ -->
+      <div id="monitor-logs-panel" style="display:none;margin-bottom:18px;">
+        <div class="section-label" style="margin-bottom:12px;">Registro por Monitor</div>
+        <div id="monitor-logs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+      </div>
+
+      <div class="chart-legend" id="chart-legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>PA Sistólica</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>PA Diastólica</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>FC (lpm)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>FR (rpm)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2a9d8f"></div>SpO₂ (%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1a3a5c"></div>Temp (°C)</div>
+      </div>
+      <div class="chart-container"><canvas id="vitalChart"></canvas></div>
+      <div class="chart-input-row">
+        <div class="field-group"><label class="field-label">Hora</label><input class="field-input" id="inp-hora" type="time"></div>
+        <div class="field-group"><label class="field-label">PA (mmHg)</label><input class="field-input" id="inp-pa" type="text" placeholder="120/80"></div>
+        <div class="field-group"><label class="field-label">FC (lpm)</label><input class="field-input" id="inp-fc" type="number" placeholder="72"></div>
+        <div class="field-group"><label class="field-label">FR (rpm)</label><input class="field-input" id="inp-fr" type="number" placeholder="16"></div>
+        <div class="field-group"><label class="field-label">SpO₂ (%)</label><input class="field-input" id="inp-spo2" type="number" placeholder="98"></div>
+        <div class="field-group"><label class="field-label">Temp (°C)</label><input class="field-input" id="inp-temp" type="number" step="0.1" placeholder="36.5"></div>
+        <div style="display:flex;align-items:flex-end;"><button class="btn-add-vital" onclick="addVital()">+ Registrar</button></div>
+      </div>
+      <table class="vital-rows-table" id="vitalTable">
+        <thead><tr><th>Hora</th><th>PA Sist.</th><th>PA Diast.</th><th>FC</th><th>FR</th><th>SpO₂</th><th>Temp</th><th></th></tr></thead>
+        <tbody id="vitalBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. LÍQUIDOS -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">💧</div><span class="card-title">Balance de Líquidos</span></div>
+    <div class="card-body">
+      <div class="fluids-panel">
+        <div class="fluid-card">
+          <div class="fluid-title">📥 Ingresos</div>
+          <div class="fluid-item"><span class="fluid-name">Lactato Ringer</span><input class="fluid-input" id="f-lr" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Solución Salina</span><input class="fluid-input" id="f-ss" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Dextrosa</span><input class="fluid-input" id="f-dx" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Expansores</span><input class="fluid-input" id="f-exp" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Plasma</span><input class="fluid-input" id="f-pl" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Sangre</span><input class="fluid-input" id="f-sg" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-total"><span class="total-label">Total Ingresos</span><span class="total-value" id="total-ing">0 ml</span></div>
+        </div>
+        <div class="fluid-card">
+          <div class="fluid-title">📤 Egresos</div>
+
+          <!-- ── HEMORRAGIA ── -->
+          <div style="border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--surface);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);display:flex;align-items:center;gap:6px;">🩸 Hemorragia</span>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--muted);padding:4px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--white);transition:all .2s;" id="hem-toggle-label" onclick="toggleHemorragia()">
+                <span id="hem-toggle-dot" style="width:9px;height:9px;border-radius:50%;background:var(--border2);transition:all .2s;flex-shrink:0;"></span>
+                <span id="hem-toggle-txt">Sin hemorragia</span>
+              </label>
+            </div>
+
+            <!-- Sangrado ml — siempre visible -->
+            <div class="fluid-item" style="margin-bottom:8px;">
+              <span class="fluid-name" style="color:var(--red);font-weight:600;">Sangrado estimado</span>
+              <input class="fluid-input" id="e-sg" type="number" placeholder="0" oninput="calcBalance();evalHemorragia()" style="border-color:var(--red-mid);">
+              <span class="fluid-unit">ml</span>
+            </div>
+
+            <!-- Panel detalle — visible solo si hay hemorragia -->
+            <div id="hem-detail" style="display:none;">
+
+              <!-- Grado de hemorragia OMS -->
+              <div style="margin-bottom:9px;">
+                <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Clasificación ATLS (Grado)</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;" id="hem-grado-grid">
+                  <button class="hem-grado-btn" data-grado="I"   data-color="#276749" data-bg="#f0fff4" data-rango="&lt;750 ml / &lt;15%" onclick="selGrado(this)">
+                    <span style="font-size:1rem;">🟢</span><span class="hem-grado-num">I</span><span class="hem-grado-rango">&lt;750 ml</span>
+                  </button>
+                  <button class="hem-grado-btn" data-grado="II"  data-color="#b7791f" data-bg="#fffaf0" data-rango="750–1500 ml" onclick="selGrado(this)">
+                    <span style="font-size:1rem;">🟡</span><span class="hem-grado-num">II</span><span class="hem-grado-rango">750–1500</span>
+                  </button>
+                  <button class="hem-grado-btn" data-grado="III" data-color="#c05621" data-bg="#fff7ed" data-rango="1500–2000 ml" onclick="selGrado(this)">
+                    <span style="font-size:1rem;">🟠</span><span class="hem-grado-num">III</span><span class="hem-grado-rango">1500–2000</span>
+                  </button>
+                  <button class="hem-grado-btn" data-grado="IV"  data-color="#c53030" data-bg="#fff0f0" data-rango="&gt;2000 ml / &gt;40%" onclick="selGrado(this)">
+                    <span style="font-size:1rem;">🔴</span><span class="hem-grado-num">IV</span><span class="hem-grado-rango">&gt;2000 ml</span>
+                  </button>
+                </div>
+                <div id="hem-grado-desc" style="display:none;margin-top:6px;padding:7px 10px;border-radius:7px;font-size:.75rem;line-height:1.5;font-weight:500;"></div>
+              </div>
+
+              <!-- Tipo de hemorragia -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Tipo</div>
+                  <select class="field-select" id="hem-tipo" style="font-size:.8rem;padding:7px 10px;">
+                    <option value="">— Seleccionar —</option>
+                    <option>Arterial</option>
+                    <option>Venosa</option>
+                    <option>Capilar</option>
+                    <option>Mixta</option>
+                    <option>Interna</option>
+                    <option>Externa</option>
+                    <option>Coagulopatía</option>
+                  </select>
+                </div>
+                <div>
+                  <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Sitio de sangrado</div>
+                  <input class="field-input" id="hem-sitio" type="text" placeholder="Ej: lecho quirúrgico, vaso..." style="font-size:.8rem;padding:7px 10px;">
+                </div>
+              </div>
+
+              <!-- Transfusión requerida -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Transfusión</div>
+                  <select class="field-select" id="hem-transf" style="font-size:.8rem;padding:7px 10px;" oninput="updateHemStats()">
+                    <option value="no">No requerida</option>
+                    <option value="phy">Glóbulos rojos (PRC)</option>
+                    <option value="ffp">Plasma fresco (PFC)</option>
+                    <option value="plt">Plaquetas</option>
+                    <option value="mtp">Protocolo masivo (MTP)</option>
+                    <option value="auto">Autotransfusión</option>
+                  </select>
+                </div>
+                <div>
+                  <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Unidades transfundidas</div>
+                  <input class="fluid-input" id="hem-unidades" type="number" placeholder="0" style="width:100%;text-align:center;" oninput="updateHemStats()">
+                </div>
+              </div>
+
+              <!-- Manejo / hemostasia -->
+              <div style="margin-bottom:8px;">
+                <div style="font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;">Manejo hemostático</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px;" id="hem-manejo-btns">
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Electrocauterio</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Sutura hemostática</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Ligadura vascular</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Taponamiento</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Ác. tranexámico</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Gelita / Surgicel</button>
+                  <button class="hem-tag-btn" onclick="toggleHemTag(this)">Control damage</button>
+                </div>
+              </div>
+
+              <!-- Resumen hemorragia -->
+              <div id="hem-resumen" style="display:none;border-radius:8px;padding:9px 12px;font-size:.77rem;line-height:1.6;font-weight:500;margin-top:4px;"></div>
+            </div>
+          </div>
+          <div class="fluid-item"><span class="fluid-name">Diuresis</span><input class="fluid-input" id="e-di" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Aspirado gástrico</span><input class="fluid-input" id="e-ag" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Pérdidas insensibles</span><input class="fluid-input" id="e-pi" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-item"><span class="fluid-name">Otros</span><input class="fluid-input" id="e-ot" type="number" placeholder="0" oninput="calcBalance()"><span class="fluid-unit">ml</span></div>
+          <div class="fluid-total"><span class="total-label">Total Egresos</span><span class="total-value" id="total-eg">0 ml</span></div>
+          <div class="fluid-total" style="margin-top:8px;border-top-color:rgba(42,157,143,.3)">
+            <span class="total-label" style="color:var(--teal-d)">Balance Final</span>
+            <span class="total-value" id="total-balance" style="color:var(--teal-d)">0 ml</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. DURACIÓN + APGAR -->
+  <div id="dur-apgar-row" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div class="card" id="dur-card-wrap">
+      <div class="card-header"><div class="card-icon">⏱️</div><span class="card-title">Duración</span></div>
+      <div class="card-body">
+        <div class="duration-panel">
+          <div class="dur-card">
+            <div class="dur-title">🩺 Anestesia</div>
+            <div class="dur-row">
+              <div class="field-group"><label class="field-label">Inicio</label><input class="field-input" type="time" id="anest-inicio"></div>
+              <div class="field-group"><label class="field-label">Fin</label><input class="field-input" type="time" id="anest-fin" oninput="calcDur('anest')"></div>
+            </div>
+            <div style="margin-top:10px;padding:10px;background:var(--teal-l);border:1px solid var(--teal);border-radius:8px;text-align:center;">
+              <div class="field-label" style="margin:0 0 4px;">Duración Total</div>
+              <div style="font-family:'Montserrat',sans-serif;font-size:1.2rem;color:var(--teal-d);font-weight:700;" id="dur-anest">—</div>
+            </div>
+          </div>
+          <div class="dur-card">
+            <div class="dur-title">🔪 Cirugía</div>
+            <div class="dur-row">
+              <div class="field-group"><label class="field-label">Inicio</label><input class="field-input" type="time" id="cir-inicio"></div>
+              <div class="field-group"><label class="field-label">Fin</label><input class="field-input" type="time" id="cir-fin" oninput="calcDur('cir')"></div>
+            </div>
+            <div style="margin-top:10px;padding:10px;background:var(--navy-l);border:1px solid var(--border);border-radius:8px;text-align:center;">
+              <div class="field-label" style="margin:0 0 4px;">Duración Total</div>
+              <div style="font-family:'Montserrat',sans-serif;font-size:1.2rem;color:var(--navy);font-weight:700;" id="dur-cir">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="apgar-card-wrap">
+      <div class="card-header"><div class="card-icon">👶</div><span class="card-title">APGAR y Neonatal</span></div>
+      <div class="card-body">
+        <div class="apgar-row">
+          <div class="apgar-card"><div class="apgar-label">1 Min</div><input class="apgar-input" type="number" min="0" max="10" placeholder="—"></div>
+          <div class="apgar-card"><div class="apgar-label">5 Min</div><input class="apgar-input" type="number" min="0" max="10" placeholder="—"></div>
+          <div class="apgar-card"><div class="apgar-label">10 Min</div><input class="apgar-input" type="number" min="0" max="10" placeholder="—"></div>
+          <div class="apgar-card">
+            <div class="apgar-label">Feto</div>
+            <button class="feto-btn" id="btn-feto" onclick="toggleFeto()">
+              <span class="feto-dot"></span> Feto muerto
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. COMPLICACIONES -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon">⚠️</div><span class="card-title">Complicaciones Operatorias y Comentarios</span></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div class="field-group"><label class="field-label">Complicaciones Operatorias</label><textarea class="field-textarea" placeholder="Describa las complicaciones presentadas durante el procedimiento..."></textarea></div>
+        <div class="field-group"><label class="field-label">Comentarios / Observaciones</label><textarea class="field-textarea" placeholder="Observaciones adicionales, notas del anestesiólogo..."></textarea></div>
+      </div>
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding-top:16px;border-top:1px solid var(--border);">
+        <div class="field-group"><label class="field-label">Firma del Anestesiólogo</label><input class="field-input" type="text" placeholder="Nombre completo"></div>
+        <div class="field-group"><label class="field-label">Sello / Código</label><input class="field-input" type="text" placeholder="Código profesional"></div>
+        <div class="field-group"><label class="field-label">Número de Hoja</label><input class="field-input" type="number" placeholder="1"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="bar-info">
+    <div class="bar-stat"><span class="bar-stat-label">Paciente</span><span class="bar-stat-val" id="stat-pac">—</span></div>
+    <div class="bar-stat"><span class="bar-stat-label">Total Ingresos</span><span class="bar-stat-val" id="stat-ing">0 ml</span></div>
+    <div class="bar-stat"><span class="bar-stat-label">Total Egresos</span><span class="bar-stat-val" id="stat-eg">0 ml</span></div>
+    <div class="bar-stat"><span class="bar-stat-label">Balance</span><span class="bar-stat-val" id="stat-bal">0 ml</span></div>
+    <div class="bar-stat"><span class="bar-stat-label">Reg. Vitales</span><span class="bar-stat-val" id="stat-vitals">0</span></div>
+    <div class="bar-stat"><span class="bar-stat-label">Cambios Posición</span><span class="bar-stat-val" id="stat-pos">0</span></div>
+  </div>
+  <div class="bar-buttons">
+    <button class="btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn-primary" onclick="guardar()">💾 Guardar Registro</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Registro guardado correctamente</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── CHART ──
+let vitalData=[];let chart;
+function initChart(){
+  const ctx=document.getElementById('vitalChart').getContext('2d');
+  chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[
+    {label:'PA Sist', data:[],borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.07)',tension:.4,borderWidth:2,pointRadius:4,pointHoverRadius:6},
+    {label:'PA Diast',data:[],borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.05)',tension:.4,borderWidth:2,pointRadius:4},
+    {label:'FC',      data:[],borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.05)',tension:.4,borderWidth:2,pointRadius:4},
+    {label:'FR',      data:[],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.05)',tension:.4,borderWidth:2,pointRadius:4},
+    {label:'SpO2',    data:[],borderColor:'#2a9d8f',backgroundColor:'rgba(42,157,143,.07)',tension:.4,borderWidth:2,pointRadius:4},
+    {label:'Temp',    data:[],borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,.05)',tension:.4,borderWidth:2,pointRadius:4},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(26,58,92,.95)',borderColor:'#2a9d8f',borderWidth:1,titleColor:'#ffffff',bodyColor:'rgba(255,255,255,.7)',padding:12}},
+    scales:{x:{grid:{color:'rgba(176,196,216,.5)'},ticks:{color:'#5a7a96',font:{family:'Montserrat',size:11}}},
+            y:{grid:{color:'rgba(176,196,216,.5)'},ticks:{color:'#5a7a96',font:{family:'Montserrat',size:11}},min:0,max:220}}}});
+}
+function addVital(){
+  const hora=document.getElementById('inp-hora').value;
+  const pa=document.getElementById('inp-pa').value;
+  const fc=parseInt(document.getElementById('inp-fc').value)||null;
+  const fr=parseInt(document.getElementById('inp-fr').value)||null;
+  const spo2=parseInt(document.getElementById('inp-spo2').value)||null;
+  const temp=parseFloat(document.getElementById('inp-temp').value)||null;
+  if(!hora){alert('Ingrese la hora del registro');return;}
+  let paSist=null,paDiast=null;
+  if(pa&&pa.includes('/')){const p=pa.split('/');paSist=parseInt(p[0]);paDiast=parseInt(p[1]);}
+  vitalData.push({hora,pa,paSist,paDiast,fc,fr,spo2,temp});
+  vitalData.sort((a,b)=>a.hora.localeCompare(b.hora));
+  updateChart();updateVitalTable();updateStats();
+  ['inp-pa','inp-fc','inp-fr','inp-spo2','inp-temp'].forEach(id=>document.getElementById(id).value='');
+}
+function updateChart(){
+  chart.data.labels=vitalData.map(r=>r.hora);
+  chart.data.datasets[0].data=vitalData.map(r=>r.paSist);
+  chart.data.datasets[1].data=vitalData.map(r=>r.paDiast);
+  chart.data.datasets[2].data=vitalData.map(r=>r.fc);
+  chart.data.datasets[3].data=vitalData.map(r=>r.fr);
+  chart.data.datasets[4].data=vitalData.map(r=>r.spo2);
+  chart.data.datasets[5].data=vitalData.map(r=>r.temp?r.temp*4:null);
+  chart.update();
+}
+function updateVitalTable(){
+  const tbody=document.getElementById('vitalBody');tbody.innerHTML='';
+  vitalData.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:600">${r.hora}</td><td class="pill-pa">${r.paSist||'—'}</td><td style="color:#f97316;font-weight:700">${r.paDiast||'—'}</td><td class="pill-fc">${r.fc||'—'}</td><td class="pill-fr">${r.fr||'—'}</td><td class="pill-spo2">${r.spo2?r.spo2+'%':'—'}</td><td class="pill-t">${r.temp?r.temp+'°C':'—'}</td><td><button class="btn-del" onclick="delVital(${i})">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('stat-vitals').textContent=vitalData.length;
+}
+function delVital(i){vitalData.splice(i,1);updateChart();updateVitalTable();}
+
+// ── AGENTS ──
+let agentCount=0;
+function addAgent(){
+  agentCount++;const tbody=document.getElementById('agentsBody');const tr=document.createElement('tr');tr.id='ag-'+agentCount;const id=agentCount;
+  tr.innerHTML=`<td><input class="field-input" type="text" placeholder="Ej: Propofol, Ketamina..."></td><td><input class="field-input" type="number" step="0.01" placeholder="0.00"></td><td><select class="field-select"><option>mg</option><option>mcg</option><option>ml</option><option>mg/kg</option><option>mcg/kg</option><option>U</option></select></td><td><select class="field-select"><option>IV</option><option>IM</option><option>SC</option><option>SL</option><option>INH</option><option>IT</option></select></td><td><input class="field-input" type="time"></td><td><input class="field-input" type="text" placeholder="Observaciones..."></td><td><button class="btn-del" onclick="document.getElementById('ag-${id}').remove()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+// ── FLUIDS ──
+function calcBalance(){
+  const ings=['f-lr','f-ss','f-dx','f-exp','f-pl','f-sg'];const egs=['e-sg','e-di','e-ag','e-pi','e-ot'];
+  let ing=0,eg=0;
+  ings.forEach(id=>{ing+=parseInt(document.getElementById(id).value)||0;});
+  egs.forEach(id=>{eg+=parseInt(document.getElementById(id).value)||0;});
+  const bal=ing-eg;
+  document.getElementById('total-ing').textContent=ing+' ml';
+  document.getElementById('total-eg').textContent=eg+' ml';
+  const balEl=document.getElementById('total-balance');
+  balEl.textContent=(bal>=0?'+':'')+bal+' ml';
+  balEl.style.color=bal>=0?'var(--teal-d)':'var(--red)';
+  updateStats();
+}
+function updateStats(){
+  const pac=document.getElementById('paciente').value||'—';
+  document.getElementById('stat-pac').textContent=pac.split(',')[0]||pac.split(' ')[0];
+  document.getElementById('stat-ing').textContent=document.getElementById('total-ing').textContent;
+  document.getElementById('stat-eg').textContent=document.getElementById('total-eg').textContent;
+  document.getElementById('stat-bal').textContent=document.getElementById('total-balance').textContent;
+}
+
+// ── DURATION ──
+function calcDur(type){
+  const i=document.getElementById(type==='anest'?'anest-inicio':'cir-inicio').value;
+  const f=document.getElementById(type==='anest'?'anest-fin':'cir-fin').value;
+  if(!i||!f)return;
+  const[ih,im]=i.split(':').map(Number);const[fh,fm]=f.split(':').map(Number);
+  let mins=(fh*60+fm)-(ih*60+im);if(mins<0)mins+=1440;
+  const h=Math.floor(mins/60),m=mins%60;
+  document.getElementById(type==='anest'?'dur-anest':'dur-cir').textContent=h>0?`${h}h ${m}m`:`${m} min`;
+}
+
+// ── RADIO / TOGGLES ──
+function selRadio(el,group){document.querySelectorAll(`[onclick*="${group}"]`).forEach(r=>r.classList.remove('selected'));el.classList.add('selected');el.querySelector('input').checked=true;}
+function toggleTg(el){el.classList.toggle('on');}
+
+// ── TIPO DE CIRUGÍA ──
+let cxType=null;
+function selCxType(type){
+  const btnE=document.getElementById('btn-emergencia');
+  const btnP=document.getElementById('btn-programada');
+  const banner=document.getElementById('cx-type-banner');
+  if(cxType===type){
+    // Deselect
+    cxType=null;
+    btnE.classList.remove('active');
+    btnP.classList.remove('active');
+    banner.style.display='none';
+    banner.className='';
+    banner.textContent='';
+  } else {
+    cxType=type;
+    btnE.classList.toggle('active', type==='emergencia');
+    btnP.classList.toggle('active', type==='programada');
+    banner.style.display='inline-block';
+    banner.className=type;
+    banner.textContent=type==='emergencia'?'⚠ EMERGENCIA':'✓ PROGRAMADA';
+  }
+  updateStats();
+}
+
+// ── FETO ──
+let fetoMuerto=false;
+function toggleFeto(){
+  fetoMuerto=!fetoMuerto;
+  const btn=document.getElementById('btn-feto');
+  const apgarCards=document.querySelectorAll('.apgar-card');
+  if(fetoMuerto){
+    btn.classList.add('active');
+    btn.innerHTML='<span class="feto-dot"></span> ✓ Feto muerto — confirmado';
+    // Disable first 3 apgar cards (1min, 5min, 10min), keep 4th (this button)
+    apgarCards.forEach((c,i)=>{ if(i<3) c.classList.add('feto-off'); });
+  } else {
+    btn.classList.remove('active');
+    btn.innerHTML='<span class="feto-dot"></span> Feto muerto';
+    apgarCards.forEach(c=>c.classList.remove('feto-off'));
+  }
+}
+// ══════════════════════════════════════════════════════
+// EQUIPOS UTILIZADOS
+// ══════════════════════════════════════════════════════
+const equipSelected = new Set();
+
+function selEquipTab(btn){
+  document.querySelectorAll('.equip-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.equip-panel').forEach(p=>p.style.display='none');
+  btn.classList.add('active');
+  const tab = btn.dataset.tab;
+  const panel = document.getElementById('equip-panel-'+tab);
+  if(panel) panel.style.display='block';
+}
+
+function toggleEquip(el){
+  el.classList.toggle('on');
+  const key = el.dataset.key;
+  if(el.classList.contains('on')) equipSelected.add(el.textContent.replace('✓ ','').trim());
+  else equipSelected.delete(el.textContent.replace('✓ ','').trim());
+  renderEquipResumen();
+}
+
+function renderEquipResumen(){
+  const res = document.getElementById('equip-resumen');
+  if(!res) return;
+  if(!equipSelected.size){ res.style.display='none'; return; }
+  res.style.display='block';
+  res.innerHTML='<strong>🔧 Equipos seleccionados:</strong> '+[...equipSelected].join(' · ');
+}
+
+// Auto-activar tab según técnica seleccionada
+function selRadio(el,group){
+  document.querySelectorAll(`[onclick*="${group}"]`).forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked=true;
+  // Auto-switch equipment tab
+  const val = el.querySelector('input').value;
+  if(group==='general'){
+    const btn=document.getElementById('etab-via');
+    if(btn){document.querySelectorAll('.equip-tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.equip-panel').forEach(p=>p.style.display='none');btn.classList.add('active');document.getElementById('equip-panel-via').style.display='block';}
+  } else if(group==='conductiva'){
+    const btn=document.getElementById('etab-conductiva');
+    if(btn){document.querySelectorAll('.equip-tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.equip-panel').forEach(p=>p.style.display='none');btn.classList.add('active');document.getElementById('equip-panel-conductiva').style.display='block';}
+  }
+}
+
+function autoTabBloqueo(){
+  const btn=document.getElementById('etab-bloqueo');
+  if(btn){document.querySelectorAll('.equip-tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.equip-panel').forEach(p=>p.style.display='none');btn.classList.add('active');document.getElementById('equip-panel-bloqueo').style.display='block';}
+}
+
+// ── MONITOREO ──
+const MONITOR_DEF = {
+  ecg:   { label:'ECG',    color:'#3b82f6', dot:'#3b82f6', desc:'Frec. Cardíaca',
+           fields:[{id:'fc',  lbl:'FC (lpm)',  ph:'72',    type:'number'}],
+           unit:'lpm' },
+  nibp:  { label:'NIBP',   color:'#ef4444', dot:'#ef4444', desc:'Presión Arterial',
+           fields:[{id:'pas', lbl:'PA Sist.',  ph:'120',   type:'number'},
+                   {id:'pad', lbl:'PA Diast.', ph:'80',    type:'number'},
+                   {id:'pam', lbl:'PAM',       ph:'calc',  type:'number', readonly:true}],
+           unit:'mmHg' },
+  spo2:  { label:'SpO₂',   color:'#2a9d8f', dot:'#2a9d8f', desc:'Saturación O₂',
+           fields:[{id:'spo2', lbl:'SpO₂ (%)', ph:'98',   type:'number'}],
+           unit:'%' },
+  capno: { label:'Capno',  color:'#8b5cf6', dot:'#8b5cf6', desc:'Capnografía',
+           fields:[{id:'etco2', lbl:'EtCO₂ (mmHg)', ph:'35', type:'number'},
+                   {id:'fr',   lbl:'FR (rpm)',       ph:'16', type:'number'}],
+           unit:'mmHg' },
+  temp:  { label:'Temp.',  color:'#f59e0b', dot:'#f59e0b', desc:'Temperatura',
+           fields:[{id:'temp', lbl:'Temp (°C)', ph:'36.5', type:'number', step:'0.1'}],
+           unit:'°C' },
+  bis:   { label:'BIS',    color:'#553c9a', dot:'#553c9a', desc:'Índice Biespectral',
+           fields:[{id:'bis',  lbl:'BIS (0–100)', ph:'45', type:'number'},
+                   {id:'emd',  lbl:'EMG dB',      ph:'30', type:'number'}],
+           unit:'' },
+};
+
+// monitorLogs[key] = [{hora, ...values, obs}]
+const monitorLogs = {};
+
+function toggleMonitor(el){
+  el.classList.toggle('active');
+  syncMonitorBadges();
+  buildMonitorLogs();
+}
+
+function buildMonitorLogs(){
+  const active = [...document.querySelectorAll('.monitor-item.active')];
+  const panel  = document.getElementById('monitor-logs-panel');
+  const grid   = document.getElementById('monitor-logs-grid');
+  if(!active.length){ panel.style.display='none'; grid.innerHTML=''; return; }
+  panel.style.display='block';
+
+  // Preserve existing logs, only add/remove cards
+  const activeKeys = active.map(el=>el.dataset.monitor);
+
+  // Remove cards for deactivated monitors
+  grid.querySelectorAll('.mon-log-card').forEach(c=>{
+    if(!activeKeys.includes(c.dataset.key)) c.remove();
+  });
+
+  // Add cards for newly activated monitors
+  activeKeys.forEach(key=>{
+    if(grid.querySelector(`.mon-log-card[data-key="${key}"]`)) return; // already exists
+    const def = MONITOR_DEF[key];
+    if(!def) return;
+    if(!monitorLogs[key]) monitorLogs[key]=[];
+
+    const card = document.createElement('div');
+    card.className='mon-log-card';
+    card.dataset.key=key;
+
+    // Build field inputs HTML
+    const fieldsHtml = def.fields.map(f=>`
+      <div class="field-group" style="flex:1;min-width:60px;">
+        <label class="field-label" style="color:${def.color}">${f.lbl}</label>
+        <input class="field-input mon-log-input-row" id="ml-${key}-${f.id}"
+          type="${f.type}" placeholder="${f.ph}"
+          ${f.step?`step="${f.step}"`:''}
+          ${f.readonly?`readonly style="background:var(--surface);color:${def.color};font-weight:700;"`:''}
+          ${key==='nibp'&&f.id==='pam'?`oninput=""`:''}
+          ${key==='nibp'&&(f.id==='pas'||f.id==='pad')?`oninput="calcPAM('${key}')"`:''}
+          style="font-family:'Montserrat',sans-serif;font-size:.82rem;text-align:center;padding:6px 8px;">
+      </div>`).join('');
+
+    card.innerHTML=`
+      <div class="mon-log-header" style="border-left:3px solid ${def.color};">
+        <div class="mon-log-title">
+          <span class="mon-log-dot" style="background:${def.dot};box-shadow:0 0 5px ${def.dot}88;"></span>
+          <span style="color:${def.color};">${def.label}</span>
+          <span style="font-size:.68rem;color:var(--muted);font-weight:400;">${def.desc}</span>
+        </div>
+        <span style="font-size:.68rem;color:var(--muted);" id="ml-${key}-count">0 registros</span>
+      </div>
+      <div class="mon-log-body">
+        <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap;">
+          <div class="field-group" style="min-width:72px;">
+            <label class="field-label">Hora</label>
+            <input class="field-input" id="ml-${key}-hora" type="time"
+              style="font-family:'Montserrat',sans-serif;font-size:.82rem;text-align:center;padding:6px 8px;">
+          </div>
+          ${fieldsHtml}
+          <div class="field-group" style="flex:1.5;min-width:80px;">
+            <label class="field-label">Obs.</label>
+            <input class="field-input" id="ml-${key}-obs" type="text" placeholder="Nota..."
+              style="font-size:.78rem;padding:6px 8px;">
+          </div>
+          <div style="display:flex;gap:4px;align-items:flex-end;padding-bottom:1px;">
+            <button class="event-now-btn" onclick="setMLNow('${key}')" style="height:32px;padding:0 8px;" title="Hora actual">⏱</button>
+            <button class="btn-add-vital" onclick="addMonitorLog('${key}')" style="height:32px;padding:0 10px;font-size:.78rem;">+ Reg.</button>
+          </div>
+        </div>
+        <div id="ml-${key}-table-wrap">
+          <div class="mon-log-empty" id="ml-${key}-empty">Sin registros aún</div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+    renderMonitorLog(key);
+  });
+}
+
+function setMLNow(key){
+  const el=document.getElementById(`ml-${key}-hora`);
+  if(el) el.value=new Date().toTimeString().slice(0,5);
+}
+
+function calcPAM(key){
+  const pas=parseFloat(document.getElementById(`ml-${key}-pas`)?.value)||0;
+  const pad=parseFloat(document.getElementById(`ml-${key}-pad`)?.value)||0;
+  const pam=document.getElementById(`ml-${key}-pam`);
+  if(pam&&pas&&pad) pam.value=Math.round(pad+(pas-pad)/3);
+}
+
+function addMonitorLog(key){
+  const def=MONITOR_DEF[key];
+  if(!def) return;
+  const hora=document.getElementById(`ml-${key}-hora`)?.value;
+  if(!hora){ alert('Ingrese la hora'); return; }
+  const entry={hora};
+  def.fields.forEach(f=>{
+    const el=document.getElementById(`ml-${key}-${f.id}`);
+    if(el&&!f.readonly) entry[f.id]=el.value||'—';
+  });
+  entry.obs=document.getElementById(`ml-${key}-obs`)?.value||'';
+  monitorLogs[key].push(entry);
+  monitorLogs[key].sort((a,b)=>a.hora.localeCompare(b.hora));
+  renderMonitorLog(key);
+  // Clear fields
+  def.fields.forEach(f=>{ const el=document.getElementById(`ml-${key}-${f.id}`); if(el) el.value=''; });
+  const obs=document.getElementById(`ml-${key}-obs`); if(obs) obs.value='';
+}
+
+function delMonitorLog(key,idx){
+  monitorLogs[key].splice(idx,1);
+  renderMonitorLog(key);
+}
+
+function renderMonitorLog(key){
+  const def=MONITOR_DEF[key];
+  const logs=monitorLogs[key]||[];
+  const wrap=document.getElementById(`ml-${key}-table-wrap`);
+  const countEl=document.getElementById(`ml-${key}-count`);
+  if(!wrap) return;
+  if(countEl) countEl.textContent=logs.length+' registro'+(logs.length!==1?'s':'');
+  if(!logs.length){
+    wrap.innerHTML=`<div class="mon-log-empty" id="ml-${key}-empty">Sin registros aún</div>`;
+    return;
+  }
+  // Build table header from fields
+  const thFields=def.fields.filter(f=>!f.readonly||key==='nibp').map(f=>`<th>${f.lbl}</th>`).join('');
+  const thPAM=key==='nibp'?'<th>PAM</th>':'';
+  let html=`<table class="mon-log-table">
+    <thead><tr><th>Hora</th>${thFields}${thPAM}<th>Obs.</th><th></th></tr></thead><tbody>`;
+  logs.forEach((e,i)=>{
+    const tds=def.fields.filter(f=>!f.readonly).map(f=>`<td style="color:${def.color};font-weight:700;">${e[f.id]||'—'}</td>`).join('');
+    const pamTd=key==='nibp'?`<td style="color:#7c3aed;font-weight:600;">${e['pam']||'—'}</td>`:'';
+    html+=`<tr><td style="font-weight:600;">${e.hora}</td>${tds}${pamTd}<td style="color:var(--muted);font-size:.72rem;">${e.obs||'—'}</td>
+      <td><button class="btn-del" onclick="delMonitorLog('${key}',${i})" style="width:22px;height:22px;font-size:.7rem;">✕</button></td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
+}
+
+function syncMonitorBadges(){
+  const active = [...document.querySelectorAll('.monitor-item.active')];
+  const badges = document.getElementById('monitor-badges');
+  const bar    = document.getElementById('monitor-status-bar');
+
+  if(!active.length){
+    badges.innerHTML = '<span style="font-size:.78rem;color:var(--dim);font-style:italic;">Ninguno seleccionado — activa los monitores en Técnica Anestésica</span>';
+    bar.style.borderColor = 'var(--border)';
+    bar.style.background  = 'var(--surface)';
+    return;
+  }
+
+  bar.style.borderColor = 'var(--teal)';
+  bar.style.background  = 'var(--teal-l)';
+
+  badges.innerHTML = active.map(el => {
+    const key  = el.dataset.monitor;
+    const def  = MONITOR_DEF[key] || { label: el.querySelector('.monitor-label').textContent, color:'var(--teal)', dot:'var(--teal)', desc:'' };
+    return `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;
+      border:1.5px solid ${def.color};background:white;font-size:.75rem;font-weight:700;color:${def.color};
+      box-shadow:0 1px 4px rgba(0,0,0,.07);">
+      <span style="width:8px;height:8px;border-radius:50%;background:${def.dot};
+        box-shadow:0 0 5px ${def.dot}88;animation:pulseMonitor 2s infinite;"></span>
+      ${def.label}
+      <span style="font-weight:400;font-size:.68rem;opacity:.75;">${def.desc}</span>
+    </span>`;
+  }).join('');
+}
+function addInfusion(){const cont=document.getElementById('infusionesRows');const div=document.createElement('div');div.className='fluid-item';div.style.marginBottom='8px';div.innerHTML=`<input class="field-input" style="flex:1" type="text" placeholder="Agente / fármaco"><input class="fluid-input" type="number" placeholder="cc"><span class="fluid-unit">cc</span>`;cont.appendChild(div);}
+function selPosition(el){document.querySelectorAll('.position-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');el.querySelector('input').checked=true;}
+
+// ══════════════════════════════════════════════════════
+// HEMORRAGIA
+// ══════════════════════════════════════════════════════
+let hemActiva=false;
+let hemGrado=null;
+
+const GRADO_INFO={
+  'I':  {color:'#276749',bg:'#f0fff4',border:'#68d391',desc:'Leve. FC &lt;100 lpm. PA normal. Llenado capilar normal. No requiere transfusión habitualmente.'},
+  'II': {color:'#b7791f',bg:'#fffaf0',border:'#f6ad55',desc:'Moderada. FC 100–120. PA normal-baja. Ansiedad leve. Evaluar reposición con cristaloides.'},
+  'III':{color:'#c05621',bg:'#fff7ed',border:'#fc8181',desc:'Severa. FC 120–140. Hipotensión. Confusión. Requiere transfusión de GRD.'},
+  'IV': {color:'#c53030',bg:'#fff0f0',border:'#fc8181',desc:'Crítica. FC &gt;140. Hipotensión severa. Letargo. Protocolo de transfusión masiva (MTP).'},
+};
+
+function toggleHemorragia(){
+  hemActiva=!hemActiva;
+  const detail=document.getElementById('hem-detail');
+  const dot=document.getElementById('hem-toggle-dot');
+  const txt=document.getElementById('hem-toggle-txt');
+  const label=document.getElementById('hem-toggle-label');
+  if(hemActiva){
+    detail.style.display='block';
+    dot.style.background='var(--red)';
+    dot.style.boxShadow='0 0 5px rgba(197,48,48,.6)';
+    txt.textContent='Hemorragia presente';
+    label.style.borderColor='var(--red)';
+    label.style.color='var(--red)';
+    label.style.background='var(--red-l)';
+    evalHemorragia();
+  } else {
+    detail.style.display='none';
+    dot.style.background='var(--border2)';
+    dot.style.boxShadow='none';
+    txt.textContent='Sin hemorragia';
+    label.style.borderColor='var(--border)';
+    label.style.color='var(--muted)';
+    label.style.background='var(--white)';
+    document.getElementById('hem-resumen').style.display='none';
+  }
+}
+
+function selGrado(btn){
+  document.querySelectorAll('.hem-grado-btn').forEach(b=>{
+    b.classList.remove('sel');
+    b.style.borderColor='var(--border)';
+    b.style.background='var(--white)';
+    b.querySelector('.hem-grado-num').style.color='var(--text)';
+  });
+  const g=btn.dataset.grado;
+  const info=GRADO_INFO[g];
+  btn.classList.add('sel');
+  btn.style.borderColor=info.color;
+  btn.style.background=info.bg;
+  btn.querySelector('.hem-grado-num').style.color=info.color;
+  hemGrado=g;
+  const desc=document.getElementById('hem-grado-desc');
+  desc.style.display='block';
+  desc.style.background=info.bg;
+  desc.style.border='1.5px solid '+info.border;
+  desc.style.color=info.color;
+  desc.innerHTML='<strong>Grado '+g+':</strong> '+info.desc;
+  updateHemStats();
+}
+
+function toggleHemTag(btn){
+  btn.classList.toggle('on');
+  updateHemStats();
+}
+
+function evalHemorragia(){
+  const ml=parseInt(document.getElementById('e-sg').value)||0;
+  if(!hemActiva||!ml) return;
+  // Auto-suggest grade based on ml
+  let suggest=null;
+  if(ml<750) suggest='I';
+  else if(ml<1500) suggest='II';
+  else if(ml<2000) suggest='III';
+  else suggest='IV';
+  if(!hemGrado){
+    // Only auto-select if no grade chosen yet
+    const btn=document.querySelector(`.hem-grado-btn[data-grado="${suggest}"]`);
+    if(btn) selGrado(btn);
+  }
+  updateHemStats();
+}
+
+function updateHemStats(){
+  if(!hemActiva) return;
+  const ml=parseInt(document.getElementById('e-sg').value)||0;
+  const tipo=document.getElementById('hem-tipo').value;
+  const sitio=document.getElementById('hem-sitio').value;
+  const transf=document.getElementById('hem-transf');
+  const transfTxt=transf.options[transf.selectedIndex].text;
+  const unidades=parseInt(document.getElementById('hem-unidades').value)||0;
+  const tags=[...document.querySelectorAll('.hem-tag-btn.on')].map(b=>b.textContent).join(', ');
+  const resumen=document.getElementById('hem-resumen');
+  if(!ml && !hemGrado){ resumen.style.display='none'; return; }
+  const info=hemGrado?GRADO_INFO[hemGrado]:null;
+  resumen.style.display='block';
+  resumen.style.background=info?info.bg:'var(--surface)';
+  resumen.style.border='1.5px solid '+(info?info.border:'var(--border)');
+  resumen.style.color=info?info.color:'var(--text)';
+  let html=`<strong>🩸 Hemorragia${hemGrado?' Grado '+hemGrado:''}</strong> — ${ml} ml`;
+  if(tipo) html+=` · ${tipo}`;
+  if(sitio) html+=` · ${sitio}`;
+  if(transf.value!=='no') html+=`<br>💉 Transfusión: ${transfTxt}${unidades?' × '+unidades+' U':''}`;
+  if(tags) html+=`<br>🔧 Manejo: ${tags}`;
+  resumen.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════
+// REGISTRO DE CAMBIOS DE POSICIÓN DURANTE LA CIRUGÍA
+// Solo esta sección fue agregada al código original
+// ══════════════════════════════════════════════════════
+let posChanges=[];
+let posIdCounter=0;
+
+const POS_ICONS={
+  'Supino':'🧍','Prono':'🫃',
+  'Lateral Derecho':'🤸','Lateral Izquierdo':'🤸',
+  'Trendelenburg':'📐','Anti-Trendelenburg':'📏',
+  'Litotomía':'🦵','Sentado':'🪑',
+  'Fowler':'🛌','Jackknife':'📏','Otro':'🔄'
+};
+
+function setPosNow(){
+  document.getElementById('pos-change-time').value=new Date().toTimeString().slice(0,5);
+}
+
+function addPosChange(){
+  const name=document.getElementById('pos-change-name').value;
+  const time=document.getElementById('pos-change-time').value;
+  const note=document.getElementById('pos-change-note').value.trim();
+  if(!name){document.getElementById('pos-change-name').focus();return;}
+  if(!time){document.getElementById('pos-change-time').focus();return;}
+  posIdCounter++;
+  posChanges.push({id:posIdCounter,name,time,note});
+  posChanges.sort((a,b)=>a.time.localeCompare(b.time));
+  renderPosTimeline();
+  document.getElementById('pos-change-name').value='';
+  document.getElementById('pos-change-note').value='';
+  document.getElementById('stat-pos').textContent=posChanges.length;
+}
+
+function delPosChange(id){
+  posChanges=posChanges.filter(p=>p.id!==id);
+  renderPosTimeline();
+  document.getElementById('stat-pos').textContent=posChanges.length;
+}
+
+function renderPosTimeline(){
+  const tl=document.getElementById('pos-timeline');
+  if(!posChanges.length){
+    tl.innerHTML='<div style="font-size:.8rem;color:var(--dim);padding:12px;text-align:center;border:1.5px dashed var(--border);border-radius:9px;background:var(--surface);">Sin cambios registrados — aparecerán aquí cronológicamente</div>';
+    return;
+  }
+  tl.innerHTML='';
+  posChanges.forEach((p,idx)=>{
+    const isLast=(idx===posChanges.length-1); // último = posición actual
+    const icon=POS_ICONS[p.name]||'🔄';
+    const row=document.createElement('div');
+    row.className='pos-log-row';
+    if(isLast){
+      row.style.borderColor='var(--teal)';
+      row.style.background='var(--teal-l)';
+    }
+    row.innerHTML=`
+      <div style="font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:${isLast?'var(--teal-d)':'var(--navy)'};text-align:center;background:${isLast?'rgba(42,157,143,.18)':'var(--navy-l)'};border-radius:6px;padding:5px 6px;">${p.time}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:600;color:var(--teal-d);">
+        <span style="font-size:1.05rem;">${icon}</span>
+        <span>${p.name}</span>
+        ${isLast?'<span style="font-size:.66rem;background:var(--teal);color:white;border-radius:4px;padding:2px 7px;font-weight:700;letter-spacing:.04em;margin-left:2px;">ACTUAL</span>':''}
+      </div>
+      <div style="font-size:.79rem;color:var(--muted);font-style:${p.note?'normal':'italic'}">${p.note||'—'}</div>
+      <button class="btn-del" onclick="delPosChange(${p.id})" title="Eliminar registro">✕</button>
+    `;
+    tl.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// CPT ANESTESIA
+// ══════════════════════════════════════════════════════
+const CPT_DB = [
+  // Cabeza y cuello
+  {c:'00100',d:'Anestesia procedimientos cabeza (sin especificar)',cat:'cabeza'},
+  {c:'00102',d:'Anestesia reparación labio leporino',cat:'cabeza'},
+  {c:'00103',d:'Anestesia reconstrucción párpados',cat:'cabeza'},
+  {c:'00104',d:'Anestesia electroconvulsiva',cat:'cabeza'},
+  {c:'00120',d:'Anestesia procedimientos oído externo',cat:'cabeza'},
+  {c:'00124',d:'Anestesia otoscopía diagnóstica',cat:'cabeza'},
+  {c:'00126',d:'Anestesia timpanoplastia',cat:'cabeza'},
+  {c:'00140',d:'Anestesia procedimientos ojos',cat:'cabeza'},
+  {c:'00142',d:'Anestesia lensectomía/catarata',cat:'cabeza'},
+  {c:'00144',d:'Anestesia trasplante de córnea',cat:'cabeza'},
+  {c:'00145',d:'Anestesia vitrectomía',cat:'cabeza'},
+  {c:'00147',d:'Anestesia iridectomía',cat:'cabeza'},
+  {c:'00148',d:'Anestesia oftalmoscopía',cat:'cabeza'},
+  {c:'00160',d:'Anestesia procedimientos nariz y senos',cat:'cabeza'},
+  {c:'00162',d:'Anestesia resección maxilar radical',cat:'cabeza'},
+  {c:'00164',d:'Anestesia biopsia nasal',cat:'cabeza'},
+  {c:'00170',d:'Anestesia procedimientos cavidad oral',cat:'cabeza'},
+  {c:'00172',d:'Anestesia reparación paladar hendido',cat:'cabeza'},
+  {c:'00174',d:'Anestesia excisión absceso periamigdalino',cat:'cabeza'},
+  {c:'00176',d:'Anestesia faringectomía',cat:'cabeza'},
+  {c:'00190',d:'Anestesia procedimientos huesos faciales',cat:'cabeza'},
+  {c:'00192',d:'Anestesia osteotomía radical mandibular',cat:'cabeza'},
+  {c:'00210',d:'Anestesia procedimientos intracraneales',cat:'cabeza'},
+  {c:'00212',d:'Anestesia punción subdural',cat:'cabeza'},
+  {c:'00214',d:'Anestesia drenaje absceso intracraneal',cat:'cabeza'},
+  {c:'00215',d:'Anestesia craneoplastia / craniotomía',cat:'cabeza'},
+  {c:'00216',d:'Anestesia aneurisma intracraneal vascular',cat:'cabeza'},
+  {c:'00218',d:'Anestesia procedimiento en posición sentada',cat:'cabeza'},
+  {c:'00220',d:'Anestesia cisternal / ventriculografía',cat:'cabeza'},
+  {c:'00300',d:'Anestesia procedimientos cuello y parte posterior',cat:'cabeza'},
+  {c:'00320',d:'Anestesia laringoscopía y broncoscopía',cat:'cabeza'},
+  {c:'00322',d:'Anestesia biopsia tráquea',cat:'cabeza'},
+  {c:'00326',d:'Anestesia procedimientos laríngeos (niños <1 año)',cat:'cabeza'},
+  // Tórax
+  {c:'00400',d:'Anestesia procedimientos pared torácica anterior',cat:'torax'},
+  {c:'00402',d:'Anestesia reconstrucción mama',cat:'torax'},
+  {c:'00404',d:'Anestesia mastectomía radical',cat:'torax'},
+  {c:'00406',d:'Anestesia mastectomía radical con injerto',cat:'torax'},
+  {c:'00410',d:'Anestesia cardioversión eléctrica',cat:'torax'},
+  {c:'00450',d:'Anestesia procedimientos clavícula y escápula',cat:'torax'},
+  {c:'00454',d:'Anestesia biopsia clavícula',cat:'torax'},
+  {c:'00470',d:'Anestesia procedimientos costillas',cat:'torax'},
+  {c:'00472',d:'Anestesia lobectomía pulmonar',cat:'torax'},
+  {c:'00474',d:'Anestesia reparación fístula broncopulmonar',cat:'torax'},
+  {c:'00500',d:'Anestesia procedimientos esófago',cat:'torax'},
+  {c:'00520',d:'Anestesia procedimientos pleura / pulmón',cat:'torax'},
+  {c:'00522',d:'Anestesia biopsia pleural / toracocentesis',cat:'torax'},
+  {c:'00524',d:'Anestesia drenaje neumotórax',cat:'torax'},
+  {c:'00528',d:'Anestesia mediastinoscopia',cat:'torax'},
+  {c:'00529',d:'Anestesia mediastinotomía',cat:'torax'},
+  {c:'00530',d:'Anestesia marcapasos cardíaco permanente',cat:'torax'},
+  {c:'00532',d:'Anestesia acceso venoso central',cat:'torax'},
+  {c:'00534',d:'Anestesia cardioversor implantable (DAI)',cat:'torax'},
+  {c:'00537',d:'Anestesia ablación electrofisiológica',cat:'torax'},
+  {c:'00539',d:'Anestesia catéter de arteria pulmonar',cat:'torax'},
+  // Cardíaco
+  {c:'00560',d:'Anestesia cirugía cardíaca con bomba extracorpórea',cat:'cardiaco'},
+  {c:'00561',d:'Anestesia cirugía cardíaca con bomba (niños <1 año)',cat:'cardiaco'},
+  {c:'00562',d:'Anestesia re-operación cardíaca con bomba',cat:'cardiaco'},
+  {c:'00563',d:'Anestesia arresto circulatorio hipotérmico',cat:'cardiaco'},
+  {c:'00566',d:'Anestesia bypass arterias coronarias sin bomba (OPCAB)',cat:'cardiaco'},
+  {c:'00567',d:'Anestesia bypass coronario con bomba (CABG)',cat:'cardiaco'},
+  {c:'00580',d:'Anestesia trasplante cardíaco',cat:'cardiaco'},
+  // Abdomen
+  {c:'00700',d:'Anestesia procedimientos pared abdominal anterior',cat:'abdomen'},
+  {c:'00702',d:'Anestesia hernioplastia inguinal/femoral',cat:'abdomen'},
+  {c:'00730',d:'Anestesia procedimientos esófago superior abdominal',cat:'abdomen'},
+  {c:'00740',d:'Anestesia procedimientos esófago superior laparoscópico',cat:'abdomen'},
+  {c:'00750',d:'Anestesia reparación hernia',cat:'abdomen'},
+  {c:'00752',d:'Anestesia hernioplastia con injerto intestinal',cat:'abdomen'},
+  {c:'00756',d:'Anestesia reparación defecto pared abdominal (adulto)',cat:'abdomen'},
+  {c:'00770',d:'Anestesia procedimientos aorta abdominal',cat:'abdomen'},
+  {c:'00790',d:'Anestesia procedimientos hígado y vía biliar',cat:'abdomen'},
+  {c:'00792',d:'Anestesia colecistectomía parcial o completa',cat:'abdomen'},
+  {c:'00794',d:'Anestesia pancreatectomía',cat:'abdomen'},
+  {c:'00796',d:'Anestesia trasplante hepático',cat:'abdomen'},
+  {c:'00797',d:'Anestesia trasplante intestinal',cat:'abdomen'},
+  {c:'00800',d:'Anestesia procedimientos pared abdominal inferior',cat:'abdomen'},
+  {c:'00802',d:'Anestesia lipectomía abdominal',cat:'abdomen'},
+  {c:'00810',d:'Anestesia procedimientos intestino delgado',cat:'abdomen'},
+  {c:'00820',d:'Anestesia procedimientos colon',cat:'abdomen'},
+  {c:'00830',d:'Anestesia hernioplastia abdominal laparoscópica',cat:'abdomen'},
+  {c:'00840',d:'Anestesia procedimientos intraabdominales',cat:'abdomen'},
+  {c:'00844',d:'Anestesia resección intestinal',cat:'abdomen'},
+  {c:'00846',d:'Anestesia histerectomía radical',cat:'abdomen'},
+  {c:'00848',d:'Anestesia pelvic exenteration',cat:'abdomen'},
+  {c:'00851',d:'Anestesia ligadura trompas',cat:'abdomen'},
+  {c:'00860',d:'Anestesia procedimientos retroperitoneales',cat:'abdomen'},
+  {c:'00862',d:'Anestesia nefrectomía',cat:'abdomen'},
+  {c:'00864',d:'Anestesia nefrectomía total',cat:'abdomen'},
+  {c:'00865',d:'Anestesia nefrectomía radical',cat:'abdomen'},
+  {c:'00866',d:'Anestesia adrenalectomía',cat:'abdomen'},
+  {c:'00868',d:'Anestesia trasplante renal',cat:'abdomen'},
+  {c:'00870',d:'Anestesia cistostomía',cat:'abdomen'},
+  {c:'00872',d:'Anestesia litotripsia (ESWL) con tina',cat:'abdomen'},
+  {c:'00873',d:'Anestesia litotripsia (ESWL) sin tina',cat:'abdomen'},
+  {c:'00880',d:'Anestesia procedimientos vasos abdominales mayores',cat:'abdomen'},
+  // Perineal / Pelvis
+  {c:'00900',d:'Anestesia procedimientos perineales',cat:'perineal'},
+  {c:'00902',d:'Anestesia anorectoplastia',cat:'perineal'},
+  {c:'00904',d:'Anestesia procedimientos radicales perineales',cat:'perineal'},
+  {c:'00906',d:'Anestesia vulvectomía',cat:'perineal'},
+  {c:'00908',d:'Anestesia perineoplastia',cat:'perineal'},
+  {c:'00910',d:'Anestesia cistoscopía diagnóstica',cat:'perineal'},
+  {c:'00912',d:'Anestesia cistoscopía con procedimiento transuretr.',cat:'perineal'},
+  {c:'00914',d:'Anestesia resección transuretral próstata',cat:'perineal'},
+  {c:'00916',d:'Anestesia post-TURP hematuria',cat:'perineal'},
+  {c:'00918',d:'Anestesia extracción cálculos con litotricia',cat:'perineal'},
+  {c:'00920',d:'Anestesia procedimientos genitales masculinos',cat:'perineal'},
+  {c:'00921',d:'Anestesia vasectomía bilateral',cat:'perineal'},
+  {c:'00922',d:'Anestesia orquidopexia',cat:'perineal'},
+  {c:'00924',d:'Anestesia exploración testicular',cat:'perineal'},
+  {c:'00926',d:'Anestesia orquiectomía radical',cat:'perineal'},
+  {c:'00928',d:'Anestesia orquiectomía radical retroperitoneal',cat:'perineal'},
+  {c:'00930',d:'Anestesia orquidopexia',cat:'perineal'},
+  {c:'00932',d:'Anestesia amputación pene completa',cat:'perineal'},
+  {c:'00934',d:'Anestesia extirpación ganglios inguinales',cat:'perineal'},
+  {c:'00940',d:'Anestesia procedimientos vagina y cérvix',cat:'perineal'},
+  {c:'00942',d:'Anestesia colpotomía / colpectomía',cat:'perineal'},
+  {c:'00944',d:'Anestesia reparación prolapso vaginal',cat:'perineal'},
+  {c:'00948',d:'Anestesia procedimientos cérvix',cat:'perineal'},
+  {c:'00950',d:'Anestesia colposcopía',cat:'perineal'},
+  {c:'00952',d:'Anestesia histeroscopía / histerectomía vaginal',cat:'perineal'},
+  // Columna
+  {c:'00600',d:'Anestesia procedimientos columna cervical y torácica',cat:'columna'},
+  {c:'00604',d:'Anestesia columna cervical en posición sentado',cat:'columna'},
+  {c:'00620',d:'Anestesia procedimientos columna torácica',cat:'columna'},
+  {c:'00625',d:'Anestesia columna torácica, sin fusión',cat:'columna'},
+  {c:'00626',d:'Anestesia columna torácica, con fusión',cat:'columna'},
+  {c:'00630',d:'Anestesia procedimientos región lumbar',cat:'columna'},
+  {c:'00632',d:'Anestesia laminectomía lumbar',cat:'columna'},
+  {c:'00634',d:'Anestesia quiste espinal',cat:'columna'},
+  {c:'00635',d:'Anestesia inyección agente diagnóstico columna',cat:'columna'},
+  {c:'00640',d:'Anestesia manipulación columna',cat:'columna'},
+  {c:'00670',d:'Anestesia fusión vertebral extensa',cat:'columna'},
+  // Extremidades
+  {c:'01200',d:'Anestesia procedimientos articulación cadera',cat:'extremidades'},
+  {c:'01202',d:'Anestesia artroscopía cadera diagnóstica',cat:'extremidades'},
+  {c:'01210',d:'Anestesia artroplastia cadera parcial',cat:'extremidades'},
+  {c:'01212',d:'Anestesia artroplastia cadera total',cat:'extremidades'},
+  {c:'01214',d:'Anestesia revisión artroplastia cadera total',cat:'extremidades'},
+  {c:'01215',d:'Anestesia revisión artroplastia cadera (componente)',cat:'extremidades'},
+  {c:'01220',d:'Anestesia procedimientos fémur proximal',cat:'extremidades'},
+  {c:'01230',d:'Anestesia amputación miembro inferior',cat:'extremidades'},
+  {c:'01232',d:'Anestesia amputación femoral',cat:'extremidades'},
+  {c:'01234',d:'Anestesia desarticulación femoral',cat:'extremidades'},
+  {c:'01250',d:'Anestesia procedimientos rodilla',cat:'extremidades'},
+  {c:'01260',d:'Anestesia artroscopía rodilla diagnóstica',cat:'extremidades'},
+  {c:'01270',d:'Anestesia artroplastia rodilla',cat:'extremidades'},
+  {c:'01272',d:'Anestesia revisión artroplastia rodilla',cat:'extremidades'},
+  {c:'01274',d:'Anestesia revisión artroplastia rodilla (componente)',cat:'extremidades'},
+  {c:'01320',d:'Anestesia procedimientos nervio poplíteo',cat:'extremidades'},
+  {c:'01340',d:'Anestesia procedimientos tibia y peroné',cat:'extremidades'},
+  {c:'01360',d:'Anestesia procedimientos tobillo',cat:'extremidades'},
+  {c:'01380',d:'Anestesia artroscopía tobillo',cat:'extremidades'},
+  {c:'01390',d:'Anestesia procedimientos pie',cat:'extremidades'},
+  {c:'01392',d:'Anestesia amputación pie',cat:'extremidades'},
+  {c:'01400',d:'Anestesia procedimientos hombro',cat:'extremidades'},
+  {c:'01402',d:'Anestesia artroscopía hombro',cat:'extremidades'},
+  {c:'01404',d:'Anestesia desarticulación hombro',cat:'extremidades'},
+  {c:'01470',d:'Anestesia procedimientos nervios periféricos pierna',cat:'extremidades'},
+  {c:'01480',d:'Anestesia procedimientos huesos pelvis y cadera',cat:'extremidades'},
+  {c:'01482',d:'Anestesia biopsia pelvis ósea',cat:'extremidades'},
+  {c:'01484',d:'Anestesia osteotomía pelvis',cat:'extremidades'},
+  {c:'01486',d:'Anestesia resección pelvis radical',cat:'extremidades'},
+  {c:'01490',d:'Anestesia procedimientos extremidad inferior sin especificar',cat:'extremidades'},
+  {c:'01500',d:'Anestesia procedimientos vasos miembro inferior',cat:'extremidades'},
+  {c:'01502',d:'Anestesia tromboembolectomía arteria poplítea',cat:'extremidades'},
+  {c:'01520',d:'Anestesia amputación miembro inferior extremo distal',cat:'extremidades'},
+  // Pediátrico
+  {c:'00326',d:'Anestesia procedimientos laríngeos niños <1 año',cat:'pediatrico'},
+  {c:'00327',d:'Anestesia broncoscopía terapéutica niños <1 año',cat:'pediatrico'},
+  {c:'00329',d:'Anestesia broncoscopía diagnóstica niños <1 año',cat:'pediatrico'},
+  {c:'00561',d:'Anestesia cirugía cardíaca con bomba niños <1 año',cat:'pediatrico'},
+  {c:'00834',d:'Anestesia hernioplastia laparoscópica niños <37 semanas',cat:'pediatrico'},
+  {c:'00836',d:'Anestesia hernioplastia laparoscópica niños >37 semanas',cat:'pediatrico'},
+  // Otro / General
+  {c:'01991',d:'Anestesia procedimientos diagnósticos o terapéuticos',cat:'otro'},
+  {c:'01992',d:'Anestesia inmovilización terapéutica (adulto)',cat:'otro'},
+  {c:'99100',d:'Calificación anestesia — Edad extrema (<1 año o >70 años)',cat:'otro'},
+  {c:'99100',d:'Calificación anestesia — Edad extrema (>70 años)',cat:'otro'},
+  {c:'99116',d:'Calificación — Utilización de hipotensión controlada',cat:'otro'},
+  {c:'99135',d:'Calificación — Hipotermia controlada',cat:'otro'},
+  {c:'99140',d:'Calificación — Cirugía de emergencia',cat:'otro'},
+];
+
+let selectedCPT = [];
+
+function searchCPT(q){
+  const dd = document.getElementById('cptDropdown');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2 = q.toLowerCase();
+  const res = CPT_DB.filter(r=>r.c.includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){dd.innerHTML='<div class="cie-option" style="color:var(--muted);cursor:default;">Sin resultados. Use ingreso manual.</div>';dd.classList.add('open');return;}
+  dd.innerHTML = res.map(r=>`<div class="cie-option" onclick="addCPT('${r.c}','${r.d.replace(/'/g,"\\'")}')">
+    <span class="cie-code">${r.c}</span><span class="cie-desc-text">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+function openCPT(){if(document.getElementById('cptSearch').value.length>=2)searchCPT(document.getElementById('cptSearch').value);}
+function closeCPT(){document.getElementById('cptDropdown').classList.remove('open');}
+
+function filterCPTCat(cat){
+  const list = document.getElementById('cpt-cat-list');
+  const btns = document.querySelectorAll('#cpt-cat-btns .hem-tag-btn');
+  const isOpen = list.style.display==='block' && list.dataset.cat===cat;
+  btns.forEach(b=>b.classList.remove('on'));
+  if(isOpen){ list.style.display='none'; list.dataset.cat=''; return; }
+  btns.forEach(b=>{ if(b.textContent.trim().toLowerCase().startsWith(cat.substring(0,4))) b.classList.add('on'); });
+  const res = CPT_DB.filter(r=>r.cat===cat);
+  list.innerHTML = res.map(r=>`<div class="cie-option" onclick="addCPT('${r.c}','${r.d.replace(/'/g,"\\'")}');closeCPTCat()">
+    <span class="cie-code">${r.c}</span><span class="cie-desc-text">${r.d}</span></div>`).join('');
+  list.style.display = 'block';
+  list.dataset.cat = cat;
+}
+
+function closeCPTCat(){
+  const list = document.getElementById('cpt-cat-list');
+  if(list){ list.style.display='none'; list.dataset.cat=''; }
+  document.querySelectorAll('#cpt-cat-btns .hem-tag-btn').forEach(b=>b.classList.remove('on'));
+}
+
+function addCPT(code,desc){
+  if(selectedCPT.find(x=>x.c===code)) return;
+  selectedCPT.push({c:code,d:desc});
+  renderCPTTags();
+  document.getElementById('cptSearch').value='';
+  closeCPT();
+  closeCPTCat();
+}
+function removeCPT(code){selectedCPT=selectedCPT.filter(x=>x.c!==code);renderCPTTags();}
+function renderCPTTags(){
+  const cont = document.getElementById('cptSelected');
+  if(!selectedCPT.length){cont.innerHTML='<span style="font-size:.8rem;color:var(--dim);padding:6px 0;">Ningún código seleccionado</span>';return;}
+  cont.innerHTML = selectedCPT.map(x=>`<span class="cie-tag">
+    <span class="cie-tag-code" style="color:var(--navy-mid);">${x.c}</span>
+    <span class="cie-tag-name">${x.d}</span>
+    <button class="cie-tag-del" onclick="removeCPT('${x.c}')">✕</button>
+  </span>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// ASA
+// ══════════════════════════════════════════════════════
+const ASA_CONFIG = {
+  'I':  {color:'#276749',bg:'#f0fff4',border:'#68d391'},
+  'II': {color:'#1d4ed8',bg:'#eff6ff',border:'#93c5fd'},
+  'III':{color:'#b7791f',bg:'#fffaf0',border:'#f6ad55'},
+  'IV': {color:'#c53030',bg:'#fff0f0',border:'#fc8181'},
+  'V':  {color:'#6d28d9',bg:'#f5f3ff',border:'#c4b5fd'},
+  'VI': {color:'#86198f',bg:'#fdf2f8',border:'#f0abfc'},
+};
+
+let asaSelected = null;
+let asaE = false;
+
+function selASA(el){
+  const grade = el.dataset.asa;
+  const isSame = asaSelected === grade;
+  // Reset all compact btns
+  document.querySelectorAll('.asa-btn[data-asa]').forEach(b=>{
+    if(b.dataset.asa==='E') return;
+    const cfg = ASA_CONFIG[b.dataset.asa];
+    if(cfg){ b.style.background='var(--white)'; b.style.transform=''; b.style.boxShadow=''; }
+  });
+  if(isSame){
+    asaSelected=null;
+    document.getElementById('asa-resultado').style.display='none';
+    return;
+  }
+  asaSelected = grade;
+  const cfg = ASA_CONFIG[grade];
+  el.style.background = cfg.bg;
+  el.style.transform  = 'scale(1.06)';
+  el.style.boxShadow  = '0 0 0 3px '+cfg.border+'66';
+  renderASAResult();
+}
+
+function selASAE(el){
+  asaE = !asaE;
+  el.style.borderColor = asaE ? 'var(--red)' : 'var(--border)';
+  el.style.background  = asaE ? 'var(--red-l)' : 'var(--white)';
+  renderASAResult();
+}
+
+function renderASAResult(){
+  const res = document.getElementById('asa-resultado');
+  if(!asaSelected){res.style.display='none';return;}
+  const cfg = ASA_CONFIG[asaSelected];
+  const label = 'ASA ' + asaSelected + (asaE ? '-E' : '');
+  res.style.display='block';
+  res.style.background=cfg.bg;
+  res.style.border='2px solid '+cfg.border;
+  document.getElementById('asa-resultado-text').textContent = label;
+  document.getElementById('asa-resultado-text').style.color = cfg.color;
+  const descs = {
+    'I':'Paciente sano, sin enf. sistémica','II':'Enf. sistémica leve controlada',
+    'III':'Enf. sistémica severa limitante','IV':'Amenaza constante a la vida',
+    'V':'No sobrevive sin cirugía','VI':'Muerte cerebral / Donante de órganos'
+  };
+  document.getElementById('asa-resultado-desc').textContent = descs[asaSelected] + (asaE?' — CIRUGÍA DE EMERGENCIA':'');
+  document.getElementById('asa-resultado-desc').style.color = cfg.color;
+}
+
+// ══════════════════════════════════════════════════════
+// DIAGNÓSTICO PRE/POST — BUSCADORES CIE-10 INDEPENDIENTES
+// ══════════════════════════════════════════════════════
+const dxSelected = { pre:[], post:[] };
+
+function searchDX(scope, q){
+  const dd = document.getElementById(`dx${scope.charAt(0).toUpperCase()+scope.slice(1)}Dropdown`);
+  if(!q||q.length<2){ dd.innerHTML=''; dd.classList.remove('open'); return; }
+  const q2=q.toLowerCase();
+  const res=CIE10_DB.filter(r=>r.c.toLowerCase().includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){
+    dd.innerHTML='<div class="cie-option" style="color:var(--muted);cursor:default;">Sin resultados. Use ingreso manual.</div>';
+    dd.classList.add('open'); return;
+  }
+  dd.innerHTML=res.map(r=>`<div class="cie-option" onclick="addDX('${scope}','${r.c}','${r.d.replace(/'/g,"\\'")}')">
+    <span class="cie-code">${r.c}</span><span class="cie-desc-text">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+
+function openDX(scope){
+  const inp=document.getElementById(`dx${scope.charAt(0).toUpperCase()+scope.slice(1)}Search`);
+  if(inp&&inp.value.length>=2) searchDX(scope,inp.value);
+}
+
+function closeDX(scope){
+  const dd=document.getElementById(`dx${scope.charAt(0).toUpperCase()+scope.slice(1)}Dropdown`);
+  if(dd) dd.classList.remove('open');
+}
+
+function addDX(scope,code,desc){
+  if(dxSelected[scope].find(x=>x.c===code)) return;
+  dxSelected[scope].push({c:code,d:desc});
+  renderDXTags(scope);
+  const inp=document.getElementById(`dx${scope.charAt(0).toUpperCase()+scope.slice(1)}Search`);
+  if(inp) inp.value='';
+  closeDX(scope);
+}
+
+function removeDX(scope,code){
+  dxSelected[scope]=dxSelected[scope].filter(x=>x.c!==code);
+  renderDXTags(scope);
+}
+
+function renderDXTags(scope){
+  const S=scope.charAt(0).toUpperCase()+scope.slice(1);
+  const cont=document.getElementById(`dx${S}Selected`);
+  if(!cont) return;
+  if(!dxSelected[scope].length){
+    cont.innerHTML=`<span style="font-size:.78rem;color:var(--dim);">Sin diagnóstico ${scope==='pre'?'preoperatorio':'postoperatorio'}</span>`;
+    return;
+  }
+  cont.innerHTML=dxSelected[scope].map(x=>`<span class="cie-tag">
+    <span class="cie-tag-code">${x.c}</span>
+    <span class="cie-tag-name">${x.d}</span>
+    <button class="cie-tag-del" onclick="removeDX('${scope}','${x.c}')">✕</button>
+  </span>`).join('');
+}
+
+// ── CIE-10 DB (compartida con buscadores de diagnóstico) ──
+const CIE10_DB=[{c:'S00',d:'Traumatismo superficial de la cabeza'},{c:'S02',d:'Fractura del cráneo y de los huesos de la cara'},{c:'S06',d:'Traumatismo intracraneal'},{c:'S12',d:'Fractura de vértebras cervicales'},{c:'S22',d:'Fractura de costillas, esternón y columna torácica'},{c:'S32',d:'Fractura de la columna lumbar y de la pelvis'},{c:'S42',d:'Fractura del hombro y del brazo'},{c:'S52',d:'Fractura del antebrazo'},{c:'S62',d:'Fractura a nivel de la muñeca y mano'},{c:'S72',d:'Fractura del fémur'},{c:'S82',d:'Fractura de la pierna'},{c:'S92',d:'Fractura del pie'},{c:'S93',d:'Luxación y esguince del tobillo'},{c:'M16',d:'Coxartrosis (Artrosis de la cadera)'},{c:'M17',d:'Gonartrosis (Artrosis de la rodilla)'},{c:'M19',d:'Otras artrosis'},{c:'M23',d:'Trastornos internos de la rodilla'},{c:'M75',d:'Lesiones del hombro (Síndrome manguito rotador)'},{c:'K35',d:'Apendicitis aguda con peritonitis'},{c:'K37',d:'Apendicitis, no especificada'},{c:'K40',d:'Hernia inguinal'},{c:'K41',d:'Hernia femoral'},{c:'K43',d:'Hernia ventral (hernia incisional)'},{c:'K80',d:'Colelitiasis (cálculos biliares)'},{c:'K81',d:'Colecistitis'},{c:'K85',d:'Pancreatitis aguda'},{c:'K56',d:'Íleo paralítico y obstrucción intestinal'},{c:'K57',d:'Enfermedad diverticular del intestino'},{c:'O04',d:'Aborto médico'},{c:'O82',d:'Parto por cesárea'},{c:'N83',d:'Trastornos no inflamatorios del ovario'},{c:'I21',d:'Infarto agudo de miocardio'},{c:'I25',d:'Enfermedad isquémica crónica del corazón'},{c:'I50',d:'Insuficiencia cardíaca'},{c:'I63',d:'Infarto cerebral'},{c:'Z48',d:'Atención posterior a otros procedimientos quirúrgicos'},{c:'Z96',d:'Presencia de implantes funcionales'},{c:'Z79',d:'Uso prolongado de medicamentos'},{c:'T41',d:'Intoxicación por anestésicos y gases terapéuticos'},{c:'N20',d:'Cálculo del riñón y uréter'},{c:'N40',d:'Hiperplasia de la próstata'},{c:'M47',d:'Espondilosis'},{c:'M51',d:'Otros trastornos del disco intervertebral'}];
+
+// ── EVENTOS QUIRÚRGICOS ──
+const FIXED_EVENTS=[{id:'ev-monitor',emoji:'📟',name:'Inicio de Monitoreo',color:'#2a9d8f'},{id:'ev-induccion',emoji:'💉',name:'Inducción Anestésica',color:'#3b82f6'},{id:'ev-intubacion',emoji:'🫁',name:'Intubación',color:'#8b5cf6'},{id:'ev-incision',emoji:'🔪',name:'Incisión Quirúrgica',color:'#ef4444'},{id:'ev-extubacion',emoji:'😮',name:'Extubación',color:'#f59e0b'},{id:'ev-fin',emoji:'✅',name:'Fin de Cirugía',color:'#276749'}];
+function renderFixedEvents(){
+  const tl=document.getElementById('eventsTimeline');tl.innerHTML='';
+  FIXED_EVENTS.forEach(ev=>{
+    const row=document.createElement('div');row.className='event-row';row.id=ev.id;
+    row.innerHTML=`<div class="event-name-badge" style="border-color:${ev.color}22;background:${ev.color}0d;"><span class="event-emoji">${ev.emoji}</span><span style="color:${ev.color}">${ev.name}</span></div><input class="event-time-input" type="time" placeholder="--:--" style="border-color:${ev.color}44;color:${ev.color}"><input class="event-note-input" type="text" placeholder="Observaciones del evento..."><button class="event-now-btn" onclick="setEventNow(this)" style="border-color:${ev.color};color:${ev.color};background:${ev.color}12;">⏱ Ahora</button>`;
+    const dot=document.createElement('span');dot.style.cssText=`position:absolute;left:-26px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:${ev.color};border:2px solid var(--bg-grad-to);box-shadow:0 0 8px ${ev.color}66;pointer-events:none;`;
+    row.appendChild(dot);tl.appendChild(row);
+  });
+}
+function setEventNow(btn){const row=btn.closest('.event-row');const ti=row.querySelector('.event-time-input');ti.value=new Date().toTimeString().slice(0,5);ti.style.boxShadow='0 0 0 3px rgba(42,157,143,.2)';setTimeout(()=>ti.style.boxShadow='',1500);}
+let customEventCount=0;
+function addCustomEvent(){
+  const name=document.getElementById('newEventName').value.trim();const time=document.getElementById('newEventTime').value;
+  if(!name){document.getElementById('newEventName').focus();return;}
+  customEventCount++;const tl=document.getElementById('eventsTimeline');const row=document.createElement('div');row.className='event-row';row.id='cev-'+customEventCount;const id=customEventCount;
+  row.innerHTML=`<div class="event-name-badge" style="border-color:var(--amber);background:var(--amber-l);"><span class="event-emoji">⚡</span><span style="color:var(--amber)">${name}</span></div><input class="event-time-input" type="time" value="${time}" style="color:var(--amber)"><input class="event-note-input" type="text" placeholder="Observaciones..."><button class="btn-del" onclick="document.getElementById('cev-${id}').remove()" style="flex-shrink:0">✕</button>`;
+  const dot=document.createElement('span');dot.style.cssText=`position:absolute;left:-26px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:var(--amber);border:2px solid var(--bg-grad-to);pointer-events:none;`;
+  row.appendChild(dot);tl.appendChild(row);
+  document.getElementById('newEventName').value='';document.getElementById('newEventTime').value='';
+}
+
+// ══════════════════════════════════════════════════════
+// SMART PRINT — oculta lo que no se llenó
+// ══════════════════════════════════════════════════════
+function prepareForPrint(){
+  // ── Reset ──
+  document.querySelectorAll('.print-empty,.print-no-sel,.print-active')
+    .forEach(el=>el.classList.remove('print-empty','print-no-sel','print-active'));
+  document.querySelectorAll('.fluid-item').forEach(el=>el.classList.remove('print-empty'));
+  document.getElementById('dur-apgar-row')?.classList.remove('apgar-empty');
+
+  const hide = el => { if(el) el.classList.add('print-empty'); };
+  const val  = el => (el?.value||'').trim();
+  const hasTags = id => !!document.getElementById(id)?.querySelector('.cie-tag');
+
+  // ══ 2. EQUIPO MÉDICO — ocultar staff vacíos, ocultar card si todo vacío ══
+  const staffInputs = [...document.querySelectorAll('.staff-grid-5 .field-input')];
+  staffInputs.forEach(inp=>{ if(!val(inp)) hide(inp.closest('.field-group')); });
+  // Diagnósticos CIE-10
+  if(!hasTags('dxPreSelected'))  hide(document.getElementById('dxPreSelected'));
+  if(!hasTags('dxPostSelected')) hide(document.getElementById('dxPostSelected'));
+
+  // ══ 3. TÉCNICA ANESTÉSICA ══
+  document.querySelectorAll('.tech-col').forEach(col=>{
+    const hasSelected = col.querySelector('.radio-item.selected');
+    const isMonitor   = col.querySelector('.monitor-grid');
+    if(!hasSelected && !isMonitor){ col.classList.add('print-no-sel'); return; }
+    if(isMonitor && !col.querySelector('.monitor-item.active')){ col.classList.add('print-no-sel'); return; }
+    col.querySelectorAll('.field-group').forEach(fg=>{
+      const inp = fg.querySelector('input,select');
+      if(inp && !val(inp)) hide(fg);
+    });
+    col.querySelectorAll('#infusionesRows .fluid-item').forEach(fi=>{
+      if([...fi.querySelectorAll('input')].every(i=>!val(i))) hide(fi);
+    });
+    col.querySelectorAll('.btn-add-row').forEach(b=>hide(b));
+  });
+
+  // ══ 4. EQUIPOS — solo panel activo, solo cols con selección ══
+  document.querySelectorAll('.equip-panel').forEach(panel=>{
+    if(panel.style.display==='none'){ hide(panel); return; }
+    panel.classList.add('print-active');
+    panel.querySelectorAll('.equip-sub-col').forEach(col=>{
+      const hasOn  = col.querySelector('.equip-chk.on');
+      const hasVal = [...col.querySelectorAll('input')].some(i=>val(i));
+      if(!hasOn && !hasVal){ col.classList.add('print-no-sel'); return; }
+      col.querySelectorAll('input').forEach(inp=>{
+        if(!val(inp)) hide(inp.closest('.field-group') || inp.parentElement);
+      });
+    });
+  });
+  if(!document.querySelector('.equip-chk.on')){
+    hide(document.getElementById('equip-panel-via')?.closest('[style*="border-top"]'));
+  }
+
+  // ══ 5. POSICIÓN — obs vacía ══
+  document.querySelectorAll('#positionGrid').forEach(grid=>{
+    if(!grid.querySelector('.position-card.selected'))
+      hide(grid.closest('.card'));
+  });
+  const posObs = document.querySelector('[placeholder*="posicionamiento"],[placeholder*="Detalles adicionales"]');
+  if(posObs && !val(posObs)) hide(posObs.closest('.field-group') || posObs.parentElement);
+
+  // ══ 6. CAMBIOS POSICIÓN — ya oculto por CSS, pero también timeline vacío ══
+  const posTimeline = document.getElementById('pos-timeline');
+  if(posTimeline && !posTimeline.querySelector('.pos-log-row')) hide(posTimeline);
+
+  // ══ 7. CPT — ocultar card completa si sin tags ══
+  if(!hasTags('cptSelected'))
+    hide(document.getElementById('cptSelected')?.closest('.card'));
+
+  // ══ 8. ASA — ocultar botones siempre, ocultar resultado si sin selección ══
+  document.querySelectorAll('.asa-btn').forEach(b=>b.classList.add('print-empty'));
+  hide(document.getElementById('asa-E-btn'));
+  const asaRes = document.getElementById('asa-resultado');
+  if(asaRes && asaRes.style.display==='none') hide(asaRes.closest('.card'));
+
+  // ══ 9. EVENTOS QUIRÚRGICOS — ocultar filas sin hora, ocultar card si todas vacías ══
+  let evFilled = 0;
+  document.querySelectorAll('.event-row').forEach(row=>{
+    const t = row.querySelector('.event-time-input');
+    if(!t || !val(t)){ hide(row); } else { evFilled++; }
+  });
+  if(!evFilled) hide(document.getElementById('eventsTimeline')?.closest('.card'));
+
+  // ══ 10. AGENTES — ocultar filas vacías, ocultar card si todas vacías ══
+  const agBody = document.getElementById('agentsBody');
+  if(agBody){
+    let agFilled = 0;
+    [...agBody.querySelectorAll('tr')].forEach(tr=>{
+      const inputs = [...tr.querySelectorAll('input,select')];
+      const hasVal = inputs.some(i=>val(i));
+      if(!hasVal){ hide(tr); } else { agFilled++; }
+    });
+    if(!agFilled) hide(agBody.closest('.card'));
+  }
+
+  // ══ 11. SIGNOS VITALES — ocultar tabla y chart si sin datos ══
+  const vtBody = document.getElementById('vitalBody');
+  if(vtBody && !vtBody.children.length){
+    hide(vtBody.closest('table'));
+    hide(document.querySelector('.chart-container'));
+    hide(document.getElementById('monitor-logs-panel'));
+    hide(document.getElementById('monitor-status-bar'));
+    hide(document.querySelector('.chart-legend'));
+  }
+  // Monitor logs
+  const monPanel = document.getElementById('monitor-logs-panel');
+  if(monPanel && monPanel.style.display==='none') hide(monPanel);
+
+  // ══ 12. BALANCE DE LÍQUIDOS — ocultar filas con 0 ══
+  document.querySelectorAll('.fluid-item').forEach(item=>{
+    const inp = item.querySelector('.fluid-input');
+    if(inp && (parseFloat(inp.value)||0)===0) item.classList.add('print-empty');
+  });
+  // Hemorragia: ocultar bloque si sangrado 0
+  const eSg = document.getElementById('e-sg');
+  if(eSg && (parseFloat(eSg.value)||0)===0)
+    hide(eSg.closest('[style*="border:1.5px"]') || eSg.closest('[style*="border-radius:10px"]'));
+  // Ocultar también hem-detail si no activo
+  const hemDetail = document.getElementById('hem-detail');
+  if(hemDetail && hemDetail.style.display==='none') hide(hemDetail);
+
+  // ══ 13. DURACIÓN — ocultar dur-card si sin valores ══
+  if(document.getElementById('dur-anest')?.textContent.trim()==='—')
+    hide(document.getElementById('dur-anest')?.closest('.dur-card'));
+  if(document.getElementById('dur-cir')?.textContent.trim()==='—')
+    hide(document.getElementById('dur-cir')?.closest('.dur-card'));
+
+  // ══ 14. APGAR — ocultar card si vacío, expandir duración ══
+  const apgarFilled = [...document.querySelectorAll('.apgar-input')].some(i=>i.value!=='');
+  if(!apgarFilled) document.getElementById('dur-apgar-row')?.classList.add('apgar-empty');
+
+  // ══ 15. COMPLICACIONES — ocultar textareas y field-groups vacíos ══
+  document.querySelectorAll('.field-textarea').forEach(ta=>{
+    if(!ta.value.trim()) hide(ta.closest('.field-group'));
+  });
+  // Ocultar card complicaciones si todo vacío
+  const compCard = document.querySelector('[data-comp-card]') ||
+    [...document.querySelectorAll('.card')].find(c=>c.querySelector('.card-title')?.textContent.includes('Complicaciones'));
+  if(compCard){
+    const allEmpty = [...compCard.querySelectorAll('.field-textarea,.field-input')]
+      .every(el=>!el.value.trim());
+    if(allEmpty) hide(compCard);
+  }
+}
+
+function afterPrint(){
+  document.querySelectorAll('.print-empty,.print-no-sel,.print-active')
+    .forEach(el=>el.classList.remove('print-empty','print-no-sel','print-active'));
+  document.querySelectorAll('.fluid-item').forEach(el=>el.classList.remove('print-empty'));
+  document.getElementById('dur-apgar-row')?.classList.remove('apgar-empty');
+  document.querySelectorAll('.field-input').forEach(inp=>inp.style.visibility='');
+}
+
+window.addEventListener('beforeprint', prepareForPrint);
+window.addEventListener('afterprint',  afterPrint);
+
+// ── SAVE ──
+function guardar(){const t=document.getElementById('toast');t.classList.add('show');updateStats();setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══════════════════════════════════════════════════════
+// BUSCADOR DE MÉDICOS — Equipo Quirúrgico
+// ══════════════════════════════════════════════════════
+const MEDICOS_DB = [
+  // ── CIRUGÍA GENERAL ──
+  {n:'Dr. Alvarado Muñoz César Augusto',    e:'Cirugía General · Laparoscópica'},
+  {n:'Dr. Andrade Villacís Juan Pablo',      e:'Cirugía General'},
+  {n:'Dr. Arroyo Salgado Mario Rodrigo',     e:'Cirugía General · Coloproctología'},
+  {n:'Dra. Barreiro Ortiz Diana Marcela',    e:'Cirugía General · Oncológica'},
+  {n:'Dr. Borja Pazmiño Carlos Eduardo',     e:'Cirugía General · Laparoscópica'},
+  {n:'Dr. Carrasco Vega Luis Hernán',        e:'Cirugía General'},
+  {n:'Dr. Castro Freire Pedro Alejandro',    e:'Cirugía General · Bariátrica'},
+  {n:'Dra. Cevallos Lara Ana Cristina',      e:'Cirugía General'},
+  {n:'Dr. Chiriboga Espín Diego Fernando',   e:'Cirugía General · Laparoscópica'},
+  {n:'Dr. Coba Noriega Víctor Manuel',       e:'Cirugía General'},
+  {n:'Dr. Córdova Proaño Ramiro Esteban',    e:'Cirugía General · Bariátrica'},
+  {n:'Dra. Díaz Astudillo María José',       e:'Cirugía General'},
+  {n:'Dr. Espinosa Guerrero Rubén Darío',    e:'Cirugía General · Coloproctología'},
+  {n:'Dr. Flores Buitrón Santiago Javier',   e:'Cirugía General'},
+  {n:'Dra. García Morales Patricia Elena',   e:'Cirugía General · Laparoscópica'},
+  {n:'Dr. Guerrero Benalcázar Carlos Hugo',  e:'Cirugía General'},
+  {n:'Dr. Herrera Cárdenas Rodrigo Fabián',  e:'Cirugía General · Oncológica'},
+  {n:'Dr. Hidalgo Toscano Marco Antonio',    e:'Cirugía General'},
+  {n:'Dr. Intriago Cedeño Luis Alfredo',     e:'Cirugía General · Laparoscópica'},
+  {n:'Dr. Jara Solano Fernando Patricio',    e:'Cirugía General'},
+  // ── TRAUMATOLOGÍA ──
+  {n:'Dr. Acosta Benítez Mauricio Andrés',   e:'Traumatología y Ortopedia'},
+  {n:'Dr. Aguirre Ponce Roberto Carlos',     e:'Traumatología y Ortopedia'},
+  {n:'Dr. Arteaga Játiva Héctor Gabriel',    e:'Traumatología · Artroscopia'},
+  {n:'Dr. Bastidas Montero Iván Rodrigo',    e:'Traumatología y Ortopedia'},
+  {n:'Dr. Camacho Rosero Felipe Ignacio',    e:'Traumatología · Columna Vertebral'},
+  {n:'Dra. Córdova Tapia Lorena Beatriz',    e:'Traumatología y Ortopedia'},
+  {n:'Dr. Enríquez Salazar Jaime Alberto',   e:'Traumatología · Cadera y Rodilla'},
+  {n:'Dr. Freire Moncayo Diego Patricio',    e:'Traumatología y Ortopedia'},
+  {n:'Dr. Garzón Muñoz Sergio Esteban',      e:'Traumatología · Artroscopia'},
+  {n:'Dr. León Romero Pablo Sebastián',      e:'Traumatología y Ortopedia'},
+  // ── GINECOLOGÍA ──
+  {n:'Dra. Alarcón Suárez Mónica Raquel',    e:'Ginecología y Obstetricia'},
+  {n:'Dra. Andrade Briones Silvia Patricia', e:'Ginecología · Laparoscópica'},
+  {n:'Dr. Barragán Albán Jorge Ernesto',     e:'Ginecología y Obstetricia'},
+  {n:'Dra. Calvache Ponce María Fernanda',   e:'Ginecología Oncológica'},
+  {n:'Dra. Carrillo Yánez Lucía Esperanza',  e:'Ginecología y Obstetricia'},
+  {n:'Dr. Erazo Terán Marco Vinicio',        e:'Ginecología y Obstetricia'},
+  {n:'Dra. Fonseca Minda Andrea Carolina',   e:'Ginecología · Uroginecología'},
+  {n:'Dra. Játiva Morales Carmen Alicia',    e:'Ginecología y Obstetricia'},
+  // ── UROLOGÍA ──
+  {n:'Dr. Almeida Viteri Ramiro Gustavo',    e:'Urología · Laparoscópica'},
+  {n:'Dr. Armas Salazar Cristóbal Iván',     e:'Urología'},
+  {n:'Dr. Bravo Ordóñez Nelson Eduardo',     e:'Urología · Endourología'},
+  {n:'Dr. Celi Torres Frank Alexander',      e:'Urología · Robótica'},
+  {n:'Dr. Correa Gallegos Alfredo Patricio', e:'Urología'},
+  // ── NEUROCIRUGÍA ──
+  {n:'Dr. Andrade Chiquito Alex Marcelo',    e:'Neurocirugía'},
+  {n:'Dr. Balseca Espín Edgar Ramiro',       e:'Neurocirugía · Columna'},
+  {n:'Dr. Benavides Jara Fabio Hernán',      e:'Neurocirugía'},
+  {n:'Dr. Carrera Romero Patricio Enrique',  e:'Neurocirugía · Vascular'},
+  // ── VASCULAR ──
+  {n:'Dr. Alvarado Soto Rodrigo Humberto',   e:'Cirugía Vascular'},
+  {n:'Dr. Barba Cevallos Christian David',   e:'Cirugía Vascular · Endovascular'},
+  {n:'Dr. Cadena Molina Galo Renato',        e:'Cirugía Vascular'},
+  // ── PLÁSTICA ──
+  {n:'Dra. Andrade Mena Paola Alejandra',    e:'Cirugía Plástica y Reconstructiva'},
+  {n:'Dr. Cárdenas Ochoa Jorge Luis',        e:'Cirugía Plástica · Estética'},
+  {n:'Dra. Espín Chávez Daniela Verónica',   e:'Cirugía Plástica y Reconstructiva'},
+  // ── ANESTESIOLOGÍA ──
+  {n:'Dr. Acosta Zambrano Marcelo Patricio', e:'Anestesiología · Dolor'},
+  {n:'Dra. Alban Navarrete Gloria Cecilia',  e:'Anestesiología'},
+  {n:'Dr. Alvarado Viteri Wilson Roberto',   e:'Anestesiología · Cuidados Intensivos'},
+  {n:'Dra. Amores Cruz Tatiana Elizabeth',   e:'Anestesiología · Pediátrica'},
+  {n:'Dr. Arroyo Martínez Fredy Gonzalo',    e:'Anestesiología'},
+  {n:'Dr. Asanza Rivadeneira José Daniel',   e:'Anestesiología · Regional'},
+  {n:'Dra. Benalcázar Aguilera Ana Lucía',   e:'Anestesiología'},
+  {n:'Dr. Bravo Celi Christian Augusto',     e:'Anestesiología · Cardiovascular'},
+  {n:'Dr. Cabrera Ruiz Fernando Patricio',   e:'Anestesiología'},
+  {n:'Dra. Calero Ponce Diana Paulina',      e:'Anestesiología'},
+  {n:'Dr. Carrillo Borja Alex Rodrigo',      e:'Anestesiología · Regional'},
+  {n:'Dra. Castro Navarrete María Cristina', e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Cevallos Guerrero Pablo Andrés',   e:'Anestesiología'},
+  {n:'Dr. Chicaiza Reinoso Marco Aurelio',   e:'Anestesiología · UCI'},
+  {n:'Dra. Chiluiza Mora Verónica Sofía',    e:'Anestesiología · Pediátrica'},
+  {n:'Dr. Coral Enríquez Javier Eduardo',    e:'Anestesiología'},
+  {n:'Dr. Díaz Freire Edison Patricio',      e:'Anestesiología · Dolor Crónico'},
+  {n:'Dra. Dueñas Guayasamín Rosa Elena',    e:'Anestesiología'},
+  {n:'Dr. Enríquez Andrade Miguel Ángel',    e:'Anestesiología · Regional'},
+  {n:'Dr. Escobar Cárdenas Luis Fernando',   e:'Anestesiología'},
+  {n:'Dra. Espinosa Zeas María Belén',       e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Fonseca Bolaños Carlos Ramiro',    e:'Anestesiología'},
+  {n:'Dr. Freire Játiva Alex Germán',        e:'Anestesiología · Cardiovascular'},
+  {n:'Dra. Gaibor Núñez Sylvia Patricia',    e:'Anestesiología'},
+  {n:'Dr. Galarza Mena Roberto Iván',        e:'Anestesiología · Regional'},
+  {n:'Dr. García Andrade Juan Guillermo',    e:'Anestesiología · UCI'},
+  {n:'Dra. Guerrero Morales Paola Cristina', e:'Anestesiología'},
+  {n:'Dr. Guevara Sánchez Klever Rodrigo',   e:'Anestesiología · Dolor'},
+  {n:'Dr. Heredia Molina Pablo Nicolás',     e:'Anestesiología'},
+  {n:'Dra. Herrera Velasco Sandra Verónica', e:'Anestesiología · Pediátrica'},
+  {n:'Dr. Hidalgo Romero Christian Paul',    e:'Anestesiología'},
+  {n:'Dr. Iza Venegas Mauricio Rodrigo',     e:'Anestesiología · UCI'},
+  {n:'Dra. Játiva Ponce Fernanda Elizabeth', e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Jiménez Alarcón Marco Vinicio',    e:'Anestesiología'},
+  {n:'Dra. Lara Arregui Lorena Piedad',      e:'Anestesiología · Regional'},
+  {n:'Dr. León Orozco Edgar Hernán',         e:'Anestesiología'},
+  {n:'Dr. Maldonado Rosero Jorge Fabián',    e:'Anestesiología · Cardiovascular'},
+  {n:'Dr. Picoita Camacho Fernando Fabricio',e:'Anestesiología · Regional · Dolor'},
+  {n:'Dra. Paredes Álvarez Gloria Magdalena',e:'Anestesiología'},
+  {n:'Dr. Pazmiño Cevallos César Bolívar',   e:'Anestesiología · UCI'},
+  {n:'Dra. Peña Narváez Sandra Janeth',      e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Pérez Montero Klever Rodrigo',     e:'Anestesiología'},
+  {n:'Dra. Ponce Benalcázar Tatiana Isabel', e:'Anestesiología · Pediátrica'},
+  {n:'Dr. Portilla Vallejo Jorge Hernán',    e:'Anestesiología · Regional'},
+  {n:'Dra. Proaño Molina Diana Katherine',   e:'Anestesiología'},
+  {n:'Dr. Quezada Espinoza Roger Andrés',    e:'Anestesiología'},
+  {n:'Dra. Quiñónez Muñoz Rebeca Paola',     e:'Anestesiología · Dolor'},
+  {n:'Dr. Recalde Montalvo Alex Patricio',   e:'Anestesiología'},
+  {n:'Dr. Rojas Andino Sebastián Felipe',    e:'Anestesiología · Regional'},
+  {n:'Dra. Romero Salazar Lupe Margarita',   e:'Anestesiología'},
+  {n:'Dr. Rueda Enríquez Carlos Alberto',    e:'Anestesiología · Cardiovascular'},
+  {n:'Dr. Salazar Acosta Roberto Eduardo',   e:'Anestesiología · UCI'},
+  {n:'Dra. Salazar Erazo Mónica Paulina',    e:'Anestesiología'},
+  {n:'Dr. Salcedo Chávez Milton Rodrigo',    e:'Anestesiología · Regional'},
+  {n:'Dra. Sandoval Flores Patricia Cecilia',e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Tapia Guerrero Milton Alfredo',    e:'Anestesiología'},
+  {n:'Dr. Delgado Zurita Luis Miguel',       e:'Anestesiología · UCI'},
+  {n:'Dra. Tigse Cárdenas Andrea Lisette',   e:'Anestesiología'},
+  {n:'Dr. Torres Aguirre Marco Fabián',      e:'Anestesiología · Regional · Dolor'},
+  {n:'Dr. Troya Bermeo Jorge Enrique',       e:'Anestesiología'},
+  {n:'Dra. Ullauri Paredes Verónica Marisol',e:'Anestesiología · Pediátrica'},
+  {n:'Dr. Valdivieso Ponce Ramiro Augusto',  e:'Anestesiología'},
+  {n:'Dra. Vargas Naranjo Gloria Patricia',  e:'Anestesiología · Obstétrica'},
+  {n:'Dr. Velasco Proaño Gustavo Alejandro', e:'Anestesiología'},
+  {n:'Dr. Viteri Portilla Rodrigo Patricio', e:'Anestesiología · Cardiovascular'},
+  {n:'Dra. Yánez Cárdenas Carmen Alicia',    e:'Anestesiología'},
+  {n:'Dr. Zambrano Mena Patricio Rodrigo',   e:'Anestesiología · UCI'},
+  {n:'Dra. Zapata Benítez Sandra Elena',     e:'Anestesiología'},
+  {n:'Dr. Zúñiga Moncayo Christian Paúl',    e:'Anestesiología · Regional'},
+  // ── PEDIATRÍA / NEONATOLOGÍA ──
+  {n:'Dra. Álvarez Paredes Rosa Gabriela',   e:'Neonatología'},
+  {n:'Dr. Andrade Cevallos Ramiro Esteban',  e:'Pediatría · Neonatología'},
+  {n:'Dra. Arroyo Benalcázar Lorena Patricia',e:'Neonatología · UCI Neonatal'},
+  {n:'Dr. Cabrera Salinas Edgar Gustavo',    e:'Pediatría'},
+  {n:'Dra. Camacho Torres Verónica Isabel',  e:'Neonatología'},
+  {n:'Dr. Cisneros Orellana Pedro Alfonso',  e:'Pediatría · Neonatología'},
+  {n:'Dra. Córdova Andrade Gloria Marisol',  e:'Neonatología · UCI Neonatal'},
+  {n:'Dr. Espinosa Guerrero Iván Patricio',  e:'Pediatría'},
+  {n:'Dra. Guerrero Vásquez Mónica Leticia', e:'Neonatología'},
+  {n:'Dr. Herrera Benalcázar Marco Vinicio', e:'Pediatría · Neonatología'},
+];
+
+function searchDoctor(field, q){
+  const dd = document.getElementById('doc-drop-'+field);
+  if(!dd) return;
+  if(!q || q.length < 2){ dd.innerHTML=''; dd.classList.remove('open'); return; }
+  const q2 = q.toLowerCase();
+  const res = MEDICOS_DB.filter(m => m.n.toLowerCase().includes(q2) || m.e.toLowerCase().includes(q2)).slice(0,8);
+  if(!res.length){
+    dd.innerHTML='<div class="doc-option"><span class="doc-opt-name" style="color:var(--muted);">Sin resultados — escriba el nombre completo</span></div>';
+    dd.classList.add('open'); return;
+  }
+  dd.innerHTML = res.map(m =>
+    `<div class="doc-option" onclick="selectDoctor('${field}','${m.n.replace(/'/g,"\\'")}')">
+      <span class="doc-opt-name">${m.n}</span>
+      <span class="doc-opt-esp">${m.e}</span>
+    </div>`).join('');
+  dd.classList.add('open');
+}
+
+function openDocDrop(field){
+  const inp = document.getElementById('staff-'+field);
+  if(inp && inp.value.length >= 2) searchDoctor(field, inp.value);
+}
+
+function closeDocDrop(field){
+  document.getElementById('doc-drop-'+field)?.classList.remove('open');
+}
+
+function selectDoctor(field, name){
+  const inp = document.getElementById('staff-'+field);
+  if(inp){ inp.value = name; inp.style.color='var(--navy)'; inp.style.fontWeight='600'; }
+  closeDocDrop(field);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  initChart();addAgent();addAgent();addAgent();
+  renderFixedEvents();
+  document.getElementById('inp-hora').value=new Date().toTimeString().slice(0,5);
+  updateStats();
+  document.getElementById('paciente').addEventListener('input',updateStats);
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#cptSearch') && !e.target.closest('#cptDropdown')) closeCPT();
+    if(!e.target.closest('#dxPreSearch')  && !e.target.closest('#dxPreDropdown'))  closeDX('pre');
+    if(!e.target.closest('#dxPostSearch') && !e.target.closest('#dxPostDropdown')) closeDX('post');
+    ['cir1','cir2','ayu1','ayu2','anest','ped'].forEach(f=>{
+      if(!e.target.closest('#staff-'+f) && !e.target.closest('#doc-drop-'+f)) closeDocDrop(f);
+    });
+  });
+});
+</script>
+</body>
+</html>
