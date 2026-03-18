@@ -653,7 +653,7 @@ const MedicalModulePanel = () => {
                 <h3 className="text-lg font-bold">{activeModal.title}</h3>
                 <button type="button" className="rounded-md bg-white/15 px-2 py-1 text-sm" onClick={() => setActiveModalKey(null)}>✕</button>{/* aquie es la X de cerrar */}
               </div>
-              <div className="max-h-[68vh] overflow-y-auto bg-[#f8fcff]"> {/**tamaño del cerrar */}
+              <div className="max-h-[81vh] overflow-y-auto bg-[#f8fcff]"> {/**tamaño del cerrar */}
                 {ActiveModalPageComponent ? (
                   <div className="embedded-modal-page">
                     <style>{`
