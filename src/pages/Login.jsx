@@ -49,7 +49,7 @@ const Login = () => {
         <title>Iniciar Sesion - Sistema Hospitalario</title>
       </Helmet>
 
-      <div className="min-h-[38rem] bg-gradient-to-br from-[#ffffff] via-[#ffffff] to-[#1a5784] relative px-4 py-1">
+      <div className="min-h-[38rem] bg-gradient-to-br from-[#ffffff] via-[#ffffff] to-[#FFFFFF] relative px-4 py-1">
         <div className="border-b-4 border-black-9 pb-1 pl-1 items-start">
           <div>
             <img
@@ -68,11 +68,11 @@ const Login = () => {
               }}
             />
           </div>
-          <h1 className="text-4xl font-bold text-center text-[#3aa7aa]">INGRESO SISTEMA</h1>
+          <h1 className="text-4xl font-bold text-center text-[#69C9BA]">INGRESO SISTEMA</h1>
         </div>
 
-        <div className="flex mt-4 bg-[#000000]/10 rounded-lg border border-[#337375] shadow-md mx-1 max-w-9xl p-5">
-          <div className="flex justify-center items-center mt-1 bg-[#1a5784]/10 rounded-lg border border-[#337375] shadow-md mx-auto max-w-5x1 p-10">
+        <div className="flex mt-4 bg-[#69C9BA]/30 rounded-lg border border-[#337375] shadow-md mx-1 max-w-9xl p-1">
+          <div className="flex justify-center items-center mt-1 bg-[#76C4D5]/9 rounded-lg border border-[#337375] shadow-md mx-auto max-w-5x1 p-10">
             <div className="hidden md:flex items-center justify-center w-1/2">
               <img
                 src="https://future-health.care/wp-content/uploads/2023/07/Tendencias_1200x800_blog.jpg"
@@ -94,11 +94,11 @@ const Login = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="w-full md:w-1/2 bg-[#b1b7c6] p-8 rounded-lg border border-[#337375]"
+              className="w-full md:w-1/2 bg-[#FFFFFF] p-8 rounded-lg border border-[#337375]"
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="text-white bg-[#7690AC] px-2 py-1 rounded shadow font-bold uppercase text-sm mb-1 inline-block">
+                  <label className="text-[#000000]/70 bg-[#69C9BA] px-2 py-1 rounded shadow font-semibold uppercase text-sm mb-1 inline-block">
                     Correo
                   </label>
 
@@ -117,8 +117,8 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <label className="text-white bg-[#7690AC] px-2 py-1 rounded shadow font-bold uppercase text-sm mb-1 inline-block">
-                    Contrasena
+                  <label className="text-[#000000]/70 bg-[#69C9BA] px-2 py-1 rounded shadow font-semibold uppercase text-sm mb-1 inline-block">
+                    Contraseña
                   </label>
                   <div className="relative bg-white rounded shadow p-1">
                     <Lock className="absolute left-3 top-3 w-5 h-5 text-black" />
@@ -137,7 +137,7 @@ const Login = () => {
                 <Button
                   type="submit"
                   disabled={submitting || loading}
-                  className="w-full bg-[#3aa7aa] hover:bg-gray-300 text-black font-bold py-3 rounded border-2 border-black-500 transition-all"
+                  className="w-full bg-[#69C9BA] hover:bg-[#4ea685]/80 text-[#000000]/70 font-bold py-4 rounded border-4 border-[#69c9ba]/90 transition-all"
                 >
                   {submitting || loading ? (
                     <div className="flex items-center justify-center">

@@ -107,7 +107,7 @@ function App() {
           <Toaster />
         </div>
 
-        <footer className="grid grid-cols-7 md:grid-cols-7 bg-[#595759]">
+        <footer className="grid grid-cols-7 md:grid-cols-7 bg-[#69C9BA]/30">
           <div className="ml-3 mt-2 font-bold">
             <img
               src="https://i.postimg.cc/9MHfPv55/Gemini-Generated-Image-4e7mun4e7mun4e7m.png"
@@ -116,21 +116,21 @@ function App() {
             />
           </div>
 
-          <div className="mt-2 text-[9.5px] font-medium">
+          <div className="mt-2 text-[9.5px] font-medium text-[#595759]/90 tracking-wide min-h-[10px] hover:text-[#000000]">
             <p>MEDIX➇ HIS VERSION V3.18.798</p>
           </div>
 
           <div className="font-bold" />
 
-          <div className="text-[9.5px] text-center font-medium text-white/90 bg-[#76c4d5]/10 tracking-wide min-h-[10px] hover:text-[gray]/100">
-            <h1>Clinicas Atlas © 2026 </h1>
+          <div className="text-[9.5px] text-center font-medium text-[#595759]/90 tracking-wide min-h-[10px] hover:text-[#000000]">
+            <strong>Clinicas Atlas © 2026 </strong>
             <p>Todos los Derechos Reservados</p>
           </div>
 
           <div className="font-bold" />
           <div className="font-bold" />
 
-          <div className="text-end item-center mr-10 text-[9.5px] ">
+          <div className="text-end item-center mr-10 text-[9.5px] font-medium text-[#595759]/90 tracking-wide min-h-[10px] hover:text-[#000000] ">
             <p>Desarollado por MANHFER SYSTEMS S.A.S</p>
           </div>
         </footer>

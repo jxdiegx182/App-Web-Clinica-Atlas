@@ -4,14 +4,9 @@ import { useRef } from 'react';
 import { onSnapshot } from 'firebase/firestore';
 import {
   collection,
-  doc,
   getDocs,
   query,
-  where,
   orderBy,
-  setDoc,
-  serverTimestamp,
-  updateDoc,
   limit,
 } from 'firebase/firestore';
 import GraficoPastelServicio from '../components/GraficoPastelServicio';
@@ -28,6 +23,12 @@ import { canAccessByRole, getAllowedRolesForDashboardModule } from '@/constants/
 import { ROLES } from '@/constants/roles';
 import { PatientCard, PatientSearchBar, PatientsGrid } from '@/modules/dashboard/components';
 import { getStatusColor } from '@/shared/theme/colors';
+import {
+  getAdmisionesAdmitidas,
+  subscribeAdmisionesAdmitidas,
+  updateAdmisionById,
+} from '@/services/admisionesSupabaseService';
+import { supabase } from '@/lib/supabaseClient';
 import {
   LogOut,
   User,
@@ -53,82 +54,121 @@ const serviciosHospital = [
 ];
 //'Quirófano',
 const UNAUTHORIZED_MODULE_BUTTON_MODE = 'hide'; // 'hide' | 'disable'
+const ALTA_MEDICA_ESTADO = 'Alta Médica';
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const MEDICATION_ADMIN_TABLE =
+  import.meta.env.VITE_SUPABASE_MEDICATION_ADMIN_TABLE || 'medicamentos_administraciones';
+const MEDICATION_REFRESH_INTERVAL_MS = 30000;
 
-const MEDICATION_SOURCE_COLLECTIONS = [
-  { name: 'prescriptions', label: 'Prescripcion' },
-  { name: 'medical_prescriptions', label: 'Prescripcion' },
-  { name: 'recetas', label: 'Receta' },
-];
+function parseHourToMinutes(hour) {
+  const text = String(hour || '').trim();
+  const match = text.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return Number.POSITIVE_INFINITY;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  if (Number.isNaN(h) || Number.isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return h * 60 + m;
+}
 
-const sanitizeMedicationKeyPart = (value) =>
-  String(value || 'sin_dato')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '') || 'sin_dato';
-
-const buildMedicationKey = (medicamento, horaPrimeraToma, proximaToma) =>
-  `${sanitizeMedicationKeyPart(medicamento)}_${sanitizeMedicationKeyPart(horaPrimeraToma)}_${sanitizeMedicationKeyPart(proximaToma)}`;
-
-const normalizeMedicationEntry = (entry, sourceLabel) => {
-  const medicamento = String(entry?.medicamento || entry?.nombre || entry?.farmaco || entry?.descripcion || '').trim();
-  if (!medicamento) return null;
-
-  const horaPrimeraToma = String(
-    entry?.horaPrimeraToma ||
-      entry?.horaPrimera ||
-      entry?.horaInicial ||
-      entry?.hora ||
-      entry?.hora_toma ||
-      ''
-  ).trim();
-
-  const proximaToma = String(
-    entry?.proximaToma ||
-      entry?.horaProximaToma ||
-      entry?.siguienteToma ||
-      entry?.hora_proxima ||
-      ''
-  ).trim();
-
-  return {
-    id: buildMedicationKey(medicamento, horaPrimeraToma || '--', proximaToma || '--'),
-    medicamento,
-    horaPrimeraToma: horaPrimeraToma || '--',
-    proximaToma: proximaToma || '--',
-    source: sourceLabel,
-  };
-};
-
-const extractMedicationEntries = (docData, sourceLabel) => {
-  const result = [];
-  const rawItems = [];
-
-  if (Array.isArray(docData?.medicamentos)) rawItems.push(...docData.medicamentos);
-  if (Array.isArray(docData?.prescripciones)) rawItems.push(...docData.prescripciones);
-  if (Array.isArray(docData?.items)) rawItems.push(...docData.items);
-  if (docData?.medicamento && rawItems.length === 0) rawItems.push(docData);
-
-  rawItems.forEach((item) => {
-    const normalized = normalizeMedicationEntry(item, sourceLabel);
-    if (normalized) result.push(normalized);
-  });
-
-  return result;
+const formatMinutesToHour = (minutes) => {
+  const safe = ((minutes % 1440) + 1440) % 1440;
+  const hh = String(Math.floor(safe / 60)).padStart(2, '0');
+  const mm = String(safe % 60).padStart(2, '0');
+  return `${hh}:${mm}`;
 };
 
 const getMedicationScheduleHours = (item, record = {}) => {
+  const baseHour = String(item?.hora_inicio || item?.horaPrimeraToma || '').trim();
+  const nextHour = String(item?.proxima_toma || item?.proximaToma || '').trim();
+  const interval = Number(item?.intervalo_horas || 0);
+  const hasInterval = Number.isFinite(interval) && interval > 0;
+  const generated = new Set();
+
+  [baseHour, nextHour]
+    .filter((hour) => hour && hour !== '--')
+    .forEach((hour) => generated.add(hour));
+
+  if (hasInterval) {
+    const startMin = parseHourToMinutes(baseHour);
+    const nextMin = parseHourToMinutes(nextHour);
+    const maxSteps = Math.max(1, Math.ceil(24 / interval));
+    if (Number.isFinite(startMin)) {
+      for (let i = 1; i <= maxSteps; i += 1) {
+        generated.add(formatMinutesToHour(startMin + i * interval * 60));
+      }
+    }
+    if (Number.isFinite(nextMin)) {
+      for (let i = 1; i <= maxSteps; i += 1) {
+        generated.add(formatMinutesToHour(nextMin + i * interval * 60));
+      }
+    }
+  }
+
   const hours = [
-    item?.horaPrimeraToma,
-    item?.proximaToma,
+    ...Array.from(generated),
     ...(Array.isArray(record?.horariosProgramados) ? record.horariosProgramados : []),
     ...Object.keys(record?.administracionesPorHora || {}),
   ]
     .map((hour) => String(hour || '').trim())
     .filter((hour) => hour && hour !== '--');
 
-  return Array.from(new Set(hours));
+  return Array.from(new Set(hours)).sort(
+    (a, b) => parseHourToMinutes(a) - parseHourToMinutes(b)
+  );
+};
+
+const toSupabaseError = (error, fallbackMessage) => {
+  if (!error) return new Error(fallbackMessage);
+  const wrapped = new Error(error.message || fallbackMessage);
+  wrapped.code = error.code;
+  wrapped.details = error.details;
+  wrapped.hint = error.hint;
+  return wrapped;
+};
+
+const buildMedicationRecordsByKey = (administraciones = []) => {
+  const records = {};
+  const toMillis = (value) => {
+    if (!value) return 0;
+    const parsed = value?.toDate ? value.toDate() : new Date(value);
+    const time = parsed.getTime();
+    return Number.isNaN(time) ? 0 : time;
+  };
+
+  (administraciones || []).forEach((row) => {
+    const medicationKey = row?.medicamento_id;
+    const scheduledHour = String(row?.hora_programada || row?.hora || '').trim();
+    if (!medicationKey || !scheduledHour) return;
+
+    if (!records[medicationKey]) {
+      records[medicationKey] = {
+        medicationKey,
+        horariosProgramados: [],
+        administracionesPorHora: {},
+      };
+    }
+
+    const existingHourData = records[medicationKey].administracionesPorHora[scheduledHour];
+    const existingTime = toMillis(existingHourData?.confirmationTime);
+    const incomingTime = toMillis(row?.timestamp || row?.created_at) || Date.now();
+
+    if (!records[medicationKey].horariosProgramados.includes(scheduledHour)) {
+      records[medicationKey].horariosProgramados.push(scheduledHour);
+    }
+
+    if (!existingHourData || incomingTime >= existingTime) {
+      records[medicationKey].administracionesPorHora[scheduledHour] = {
+        confirmada: Boolean(row?.confirmado || row?.estado === 'administrado'),
+        confirmationTime: row?.timestamp || row?.created_at || '',
+        confirmadoPor: row?.confirmado_por || '',
+        estado: row?.estado || (row?.confirmado ? 'administrado' : 'pendiente'),
+      };
+    }
+  });
+
+  return records;
 };
 
 const Dashboard = () => {
@@ -144,6 +184,21 @@ const Dashboard = () => {
   const [showTooltip, setShowTooltip] = useState(null);
   const [medicationPlanByPatient, setMedicationPlanByPatient] = useState({});
   const [medicationRecordsByPatient, setMedicationRecordsByPatient] = useState({});
+
+  const parseDateValue = (value) => {
+    if (!value) return null;
+    const date = value?.toDate ? value.toDate() : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
+
+  const formatUbicacionDashboard = (ubicacion) => {
+    if (!ubicacion || typeof ubicacion !== 'object') return '(Sin ubicación)';
+    const parts = [];
+    if (ubicacion.habitacion) parts.push(String(ubicacion.habitacion));
+    if (ubicacion.piso) parts.push(`Piso ${ubicacion.piso}`);
+    if (!parts.length) return '(Sin ubicación)';
+    return `(${parts.join(' | ')})`;
+  };
   // ========== DEFINICIÓN DE ESTADOS DE PACIENTES ==========
   const estadosPaciente = {
     'Espera': { color: 'bg-gray-400', text: 'text-gray-700' },
@@ -168,7 +223,7 @@ const Dashboard = () => {
 
     mains.forEach((m) => {
       estadosIniciales[m.id] = m.estado || 'Atención';
-      serviciosIniciales[m.id] = m.servicio || 'Emergencia';
+      serviciosIniciales[m.id] = m.servicio || 'EMERGENCIA';
     });
     setEstados(estadosIniciales);
     setServicios(serviciosIniciales);
@@ -237,56 +292,63 @@ const Dashboard = () => {
 
   //+++++++++++++++++++++++++++++++++++++++
   useEffect(() => {
-    const q = query(
-      collection(db, 'admisiones'),
-      where('admitido', '==', true),
-      orderBy('admittedAt', 'desc')
+    const mapAdmisionToMain = (row) => {
+      const main = row?.mainData || {};
+      const createdDate = parseDateValue(row?.createdAt);
+      const hasValidDate = Boolean(createdDate);
+      const today = new Date();
+      const estancia = hasValidDate
+        ? Math.floor((today - createdDate) / (1000 * 60 * 60 * 24) + 1)
+        : 0;
+
+      return {
+        id: row.id,
+        mainData: main,
+        createdAt: row?.createdAt || null,
+        fechaIngreso: hasValidDate ? createdDate.toLocaleDateString() : '',
+        estancia,
+        hora: hasValidDate ? createdDate.toLocaleTimeString() : '',
+        nombre: `${main.firstName ?? ''} ${main.lastName ?? ''}`.trim(),
+        cedula: main.cedula ?? '',
+        medico: main.medico ?? '',
+        alergiaUno: main.alergiaUno ?? '',
+        alergiaDos: main.alergiaDos ?? '',
+        alergiaTres: main.alergiaTres ?? '',
+        alergiaIconUno: main.alergiaIconUno ?? '',
+        alergiaIconDos: main.alergiaIconDos ?? '',
+        alergiaIconTres: main.alergiaIconTres ?? '',
+        horarioDos: main.horarioDos ?? '',
+        horarioTres: main.horarioTres ?? '',
+        especialidad: 'General',
+        estado: main.estado || 'Atención',
+        seguro: main.seguro ?? '',
+        servicio: main.servicio ?? '',
+        ubicacion: main.ubicacion ?? {},
+        telefono: main.phone ?? '',
+        modulos: [
+          'Modulo Médico',
+          'Modulo Enfermeria',
+          'Modulo Examenes',
+          'Modulo Facturación',
+        ],
+      };
+    };
+
+    const loadInitial = async () => {
+      try {
+        const rows = await getAdmisionesAdmitidas();
+        setMains(rows.map(mapAdmisionToMain));
+      } catch (error) {
+        console.error('Error cargando admisiones desde Supabase:', error);
+      }
+    };
+
+    loadInitial();
+
+    const unsubscribe = subscribeAdmisionesAdmitidas(
+      (rows) => setMains(rows.map(mapAdmisionToMain)),
+      (error) => console.error('Error realtime admisiones Supabase:', error)
     );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const admisionesFirebase = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        const main = data.mainData || {};
-        const fechaIngresoDate = data.createdAt?.toDate?.() ?? null;
-        const hoy = new Date();
-
-        const estancia = fechaIngresoDate
-          ? Math.floor((hoy - fechaIngresoDate) / (1000 * 60 * 60 * 24) + 1)
-          : 0;
-
-        return {
-          id: doc.id,
-          fechaIngreso: data.createdAt?.toDate?.().toLocaleDateString() ?? '',
-          estancia,
-          hora: data.createdAt?.toDate?.().toLocaleTimeString() ?? '',
-          nombre: `${main.firstName ?? ''} ${main.lastName ?? ''}`.trim(),
-          cedula: main.cedula ?? '',
-          medico: main.medico ?? '',
-          alergiaUno: main.alergiaUno ?? '',
-          alergiaDos: main.alergiaDos ?? '',
-          alergiaTres: main.alergiaTres ?? '',
-          alergiaIconUno: main.alergiaIconUno ?? '',
-          alergiaIconDos: main.alergiaIconDos ?? '',
-          alergiaIconTres: main.alergiaIconTres ?? '',
-          horarioDos: main.horarioDos ?? '',
-          horarioTres: main.horarioTres ?? '',
-          especialidad: 'General',
-          estado: main.estado || 'Atención',
-          seguro: main.seguro ?? '',
-          servicio: main.servicio ?? '',
-          ubicacion: main.ubicacion ?? {},
-          telefono: main.phone ?? '',
-          modulos: [
-            'Modulo Médico',
-            'Modulo Enfermeria',
-            'Modulo Examenes',
-            'Modulo Facturación',
-          ],
-        };
-      });
-
-      setMains(admisionesFirebase);
-    });
 
     return () => unsubscribe();
   }, []);
@@ -299,95 +361,134 @@ const Dashboard = () => {
     }
 
     let isMounted = true;
-    const unsubscribers = [];
+    const mainIds = mains.map((main) => main.id);
+    let refreshTimeout = null;
 
-    const loadMedicationPlan = async () => {
+    const loadMedicationData = async () => {
       const nextPlan = {};
+      const nextRecords = {};
 
       await Promise.all(
         mains.map(async (main) => {
-          const mergedMedications = new Map();
-
           try {
-            const clinicalEvolutionRef = collection(db, 'admisiones', main.id, 'clinical_evolution');
-            const clinicalEvolutionQuery = query(clinicalEvolutionRef, orderBy('createdAt', 'desc'), limit(1));
-            const clinicalSnapshot = await getDocs(clinicalEvolutionQuery);
+            const { data: evolutions, error: evolutionsError } = await supabase
+              .from('clinical_evolution')
+              .select(
+                `
+                  id,
+                  created_at,
+                  medicamentos (
+                    id,
+                    clinical_evolution_id,
+                    medicamento,
+                    via,
+                    frecuencia,
+                    hora_inicio,
+                    intervalo_horas,
+                    proxima_toma,
+                    presentacion,
+                    administra,
+                    cantidad,
+                    indicacion,
+                    created_at
+                  )
+                `
+              )
+              .eq('admision_id', main.id)
+              .order('created_at', { ascending: false });
 
-            clinicalSnapshot.docs.forEach((docSnap) => {
-              const entries = extractMedicationEntries(docSnap.data(), 'Evolucion');
-              entries.forEach((entry) => {
-                mergedMedications.set(entry.id, entry);
+            if (evolutionsError) {
+              throw toSupabaseError(
+                evolutionsError,
+                `No se pudo cargar medicación para ${main.nombre}.`
+              );
+            }
+
+            const medications = [];
+            (evolutions || []).forEach((evolution) => {
+              (evolution?.medicamentos || []).forEach((med) => {
+                medications.push({
+                  ...med,
+                  source: 'Registro medicación',
+                  clinical_evolution_id:
+                    med?.clinical_evolution_id || evolution?.id || null,
+                });
               });
             });
+
+            nextPlan[main.id] = medications;
+
+            const { data: administraciones, error: administracionesError } =
+              await supabase
+                .from(MEDICATION_ADMIN_TABLE)
+                .select('*')
+                .eq('admision_id', main.id)
+                .order('timestamp', { ascending: false });
+
+            if (administracionesError && administracionesError.code !== '42P01') {
+              throw toSupabaseError(
+                administracionesError,
+                `No se pudieron cargar checks de medicación para ${main.nombre}.`
+              );
+            }
+
+            const recordsByKey = buildMedicationRecordsByKey(administraciones || []);
+            nextRecords[main.id] = recordsByKey;
           } catch (error) {
-            console.warn(`⚠️ No se pudo cargar evolución de ${main.nombre}`, error);
+            console.error(
+              `❌ Error cargando plan/registro de medicación para ${main.nombre}:`,
+              error
+            );
+            nextPlan[main.id] = [];
+            nextRecords[main.id] = {};
           }
-
-          const optionalSources = await Promise.allSettled(
-            MEDICATION_SOURCE_COLLECTIONS.map((source) =>
-              getDocs(query(collection(db, 'admisiones', main.id, source.name), limit(5)))
-            )
-          );
-
-          optionalSources.forEach((result, index) => {
-            if (result.status !== 'fulfilled') return;
-            const sourceLabel = MEDICATION_SOURCE_COLLECTIONS[index].label;
-
-            result.value.docs.forEach((docSnap) => {
-              const entries = extractMedicationEntries(docSnap.data(), sourceLabel);
-              entries.forEach((entry) => {
-                const existing = mergedMedications.get(entry.id);
-                if (existing) {
-                  const sources = new Set([existing.source, sourceLabel]);
-                  mergedMedications.set(entry.id, { ...existing, source: Array.from(sources).join(' + ') });
-                } else {
-                  mergedMedications.set(entry.id, entry);
-                }
-              });
-            });
-          });
-
-          nextPlan[main.id] = Array.from(mergedMedications.values());
         })
       );
 
       if (!isMounted) return;
       setMedicationPlanByPatient(nextPlan);
+      setMedicationRecordsByPatient(nextRecords);
     };
 
-    loadMedicationPlan();
+    const scheduleReload = () => {
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      refreshTimeout = setTimeout(() => {
+        loadMedicationData();
+      }, 250);
+    };
 
-    mains.forEach((main) => {
-      const medicationRecordsRef = collection(db, 'admisiones', main.id, 'medication_records');
-      const medicationRecordsQuery = query(medicationRecordsRef, limit(250));
-      const unsubscribe = onSnapshot(
-        medicationRecordsQuery,
-        (snapshot) => {
-          setMedicationRecordsByPatient((prev) => {
-            const recordsByKey = {};
-            snapshot.docs.forEach((docSnap) => {
-              const data = docSnap.data();
-              const key = data.medicationKey || docSnap.id;
-              recordsByKey[key] = data;
-            });
+    loadMedicationData();
 
-            return {
-              ...prev,
-              [main.id]: recordsByKey,
-            };
-          });
-        },
-        (error) => {
-          console.error(`❌ Error escuchando medication_records de ${main.nombre}:`, error);
+    const medicationChannel = supabase
+      .channel(`dashboard-medication-${mainIds.join('-')}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'clinical_evolution' },
+        scheduleReload
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'medicamentos' },
+        scheduleReload
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: MEDICATION_ADMIN_TABLE },
+        scheduleReload
+      )
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR') {
+          console.warn('⚠️ Realtime de medicamentos no disponible. Se usará refresco automático.');
         }
-      );
+      });
 
-      unsubscribers.push(unsubscribe);
-    });
+    const intervalId = setInterval(loadMedicationData, MEDICATION_REFRESH_INTERVAL_MS);
 
     return () => {
       isMounted = false;
-      unsubscribers.forEach((unsubscribe) => unsubscribe());
+      clearInterval(intervalId);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      supabase.removeChannel(medicationChannel);
     };
   }, [mains]);
 
@@ -437,8 +538,18 @@ const Dashboard = () => {
     return modules;
   };
 
+  const visibleMains = mains.filter((main) => {
+    const estadoActual = estados[main.id] || main.estado || 'Atención';
+    if (estadoActual !== ALTA_MEDICA_ESTADO) return true;
+
+    const referenciaAlta = parseDateValue(main.createdAt);
+
+    if (!referenciaAlta) return true;
+    return fechaHoraActual.getTime() - referenciaAlta.getTime() < ONE_DAY_MS;
+  });
+
   //BUSQUEDA
-  const filteredMains = mains.filter(
+  const filteredMains = visibleMains.filter(
     (main) =>
       main.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || //busqueda
       main.cedula.includes(searchTerm) ||
@@ -449,21 +560,21 @@ const Dashboard = () => {
   const [orderAsc, setOrderAsc] = useState(true);
 
   const sortedMains = [...filteredMains].sort((a, b) => {
-    const dateA = new Date(a.fechaIngreso);
-    const dateB = new Date(b.fechaIngreso);
+    const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+    const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return orderAsc ? dateA - dateB : dateB - dateA;
   });
 
   // 🔥 CONTADOR ALTAS MÉDICAS
   //+++++++++++++++++++++++++++++++++
-  const totalAltasMedicas = mains.filter(
-    (m) => m.estado === 'Alta Médica'
+  const totalAltasMedicas = visibleMains.filter(
+    (m) => (estados[m.id] || m.estado) === ALTA_MEDICA_ESTADO
   ).length;
   // 🔥 CONTADOR ALTAS MÉDICAS++++++++++++++++++++++++++++++++++++++++++++
   //+++++++++++++++++++++contador de camas gpt5
   const TOTAL_CAMAS = 60;
 
-  const camasOcupadas = mains.filter((m) => m.estado !== 'Alta Médica').length;
+  const camasOcupadas = visibleMains.filter((m) => (estados[m.id] || m.estado) !== ALTA_MEDICA_ESTADO).length;
 
   const camasDisponibles = TOTAL_CAMAS - camasOcupadas;
 
@@ -471,14 +582,14 @@ const Dashboard = () => {
   //+++++++++++++++++++++++++++++++++++++++++++++
 
   // 🔥 CONTADOR QUIRÓFANO (TIEMPO REAL)
-  const totalQuirofano = mains.filter((m) => m.estado === 'Quirófano').length;
+  const totalQuirofano = visibleMains.filter((m) => (estados[m.id] || m.estado) === 'Quirófano').length;
 
   //++++++++++++++++++++++++++++++++++++
 //+++++++++CONTADOR DE TERAPIA INTENISVA ++++++++++++++
 // 🔥 CONTADOR TERAPIA INTENSIVA (TIEMPO REAL)
-const totalTerapiaIntensiva = mains.filter(
+const totalTerapiaIntensiva = visibleMains.filter(
   (m) =>
-    m.estado === 'Terapia Intensiva' //||
+    (estados[m.id] || m.estado) === 'Terapia Intensiva' //||
    // m.servicio === 'UCI' ||
     //m.servicio === 'UCI PEDIATRICA'
 ).length;
@@ -488,16 +599,36 @@ const totalTerapiaIntensiva = mains.filter(
   //LOGICA DEL ESTADO PARA ALMACENAR EN FIREBASE SEGUN EL SELECTOR
   const handleEstadoChange = async (mainId, nuevoEstado) => {
     try {
+      const targetPatient = mains.find((item) => item.id === mainId);
+      if (!targetPatient) return;
+
+      const estadoActual = estados[mainId] || targetPatient.estado || 'Atención';
+
+      // Regla: Alta Médica queda bloqueada y no acepta más cambios.
+      if (estadoActual === ALTA_MEDICA_ESTADO && nuevoEstado !== ALTA_MEDICA_ESTADO) {
+        toast({
+          title: 'Estado bloqueado',
+          description: 'El paciente está en "Alta Médica" y ya no permite cambios.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      if (estadoActual === nuevoEstado) return;
+
       // 1️⃣ Actualiza UI
       setEstados((prev) => ({
         ...prev,
         [mainId]: nuevoEstado,
       }));
 
-      // 2️⃣ Actualiza Firestore
-      const ref = doc(db, 'admisiones', mainId);
-      await updateDoc(ref, {
-        'mainData.estado': nuevoEstado,
+      // 2️⃣ Actualiza Supabase
+      const updatedMainData = {
+        ...(targetPatient?.mainData || {}),
+        estado: nuevoEstado,
+      };
+      await updateAdmisionById(mainId, {
+        mainData: updatedMainData,
       });
 
       toast({
@@ -518,16 +649,31 @@ const totalTerapiaIntensiva = mains.filter(
   //LA MISMA LOGICA DE LA PARTE DE AQRRIVA DEL ESTADO
   const handleServicioChange = async (mainId, nuevoServicio) => {
     try {
+      const targetPatient = mains.find((item) => item.id === mainId);
+      if (!targetPatient) return;
+      const estadoActual = estados[mainId] || targetPatient.estado || 'Atención';
+      if (estadoActual === ALTA_MEDICA_ESTADO) {
+        toast({
+          title: 'Registro bloqueado',
+          description: 'No se puede modificar servicio cuando el paciente está en "Alta Médica".',
+          variant: 'destructive',
+        });
+        return;
+      }
+
       // 1️⃣ UI inmediata
       setServicios((prev) => ({
         ...prev,
         [mainId]: nuevoServicio,
       }));
 
-      // 2️⃣ Firebase
-      const ref = doc(db, 'admisiones', mainId);
-      await updateDoc(ref, {
-        'mainData.servicio': nuevoServicio,
+      // 2️⃣ Supabase
+      const updatedMainData = {
+        ...(targetPatient?.mainData || {}),
+        servicio: nuevoServicio,
+      };
+      await updateAdmisionById(mainId, {
+        mainData: updatedMainData,
       });
 
       toast({
@@ -676,8 +822,9 @@ const resumenVitales = [
         mergedItems.set(key, {
           id: key,
           medicamento: record?.medicamento || 'Medicamento',
-          horaPrimeraToma: record?.horaPrimeraToma || '--',
-          proximaToma: record?.proximaToma || '--',
+          hora_inicio: record?.hora_inicio || '--',
+          proxima_toma: record?.proxima_toma || '--',
+          intervalo_horas: record?.intervalo_horas || '',
           source: record?.source || 'Registro',
         });
       }
@@ -737,57 +884,67 @@ const resumenVitales = [
       return;
     }
 
-    try {
-      const nurseName = profile?.nombre || user?.email || 'Enfermera de turno';
-      const nowIso = new Date().toISOString();
-      const scheduleHours = getMedicationScheduleHours(medicationItem, currentRecord);
-      const nextAdministraciones = {
-        ...(currentRecord?.administracionesPorHora || {}),
-        [hour]: {
-          confirmada: true,
-          confirmationTime: nowIso,
-          confirmadoPor: nurseName,
-          nurseUid: user?.uid || null,
-        },
-      };
+    const nurseName = profile?.nombre || user?.email || 'Enfermería';
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const nowHour = now.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    const scheduleHours = getMedicationScheduleHours(medicationItem, currentRecord);
+    const optimisticAdministraciones = {
+      ...(currentRecord?.administracionesPorHora || {}),
+      [hour]: {
+        confirmada: true,
+        confirmationTime: nowIso,
+        confirmadoPor: nurseName,
+        estado: 'administrado',
+      },
+    };
 
-      const allConfirmed =
-        scheduleHours.length > 0 &&
-        scheduleHours.every((scheduledHour) =>
-          Boolean(nextAdministraciones[scheduledHour]?.confirmada)
-        );
-
-      const medicationRef = doc(
-        db,
-        'admisiones',
-        main.id,
-        'medication_records',
-        medicationItem.id
-      );
-
-      await setDoc(
-        medicationRef,
-        {
+    setMedicationRecordsByPatient((prev) => ({
+      ...prev,
+      [main.id]: {
+        ...(prev[main.id] || {}),
+        [medicationItem.id]: {
+          ...(prev[main.id]?.[medicationItem.id] || {}),
           medicationKey: medicationItem.id,
           medicamento: medicationItem.medicamento,
-          horaPrimeraToma:
-            medicationItem.horaPrimeraToma === '--'
-              ? ''
-              : medicationItem.horaPrimeraToma,
-          proximaToma:
-            medicationItem.proximaToma === '--' ? '' : medicationItem.proximaToma,
-          source: medicationItem.source || 'Evolucion',
+          hora_inicio: medicationItem.hora_inicio || '',
+          proxima_toma: medicationItem.proxima_toma || '',
+          intervalo_horas: medicationItem.intervalo_horas || '',
+          source: medicationItem.source || 'Registro medicación',
           horariosProgramados: scheduleHours,
-          administracionesPorHora: nextAdministraciones,
-          confirmada: allConfirmed,
-          confirmationTime: allConfirmed ? nowIso : null,
-          confirmadoPor: allConfirmed ? nurseName : '',
-          nurseUid: allConfirmed ? user?.uid || null : null,
-          updatedAt: serverTimestamp(),
+          administracionesPorHora: optimisticAdministraciones,
         },
-        { merge: true }
-      );
+      },
+    }));
 
+    try {
+      const payload = {
+        admision_id: main.id,
+        medicamento_id: medicationItem.id,
+        hora_programada: hour,
+        hora: nowHour,
+        confirmado: true,
+        confirmado_por: nurseName,
+        estado: 'administrado',
+        timestamp: nowIso,
+        created_at: nowIso,
+      };
+
+      const { error } = await supabase.from(MEDICATION_ADMIN_TABLE).insert([payload]);
+      if (error) {
+        throw toSupabaseError(error, 'No se pudo registrar la administración.');
+      }
+
+      toast({
+        title: 'Registro de medicación',
+        description: `La enfermera ${nurseName} registró ${medicationItem.medicamento} a las ${hour}.`,
+      });
+    } catch (error) {
+      console.error('❌ Error registrando medicación desde dashboard:', error);
       setMedicationRecordsByPatient((prev) => ({
         ...prev,
         [main.id]: {
@@ -796,32 +953,27 @@ const resumenVitales = [
             ...(prev[main.id]?.[medicationItem.id] || {}),
             medicationKey: medicationItem.id,
             medicamento: medicationItem.medicamento,
-            horaPrimeraToma:
-              medicationItem.horaPrimeraToma === '--'
-                ? ''
-                : medicationItem.horaPrimeraToma,
-            proximaToma:
-              medicationItem.proximaToma === '--' ? '' : medicationItem.proximaToma,
-            source: medicationItem.source || 'Evolucion',
+            hora_inicio: medicationItem.hora_inicio || '',
+            proxima_toma: medicationItem.proxima_toma || '',
+            intervalo_horas: medicationItem.intervalo_horas || '',
+            source: medicationItem.source || 'Registro medicación',
             horariosProgramados: scheduleHours,
-            administracionesPorHora: nextAdministraciones,
-            confirmada: allConfirmed,
-            confirmationTime: allConfirmed ? nowIso : null,
-            confirmadoPor: allConfirmed ? nurseName : '',
-            nurseUid: allConfirmed ? user?.uid || null : null,
+            administracionesPorHora: {
+              ...(prev[main.id]?.[medicationItem.id]?.administracionesPorHora || {}),
+              [hour]: {
+                confirmada: false,
+                confirmationTime: '',
+                confirmadoPor: '',
+                estado: 'pendiente',
+              },
+            },
           },
         },
       }));
-
-      toast({
-        title: 'Registro de medicación',
-        description: `La enfermera ${nurseName} registró ${medicationItem.medicamento} a las ${hour}.`,
-      });
-    } catch (error) {
-      console.error('❌ Error registrando medicación desde dashboard:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo registrar la medicación.',
+        description:
+          error?.message || 'No se pudo registrar la medicación.',
         variant: 'destructive',
       });
     }
@@ -840,7 +992,7 @@ const resumenVitales = [
           className="bg-white shadow p-1"
         >
           <div className="max-w-9xl mx-auto flex justify-between items-center">
-            <div className="text-[#69c9ba] font-bold text-3xl -translate-x-[-80px] text-center  w-full">
+            <div className="text-[#4ea685] font-bold text-3xl -translate-x-[-80px] text-center  w-full">
               RACK HOSPITALARIO
             </div>
             <div className="flex items-center gap-2">
@@ -852,7 +1004,7 @@ const resumenVitales = [
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-[#69c9ba] bg-[#69c9ba] text-white hover:bg-[#76c4d5]"
+                className="border-[#69c9ba] bg-[#69c9ba] text-white hover:bg-[#595759]"
               >
                 <LogOut className=" w-4 h-4 mr-2" /> Salir
               </Button>
@@ -880,11 +1032,11 @@ const resumenVitales = [
 
           {/* CENTRO KPIs */}
           <div className="flex justify-center">
-            <div className="flex gap-6">
+            <div className="flex gap-3">
               {/*++++++++++++++++++++++++++++++++++++++++++++++++ OCUPACIÓN CAMAS++++++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-44  p-5 rounded-3xl bg-gradient-to-br from-[#e6f6f6] to-white text-[#007e8f] shadow-lg border border-[#bde3e3]"
+                className="relative w-40  p-4 rounded-3xl bg-gradient-to-br from-[#e6f6f6] to-white text-[#007e8f] shadow-lg border border-[#bde3e3]"
               >
                 <div className="text-xs text-gray-500 uppercase tracking-wider">
                   Ocupación de Camas
@@ -928,7 +1080,7 @@ const resumenVitales = [
 {/* ++++++++++++++++++++++++++++++++++++++TERAPIA INTENSIVA++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
 <motion.div
   whileHover={{ scale: 1.03 }}
-  className="relative w-44 p-5 rounded-3xl 
+  className="relative w-40 p-4 rounded-3xl 
   bg-gradient-to-br from-orange-50 to-white
   shadow-lg border border-orange-100"
 >
@@ -953,7 +1105,7 @@ const resumenVitales = [
               {/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ALTAS++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-44 p-5 rounded-3xl 
+                className="relative w-40 p-4 rounded-3xl 
         bg-gradient-to-br from-[#e6f6f6] to-white
         shadow-lg border border-green-100"
               >
@@ -977,7 +1129,7 @@ const resumenVitales = [
 {/* +++++++++++++++++++++++++++++++++++++++++++QUIRÓFANO+++++++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-44 p-5 rounded-3xl 
+                className="relative w-40 p-4 rounded-3xl 
         bg-gradient-to-br from-[#e0f2f2] to-white
         shadow-lg border border-purple-100 "
               >
@@ -1032,39 +1184,39 @@ const resumenVitales = [
             />
           </div>
         </header>
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termibna el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
 
-        <div className="max-w-9xl mx-auto p-2 pb-72">
-          <Card className="border border-[#007e8f]/30 overflow-visible">
-            <table className="w-full text-sm relative">
-              <thead className="bg-[#76c4d5] text-white uppercase text-xs tracking-wider">
+        <div className=" max-w-full p-6 pb-72  ">
+          <Card className="border-3 border-[#76c4d5]/90 shadow-lg rounded-xl overflow-visible ">
+            <table className="w-full text-sm relative  ">
+              <thead className="bg-[#69c9ba] text-white uppercase text-xs tracking-wider ">
                 {/*turqueza encabezado */}
                 <tr>
-                  <th
-                    className="text-center px-4 py-3 cursor-pointer select-none"
-                    onClick={() => setOrderAsc(!orderAsc)}
-                  >
-                    <Calendar className="inline w-4 h-4 mr-2" />
-                    Fecha de Ingreso{' '}
-                    <ArrowBigUp className="inline w-4 h-4 mr-2" />
-                  </th>
-                  <th className="text-left px-4 py-3">Estancia</th>
-                  <th className="text-center px-4 py-3">Paciente</th>
-                  <th className="text-center px-4 py-3">HCL</th>
-                  <th className="text-center px-4 py-3">Médico</th>
-                  <th className="text-center px-4 py-3">Alertas</th>
-                  <th className="text-center px-4 py-3">Estado</th>
+                  <th className="text-center px-4 py-3 cursor-pointer select-none hover:text-[#595759]"
+                    onClick={() => setOrderAsc(!orderAsc)}>
 
-                  <th className="text-center px-4 py-3">Servicio</th>
-                  <th className="text-center px-4 py-3">Seguro</th>
-                  <th className="text-center px-4 py-3">Módulos</th>
+                    <Calendar className="inline w-4 h-4 mr-2" />
+                    Fecha Ingreso{' '}
+                    <ArrowBigUp className="inline w-4 h-4 mr-2" />
+
+                  </th>
+                  <th className="text-left px-4 py-3 hover:text-[#595759]">Estancia</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Paciente</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">HCL</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Médico</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Alertas</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Estado</th>
+
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Servicio</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Seguro</th>
+                  <th className="text-center px-4 py-3 hover:text-[#595759]">Módulos</th>
                 </tr>
               </thead>
 
@@ -1073,6 +1225,10 @@ const resumenVitales = [
                 {sortedMains.map((main, index) => {
                   const patientMedicationRows = getPatientMedicationRows(main.id);
                   const pendingMedicationCount = getPendingMedicationCount(main.id);
+                  const estadoActualFila = estados[main.id] || main.estado || 'Atención';
+                  const isAltaBloqueada = estadoActualFila === ALTA_MEDICA_ESTADO;
+                  const servicioActual = servicios[main.id] || main.servicio || '';
+                  const ubicacionTexto = formatUbicacionDashboard(main.ubicacion);
 
                   return (
                   <motion.tr
@@ -1088,35 +1244,35 @@ const resumenVitales = [
 
 
                     {/**Aqui inicia el encabezado del dashboard */}
-                    <td className="px-4 py-3 text-center text-[#000d5b] bg-[#f1f5f9] ">
+                    <td className="px-4 py-3 text-center text-[#595759] font-medium bg-[#69c9ba]/20 ">
                       {main.fechaIngreso}
                     </td>
 
                     {/**Aqui PARA QUE ME DE LA ESTADIA DEL PACIENTE TENGO QUE SUMAR LOS DIAS DESDE QUE INGRESO */}
-                    <td className="px-4 py-3 text-center text-[#000d5b]  ">
+                    <td className="px-4 py-3 text-center text-[#595759] font-medium "> 
                       {main.estancia} <h1>días</h1>
                     </td>
 
                     {/*Elgrupo de las personas que estan en mi dashboard traidas directamente de firebase*/}
-                    <td className="relative px-4 py-3 bg-[#f1f5f9] text-center">
+                    <td className="relative px-4 py-3 bg-[#69c9ba]/20 text-center">
                       <div className="inline-block group cursor-pointer">
                         {/* Nombre */}
-                        <span className="text-gray-900 font-medium group-hover:text-[#007e8f] transition">
+                        <span className="text-[#595759] font-bold group-hover:text-[#4ea685] transition">
                           {main.nombre}
                         </span>
 
                         {/* Tooltip */}
                         <div
-                          className="pointer-events-none absolute top-full left-1/2 z-[100] w-80 -translate-x-1/2 mt-2
-        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 rounded-lg bg-white border border-gray-200
+                          className="pointer-events-none absolute top-full left-1/2 z-[9999] w-80 -translate-x-1/2 mt-2
+        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 rounded-lg bg-white border border-[#76C4D5]
         shadow-2xl p-4 text-xs text-gray-800"
                         >
-                          <p className="font-semibold text-[#007e8f] mb-3 flex items-center gap-1">
-                            🩺 Signos vitales
+                          <p className="font-bold text-[#595759] items-center mb-3 flex items-center gap-1">
+                            🩺 SIGNOS VITALES
                           </p>
 
                         
-                           <div className="bg-gradient-to-br from-[#4EA685]/20 to-[#76C4D5]/30 rounded-lg p-3 text-sm text-gray-700">
+                           <div className="bg-gradient-to-br from-[#76C4D5]/30 to-[#76C4D5]/30 rounded-lg p-3 text-sm text-gray-700">
                 <h3 className="font-semibold text-slate-700 mb-2 text-center">ÚLTIMOS SIGNOS VITALES</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {getDynamicResumenVitales(main.id).map((vital) => (
@@ -1143,17 +1299,16 @@ const resumenVitales = [
 
 
                       {/* CEDULA */}
-                    <td className="px-4 py-3 text-[#000d5b] font-semibold ">
+                    <td className="px-4 py-3 text-[#4EA685] font-semibold ">
                       {main.cedula}
                     </td>
                     {/* MEDICO */}
-                    <td className="px-4 py-3 text-gray-700 bg-[#f1f5f9]">
+                    <td className="px-4 py-3 text-[#595759] font-medium bg-[#69c9ba]/20">
                       {main.medico}
                     </td>
-                    {/* *******************************AQUI AGRUPO TRES TIPOS DE ALERGIAS QUE *******************************
-                     *******************************TRAIGO DESDE FIREBASE PARA NO *******************************
-                     *******************************TENER QUE CONECTAR CON LA APLICACION MISMA *******************************
-                     *******************************MUCHO OJO SE AGRUPA DESDE AQUI HASTA ******************************* */}
+                    {/* *******************************AQUI es cuadro ventana   *******************************
+                     *******************************externa para las alertas indicacion de medicamentos *******************************
+                    ********************************************************************************************************** */}
 
                     <td className="px-4 py-3 text-[#000d5b] relative ">
                       {/* ALERGIAS 1 */}
@@ -1192,11 +1347,7 @@ const resumenVitales = [
         scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-90 transition-all duration-200 rounded-xl bg-white border border-gray-300
         shadow-xl p-3 text-xs text-gray-800"
                         >
-                          <p className="font-semibold text-[#007e8f] mb-2 flex items-center gap-1">
-                            INDICACION NUEVA: PARACETAMOL
-                            <p>6:00 AM</p> <br />
-                            <p>18:00 PM</p>
-                          </p>
+                          
 
                           <ul className="space-y-1/2">
                             <li>{main.alergiaDos}</li>
@@ -1237,10 +1388,22 @@ const resumenVitales = [
                         </div>
 
                         {showTooltip === main.id && (
-                          <div className="absolute bottom-full left-1/2 z-50 w-72 -translate-x-1/2 -translate-y-1 rounded-xl bg-white border border-gray-300 shadow-xl p-3 text-xs text-gray-800">
-                            <p className="font-semibold text-[#007e8f] mb-2">
-                              HORARIO DE MEDICAMENTOS
-                            </p>
+                          <div className="absolute top-full left-1/2 z-[9999] w-80 -translate-x-1/2  
+      rounded-lg bg-white border border-[#76C4D5] shadow-2xl p-4 text-xs text-gray-800 pointer-events-auto"
+    > <div className="mb-2 flex items-center justify-between gap-2">
+                              <p className="font-bold text-[#4EA685]">
+                                HORARIO DE MEDICAMENTOS
+                              </p>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                  isNurseUser
+                                    ? 'bg-emerald-100 text-[#595759]'
+                                    : 'bg-[#76C4D5]-100 text-[#595759] border border-[#76C4D5]'
+                                }`}
+                              >
+                                {isNurseUser ? 'Checks habilitados (enfermería)' : 'Solo enfermería'}
+                              </span>
+                            </div>
 
                             {patientMedicationRows.length === 0 ? (
                               <p className="text-gray-600">
@@ -1251,9 +1414,9 @@ const resumenVitales = [
                                 {patientMedicationRows.map((medication) => (
                                   <div
                                     key={medication.id}
-                                    className="rounded-lg border border-gray-200 bg-slate-50 px-2 py-2"
+                                    className="rounded-lg border border-gray-200 bg-[#76C4D5]/20 px-2 py-2"
                                   >
-                                    <p className="font-semibold text-[#1c3f6e]">
+                                    <p className="font-semibold text-[#595759]">
                                       {medication.medicamento}
                                     </p>
                                     <div className="mt-1 flex flex-wrap gap-1.5">
@@ -1279,13 +1442,14 @@ const resumenVitales = [
                                                   hour
                                                 )
                                               }
+                                              disabled={!isNurseUser || isCompleted}
                                               className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
                                                 isCompleted
                                                   ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
                                                   : 'bg-red-100 text-red-700 border border-red-300'
                                               } ${
                                                 !isNurseUser
-                                                  ? 'cursor-not-allowed opacity-90'
+                                                  ? 'cursor-not-allowed opacity-70'
                                                   : 'hover:brightness-95'
                                               }`}
                                               title={
@@ -1307,12 +1471,13 @@ const resumenVitales = [
                               </div>
                             )}
 
-                            <p className="mt-2 text-[11px] font-semibold text-slate-600">
-                              Pendientes: {pendingMedicationCount}
-                            </p>
+                           <div className="flex items-center gap-1 mt-2 text-[11px] font-bold">
+                              <p className="text-[#595759]">Pendientes:</p>
+                                  <p className="text-[#B51414]">{pendingMedicationCount}</p>
+                                    </div>
 
                             {!isNurseUser ? (
-                              <p className="mt-1 text-[10px] text-amber-700">
+                              <p className="mt-1 text-[10px] text-[#595759]/50 font-bold">
                                 Solo usuarios de enfermería pueden registrar la medicación.
                               </p>
                             ) : null}
@@ -1323,28 +1488,33 @@ const resumenVitales = [
                         )}
                       </div>
                     </td>
-                    {/* ARRIBA AQUI AGRUPO TRES TIPOS DE ALERGIAS QUE TRAIGO DESDE FIREBASE PARA NO *******************************
+                    {/* ARRIBA AQUI es las alertas de medicacmentos que faltan por dar al paciente *******************************
                      ******************************* TENER QUE CONECTAR CON LA APLICACION MISMA *******************************
                      *******************************MUCHO OJO SE AGRUPA DESDE AQUI HASTA ******************************* */}
 
                     {/**AQUI AGREGO EL SELECTOR DE ESTADOS DEPENDE DE QUE SE ENCUENTRE EL PACIENTE */}
-                    <td className="px-4 py-3 text-center font-medium bg-[#f1f5f9]">
+                    <td className="px-4 py-3 text-center font-medium bg-[#69c9ba]/10">
                       <div className="flex items-center justify-center gap-2">
                         {/* Punto de color */}
                         <span
                           className={`w-3 h-3 rounded-full ${
-                            estadosPaciente[estados[main.id] || 'Atención']
+                            (estadosPaciente[estadoActualFila] || estadosPaciente['Atención'])
                               .color
                           }`}
                         />
 
                         {/* Selector */}
                         <select
-                          value={estados[main.id] || 'Atención'}
+                          value={estadoActualFila}
                           onChange={(e) =>
                             handleEstadoChange(main.id, e.target.value)
                           }
-                          className="px-2 py-1 rounded-full text-xs font-semibold bg-[#0b4f6c]/10 text-blue-700 hover:text-[#007e8f] transition"
+                          disabled={isAltaBloqueada}
+                          className={`px-2 py-1 rounded-full text-xs font-semibold bg-[#69c9ba]/50 text-[#000000]/70 transition ${
+                            isAltaBloqueada
+                              ? 'cursor-not-allowed opacity-100'
+                              : 'hover:text-[#000000]'
+                          }`}
                         >
                           {Object.keys(estadosPaciente).map((opcion) => (
                             <option key={opcion} value={opcion}>
@@ -1361,11 +1531,14 @@ const resumenVitales = [
                       <div className="flex flex-col items-center">
                         {/* Selector Servicio */}
                         <select
-                          value={servicios[main.id] || ''}
+                          value={servicioActual}
                           onChange={(e) =>
                             handleServicioChange(main.id, e.target.value)
                           }
-                          className="bg-transparent border-none outline-none font-semibold text-[#007e8f] hover:text-[#007e8f] transition"
+                          disabled={isAltaBloqueada}
+                          className={`bg-transparent border-none outline-none font-bold text-[#4ea685] transition ${
+                            isAltaBloqueada ? 'cursor-not-allowed opacity-70' : 'hover:text-[#595759]'
+                          }`}
                         >
                           {serviciosHospital.map((servicio) => (
                             <option key={servicio} value={servicio}>
@@ -1374,25 +1547,15 @@ const resumenVitales = [
                           ))}
                         </select>
 
-                        {/* 🔥 INFORMACIÓN DE UBICACIÓN (NUEVA ESTRUCTURA) */}
-                        {main.ubicacion && (
-                          <div className="text-[11px] text-gray-500 mt-1 leading-tight">
-                            {/* Piso si existe */}
-                            {main.ubicacion.piso && (
-                              <div>Piso {main.ubicacion.piso}</div>
-                            )}
-
-                            {/* Habitación si existe */}
-                            {main.ubicacion.habitacion && (
-                              <div>{main.ubicacion.habitacion}</div>
-                            )}
-                          </div>
-                        )}
+                        {/* Ubicación debajo del servicio */}
+                        <div className="text-[11px] text-gray-500 mt-1 leading-tight hover:text-[#000000]">
+                          {ubicacionTexto}
+                        </div>
                       </div>
                     </td>
                     {/**AGREGAR SELECTOR PARA SERVICIOS ****++++++++++++++++++++++++++++++++++*******a */}
 
-                    <td className="px-4 py-3 text-[#000d5b] bg-[#f1f5f9]">
+                    <td className="px-4 py-3 text-[#000d5b] bg-[#69c9ba]/20">
                       {main.seguro}
                     </td>
 

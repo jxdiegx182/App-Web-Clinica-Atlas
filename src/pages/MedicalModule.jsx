@@ -4,8 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { db } from '../firebaseConfig';
-import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 import Anamnesis from './Anamnesis';
 import { Stethoscope, Building, } from 'lucide-react';
@@ -18,6 +16,12 @@ import Receta from './Receta';
 import Protocolo from './Protocolo';
 import RegAnestesia from './RegAnestesia';
 import MedicalModuleConsen from './Consentimientos';
+import {
+  getAdmisionForModuleById,
+  getClinicalEvolutionFull,
+  getLatestSignosVitalesByAdmisionId,
+  getIngresoHistorialByAdmisionId,
+} from '@/services/admisionesSupabaseService';
 
 const historialIngresos = [
   { date: '03/03/2026', note: 'Actual - Hospitalizacion', active: true },
@@ -94,7 +98,7 @@ const moduloMedicoSecciones = [
   },
   {
     title: 'EVALUACION CLINICA',
-    
+
     gridClass: 'md:grid-cols-2 xl:grid-cols-3',
     modules: [
       {
@@ -332,11 +336,23 @@ const MedicalModulePanel = () => {
   const [activeModalKey, setActiveModalKey] = useState(null);
   const [latestVitals, setLatestVitals] = useState(null);
   const [latestIngresos, setLatestIngresos] = useState(null);
+  const [clinicalEvolutionHistory, setClinicalEvolutionHistory] = useState([]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setTime(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
+
+  const loadClinicalEvolutionHistory = async (admisionId = mainId) => {
+    if (!admisionId) return;
+    try {
+      const evoluciones = await getClinicalEvolutionFull(admisionId);
+      setClinicalEvolutionHistory(evoluciones || []);
+    } catch (error) {
+      console.error('❌ Error cargando evolución clínica completa en MedicalModule:', error);
+      setClinicalEvolutionHistory([]);
+    }
+  };
 
   useEffect(() => {
     const fetchAdmisiones = async () => {
@@ -346,16 +362,11 @@ const MedicalModulePanel = () => {
       }
 
       try {
-        const ref = doc(db, 'admisiones', mainId);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          setAdmisiones(null);
-          return;
-        }
-        const data = snap.data();
-        setAdmisiones({ id: snap.id, ...data, ...data.mainData });
+        const data = await getAdmisionForModuleById(mainId);
+        setAdmisiones(data);
       } catch (error) {
         console.error('Error al obtener admisiones:', error);
+        setAdmisiones(null);
       } finally {
         setLoading(false);
       }
@@ -363,22 +374,18 @@ const MedicalModulePanel = () => {
     fetchAdmisiones();
   }, [mainId]);
 
-  // 🆕 Cargar últimos signos vitales desde Firebase
+  useEffect(() => {
+    loadClinicalEvolutionHistory(mainId);
+  }, [mainId]);
+
+  // 🆕 Cargar últimos signos vitales desde Supabase
   useEffect(() => {
     const loadLatestVitalSigns = async () => {
       if (!mainId) return;
 
       try {
-        const vitalSignsRef = collection(db, 'admisiones', mainId, 'vital_signs');
-        const q = query(vitalSignsRef, orderBy('createdAt', 'desc'), limit(1));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          console.log('📊 Módulo Médico: No hay signos vitales guardados');
-          return;
-        }
-
-        const latestVital = snapshot.docs[0].data();
+        const latestVital = await getLatestSignosVitalesByAdmisionId(mainId);
+        if (!latestVital) return;
         console.log('✅ Módulo Médico: Últimos signos vitales cargados:', latestVital);
         setLatestVitals(latestVital);
       } catch (error) {
@@ -389,24 +396,25 @@ const MedicalModulePanel = () => {
     loadLatestVitalSigns();
   }, [mainId]);
 
- // 🆕 Cargar TODOS los ingresos admisiones desde Firebase
+  // 🆕 Cargar TODOS los ingresos admisiones desde Supabase
   useEffect(() => {
     const loadLatestIngresos = async () => {
       if (!mainId) return;
 
       try {
-        const historialAdmisionesRef = collection(db, 'admisiones', mainId, 'ingreso_historial');
-        const que = query(historialAdmisionesRef, orderBy('createdAt', 'desc'));
-        const snapshotIngreso = await getDocs(que);
-
-        if (snapshotIngreso.empty) {
+        const todosIngresos = await getIngresoHistorialByAdmisionId(mainId);
+        if (!todosIngresos?.length) {
           console.log('📊 Módulo Médico: No hay ingresos guardados');
+          setLatestIngresos([]);
           return;
         }
 
-        const todosIngresos = snapshotIngreso.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        console.log('✅ Módulo Médico: Todos los ingresos cargados:', todosIngresos);
-        setLatestIngresos(todosIngresos);
+        const ingresosOrdenados = [...todosIngresos].sort(
+          (a, b) => new Date(b.fecha_ingreso) - new Date(a.fecha_ingreso)
+        );
+
+        console.log('✅ Módulo Médico: Todos los ingresos cargados:', ingresosOrdenados);
+        setLatestIngresos(ingresosOrdenados);
       } catch (error) {
         console.error('❌ Error cargando ingresos en MedicalModule:', error);
       }
@@ -418,7 +426,7 @@ const MedicalModulePanel = () => {
 
   useEffect(() => {
     if (!admisiones?.createdAt) return;
-    const fechaIngreso = admisiones.createdAt.toDate();
+    const fechaIngreso = admisiones.createdAt?.toDate ? admisiones.createdAt.toDate() : new Date(admisiones.createdAt);
     const dias = Math.floor((new Date() - fechaIngreso) / (1000 * 60 * 60 * 24) + 1);
     setEstancia(dias);
   }, [admisiones]);
@@ -457,7 +465,6 @@ const MedicalModulePanel = () => {
     }
     setActiveModalKey(module.modalKey);
   };
-
   const activeModal = activeModalKey ? modalRegistry[activeModalKey] : null;
   const ActiveModalPageComponent = activeModal?.pageComponent || null;
   const formattedDate = time.toLocaleDateString('es-ES', {
@@ -479,20 +486,18 @@ const MedicalModulePanel = () => {
       { label: 'F.R.', value: `${latestVitals.fr || '--'}/min` },
     ]
     : resumenVitales; // Fallback a valores por defecto si no hay datos en Firebase
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#ffffff] to-[#ffffff]">
       <div className="relative mb-2">
-        <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69C9BA] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#007e8f]">
+        <button onClick={() => window.history.back()} className="absolute left-0 top-1/2 -translate-y-1/2 rounded-lg bg-[#69C9BA] px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-[#4ea685]">
           ← Volver
         </button>
         <h1 className="text-2xl text-[#69c9ba] font-extrabold tracking-wide text-center">MODULO MEDICO</h1>
       </div>
-
-      <div className="min-h-screen bg-[#76c4d5]/40 p-2">
-        <header className="rounded-2xl border border-[#69c9ba]/25 bg-white/85 p-3 shadow-md text-[#595759]">
+      <div className="min-h-screen bg-[#ffffff]/90 p-2">
+        <header className="rounded-2xl border border-[#69c9ba]/25 p-3 shadow-md text-[#595759] bg-[#69c9ba]/30">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
-            <div className="rounded-xl bg-[#007e8f]/5 p-2">
+            <div className="rounded-xl bg-[#ffffff] p-2">
               <img
                 src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
                 alt="Logo Clinica Atlas"
@@ -507,7 +512,7 @@ const MedicalModulePanel = () => {
               <p>Cargando datos de admisiones...</p>
             ) : admisiones ? (
               <>
-                <div className="rounded-xl border border-[#007e8f]/15 bg-white p-2">
+                <div className="rounded-xl border border-[#007e8f]/15 bg-white/85 p-2">
                   <p className="font-bold text-sm">
                     {admisiones.firstName} {admisiones.lastName}
                   </p>
@@ -532,37 +537,36 @@ const MedicalModulePanel = () => {
           </div>
         </header>
 
-        <main className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <main className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4 ">
+          <Card className="bg-[#69c9ba]/25 border-[#69c9ba] rounded-2xl p-0 col-span-1 text-sm shadow overflow-hidden">
+            <div className=" text-white p-3 flex items-center justify-between bg-gradient-to-r from-[#69c9ba]/20 to-[#69c9ba]/20">
 
-          <Card className="bg-[#76c4d5]/20  rounded-lg p-0 col-span-1 text-sm shadow overflow-hidden">
-
-            <div className=" text-white p-2 flex items-center justify-between bg-gradient-to-r from-[#595759] to-[#7a7a7d]/40">
-
-              <div className="px-4 py-3 border-b border-slate-200 ">
-                <h3 className="text-[#ffffff] font-bold text-xl mb-3 flex items-center gap-2">
+              <div className="rounded-2xl border border-[#69c9ba] p-3 shadow-md bg-[#ffffff] ">
+                <h3 className="text-[#4ea865] font-bold text-xl mb-1 flex items-center gap-6">
                   <Stethoscope className="w-4 h-4" />HISTORIAL DE INGRESOS
                 </h3>
               </div>
             </div>
 
+            
             <div className="overflow-y-auto max-h-[290px] pr-1 bg-white">
               <div className="p-2 space-y-1">
                 {latestIngresos && Array.isArray(latestIngresos) && latestIngresos.length > 0 ? (
-                  latestIngresos.map((ingreso, index) => (
+                  latestIngresos.map((ingreso, index) => {
+                    const fechaMostrar = ingreso.fecha_ingreso;
+                    return (
                     <div key={ingreso.id || index} className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold hover:bg-[#007e8f]/5 transition">
-                      <p className="text-sm">{new Date(ingreso.createdAt?.toDate?.() || ingreso.createdAt).toLocaleDateString('es-ES')}</p>
+                      <p className="text-sm">{fechaMostrar ? new Date(fechaMostrar?.toDate?.() || fechaMostrar).toLocaleDateString('es-ES') : 'Sin fecha'}</p>
                       {ingreso.nota && <p className="text-[10px] mt-1 text-gray-600">{ingreso.nota}</p>}
                     </div>
-                  ))
+                  )})
                 ) : (
                   <div className="rounded-xl border border-[#007e8f]/15 text-[#595759] p-2 text-center font-semibold">
                     <p>No hay ingresos registrados</p>
                   </div>
                 )}
               </div>
-  
             </div>
-
 
             {/* SIGNOS VITALES CARD */}
             <motion.div
@@ -572,11 +576,11 @@ const MedicalModulePanel = () => {
               className="rounded-xl p-1"
             >
 
-              <div className="m-3 bg-gradient-to-br from-[#76c4d5]/20 to-[#69c9ba]/15 rounded-lg p-4 text-sm text-gray-700 border border-[#76c4d5]/30">
-                <h3 className="font-semibold text-[#595759] mb-2">SIGNOS VITALES</h3>
+              <div className="m-3 bg-white rounded-lg p-4 text-sm text-gray-700 border border-[#76c4d5]/30">
+                <h3 className="font-bold text-[#595759] mb-2"> 🩺 SIGNOS VITALES</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {dynamicResumenVitales.map((vital) => (
-                    <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700">
+                    <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700 bg-gradient-to-br from-[#76c4d5]/60 to-[#76c4d5]/50">
                       <p className="text-[10px] font-semibold uppercase">{vital.label}</p>
                       <p className="text-xs font-bold">{vital.value}</p>
                     </div>
@@ -584,8 +588,6 @@ const MedicalModulePanel = () => {
                 </div>
               </div>
             </motion.div>
-
-
 
           </Card>
 
@@ -595,7 +597,7 @@ const MedicalModulePanel = () => {
             className="w-full col-span-3 bg-white rounded-lg p-5 shadow"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
-              <h2 className="text-xl font-bold bg-[#76C4D5] text-white inline-block px-4 py-2 rounded-full w-fit">
+              <h2 className="text-xl font-semibold bg-[#69c9ba] text-[white] inline-block px-4 py-2 rounded-full w-fit">
                 MODULO MEDICO
               </h2>
               <Badge className="w-fit bg-[#595759] text-white hover:bg-[#69C9BA]">
@@ -667,15 +669,22 @@ const MedicalModulePanel = () => {
                         display: none !important;
                       }
                     `}</style>
-                    <ActiveModalPageComponent />
+                    <ActiveModalPageComponent
+                      {...(activeModalKey === 'evolucion'
+                        ? {
+                          clinicalEvolutionHistory,
+                          onRefreshClinicalEvolution: () => loadClinicalEvolutionHistory(mainId),
+                        }
+                        : {})}
+                    />
                   </div>
                 ) : (
                   <div className="p-5">{activeModal.render?.()}</div>
                 )}
               </div>
               <div className="border-t border-[#007e8f]/90 bg-white px-5 py-1 flex justify-end gap-2">
-              
-                <Button variant="outline" onClick={() => setActiveModalKey(null)}className="bg-[#76c4d5]/40 text-black hover:bg-[#76c4d5]">Cerrar</Button>
+
+                <Button variant="outline" onClick={() => setActiveModalKey(null)} className="bg-[#76c4d5]/40 text-black hover:bg-[#76c4d5]">Cerrar</Button>
                 {activeModal.showSave ? (
                   <Button onClick={() => toast({ title: `Guardado: ${activeModal.title}` })} className="bg-[#76c4d5]/40 text-black hover:bg-[#76c4d5]">
                     Guardar

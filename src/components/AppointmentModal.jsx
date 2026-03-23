@@ -2,7 +2,7 @@ import { db } from "../firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import React, { useState } from 'react';
 import {
-  X, Clock, CheckCircle, User, Phone, Mail, FileText, Edit, MailCheck,  Trash2, Plus
+  X, Clock, CheckCircle, User, Phone, Mail, FileText, Edit, MailCheck, Trash2, Plus
 } from 'lucide-react';
 import { generateTimeSlots, formatDateDisplay } from '../utils/dateUtils';
 
@@ -26,10 +26,6 @@ const AppointmentModal = ({
     patientTiempo: '',
     patientTipo: '',
     patientQuirofano: '',
-
-
-
-
     patientCedula: '',
     patientTelefono: '',
     patientSeguro: '',
@@ -70,10 +66,6 @@ const AppointmentModal = ({
       newErrors.patientQuirofano = 'Quirofano es requerido';
     }
 
-
-
-
-
     if (!patientData.patientCedula.trim()) {
       newErrors.patientCedula = 'La cedula es requerida';
     }
@@ -113,7 +105,7 @@ const AppointmentModal = ({
         await addDoc(collection(db, "citas"), {
           nombre: patientData.patientNombre,
           edad: patientData.patientEdad,
-          cirujia: patientData.patientCirujia, 
+          cirujia: patientData.patientCirujia,
           cirujano: patientData.patientCirujano,
           ayudante: patientData.patientAyudante,
           tiempo: patientData.patientTiempo,
@@ -137,13 +129,13 @@ const AppointmentModal = ({
           estado: "En Atención",
           timestamp: new Date()
         });
-  
+
         if (editingAppointment) {
           onConfirm(selectedDate, selectedTime, patientData, editingAppointment.originalTime);
         } else {
           onConfirm(selectedDate, selectedTime, patientData);
         }
-  
+
         handleClose();
         alert("✅ Cita guardada correctamente en Firestore");
       } catch (error) {
@@ -421,11 +413,10 @@ const AppointmentModal = ({
                       key={time}
                       onClick={() => handleTimeSelect(time)}
                       disabled={isBooked}
-                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        isBooked
-                          ? 'bg-red-100 text-red-600 cursor-not-allowed border-2 border-red-300'
-                          : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:scale-105 border-2 border-transparent hover:border-blue-200'
-                      }`}
+                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${isBooked
+                        ? 'bg-red-100 text-red-600 cursor-not-allowed border-2 border-red-300'
+                        : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:scale-105 border-2 border-transparent hover:border-blue-200'
+                        }`}
                     >
                       {time}
                       {isBooked && (
@@ -466,8 +457,8 @@ const AppointmentModal = ({
                     {field === 'patientTiempo'}
                     {field === 'patientTipo'}
                     {field === 'patientQuirofano'}
-                   
-                   
+
+
 
                     {field === 'patientCedula'}
                     {field === 'patientTelefono' && <Phone size={16} className="mr-2" />}
@@ -481,9 +472,8 @@ const AppointmentModal = ({
                       value={patientData[field]}
                       onChange={(e) => handleInputChange(field, e.target.value)}
                       rows={3}
-                      className={`text-black w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
-                        errors[field] ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`text-black w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${errors[field] ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="Describa brevemente el motivo de la consulta"
                     />
                   ) : (
@@ -491,9 +481,8 @@ const AppointmentModal = ({
                       type={field === 'patientEmail' ? 'email' : 'text'}
                       value={patientData[field]}
                       onChange={(e) => handleInputChange(field, e.target.value)}
-                      className={`text-black w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors[field] ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`text-black w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors[field] ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder={`Ingrese ${field === 'patientTelefono' ? 'un teléfono válido' : 'el dato'}`}
                     />
                   )}

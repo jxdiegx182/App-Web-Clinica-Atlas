@@ -3,12 +3,14 @@ import { Input } from '@/components/ui/input';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Stethoscope, Pill, Droplet, UtensilsCrossed, Heart, FileText, AlertCircle, Clock, Printer, Save } from 'lucide-react';
 import { EvolucionPDF } from '../components/EvolucionPDF';
-import { db } from '../firebaseConfig';
-import { doc, getDoc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
+import {
+  createClinicalEvolutionWithDetails,
+  getClinicalEvolutionFull,
+  getAdmisionForModuleById,
+} from '@/services/admisionesSupabaseService';
 
 const AllergyWarning = ({ allergy }) => (
   <span className="allergy-warning text-[#FF0000] font-semibold flex items-center gap-2">
@@ -42,12 +44,11 @@ const calcularProximaToma = (horaPrimeraToma, intervaloHoras) => {
   return `${horasProximaToma}:${minutosProximaTomaFormateados}`;
 };
 
-const Evolucion = () => {
+const Evolucion = ({ clinicalEvolutionHistory = [], onRefreshClinicalEvolution }) => {
   const { mainId } = useParams();
   const [time, setTime] = useState(new Date());
   const [admisiones, setAdmisiones] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [evoluciones, setEvoluciones] = useState(Array.isArray(clinicalEvolutionHistory) ? clinicalEvolutionHistory : []);
   // Estados para medicamentos dinámicos
   const [medicamentos, setMedicamentos] = useState([
     {
@@ -190,67 +191,44 @@ const handleSaveEvolucion = async () => {
 
   setIsSaving(true);
   try {
-    // Crear un ID único para cada registro de evolución basado en timestamp
-    const timestamp = new Date();
-    const formattedDate = timestamp.toISOString();
-    
-    // Datos a guardar en la subcolección
-    const evolucionData = {
-      // Sección Evaluación Principal
+    const payload = {
+      admision_id: mainId,
       evolucion: evolucionTexto,
       analisis: analisisTexto,
       enfermeria: enfermeriaTexto,
-
-      // Medicamentos
-      medicamentos: medicamentos,
-
-      // Infusiones
-      infusiones: {
-        infusiones: insuTexto,
-        indicacion: indiTexto,
-        frecuencia: freTexto,
-      },
-
-      // Nutrición
+      actividades: activTexto,
+      observaciones: obseTexto,
+      examenes: examenTexto,
+      medicamentos,
+      infusiones: [
+        {
+          infusiones: insuTexto,
+          indicacion: indiTexto,
+          frecuencia: freTexto,
+        },
+      ],
       nutricion: {
         dieta: dietaTexto,
         observacion: obsTexto,
         interconsulta: interTexto,
       },
-
-      // Signos Vitales
-      signosVitales: signosVitales,
-      actividades: activTexto,
-      observacionesSV: obseTexto,
-      examenesSolicitados: examenTexto,
-
-      // Estado y Alergias
-      condicion: condiTexto,
-      alergias: alergiaTexto,
-      especificarAlergias: obserTexto,
-
-      // Diagnósticos
-      diagnosticoPresuntivo: diagTexto,
-      codigoPresuntivo: codigoTexto,
-      diagnosticoDefinitivo: diagnosticoTexto,
-      codigoDefinitivo: codeTexto,
-
-      // Metadata
-      createdAt: serverTimestamp(),
-      formattedDate: formattedDate,
-      guardadoPor: 'Sistema', // Puedes cambiar esto para capturar el usuario actual
+      signos_vitales: {
+        temperatura: signosVitales.temperatura,
+        presion_arterial: signosVitales.presionArterial,
+        frecuencia_cardiaca: signosVitales.frecuenciaCardiaca,
+        sat_o2: signosVitales.satO2,
+        actividades: activTexto,
+        observaciones: obseTexto,
+      },
     };
 
-    // Guardar en la subcolección clinical_evolution
-    const clinicalEvolutionRef = doc(
-      db,
-      'admisiones',
-      mainId,
-      'clinical_evolution',
-      `registro_${timestamp.getTime()}`
-    );
+    await createClinicalEvolutionWithDetails(payload);
 
-    await setDoc(clinicalEvolutionRef, evolucionData);
+    const actualizado = await getClinicalEvolutionFull(mainId);
+    setEvoluciones(actualizado);
+    if (typeof onRefreshClinicalEvolution === 'function') {
+      onRefreshClinicalEvolution();
+    }
 
     toast({
       title: "Éxito",
@@ -279,37 +257,46 @@ useEffect(() => {
   const fetchAdmisiones = async () => {
     if (!mainId) {
       console.warn('⚠️ mainId es undefined o null'); 
-      setLoading(false);
       return;
     }
     try {
-      const ref = doc(db, 'admisiones', mainId);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        console.warn('❌ Documento no existe');
-        setAdmisiones(null);
-        return;
-      }
-      const data = snap.data();
-      setAdmisiones({
-        id: snap.id,
-        ...data,
-        ...data.mainData,
-      });
+      const data = await getAdmisionForModuleById(mainId);
+      setAdmisiones(data);
     } catch (error) {
       console.error('❌ Error al obtener admisiones:', error);
       setAdmisiones(null);
-    } finally {
-      setLoading(false);
     }
   };
   fetchAdmisiones();
 }, [mainId]);
 
+useEffect(() => {
+  setEvoluciones(Array.isArray(clinicalEvolutionHistory) ? clinicalEvolutionHistory : []);
+}, [clinicalEvolutionHistory]);
+
+useEffect(() => {
+  const fetchClinicalEvolution = async () => {
+    if (!mainId) return;
+    try {
+      const data = await getClinicalEvolutionFull(mainId);
+      setEvoluciones(data);
+    } catch (error) {
+      console.error('❌ Error al cargar evolución clínica en Supabase:', error);
+    }
+  };
+
+  if (!clinicalEvolutionHistory || clinicalEvolutionHistory.length === 0) {
+    fetchClinicalEvolution();
+  }
+}, [mainId, clinicalEvolutionHistory]);
+
 const [estancia, setEstancia] = useState(0);
 useEffect(() => {
   if (!admisiones?.createdAt) return;
-  const fechaIngreso = admisiones.createdAt.toDate();
+  const fechaIngreso = admisiones.createdAt?.toDate
+    ? admisiones.createdAt.toDate()
+    : new Date(admisiones.createdAt);
+  if (Number.isNaN(fechaIngreso.getTime())) return;
   const hoy = new Date();
   const dias = Math.floor((hoy - fechaIngreso) / (1000 * 60 * 60 * 24) + 1);
   setEstancia(dias);
@@ -341,6 +328,10 @@ useEffect(() => {
     day: 'numeric',
   });
   const formattedTime = time.toLocaleTimeString('es-ES');
+  const totalEvoluciones = Array.isArray(evoluciones) ? evoluciones.length : 0;
+  const ultimaEvolucionFecha = evoluciones?.[0]?.created_at
+    ? new Date(evoluciones[0].created_at).toLocaleString('es-ES')
+    : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ffffff] via-[#EAF4FB] to-[#1a5784] p-4">
@@ -354,6 +345,10 @@ useEffect(() => {
               Evolución Clínica
             </h1>
             <p className="text-xs md:text-sm text-gray-600 mt-1">{formattedDate} - {formattedTime}</p>
+            <p className="text-[11px] text-gray-500 mt-1">
+              Registros guardados: {totalEvoluciones}
+              {ultimaEvolucionFecha ? ` | Último: ${ultimaEvolucionFecha}` : ''}
+            </p>
           </div>
           <div className="flex gap-3">
             <Button

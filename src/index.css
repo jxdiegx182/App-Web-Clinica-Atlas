@@ -33,7 +33,7 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
-  background: linear-gradient(135deg, #ffffff 0%, #8d9fa8 50%, #4b90b2 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%);
   color: hsl(var(--foreground));
   min-height: 100vh;
 }
