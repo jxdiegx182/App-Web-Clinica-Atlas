@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medix8 — Panel Administrativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#dde7f0;--bg2:#ffffff;--bg3:#f0f5fa;--bg4:#e8edf5;
+  --purple:#1a3a5c;--purple-d:#0f2440;--purple-l:rgba(26,58,92,.1);
+  --gold:#b7791f;--gold-l:rgba(183,121,31,.1);
+  --teal:#2a9d8f;--teal-l:rgba(42,157,143,.1);
+  --red:#c53030;--red-l:rgba(197,48,48,.1);
+  --blue:#3182ce;--blue-l:rgba(49,130,206,.1);
+  --border:#b0c4d8;--border2:#90aac4;
+  --text:#1a2c3d;--muted:#5a7a96;--dim:#8baabf;--white:#ffffff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat', sans-serif;background:linear-gradient(160deg,#c5d5e5,#e8edf5);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ── MAIN APP ── */
+#app{display:block;}
+
+/* ── TOPBAR ── */
+#topbar{height:54px;background:#1a3a5c;border-bottom:2px solid #0f2440;padding:0 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:600;box-shadow:0 2px 16px rgba(0,0,0,.4);}
+.logo{display:flex;align-items:center;gap:9px;padding-right:14px;border-right:1px solid var(--border);}
+.logo-box{width:30px;height:30px;background:linear-gradient(135deg,#2a9d8f,#1f7a6e);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;color:#fff;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:.96rem;font-weight:700;color:#4db6ac;letter-spacing:.04em;}
+.logo-name b{color:var(--white);}
+.logo-sub{font-size:.46rem;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;}
+.session-pill{display:flex;align-items:center;gap:7px;padding:4px 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;}
+.session-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:spulse 2s infinite;}
+@keyframes spulse{0%,100%{opacity:1}50%{opacity:.3}}
+.session-txt{font-size:.68rem;font-weight:600;color:rgba(255,255,255,.85);}
+.session-rol{font-size:.6rem;color:rgba(255,255,255,.45);}
+#tb-clk{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);text-align:right;line-height:1.9;}
+.fsp{flex:1;}
+.btn{padding:5px 13px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:4px;}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2);}
+.btn-ghost:hover{border-color:#4db6ac;color:#4db6ac;}
+.btn-red{background:var(--red-l);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.btn-red:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:4px 10px;font-size:.68rem;}
+
+/* ── TABS ── */
+#tabs{background:#fff;border-bottom:2px solid var(--border);padding:0 20px;display:flex;overflow-x:auto;}
+#tabs::-webkit-scrollbar{display:none;}
+.tab{padding:11px 16px;font-size:.75rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .14s;white-space:nowrap;display:flex;align-items:center;gap:5px;background:#fff;}
+.tab:hover{color:var(--text);}
+.tab.on{color:#2a9d8f;border-bottom-color:#2a9d8f;}
+.tn{padding:1px 5px;border-radius:100px;font-size:.52rem;font-weight:800;min-width:15px;text-align:center;background:var(--red);color:#fff;}
+
+/* ── CONTENT ── */
+#content{padding:16px 20px;}
+.sec{display:none;}.sec.on{display:block;}
+
+/* ── KPI STRIP ── */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;transition:all .18s;box-shadow:0 1px 4px rgba(26,58,92,.07);}
+.kpi:hover{border-color:var(--border2);}
+.kpi-bot{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 10px 10px;}
+.kpi-ic{font-size:1.2rem;margin-bottom:5px;}
+.kpi-v{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;line-height:1;margin-bottom:2px;}
+.kpi-l{font-size:.56rem;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.kv-p{color:#1a3a5c;} .kv-g{color:var(--teal);} .kv-a{color:var(--gold);} .kv-r{color:var(--red);} .kv-b{color:var(--blue);}
+
+/* ── CARD ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(26,58,92,.07);}
+.ch{padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);}
+.ch-purple{background:linear-gradient(135deg,#1a3a5c,#0f2440);}
+.ch-gold{background:linear-gradient(135deg,var(--gold),#8a5a14);}
+.ch-teal{background:linear-gradient(135deg,var(--teal),var(--teal2,#1f7a6e));}
+.ch-red{background:linear-gradient(135deg,var(--red),#7f1d1d);}
+.ch-blue{background:linear-gradient(135deg,#1a3a5c,#2a5ca8);}
+.ch-t{font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase;}
+.ch-b{margin-left:auto;padding:2px 8px;border-radius:100px;font-size:.58rem;font-weight:700;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);}
+.cbody{padding:14px 16px;background:#fff;}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem;}
+.tbl th{padding:7px 10px;background:var(--bg3);color:var(--muted);font-size:.55rem;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;}
+.tbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.02);vertical-align:middle;}
+.tbl tr:hover td{background:rgba(255,255,255,.015);}
+.tbl tr:last-child td{border-bottom:none;}
+.tw{overflow-x:auto;}
+.mc{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#1f7a6e;}
+.nc{font-weight:600;color:#1a2c3d;}
+.dc{color:var(--muted);font-size:.72rem;}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:100px;font-size:.58rem;font-weight:700;border:1px solid;}
+.t-ok{background:var(--teal-l);color:var(--teal);border-color:rgba(16,185,129,.25);}
+.t-pend{background:var(--gold-l);color:var(--gold);border-color:rgba(245,158,11,.25);}
+.t-desp{background:var(--teal-l);color:var(--teal);border-color:rgba(16,185,129,.25);}
+.t-red{background:var(--red-l);color:var(--red);border-color:rgba(239,68,68,.25);}
+
+/* ── TARIFA EDIT ── */
+.tarifa-row td{vertical-align:middle;}
+.tarifa-val{font-family:'JetBrains Mono',monospace;font-weight:800;color:#2a9d8f;}
+.tarifa-inp{width:90px;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--white);outline:none;text-align:right;}
+.tarifa-inp:focus{border-color:var(--purple);}
+.tarifa-save{padding:4px 10px;background:rgba(42,157,143,.1);border:1px solid rgba(42,157,143,.25);border-radius:5px;color:#1f7a6e;font-size:.66rem;font-weight:700;cursor:pointer;transition:all .14s;}
+.tarifa-save:hover{background:#2a9d8f;color:#fff;}
+
+/* ── CONVENIO ROW ── */
+.conv-pct{font-family:'JetBrains Mono',monospace;font-weight:800;}
+
+/* ── LOG ROWS ── */
+.log-antes{color:var(--red);font-family:'JetBrains Mono',monospace;font-size:.7rem;}
+.log-ahora{color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:.7rem;}
+.log-user{font-weight:700;color:#1a3a5c;}
+
+/* ── SYNC BADGE ── */
+.sync-status{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg4);border-bottom:1px solid var(--border);}
+
+/* ── FBAR ── */
+.fbar{display:flex;align-items:center;gap:7px;padding:9px 13px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.fsp-bar{flex:1;}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:900;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.ov.on{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:min(520px,96vw);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 28px 80px rgba(0,0,0,.8);transform:scale(.96);transition:transform .2s;}
+.ov.on .modal{transform:scale(1);}
+.mh{padding:12px 16px;display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#1a3a5c,#0f2440);}
+.mt{font-family:'Rajdhani',sans-serif;font-size:.88rem;font-weight:700;color:#fff;letter-spacing:.05em;text-transform:uppercase;}
+.mx{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.9rem;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;}
+.mx:hover{background:rgba(239,68,68,.3);color:#fff;}
+.mb{padding:16px;overflow-y:auto;background:#fff;}
+.mf{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end;background:var(--bg3);background:var(--bg4);}
+.fta{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;width:100%;resize:vertical;min-height:68px;line-height:1.5;}
+.fta:focus{border-color:var(--teal);}
+.fta::placeholder{color:var(--dim);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(12px);background:#1a3a5c;color:#fff;padding:9px 20px;border-radius:9px;font-size:.78rem;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.5);opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.g{background:var(--teal);}
+#toast.r{background:var(--red);}
+#toast.a{background:var(--gold);color:#1a1a1a;}
+
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-box">M8</div>
+    <div>
+      <div class="logo-name">Medix<b>8</b> · Admin</div>
+      <div class="logo-sub">Panel Administrativo</div>
+    </div>
+  </div>
+  <div class="session-pill">
+    <div class="session-dot"></div>
+    <div>
+      <div class="session-txt" id="session-name">—</div>
+      <div class="session-rol" id="session-rol">—</div>
+    </div>
+  </div>
+  <div class="fsp"></div>
+  <div id="tb-clk"></div>
+  <a href="/farmacia" target="_parent" class="btn btn-ghost btn-sm">← Farmacia</a>
+  <button class="btn btn-red btn-sm" onclick="doLogout()">↻ Reiniciar Sesión</button>
+</div>
+
+<!-- TABS -->
+<div id="tabs">
+  <div class="tab on" id="tab-tarifario" onclick="showTab('tarifario')">💲 Administración de Servicios</div>
+  <div class="tab" id="tab-perfiles" onclick="showTab('perfiles')">👤 Perfiles y Roles <span class="tn" id="tn-perfiles">0</span></div>
+  <div class="tab" id="tab-convenios" onclick="showTab('convenios')">🤝 Convenios</div>
+  <div class="tab" id="tab-cola" onclick="showTab('cola')">🔄 Sincronización <span class="tn" id="tn-cola">0</span></div>
+  <div class="tab" id="tab-log" onclick="showTab('log')">📜 Log Auditoría <span class="tn" id="tn-log">0</span></div>
+</div>
+
+<div id="toast"></div>
+
+<div id="content">
+
+
+<!-- ═══ TARIFARIO ═══ -->
+<section id="sec-tarifario" class="sec on">
+  <div class="kpis" id="kpi-strip"></div>
+  <div class="card">
+    <div class="ch ch-purple">
+      <span style="font-size:.85rem;">💲</span>
+      <span class="ch-t">Administración de Servicios</span>
+      <span class="ch-b" id="tarif-badge">0 servicios</span>
+      <button class="btn btn-sm" onclick="abrirNuevoServicio()" style="margin-left:8px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">✏ Nuevo Servicio</button>
+      <button class="btn btn-sm" onclick="showModal('m-cargo')" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);margin-left:4px;">➕ Nuevo Cargo</button>
+      <button class="btn btn-sm" onclick="exportarTarifario()" style="background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);margin-left:4px;">⬇ Exportar</button>
+    </div>
+    <div style="padding:8px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:.7rem;color:var(--gold);">
+      ⚠ Cada modificación queda registrada en el Log de Auditoría con usuario, justificación y timestamp. Acciones irreversibles requieren rol Gerencia.
+    </div>
+    <div class="tw"><table class="tbl">
+      <thead><tr><th>Código / Tipo</th><th>Servicio / Descripción</th><th>Categoría</th><th>Tarifa</th><th>Anterior</th><th>Último Cambio</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody id="tarif-body"></tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══ CARGOS PERSONALIZADOS ═══ -->
+  <div style="margin-top:4px;">
+    <div style="padding:7px 0 10px;font-size:.68rem;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:.08em;border-left:3px solid #2a9d8f;padding-left:10px;">➕ Cargos Personalizados del Establecimiento</div>
+
+    <!-- KPIs cargos -->
+    <div class="kpis" id="cargos-kpi-strip" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px;"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;">
+      <div class="card" style="margin-bottom:0;">
+        <div class="ch" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);">
+          <span style="font-size:.85rem;">➕</span>
+          <span class="ch-t">Catálogo de Cargos</span>
+          <span class="ch-b" id="cargos-badge">0 cargos</span>
+          <div class="fsp-bar"></div>
+          <input id="sq-cargos" style="padding:5px 9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.74rem;color:#fff;outline:none;width:180px;" placeholder="🔍 Buscar cargo..." oninput="renderCargos()">
+          <select id="cat-cargos" style="padding:5px 9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.72rem;color:#fff;outline:none;margin-left:4px;" onchange="renderCargos()">
+            <option value="">Todas las categorías</option>
+            <option>Procedimiento Médico</option>
+            <option>Procedimiento de Enfermería</option>
+            <option>Material y Suministros</option>
+            <option>Diagnóstico y Laboratorio</option>
+            <option>Terapia y Rehabilitación</option>
+            <option>Servicios Especiales</option>
+            <option>Administrativo</option>
+          </select>
+          <select id="estado-cargos" style="padding:5px 9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.72rem;color:#fff;outline:none;margin-left:4px;" onchange="renderCargos()">
+            <option value="">Todos</option>
+            <option value="activo">Activos</option>
+            <option value="inactivo">Inactivos</option>
+          </select>
+          <button class="btn btn-sm" onclick="exportarCargos()" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);margin-left:4px;">⬇</button>
+        </div>
+        <div class="tw" style="max-height:340px;overflow-y:auto;">
+          <table class="tbl">
+            <thead><tr><th>Código</th><th>Cargo</th><th>Categoría</th><th>Valor</th><th>Unidad</th><th>IVA</th><th>Autorización</th><th>Estado</th><th>Áreas</th><th>Acción</th></tr></thead>
+            <tbody id="cargos-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Panel lateral -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="card" style="margin-bottom:0;">
+          <div class="ch" style="background:linear-gradient(135deg,#2a9d8f,#1f7a6e);">
+            <span style="font-size:.8rem;">🏥</span>
+            <span class="ch-t">Por Área</span>
+          </div>
+          <div class="cbody" id="panel-areas-cargo" style="padding:8px 12px;max-height:160px;overflow-y:auto;"></div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="ch" style="background:linear-gradient(135deg,#b7791f,#8a5a14);">
+            <span style="font-size:.8rem;">📊</span>
+            <span class="ch-t">Resumen</span>
+          </div>
+          <div class="cbody" id="panel-resumen-cargo" style="padding:8px 12px;"></div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="ch" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);">
+            <span style="font-size:.8rem;">🔐</span>
+            <span class="ch-t">Autorización</span>
+          </div>
+          <div class="cbody" id="panel-auth-cargo" style="padding:8px 12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+
+<!-- Motor de cálculo Qx/Anestesia — elementos ocultos requeridos por el JS -->
+<div style="display:none;" id="card-calc-anest">
+  <select id="calc-tipo-anest"></select>
+  <input id="calc-inicio" type="time" value="08:00">
+  <input id="calc-fin" type="time" value="10:00">
+  <input id="calc-minutos" type="number">
+  <div id="calc-resultado"></div>
+  <div id="calc-qx-desc"></div>
+  <div id="calc-qx-monto"></div>
+  <div id="calc-anest-tipo-badge"></div>
+  <div id="calc-anest-desc"></div>
+  <div id="calc-anest-monto"></div>
+  <div id="calc-total"></div>
+  <div id="calc-anest-local-msg"></div>
+  <div id="calc-local-aviso"></div>
+</div>
+
+<!-- ═══ CONVENIOS ═══ -->
+<section id="sec-convenios" class="sec">
+  <div class="card">
+    <div class="ch ch-blue">
+      <span style="font-size:.85rem;">🤝</span>
+      <span class="ch-t">Convenios y Seguros Médicos</span>
+      <span class="ch-b">Ajuste automático de tarifas</span>
+      <button class="btn btn-sm" onclick="showModal('m-conv-nuevo')" style="margin-left:8px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">+ Nuevo Convenio</button>
+    </div>
+    <div class="tw"><table class="tbl">
+      <thead><tr><th>Convenio</th><th>Tipo Tarifa</th><th>% Ajuste</th><th>IVA</th><th>Tarifario Nacional</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody id="conv-body"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <div class="ch ch-teal">
+      <span style="font-size:.85rem;">📋</span>
+      <span class="ch-t">Simulador de Tarifa por Convenio</span>
+    </div>
+    <div class="cbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;">
+        <div class="fg" style="margin:0;"><label class="fl">Servicio</label>
+          <select class="fs" id="sim-servicio" onchange="simularTarifa()">
+            <option value="">Seleccione servicio...</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl">Convenio</label>
+          <select class="fs" id="sim-convenio" onchange="simularTarifa()">
+            <option value="">Seleccione convenio...</option>
+          </select>
+        </div>
+        <div style="padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:4px;">Total a Cobrar</div>
+          <div id="sim-resultado" style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:800;color:var(--teal);">$—</div>
+          <div id="sim-detalle" style="font-size:.64rem;color:var(--muted);margin-top:2px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ HOTELERÍA ═══ -->
+<section id="sec-hoteleria" class="sec">
+  <div class="card">
+    <div class="ch" style="background:linear-gradient(135deg,#2a5ca8,#1a3a6e);">
+      <span style="font-size:.85rem;">🏨</span>
+      <span class="ch-t">Hotelería Hospitalaria</span>
+      <span class="ch-b" id="hot-badge">0 servicios</span>
+      <div class="fsp-bar"></div>
+      <button class="btn btn-sm" onclick="abrirNuevaHoteleria()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">+ Nuevo Servicio</button>
+      <button class="btn btn-sm" onclick="exportarHoteleria()" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);margin-left:4px;">⬇ Exportar</button>
+    </div>
+    <div style="padding:8px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:.7rem;color:var(--muted);">
+      Servicios no farmacológicos facturables durante la estadía del paciente. Se integran al tarifario maestro y a la cola de sincronización.
+    </div>
+    <div class="tw"><table class="tbl">
+      <thead><tr><th>Código</th><th>Servicio</th><th>Categoría</th><th>Descripción</th><th>Tarifa/día ($)</th><th>IVA</th><th>Disponible</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody id="hot-body"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ═══ PERFILES Y ROLES ═══ -->
+<section id="sec-perfiles" class="sec">
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;">
+    <div>
+      <div class="card">
+        <div class="ch" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);">
+          <span style="font-size:.85rem;">👤</span>
+          <span class="ch-t">Personal y Usuarios del Sistema</span>
+          <span class="ch-b" id="perf-badge">0 usuarios</span>
+          <div class="fsp-bar"></div>
+          <input style="padding:5px 9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.74rem;color:#fff;outline:none;width:200px;" placeholder="🔍 Buscar usuario..." oninput="filtrarPerfiles(this.value)" id="sq-perfiles">
+          <button class="btn btn-sm" onclick="abrirNuevoPerfil()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);margin-left:4px;">+ Nuevo Usuario</button>
+        </div>
+        <div class="tw" style="max-height:calc(100vh - 260px);overflow-y:auto;">
+          <table class="tbl">
+            <thead><tr><th>Usuario</th><th>Nombre Completo</th><th>Cargo</th><th>Área</th><th>Rol Sistema</th><th>Permisos</th><th>Estado</th><th>Último Acceso</th><th>Acción</th></tr></thead>
+            <tbody id="perf-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Panel de roles -->
+    <div>
+      <div class="card">
+        <div class="ch" style="background:linear-gradient(135deg,#2a9d8f,#1f7a6e);">
+          <span style="font-size:.85rem;">🔑</span>
+          <span class="ch-t">Definición de Roles</span>
+        </div>
+        <div class="cbody" id="roles-panel"></div>
+      </div>
+      <div class="card" style="margin-top:0;">
+        <div class="ch" style="background:linear-gradient(135deg,#b7791f,#8a5a14);">
+          <span style="font-size:.85rem;">📊</span>
+          <span class="ch-t">Resumen por Área</span>
+        </div>
+        <div class="cbody" id="areas-resumen"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COLA SINCRONIZACIÓN ═══ -->
+<section id="sec-cola" class="sec">
+  <div class="card">
+    <div class="ch ch-gold">
+      <span style="font-size:.85rem;">🔄</span>
+      <span class="ch-t">Cola de Sincronización → ERP</span>
+      <span class="ch-b" id="cola-badge2">0 pendientes</span>
+      <div class="fsp-bar"></div>
+      <button class="btn btn-sm" onclick="sincronizarTodo()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">✅ Autorizar y Sincronizar</button>
+      <button class="btn btn-sm" onclick="enviarERP()" style="background:rgba(39,103,73,.3);color:#fff;border:1px solid rgba(255,255,255,.25);margin-left:4px;">🔗 Enviar a ERP</button>
+      <button class="btn btn-sm" onclick="exportarLoteFacturacion()" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);margin-left:4px;">📦 Lote JSON</button>
+      <button class="btn btn-sm" onclick="exportarCola()" style="background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);margin-left:4px;">⬇ CSV</button>
+    </div>
+    <!-- Status ERP -->
+    <div class="sync-status" id="erp-status-bar">
+      <div id="erp-dot" style="width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:spulse 1.5s infinite;"></div>
+      <span id="erp-status-txt" style="font-size:.72rem;color:var(--gold);font-weight:600;">ERP: En espera de autorización</span>
+      <span style="margin-left:auto;font-size:.66rem;color:var(--muted);">Última sincronización: <span id="ultima-sync">Nunca</span></span>
+      <span style="font-size:.66rem;color:var(--muted);margin-left:12px;">Lote activo: <span id="erp-lote-id" style="font-family:'JetBrains Mono',monospace;color:#1a3a5c;">—</span></span>
+    </div>
+    <!-- Panel ERP expandido -->
+    <div id="erp-panel" style="display:none;padding:12px 14px;background:rgba(39,103,73,.04);border-bottom:1px solid rgba(39,103,73,.15);">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;">
+          <div style="font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:3px;">ID Transacción</div>
+          <div id="erp-txn-id" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:#1a3a5c;word-break:break-all;">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;">
+          <div style="font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:3px;">Items en Lote</div>
+          <div id="erp-items-n" style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:800;color:#276749;">0</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;">
+          <div style="font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:3px;">Monto Total Lote</div>
+          <div id="erp-monto-lote" style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:800;color:#276749;">$0.00</div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 12px;">
+        <div style="font-size:.58rem;font-weight:700;color:#276749;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Preview JSON — Payload ERP</div>
+        <pre id="erp-json-preview" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#1a2c3d;max-height:160px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin:0;"></pre>
+      </div>
+    </div>
+    <div class="tw" style="max-height:calc(100vh - 320px);overflow-y:auto;">
+      <table class="tbl">
+        <thead><tr><th>Fecha/Hora</th><th>Módulo</th><th>Concepto</th><th>Paciente / Cliente</th><th>Área / Bodega</th><th>Monto</th><th>Lote</th><th>Estado</th></tr></thead>
+        <tbody id="cola-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LOG AUDITORÍA ═══ -->
+<section id="sec-log" class="sec">
+  <div class="card">
+    <div class="ch ch-red">
+      <span style="font-size:.85rem;">📜</span>
+      <span class="ch-t">Log de Auditoría — Registro Inmutable</span>
+      <span class="ch-b" id="log-badge2">0 registros</span>
+      <div class="fsp-bar"></div>
+      <button class="btn btn-sm" onclick="exportarLog()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">⬇ Exportar CSV Legal</button>
+    </div>
+    <div class="fbar">
+      <input style="padding:6px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;flex:1;" placeholder="Filtrar log por usuario, acción..." oninput="filtrarLog(this.value)">
+      <select style="padding:6px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.74rem;color:var(--text);outline:none;" onchange="filtrarLogTipo(this.value)">
+        <option value="">Todos los tipos</option>
+        <option value="tarifa">Cambios de Tarifa</option>
+        <option value="convenio">Convenios</option>
+        <option value="sync">Sincronizaciones</option>
+        <option value="acceso">Accesos</option>
+      </select>
+    </div>
+    <div class="tw" style="max-height:calc(100vh - 300px);overflow-y:auto;">
+      <table class="tbl">
+        <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Rol</th><th>Acción</th><th>Valor Anterior</th><th>Valor Nuevo</th><th>Justificación</th></tr></thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div><!-- /content -->
+
+
+<!-- ═══ MODAL: NUEVO / EDITAR CARGO ═══ -->
+<div class="ov" id="m-cargo">
+  <div class="modal" style="width:min(580px,96vw);">
+    <div class="mh" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);">
+      <span class="mt" id="m-cargo-t">➕ Nuevo Cargo</span>
+      <button class="mx" onclick="hideModal('m-cargo')">✕</button>
+    </div>
+    <div class="mb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Código *</label>
+          <input class="fi" id="cg-cod" placeholder="CG-001" style="font-family:'JetBrains Mono',monospace;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Categoría</label>
+          <select class="fs" id="cg-cat">
+            <option>Procedimiento Médico</option>
+            <option>Procedimiento de Enfermería</option>
+            <option>Material y Suministros</option>
+            <option>Diagnóstico y Laboratorio</option>
+            <option>Terapia y Rehabilitación</option>
+            <option>Servicios Especiales</option>
+            <option>Administrativo</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Nombre del Cargo *</label>
+        <input class="fi" id="cg-nom" placeholder="Descripción completa del cargo o servicio"></div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Descripción / Detalle</label>
+        <textarea class="fta" id="cg-desc" placeholder="Detalle de qué incluye, condiciones, etc." style="min-height:46px;"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Valor ($) *</label>
+          <input class="fi" id="cg-valor" type="number" step="0.01" min="0" placeholder="0.00" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1rem;text-align:center;color:#2a9d8f;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Unidad de Cobro</label>
+          <select class="fs" id="cg-unidad">
+            <option>Por acto</option><option>Por día</option><option>Por hora</option>
+            <option>Por unidad</option><option>Por aplicación</option><option>Por sesión</option>
+            <option>Por consulta</option><option>Paquete</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl">Aplica IVA</label>
+          <select class="fs" id="cg-iva">
+            <option value="no">No (Exento)</option>
+            <option value="si">Sí (15%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Requiere Autorización</label>
+        <select class="fs" id="cg-auth">
+          <option value="no">No — Aplicación directa por cualquier área</option>
+          <option value="medico">Sí — Requiere orden médica</option>
+          <option value="gerencia">Sí — Requiere autorización Gerencia</option>
+          <option value="seguro">Sí — Requiere autorización Seguro / Convenio</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:9px;">
+        <label class="fl">Áreas donde aplica este cargo <span style="color:var(--red);">*</span></label>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;display:flex;flex-wrap:wrap;gap:6px;" id="cg-areas-wrap">
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Todas las áreas" onchange="toggleTodasAreas(this)"> <b>Todas las áreas</b></label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Hospitalización"> Hospitalización</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="UCI / Terapia Intensiva"> UCI / T.Intensiva</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Neonatología"> Neonatología</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Quirófano"> Quirófano</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Emergencia"> Emergencia</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Consulta Externa"> Consulta Externa</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Endoscopía"> Endoscopía</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Rx / Rayos X"> Rx / Rayos X</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Rehabilitación"> Rehabilitación</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Farmacia"> Farmacia</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;cursor:pointer;"><input type="checkbox" value="Administración"> Administración</label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Notas internas</label>
+        <input class="fi" id="cg-notas" placeholder="Notas para el equipo administrativo...">
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="hideModal('m-cargo')">Cancelar</button>
+      <button class="btn btn-sm" onclick="guardarCargo()" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);color:#fff;border:none;padding:6px 18px;">💾 Guardar Cargo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVO SERVICIO HOTELERÍA ═══ -->
+<div class="ov" id="m-hoteleria">
+  <div class="modal">
+    <div class="mh" style="background:linear-gradient(135deg,#2a5ca8,#1a3a6e);">
+      <span class="mt" id="m-hot-t">Nuevo Servicio de Hotelería Hospitalaria</span>
+      <button class="mx" onclick="hideModal('m-hoteleria')">✕</button>
+    </div>
+    <div class="mb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Código *</label><input class="fi" id="hot-cod" placeholder="HOT-010" style="font-family:'JetBrains Mono',monospace;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Categoría</label>
+          <select class="fs" id="hot-cat">
+            <option>Habitación y Alojamiento</option>
+            <option>Alimentación y Nutrición</option>
+            <option>Ropa de Cama y Lencería</option>
+            <option>Confort y Amenidades</option>
+            <option>Comunicación y Entretenimiento</option>
+            <option>Transporte Interno</option>
+            <option>Servicios Especiales</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Nombre del Servicio *</label><input class="fi" id="hot-nom" placeholder="Ej: Habitación doble con acompañante"></div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Descripción</label><textarea class="fta" id="hot-desc" placeholder="Descripción del servicio incluido..." style="min-height:52px;"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Tarifa/día ($) *</label><input class="fi" id="hot-precio" type="number" step="0.01" placeholder="0.00" style="font-family:'JetBrains Mono',monospace;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Aplica IVA</label><select class="fs" id="hot-iva"><option value="no">No (Exento)</option><option value="si">Sí (15%)</option></select></div>
+        <div class="fg" style="margin:0;"><label class="fl">Disponibilidad</label><input class="fi" id="hot-disp" type="number" min="1" placeholder="Unidades" style="font-family:'JetBrains Mono',monospace;"></div>
+      </div>
+      <div class="fg"><label class="fl">Incluye</label><input class="fi" id="hot-incluye" placeholder="Ej: Cama, TV, baño privado, wifi..."></div>
+    </div>
+    <div class="mf">
+      <button class="btn" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);" onclick="hideModal('m-hoteleria')">Cancelar</button>
+      <button class="btn btn-sm" onclick="guardarHoteleria()" style="background:linear-gradient(135deg,#2a5ca8,#1a3a6e);color:#fff;border:none;padding:6px 16px;">💾 Guardar Servicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVO / EDITAR PERFIL ═══ -->
+<div class="ov" id="m-perfil">
+  <div class="modal">
+    <div class="mh" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);">
+      <span class="mt" id="m-perf-t">Nuevo Usuario / Perfil</span>
+      <button class="mx" onclick="hideModal('m-perfil')">✕</button>
+    </div>
+    <div class="mb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Nombre Completo *</label><input class="fi" id="pf-nombre" placeholder="Apellido Nombre"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Cédula / ID</label><input class="fi" id="pf-cedula" placeholder="0000000000" style="font-family:'JetBrains Mono',monospace;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Cargo / Especialidad</label>
+          <select class="fs" id="pf-cargo">
+            <option>Médico General</option><option>Médico Especialista</option><option>Médico Residente</option>
+            <option>Enfermera/o Jefe</option><option>Enfermera/o</option><option>Auxiliar de Enfermería</option>
+            <option>Tecnólogo Médico</option><option>Fisioterapista</option><option>Nutricionista</option>
+            <option>Farmacéutico</option><option>Auxiliar de Farmacia</option>
+            <option>Administrador</option><option>Contador</option><option>Auditor Médico</option>
+            <option>Recepcionista</option><option>Camillero</option><option>Limpieza y Servicios</option>
+            <option>Director Médico</option><option>Gerente General</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl">Área / Servicio</label>
+          <select class="fs" id="pf-area">
+            <option>Hospitalización</option><option>UCI / Terapia Intensiva</option><option>Neonatología</option>
+            <option>Quirófano</option><option>Emergencia</option><option>Consulta Externa</option>
+            <option>Farmacia</option><option>Laboratorio</option><option>Imagenología / Rx</option>
+            <option>Endoscopía</option><option>Rehabilitación</option><option>Nutrición</option>
+            <option>Administración</option><option>Contabilidad</option><option>Gerencia</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Usuario (login) *</label><input class="fi" id="pf-user" placeholder="apellido.nombre" style="font-family:'JetBrains Mono',monospace;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Contraseña Temporal *</label><input class="fi" id="pf-pass" type="password" placeholder="••••••••"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Rol en el Sistema</label>
+          <select class="fs" id="pf-rol" onchange="actualizarPermisosViz()">
+            <option value="medico">Médico</option>
+            <option value="enfermeria">Enfermería</option>
+            <option value="farmacia">Farmacia</option>
+            <option value="auxiliar">Auxiliar</option>
+            <option value="admin">Administrativo</option>
+            <option value="auditor">Auditor</option>
+            <option value="gerencia">Gerencia</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl">Email Institucional</label><input class="fi" id="pf-email" placeholder="usuario@clinicasatlas.com" type="email"></div>
+      </div>
+      <!-- Permisos visuales -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:4px;">
+        <div style="font-size:.58rem;font-weight:700;color:#1f7a6e;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Permisos asignados al rol</div>
+        <div id="permisos-viz" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);" onclick="hideModal('m-perfil')">Cancelar</button>
+      <button class="btn btn-sm" onclick="guardarPerfil()" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);color:#fff;border:none;padding:6px 16px;">👤 Guardar Usuario</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVO / EDITAR SERVICIO ═══ -->
+<div class="ov" id="m-tarifa">
+  <div class="modal" style="width:min(580px,96vw);">
+    <div class="mh" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);"><span class="mt" id="m-tarifa-t">Servicio</span><button class="mx" onclick="hideModal('m-tarifa')">✕</button></div>
+    <div class="mb">
+      <div id="m-tarifa-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:12px;display:none;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Clave / Código *</label><input class="fi" id="tarifa-key" placeholder="ej: nuevo_serv" style="font-family:'JetBrains Mono',monospace;"></div>
+        <div class="fg" style="margin:0;"><label class="fl">Categoría</label>
+          <select class="fs" id="tarifa-cat">
+            <option>Hospitalización</option><option>UCI</option><option>Quirófano</option>
+            <option>Anestesia</option><option>Ambulatorio</option><option>Emergencia</option>
+            <option>Endoscopía</option><option>Rx / Rayos X</option><option>Imagenología</option>
+            <option>Laboratorio</option><option>Rehabilitación</option><option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Nombre del Servicio *</label><input class="fi" id="tarifa-label" placeholder="Descripción completa del servicio"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px;">
+        <div class="fg" style="margin:0;"><label class="fl">Tipo de Cálculo</label>
+          <select class="fs" id="tarifa-calculo" onchange="actualizarModalAnest()">
+            <option value="fijo">Tarifa fija</option>
+            <option value="tiempo">Por tiempo ⏱</option>
+            <option value="anestesia">Hoja de Anestesia 📋</option>
+            <option value="local">Sin cargo (local)</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl">Unidad de Cobro</label>
+          <select class="fs" id="tarifa-unidad">
+            <option>Por acto</option><option>Por día</option><option>Por hora</option>
+            <option>Por minuto</option><option>Por consulta</option><option>Por placa</option>
+            <option>Por estudio</option><option>Por atención</option><option>—</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;"><label class="fl" id="tarifa-val-lbl">Valor ($)</label>
+          <input class="fi" id="tarifa-val" type="number" step="0.01" placeholder="0.00" style="font-size:1.1rem;font-weight:800;text-align:center;font-family:'JetBrains Mono',monospace;color:#2a9d8f;">
+        </div>
+      </div>
+      <div id="panel-anestesia" style="display:none;background:rgba(39,103,73,.06);border:1px solid rgba(39,103,73,.2);border-radius:8px;padding:10px 12px;margin-bottom:9px;">
+        <div style="font-size:.62rem;font-weight:700;color:#276749;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">🔗 Vinculación con Hoja de Anestesia / Protocolo Operatorio</div>
+        <div style="font-size:.74rem;color:#5a7a96;line-height:1.7;">
+          El cargo se calcula automáticamente según el <strong style="color:#1a2c3d;">tipo de anestesia</strong> en la Hoja de Anestesia:<br>
+          <span style="color:#276749;">• General / Conductiva / Bloqueo Regional:</span> valor × tiempo quirúrgico (minutos)<br>
+          <span style="color:#b7791f;">• Sedación / MAC:</span> valor × horas desde inicio hasta fin de acto<br>
+          <span style="color:#2a9d8f;">• Anestesia Local:</span> <strong>sin cargo — no genera cobro</strong>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:9px;"><label class="fl">Notas / Condiciones</label><textarea class="fta" id="tarifa-notas" placeholder="Condiciones especiales, incluye, conexiones con otros módulos..." style="min-height:46px;"></textarea></div>
+      <div class="fg"><label class="fl">Justificación <span style="color:var(--red);">* obligatorio para auditoría</span></label>
+        <textarea class="fta" id="tarifa-justif" placeholder="Motivo de la creación o cambio de tarifa..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="hideModal('m-tarifa')">Cancelar</button>
+      <button class="btn btn-sm" onclick="confirmarTarifa()" style="background:linear-gradient(135deg,#1a3a5c,#0f2440);color:#fff;border:none;padding:6px 18px;">💾 Guardar Servicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR CONVENIO ═══ -->
+<div class="ov" id="m-convenio">
+  <div class="modal">
+    <div class="mh" style="background:linear-gradient(135deg,#1a3a5c,#2a5ca8);"><span class="mt" id="m-conv-t">Editar Convenio</span><button class="mx" onclick="hideModal('m-convenio')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">Nombre del Convenio</label><input class="fi" id="conv-nombre" placeholder="Ej: IESS, Seguro XYZ"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fg"><label class="fl">Tipo de Tarifa</label>
+          <select class="fs" id="conv-tipo"><option value="A">A — Privado</option><option value="B">B — Tarifario Nacional</option><option value="C">C — Seguro Privado</option><option value="D">D — Institucional</option></select>
+        </div>
+        <div class="fg"><label class="fl">% Ajuste (negativo=descuento)</label>
+          <input class="fi" id="conv-pct" type="number" step="1" placeholder="Ej: -30" style="font-family:'JetBrains Mono',monospace;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fg"><label class="fl">Aplica IVA</label>
+          <select class="fs" id="conv-iva"><option value="si">Sí — Con IVA 15%</option><option value="no">No — Exento IVA</option></select>
+        </div>
+        <div class="fg"><label class="fl">Estado</label>
+          <select class="fs" id="conv-activo"><option value="si">✅ Activo</option><option value="no">❌ Inactivo</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="hideModal('m-convenio')">Cancelar</button>
+      <button class="btn btn-sm" onclick="confirmarConvenio()" style="background:linear-gradient(135deg,#1a3a5c,#2a5ca8);color:#fff;border:none;padding:6px 16px;">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVO CONVENIO ═══ -->
+<div class="ov" id="m-conv-nuevo">
+  <div class="modal">
+    <div class="mh" style="background:linear-gradient(135deg,var(--teal),#1f7a6e);"><span class="mt">+ Nuevo Convenio</span><button class="mx" onclick="hideModal('m-conv-nuevo')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">Nombre del Convenio *</label><input class="fi" id="nconv-nombre" placeholder="Ej: Metropolitana de Salud"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fg"><label class="fl">Tipo</label><select class="fs" id="nconv-tipo"><option value="A">A — Privado</option><option value="B">B — Tarifario Nac.</option><option value="C">C — Seguro Privado</option><option value="D">D — Institucional</option></select></div>
+        <div class="fg"><label class="fl">% Ajuste</label><input class="fi" id="nconv-pct" type="number" step="1" placeholder="-20" style="font-family:'JetBrains Mono',monospace;"></div>
+      </div>
+      <div class="fg"><label class="fl">Aplica IVA</label><select class="fs" id="nconv-iva"><option value="si">Con IVA 15%</option><option value="no">Exento IVA</option></select></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="hideModal('m-conv-nuevo')">Cancelar</button>
+      <button class="btn btn-sm" onclick="crearConvenio()" style="background:linear-gradient(135deg,#2a9d8f,#1f7a6e);color:#fff;border:none;padding:6px 16px;">✅ Crear</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ═══ MODAL: CAMBIO RÁPIDO DE ROL ═══ -->
+<div class="ov" id="m-cambio-rol">
+  <div class="modal" style="width:min(440px,96vw);">
+    <div class="mh" style="background:linear-gradient(135deg,#2a9d8f,#1f7a6e);">
+      <span class="mt">🔑 Asignar Rol</span>
+      <button class="mx" onclick="hideModal('m-cambio-rol')">✕</button>
+    </div>
+    <div class="mb">
+      <div id="cr-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:14px;"></div>
+      <div class="fg" style="margin-bottom:12px;">
+        <label class="fl">Nuevo Rol</label>
+        <select class="fs" id="cr-rol" onchange="previewRolPermisos()" style="font-size:.86rem;font-weight:600;">
+          <option value="medico">Médico</option>
+          <option value="enfermeria">Enfermería</option>
+          <option value="farmacia">Farmacia</option>
+          <option value="auxiliar">Auxiliar</option>
+          <option value="admin">Administrativo</option>
+          <option value="auditor">Auditor</option>
+          <option value="gerencia">Gerencia</option>
+        </select>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:.58rem;font-weight:700;color:#1f7a6e;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;">Permisos del rol seleccionado</div>
+        <div id="cr-permisos" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
+      </div>
+      <div class="fg" style="margin-top:12px;margin-bottom:0;">
+        <label class="fl">Justificación del cambio <span style="color:var(--red);">* obligatorio</span></label>
+        <textarea class="fta" id="cr-justif" placeholder="Motivo del cambio de rol (queda registrado en log de auditoría)..." style="min-height:56px;"></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);" onclick="hideModal('m-cambio-rol')">Cancelar</button>
+      <button class="btn btn-sm" onclick="confirmarCambioRol()" style="background:linear-gradient(135deg,#2a9d8f,#1f7a6e);color:#fff;border:none;padding:6px 18px;">🔑 Confirmar Cambio</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  MEDIX8 ADMIN — Motor del Panel Administrativo
+// ════════════════════════════════════════════════════════════════
+
+// ── Usuarios autorizados ────────────────────────────────────────
+const USUARIOS = {
+  'auditor':  {pass:'atlas2024', rol:'Auditor',  nombre:'Fernanda Auditoria',  permisos:['read','write']},
+  'gerencia': {pass:'admin2024', rol:'Gerencia',  nombre:'Director General',    permisos:['read','write','delete','sync']},
+  'contador': {pass:'conta2024', rol:'Contador',  nombre:'Dept. Contabilidad',  permisos:['read','sync']},
+};
+
+let _session = null;
+
+// ── Base de datos del módulo ────────────────────────────────────
+const adminDB = {
+  tarifario: [
+    // ── Hospitalización ──────────────────────────────────────────
+    {key:'SVC-001',       label:'Día Hospitalización Estándar',       cuenta_contable_ref:'4.1.01.001',       cat:'CC-HOSP', unidad:'Por día',      calculo:'fijo',    valor:85.00, anterior:null, ultimoCambio:null, usuario:null, notas:'Habitación individual con baño privado'},
+    {key:'SVC-002',     label:'Día Habitación Suite',               cuenta_contable_ref:'4.1.01.001',               cat:'CC-HOSP', unidad:'Por día',      calculo:'fijo',    valor:150.00,anterior:null, ultimoCambio:null, usuario:null, notas:'Suite con sala familiar incluida'},
+    {key:'SVC-003',       label:'Día UCI / Terapia Intensiva',        cuenta_contable_ref:'4.1.01.002',        cat:'UCI',             unidad:'Por día',      calculo:'fijo',    valor:450.00,anterior:null, ultimoCambio:null, usuario:null, notas:'Incluye monitoreo continuo y personal especializado'},
+    {key:'SVC-004',        label:'Día Neonatología',                   cuenta_contable_ref:'4.1.01.002',                   cat:'UCI',             unidad:'Por día',      calculo:'fijo',    valor:320.00,anterior:null, ultimoCambio:null, usuario:null, notas:'Incubadora y cuidado neonatal'},
+    // ── Quirófano ────────────────────────────────────────────────
+    {key:'SVC-010',     label:'Derecho de Sala Quirúrgica',         cuenta_contable_ref:'4.1.02.001',         cat:'CC-QX',       unidad:'Por minuto',   calculo:'tiempo',  valor:2.50,  anterior:null, ultimoCambio:null, usuario:null, notas:'Tiempo quirúrgico tomado del Protocolo Operatorio (hora inicio → hora fin)'},
+    {key:'SVC-011',label:'Sala de Recuperación Post-Qx',       cuenta_contable_ref:'4.1.02.001',       cat:'CC-QX',       unidad:'Por hora',     calculo:'tiempo',  valor:45.00, anterior:null, ultimoCambio:null, usuario:null, notas:'Tiempo en recuperación desde protocolo operatorio'},
+    {key:'SVC-012',   label:'Primer Ayudante Quirúrgico',         cat:'CC-QX',       unidad:'Por acto',     calculo:'fijo',    valor:80.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    {key:'SVC-013',  label:'Instrumentista Quirúrgico',          cat:'CC-QX',       unidad:'Por acto',     calculo:'fijo',    valor:60.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    // ── Anestesia — vinculada a Hoja de Anestesia ────────────────
+    // Regla: el tipo se lee de la Hoja de Anestesia/Protocolo.
+    // Local → $0 sin cargo. Los demás aplican la tarifa de su fila.
+    {key:'SVC-020',    label:'Anestesia General',                  cat:'Anestesia', unidad:'Por minuto', calculo:'anestesia', valor:3.20,  anterior:null, ultimoCambio:null, usuario:null, tipoAnestesia:'general',    notas:'Valor × minutos de acto quirúrgico (hoja de anestesia)'},
+    {key:'SVC-021', label:'Anestesia Conductiva (Espinal / Epidural)', cat:'Anestesia', unidad:'Por acto', calculo:'anestesia', valor:180.00,anterior:null, ultimoCambio:null, usuario:null, tipoAnestesia:'conductiva',  notas:'Tarifa fija por acto. Tipo registrado en hoja de anestesia.'},
+    {key:'SVC-022',   label:'Sedación Consciente / MAC',          cat:'Anestesia', unidad:'Por hora',   calculo:'anestesia', valor:95.00, anterior:null, ultimoCambio:null, usuario:null, tipoAnestesia:'sedacion',    notas:'Valor × horas de acto. Tipo registrado en hoja de anestesia.'},
+    {key:'SVC-023',    label:'Bloqueo Regional / Periférico',      cat:'Anestesia', unidad:'Por acto',   calculo:'anestesia', valor:150.00,anterior:null, ultimoCambio:null, usuario:null, tipoAnestesia:'bloqueo',     notas:'Tarifa fija por acto. Tipo registrado en hoja de anestesia.'},
+    {key:'SVC-024',      label:'Anestesia Local — Sin Cargo',        cat:'Anestesia', unidad:'—',          calculo:'local',     valor:0.00,  anterior:null, ultimoCambio:null, usuario:null, tipoAnestesia:'local',       notas:'Sin cobro. Aplicada por el cirujano. No genera cargo de anestesiólogo.'},
+    // ── Ambulatorio / Otros ──────────────────────────────────────
+    {key:'SVC-030',   label:'CC-AMB',                    cat:'Ambulatorio',   unidad:'Por consulta', calculo:'fijo', valor:35.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    {key:'SVC-031',     label:'Atención de Emergencia',              cat:'CC-EMERG',    unidad:'Por atención', calculo:'fijo', valor:60.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    {key:'SVC-040',     label:'Procedimiento de Endoscopía',         cat:'CC-ENDOSC',   unidad:'Por acto',     calculo:'fijo', valor:280.00,anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    {key:'SVC-041',      label:'Radiografía Simple',                  cat:'CC-RAD', unidad:'Por placa',    calculo:'fijo', valor:45.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+    {key:'SVC-042',    label:'Ecografía General',                   cat:'Imagenología', unidad:'Por estudio',  calculo:'fijo', valor:65.00, anterior:null, ultimoCambio:null, usuario:null, notas:''},
+  ],
+
+  // ── Motor de Cálculo de Anestesia ────────────────────────────
+  // Lee el tipo de anestesia de la Hoja de Anestesia / Protocolo Operatorio
+  // y aplica la tarifa correspondiente.
+  calcularDerechoAnestesia(tipoAnestesia, minutosQx){
+    const tipo = (tipoAnestesia||'').toLowerCase().trim();
+    // Anestesia local → sin cargo
+    if(tipo === 'local' || tipo === '') return {cargo:0, descripcion:'Sin cargo (anestesia local)', key:'SVC-024'};
+    // Buscar tarifa en tarifario por tipoAnestesia
+    const tarifa = this.tarifario.find(t => t.tipoAnestesia === tipo);
+    if(!tarifa) return {cargo:0, descripcion:'Tipo de anestesia no reconocido: '+tipo, key:null};
+    let cargo = 0;
+    let descripcion = '';
+    switch(tipo){
+      case 'general':
+        cargo = tarifa.valor * (minutosQx||0);
+        descripcion = `General: $${tarifa.valor.toFixed(2)}/min × ${minutosQx} min = $${cargo.toFixed(2)}`;
+        break;
+      case 'conductiva':
+        cargo = tarifa.valor;
+        descripcion = `Conductiva: tarifa fija = $${cargo.toFixed(2)}`;
+        break;
+      case 'sedacion':
+        const horas = Math.ceil((minutosQx||0) / 60 * 10) / 10;
+        cargo = tarifa.valor * horas;
+        descripcion = `Sedación: $${tarifa.valor.toFixed(2)}/h × ${horas}h = $${cargo.toFixed(2)}`;
+        break;
+      case 'bloqueo':
+        cargo = tarifa.valor;
+        descripcion = `Bloqueo regional: tarifa fija = $${cargo.toFixed(2)}`;
+        break;
+      default:
+        cargo = 0;
+        descripcion = 'Sin cargo';
+    }
+    return {cargo:+cargo.toFixed(2), descripcion, key:tarifa.key, tarifa};
+  },
+
+  // ── Motor de Cálculo de Quirófano ────────────────────────────
+  calcularDerechoQx(minutosQx){
+    const tarifa = this.tarifario.find(t=>t.key==='SVC-010');
+    if(!tarifa) return {cargo:0, descripcion:'Tarifa Qx no configurada'};
+    const cargo = tarifa.valor * (minutosQx||0);
+    return {cargo:+cargo.toFixed(2), descripcion:`Sala Qx: $${tarifa.valor.toFixed(2)}/min × ${minutosQx} min = $${cargo.toFixed(2)}`};
+  },
+
+  convenios: [
+    {id:'CONV-001',  nombre:'Paciente Privado',      tipo:'A', pct:0,   iva:'si', activo:true},
+    {id:'CONV-002',     nombre:'IESS',                  tipo:'B', pct:-30, iva:'no', activo:true},
+    {id:'CONV-003',   nombre:'ISSPOL',                tipo:'B', pct:-25, iva:'no', activo:true},
+    {id:'CONV-004', cod_erp:'CONV-004', nombre:'Seguros Privados',       tipo:'C', pct:-15, iva:'si', activo:true},
+    {id:'CONV-005',     nombre:'SOAT',                  tipo:'B', pct:-20, iva:'no', activo:true},
+    {id:'CONV-006', cod_erp:'CONV-006', nombre:'Empleado Institucional', tipo:'D', pct:-40, iva:'no', activo:true},
+    {id:'CONV-007',      nombre:'MSP / Gratuidad',        tipo:'B', pct:-100,iva:'no', activo:true},
+  ],
+
+  cola: [],
+  log: [],
+  cargosPersonalizados: [
+    // ── Procedimientos de Enfermería ─────────────────────────────
+    {id:'CG-001',cod:'CG-001',nom:'Curación Simple',            cat:'Procedimiento de Enfermería', desc:'Limpieza y curación de herida simple',         valor:12.00, unidad:'Por acto',       iva:'no', auth:'no',       areas:['CC-HOSP','CC-EMERG','UCI','CC-AMB'],          activo:true, creadoPor:'Admin', notas:''},
+    {id:'CG-002',cod:'CG-002',nom:'Curación Compleja',          cat:'Procedimiento de Enfermería', desc:'Herida complicada, con drenaje o injerto',      valor:25.00, unidad:'Por acto',       iva:'no', auth:'medico',   areas:['CC-HOSP','CC-EMERG','UCI','CC-QX'],                   activo:true, creadoPor:'Admin', notas:''},
+    {id:'CG-003',cod:'CG-003',nom:'Colocación Sonda Vesical',   cat:'Procedimiento de Enfermería', desc:'Sondaje vesical con insumos incluidos',         valor:35.00, unidad:'Por acto',       iva:'no', auth:'medico',   areas:['CC-HOSP','UCI','CC-NEO','CC-QX'],                 activo:true, creadoPor:'Admin', notas:''},
+    {id:'CG-004',cod:'CG-004',nom:'Nebulización',               cat:'Procedimiento de Enfermería', desc:'Nebulización con medicamento prescrito',        valor:8.00,  unidad:'Por aplicación', iva:'no', auth:'no',       areas:['CC-HOSP','CC-EMERG','CC-AMB','CC-NEO'],   activo:true, creadoPor:'Admin', notas:'Medicamento se cobra por separado'},
+    {id:'CG-005',cod:'CG-005',nom:'Control de Signos Vitales',  cat:'Procedimiento de Enfermería', desc:'Toma y registro de signos vitales completos',  valor:5.00,  unidad:'Por acto',       iva:'no', auth:'no',       areas:['CC-ALL'],                                                 activo:true, creadoPor:'Admin', notas:''},
+    // ── Procedimientos Médicos ────────────────────────────────────
+    {id:'CG-006',cod:'CG-006',nom:'Interconsulta Especialista', cat:'Procedimiento Médico',        desc:'Visita y evaluación de médico especialista',   valor:60.00, unidad:'Por consulta',   iva:'no', auth:'medico',   areas:['CC-HOSP','UCI','CC-NEO'],                             activo:true, creadoPor:'Admin', notas:''},
+    {id:'CG-007',cod:'CG-007',nom:'Uso de Sala de Partos',      cat:'Procedimiento Médico',        desc:'Sala de partos con personal obstétrico',       valor:350.00,unidad:'Por acto',       iva:'no', auth:'medico',   areas:['CC-HOSP','CC-NEO'],                                   activo:true, creadoPor:'Admin', notas:'Incluye sala y personal obstétrico'},
+    // ── Terapia y Rehabilitación ──────────────────────────────────
+    {id:'CG-008',cod:'CG-008',nom:'Fisioterapia Respiratoria',  cat:'Terapia y Rehabilitación',    desc:'Sesión de fisioterapia pulmonar',              valor:40.00, unidad:'Por sesión',     iva:'si', auth:'medico',   areas:['CC-HOSP','UCI','CC-NEO'],                             activo:true, creadoPor:'Admin', notas:''},
+    {id:'CG-009',cod:'CG-009',nom:'Terapia Física / Kinesiología',cat:'Terapia y Rehabilitación', desc:'Sesión de rehabilitación física',              valor:35.00, unidad:'Por sesión',     iva:'si', auth:'medico',   areas:['CC-HOSP','CC-AMB'],                               activo:true, creadoPor:'Admin', notas:''},
+    // ── Diagnóstico ───────────────────────────────────────────────
+    {id:'CG-010',cod:'CG-010',nom:'Toma de Muestra Laboratorio',cat:'Diagnóstico y Laboratorio',   desc:'Flebotomía y envío a laboratorio',             valor:5.00,  unidad:'Por acto',       iva:'no', auth:'medico',   areas:['CC-ALL'],                                                 activo:true, creadoPor:'Admin', notas:''},
+    // ── Servicios Especiales ──────────────────────────────────────
+    {id:'CG-011',cod:'CG-011',nom:'Traslado en Ambulancia',     cat:'Servicios Especiales',        desc:'Traslado local en ambulancia equipada',        valor:120.00,unidad:'Por traslado',   iva:'si', auth:'gerencia', areas:['CC-ALL'],                                                 activo:true, creadoPor:'Admin', notas:'Disponibilidad según guardia'},
+    // ── Administrativo ────────────────────────────────────────────
+    {id:'CG-012',cod:'CG-012',nom:'Certificado Médico',         cat:'Administrativo',              desc:'Elaboración y firma de certificado médico',    valor:15.00, unidad:'Por acto',       iva:'si', auth:'no',       areas:['CC-AMB','CC-ADMIN'],                                activo:true, creadoPor:'Admin', notas:''},
+  ],
+  cargosAplicados: [],
+
+  hoteleria: [
+    {id:'HOT-001',cod:'HOT-001',nom:'Habitación Individual Estándar',   cat:'Habitación y Alojamiento',    desc:'Cama individual, baño privado, TV, WiFi',                precio:85.00,  iva:'no',disp:10,activo:true,incluye:'Cama, TV, baño privado, WiFi'},
+    {id:'HOT-002',cod:'HOT-002',nom:'Habitación Doble con Acompañante', cat:'Habitación y Alojamiento',    desc:'Cama paciente + sofá acompañante, baño privado',         precio:120.00, iva:'no',disp:6, activo:true,incluye:'2 camas, TV, baño, WiFi, desayuno acompañante'},
+    {id:'HOT-003',cod:'HOT-003',nom:'Suite Ejecutiva',                  cat:'Habitación y Alojamiento',    desc:'Habitación premium con sala de espera familiar',         precio:200.00, iva:'si',disp:3, activo:true,incluye:'Suite, sala, TV, frigobar, WiFi, menú especial'},
+    {id:'HOT-004',cod:'HOT-004',nom:'Alimentación Paciente (3 tiempos)',cat:'Alimentación y Nutrición',    desc:'Desayuno, almuerzo y cena según dieta prescrita',       precio:35.00,  iva:'no',disp:999,activo:true,incluye:'Dieta normal o terapéutica según prescripción'},
+    {id:'HOT-005',cod:'HOT-005',nom:'Alimentación Acompañante',         cat:'Alimentación y Nutrición',    desc:'3 tiempos de alimentación para familiar acompañante',   precio:18.00,  iva:'si',disp:999,activo:true,incluye:'Desayuno, almuerzo, cena'},
+    {id:'HOT-006',cod:'HOT-006',nom:'Servicio de Lavandería',           cat:'Ropa de Cama y Lencería',     desc:'Cambio diario de ropa de cama y toallas',               precio:8.00,   iva:'si',disp:999,activo:true,incluye:'Sábanas, fundas, toallas, bata paciente'},
+    {id:'HOT-007',cod:'HOT-007',nom:'TV Cable / Streaming',             cat:'Comunicación y Entretenimiento',desc:'Acceso a cable y plataformas de entretenimiento',      precio:5.00,   iva:'si',disp:20, activo:true,incluye:'TV + cable + Netflix institucional'},
+    {id:'HOT-008',cod:'HOT-008',nom:'Teléfono Habitación (llamadas)',   cat:'Comunicación y Entretenimiento',desc:'Servicio de llamadas locales y nacionales',            precio:3.00,   iva:'si',disp:999,activo:true,incluye:'Llamadas locales ilimitadas'},
+    {id:'HOT-009',cod:'HOT-009',nom:'Estacionamiento Familiar',         cat:'Transporte Interno',          desc:'Lugar de parqueo reservado para familia',               precio:5.00,   iva:'si',disp:15, activo:true,incluye:'1 vehículo por paciente'},
+    {id:'HOT-010',cod:'HOT-010',nom:'Servicio de Capilla / Espiritual', cat:'Servicios Especiales',        desc:'Atención espiritual y acceso a capilla',                precio:0.00,   iva:'no',disp:999,activo:true,incluye:'Servicio gratuito'},
+  ],
+
+  perfiles: [
+    {id:'USR-001',nombre:'Dr. Luis Delgado',    cedula:'1712345678',cargo:'Médico Especialista', area:'CC-UCI',user:'l.delgado',   rol:'medico',  email:'l.delgado@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 08:00'},
+    {id:'USR-002',nombre:'Dra. Fernanda Andrade',cedula:'1798765432',cargo:'Médico General',     area:'CC-HOSP',        user:'f.andrade',   rol:'medico',  email:'f.andrade@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 07:30'},
+    {id:'USR-003',nombre:'Lcda. Carmen Vásquez',cedula:'1756781234',cargo:'Enfermera/o Jefe',    area:'CC-HOSP',        user:'c.vasquez',   rol:'enfermeria',email:'c.vasquez@clinicasatlas.com', activo:true,ultimoAcceso:'2026-03-21 06:45'},
+    {id:'USR-004',nombre:'Aux. Jorge Mosquera', cedula:'1734567890',cargo:'Auxiliar de Enfermería',area:'CC-UCI',user:'j.mosquera',rol:'auxiliar',email:'j.mosquera@clinicasatlas.com',  activo:true,ultimoAcceso:'2026-03-20 22:00'},
+    {id:'USR-005',nombre:'Farm. Ana García',    cedula:'1723456789',cargo:'Farmacéutico',         area:'CC-FARM',               user:'a.garcia',    rol:'farmacia',email:'a.garcia@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 07:15'},
+    {id:'USR-006',nombre:'Cont. Mario Salcedo', cedula:'1789012345',cargo:'Contador',             area:'Contabilidad',           user:'m.salcedo',   rol:'admin',   email:'m.salcedo@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-20 17:00'},
+    {id:'USR-007',nombre:'Fernanda Auditoria',  cedula:'1700000001',cargo:'Auditor Médico',       area:'Gerencia',               user:'auditor',     rol:'auditor', email:'auditoria@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 09:00'},
+    {id:'USR-008',nombre:'Dr. Rodrigo Barriga', cedula:'1745678901',cargo:'Médico Especialista',  area:'CC-QX',              user:'r.barriga',   rol:'medico',  email:'r.barriga@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 07:00'},
+    {id:'USR-009',nombre:'Lcda. Patricia Ruiz', cedula:'1767890123',cargo:'Enfermera/o',          area:'CC-NEO',           user:'p.ruiz',      rol:'enfermeria',email:'p.ruiz@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 06:00'},
+    {id:'USR-010',nombre:'Director General',    cedula:'1700000002',cargo:'Gerente General',      area:'Gerencia',               user:'gerencia',    rol:'gerencia',email:'gerencia@clinicasatlas.com',   activo:true,ultimoAcceso:'2026-03-21 08:30'},
+  ],
+};
+
+// ── Generar cargos demo ─────────────────────────────────────────
+(function(){
+  const demo = [
+    {fecha:'2026-03-21 08:15',modulo:'Despacho Clínico',concepto:'Ceftriaxona 1g × 2',paciente:'Juan C. Pérez',area:'UCI-01',monto:5.60,lote:'L-2025-C',estado:'PENDIENTE'},
+    {fecha:'2026-03-21 09:00',modulo:'Despacho Clínico',concepto:'Omeprazol 40mg × 1',paciente:'María A. Loza',area:'HOSP-05',monto:1.50,lote:'L-2025-E',estado:'PENDIENTE'},
+    {fecha:'2026-03-21 09:30',modulo:'Despacho Clínico',concepto:'Vancomicina 500mg × 2',paciente:'Carlos M. Ruiz',area:'UCI-02',monto:19.60,lote:'L-2025-O',estado:'PENDIENTE'},
+    {fecha:'2026-03-21 10:45',modulo:'Venta Pública',  concepto:'Paracetamol 500mg × 10',paciente:'Consumidor Final',area:'POS',monto:2.75,lote:'L-2025-A',estado:'PENDIENTE'},
+    {fecha:'2026-03-21 11:00',modulo:'Despacho Clínico',concepto:'Morfina 10mg × 1',paciente:'RN Torres (Neo)',area:'NEO-01',monto:3.50,lote:'L-2024-M',estado:'PENDIENTE'},
+    {fecha:'2026-03-20 17:30',modulo:'Venta Pública',  concepto:'Ibuprofeno 400mg × 6',paciente:'Luis R. Morales',area:'POS',monto:2.70,lote:'L-2024-B',estado:'SINCRONIZADO'},
+    {fecha:'2026-03-20 16:00',modulo:'Despacho Clínico',concepto:'Enalapril 10mg × 2',paciente:'Ana B. Torres',area:'HOSP-08',monto:0.24,lote:'L-2025-L',estado:'SINCRONIZADO'},
+  ];
+  adminDB.cola = demo;
+  adminDB.log.push({
+    fecha:new Date().toLocaleString('es-EC',{hour12:false}),
+    usuario:'SISTEMA',rol:'Sistema',
+    accion:'Módulo administrativo inicializado',
+    antes:'—',ahora:'ACTIVO',justif:'Inicio automático',tipo:'acceso'
+  });
+})();
+
+// ── ESTADO modal editar ─────────────────────────────────────────
+let _tarifaTarget = null;
+let _convTarget   = null;
+let _logFiltro    = '';
+let _logTipo      = '';
+
+
+// ════════════════════════════════════════════════════════════════
+//  ROLES Y PERMISOS
+// ════════════════════════════════════════════════════════════════
+const ROLES_DEF = {
+  medico:    {label:'Médico',           color:'#c53030', permisos:['Ver Historial Clínico','Prescribir Medicamentos','Ver Camas','Ordenar Exámenes','Consultar Tarifario']},
+  enfermeria:{label:'Enfermería',       color:'#2a9d8f', permisos:['Ver Prescripciones','Registrar Signos Vitales','Ver Camas','Despacho Farmacia','Notas de Enfermería']},
+  farmacia:  {label:'CC-FARM',         color:'#3182ce', permisos:['Despacho Medicamentos','Ver Inventario','Ingresar Stock','Historial Despachos','Alertas de Stock']},
+  auxiliar:  {label:'Auxiliar',         color:'#b7791f', permisos:['Ver Camas','Registrar Actividades','Ver Órdenes de Trabajo']},
+  admin:     {label:'Administrativo',   color:'#553c9a', permisos:['Ver Tarifario','Gestión Convenios','Cola Sincronización','Ver Perfiles','Reportes Básicos']},
+  auditor:   {label:'Auditor',          color:'#1a3a5c', permisos:['Todo Solo Lectura','Editar Tarifas','Ver Log Auditoría','Exportar Reportes','Control Psicotrópicos']},
+  gerencia:  {label:'Gerencia',         color:'#0f2440', permisos:['Acceso Total','Autorizar Sincronización','Crear/Editar Usuarios','Configurar Roles','Aprobar Tarifas','Dashboard Financiero']},
+};
+
+// ════════════════════════════════════════════════════════════════
+//  HOTELERÍA
+// ════════════════════════════════════════════════════════════════
+let _hotTarget = null;
+
+function renderHoteleria(){
+  renderKPIs();
+  const body = document.getElementById('hot-body');
+  if(!body) return;
+  const catColor = {'Habitación y Alojamiento':'#1a3a5c','Alimentación y Nutrición':'#2a9d8f','Ropa de Cama y Lencería':'#b7791f','Comunicación y Entretenimiento':'#3182ce','Transporte Interno':'#553c9a','Servicios Especiales':'#276749'};
+  body.innerHTML = adminDB.hoteleria.map(s=>{
+    const col = catColor[s.cat]||'#5a7a96';
+    return `<tr>
+      <td class="mc">${s.cod}</td>
+      <td style="font-weight:600;color:#1a2c3d;">${s.nom}</td>
+      <td><span style="font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:100px;background:${col}18;color:${col};border:1px solid ${col}30;">${s.cat}</span></td>
+      <td style="font-size:.72rem;color:#5a7a96;max-width:160px;">${s.desc||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#2a9d8f;font-size:.9rem;">$${s.precio.toFixed(2)}</td>
+      <td style="font-size:.7rem;color:#5a7a96;">${s.iva==='si'?'Con IVA 15%':'Exento'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">${s.disp>=999?'∞':s.disp}</td>
+      <td>${s.activo?'<span class="tag t-ok" style="font-size:.58rem;">Activo</span>':'<span style="font-size:.58rem;padding:2px 7px;border-radius:100px;background:var(--red-l);color:var(--red);border:1px solid rgba(197,48,48,.2);">Inactivo</span>'}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="tarifa-save" onclick="editarHoteleria('${s.id}')">✏ Editar</button>
+        <button class="tarifa-save" onclick="toggleHoteleria('${s.id}')" style="background:${s.activo?'rgba(197,48,48,.08)':'rgba(39,103,73,.08)'};color:${s.activo?'var(--red)':'var(--teal)'};">${s.activo?'Desactivar':'Activar'}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('hot-badge').textContent = adminDB.hoteleria.length+' servicios';
+}
+
+function abrirNuevaHoteleria(){_hotTarget=null;document.getElementById('m-hot-t').textContent='Nuevo Servicio de Hotelería Hospitalaria';['hot-cod','hot-nom','hot-desc','hot-precio','hot-disp','hot-incluye'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});showModal('m-hoteleria');}
+function editarHoteleria(id){
+  const s = adminDB.hoteleria.find(x=>x.id===id);
+  if(!s) return;
+  _hotTarget = id;
+  document.getElementById('m-hot-t').textContent = 'Editar: '+s.nom;
+  document.getElementById('hot-cod').value   = s.cod;
+  document.getElementById('hot-nom').value   = s.nom;
+  document.getElementById('hot-cat').value   = s.cat;
+  document.getElementById('hot-desc').value  = s.desc||'';
+  document.getElementById('hot-precio').value= s.precio;
+  document.getElementById('hot-iva').value   = s.iva;
+  document.getElementById('hot-disp').value  = s.disp>=999?'':s.disp;
+  document.getElementById('hot-incluye').value = s.incluye||'';
+  showModal('m-hoteleria');
+}
+
+function guardarHoteleria(){
+  const nom = document.getElementById('hot-nom').value.trim();
+  const precio = parseFloat(document.getElementById('hot-precio').value)||0;
+  if(!nom){toast('Ingrese el nombre del servicio','r');return;}
+  if(precio<0){toast('El precio no puede ser negativo','r');return;}
+  const obj = {
+    id: _hotTarget||('HOT-'+String(Date.now()).slice(-4)),
+    cod: document.getElementById('hot-cod').value.trim()||('HOT-'+String(Date.now()).slice(-3)),
+    nom, cat: document.getElementById('hot-cat').value,
+    desc: document.getElementById('hot-desc').value,
+    precio,
+    iva: document.getElementById('hot-iva').value,
+    disp: parseInt(document.getElementById('hot-disp').value)||999,
+    incluye: document.getElementById('hot-incluye').value,
+    activo: true,
+  };
+  if(_hotTarget){
+    const idx = adminDB.hoteleria.findIndex(x=>x.id===_hotTarget);
+    if(idx>=0) adminDB.hoteleria[idx]=obj;
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Editar servicio hotelería: '+nom,antes:'—',ahora:'$'+precio.toFixed(2),justif:'Actualización',tipo:'tarifa'});
+  } else {
+    adminDB.hoteleria.push(obj);
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Nuevo servicio hotelería: '+nom,antes:'—',ahora:'$'+precio.toFixed(2),justif:'Creación',tipo:'tarifa'});
+  }
+  _hotTarget = null;
+  hideModal('m-hoteleria');
+  renderHoteleria();
+  toast('✅ Servicio guardado: '+nom,'g');
+}
+
+function toggleHoteleria(id){
+  const s = adminDB.hoteleria.find(x=>x.id===id);
+  if(!s) return;
+  s.activo = !s.activo;
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:(s.activo?'Activar':'Desactivar')+' servicio: '+s.nom,antes:!s.activo?'Activo':'Inactivo',ahora:s.activo?'Activo':'Inactivo',justif:'Cambio de estado',tipo:'tarifa'});
+  renderHoteleria();
+  toast((s.activo?'Servicio activado':'Servicio desactivado')+': '+s.nom,'g');
+}
+
+function exportarHoteleria(){
+  const heads='Código,Servicio,Categoría,Descripción,Tarifa/día,IVA,Disponibilidad,Estado,Incluye\n';
+  const rows=adminDB.hoteleria.map(s=>`"${s.cod}","${s.nom}","${s.cat}","${s.desc}",${s.precio.toFixed(2)},"${s.iva==='si'?'Con IVA':'Exento'}",${s.disp>=999?'Ilimitado':s.disp},"${s.activo?'Activo':'Inactivo'}","${s.incluye||''}"`).join('\n');
+  descargar(heads+rows,'Hoteleria_'+hoy()+'.csv');
+  toast('Hotelería exportada','g');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PERFILES Y USUARIOS
+// ════════════════════════════════════════════════════════════════
+let _perfTarget = null;
+
+function filtrarPerfiles(q){
+  const term = q.toLowerCase();
+  document.querySelectorAll('#perf-body tr').forEach(r=>{
+    r.style.display = r.innerText.toLowerCase().includes(term)?'':'none';
+  });
+}
+
+function renderPerfiles(){
+  renderKPIs();
+  const body = document.getElementById('perf-body');
+  if(!body) return;
+  body.innerHTML = adminDB.perfiles.map(u=>{
+    const rol = ROLES_DEF[u.rol];
+    const perms = rol?.permisos||[];
+    return `<tr>
+      <td><div class="mc">${u.user}</div></td>
+      <td style="font-weight:600;color:#1a2c3d;">${u.nombre}</td>
+      <td style="font-size:.74rem;color:#5a7a96;">${u.cargo}</td>
+      <td><span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:100px;background:rgba(42,157,143,.1);color:#1f7a6e;border:1px solid rgba(42,157,143,.2);">${u.area}</span></td>
+      <td><span style="font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:100px;background:${rol?.color||'#5a7a96'}18;color:${rol?.color||'#5a7a96'};border:1px solid ${rol?.color||'#5a7a96'}30;">${rol?.label||u.rol}</span></td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:3px;">${perms.slice(0,2).map(p=>`<span style="font-size:.56rem;padding:1px 5px;border-radius:100px;background:var(--bg3);color:#5a7a96;border:1px solid var(--border);">${p}</span>`).join('')}${perms.length>2?`<span style="font-size:.56rem;padding:1px 5px;border-radius:100px;background:var(--bg3);color:#5a7a96;">+${perms.length-2}</span>`:''}</div></td>
+      <td>${u.activo?'<span class="tag t-ok" style="font-size:.58rem;">Activo</span>':'<span style="font-size:.58rem;padding:2px 7px;border-radius:100px;background:var(--red-l);color:var(--red);border:1px solid rgba(197,48,48,.2);">Inactivo</span>'}</td>
+      <td style="font-size:.66rem;color:#5a7a96;">${u.ultimoAcceso||'—'}</td>
+      <td><div style="display:flex;gap:3px;">
+        <button class="tarifa-save" onclick="editarPerfil('${u.id}')">✏</button>
+        <button class="tarifa-save" onclick="cambiarRol('${u.id}')" style="background:rgba(42,157,143,.1);color:#1f7a6e;border-color:rgba(42,157,143,.25);" title="Cambiar rol">🔑 Rol</button>
+        <button class="tarifa-save" onclick="togglePerfil('${u.id}')" style="background:${u.activo?'rgba(197,48,48,.08)':'rgba(39,103,73,.08)'};color:${u.activo?'var(--red)':'var(--teal)'};">${u.activo?'🔒':'🔓'}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('perf-badge').textContent = adminDB.perfiles.length+' usuarios';
+  document.getElementById('tn-perfiles').textContent = adminDB.perfiles.filter(u=>u.activo).length;
+  renderRolesPanel();
+  renderAreasResumen();
+}
+
+function renderRolesPanel(){
+  const panel = document.getElementById('roles-panel');
+  if(!panel) return;
+  panel.innerHTML = Object.entries(ROLES_DEF).map(([key,r])=>{
+    const count = adminDB.perfiles.filter(u=>u.rol===key&&u.activo).length;
+    return `<div style="padding:7px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:.76rem;font-weight:700;color:${r.color};padding:2px 8px;border-radius:100px;background:${r.color}18;border:1px solid ${r.color}30;">${r.label}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#1a2c3d;">${count} usuario${count!==1?'s':''}</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px;">${r.permisos.map(p=>`<span style="font-size:.58rem;padding:1px 6px;border-radius:100px;background:${r.color}10;color:${r.color};border:1px solid ${r.color}25;">${p}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderAreasResumen(){
+  const panel = document.getElementById('areas-resumen');
+  if(!panel) return;
+  const areas = {};
+  adminDB.perfiles.filter(u=>u.activo).forEach(u=>{
+    areas[u.area]=(areas[u.area]||0)+1;
+  });
+  panel.innerHTML = Object.entries(areas).sort((a,b)=>b[1]-a[1]).map(([area,n])=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:.76rem;">
+      <span style="color:#1a2c3d;font-weight:500;">${area}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#2a9d8f;">${n}</span>
+    </div>`).join('');
+}
+
+function actualizarPermisosViz(){
+  const rol = document.getElementById('pf-rol')?.value;
+  const viz = document.getElementById('permisos-viz');
+  if(!viz) return;
+  const r = ROLES_DEF[rol];
+  viz.innerHTML = r ? r.permisos.map(p=>`<span style="font-size:.62rem;padding:3px 8px;border-radius:100px;background:${r.color}12;color:${r.color};border:1px solid ${r.color}28;font-weight:600;">${p}</span>`).join('') : '';
+}
+
+function abrirNuevoPerfil(){_perfTarget=null;document.getElementById('m-perf-t').textContent='Nuevo Usuario / Perfil';['pf-nombre','pf-cedula','pf-user','pf-pass','pf-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});actualizarPermisosViz();showModal('m-perfil');}
+
+let _rolTarget = null;
+function cambiarRol(id){
+  const u = adminDB.perfiles.find(x=>x.id===id);
+  if(!u) return;
+  _rolTarget = id;
+  const rolActual = ROLES_DEF[u.rol];
+  document.getElementById('cr-info').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+      <div>
+        <div style="font-weight:700;color:#1a2c3d;font-size:.88rem;">${u.nombre}</div>
+        <div style="font-size:.72rem;color:#5a7a96;">${u.cargo} · ${u.area}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.6rem;color:#5a7a96;margin-bottom:3px;">Rol actual</div>
+        <span style="font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:100px;background:${rolActual?.color||'#5a7a96'}18;color:${rolActual?.color||'#5a7a96'};border:1px solid ${rolActual?.color||'#5a7a96'}30;">${rolActual?.label||u.rol}</span>
+      </div>
+    </div>`;
+  document.getElementById('cr-rol').value = u.rol;
+  document.getElementById('cr-justif').value = '';
+  previewRolPermisos();
+  showModal('m-cambio-rol');
+  setTimeout(()=>document.getElementById('cr-rol')?.focus(), 200);
+}
+
+function previewRolPermisos(){
+  const rol = document.getElementById('cr-rol')?.value;
+  const r = ROLES_DEF[rol];
+  const el = document.getElementById('cr-permisos');
+  if(!el) return;
+  el.innerHTML = r ? r.permisos.map(p=>
+    `<span style="font-size:.64rem;padding:3px 9px;border-radius:100px;background:${r.color}12;color:${r.color};border:1px solid ${r.color}28;font-weight:600;">${p}</span>`
+  ).join('') : '';
+}
+
+function confirmarCambioRol(){
+  const nuevoRol = document.getElementById('cr-rol')?.value;
+  const justif   = document.getElementById('cr-justif')?.value.trim();
+  if(!justif){toast('La justificación es obligatoria','r');document.getElementById('cr-justif')?.focus();return;}
+  const u = adminDB.perfiles.find(x=>x.id===_rolTarget);
+  if(!u) return;
+  const rolAnterior = ROLES_DEF[u.rol]?.label||u.rol;
+  const rolNuevo    = ROLES_DEF[nuevoRol]?.label||nuevoRol;
+  if(u.rol === nuevoRol){toast('El usuario ya tiene ese rol asignado','a');return;}
+  u.rol = nuevoRol;
+  adminDB.log.push({
+    fecha: new Date().toLocaleString('es-EC',{hour12:false}),
+    usuario: _session?.nombre, rol: _session?.rol,
+    accion: `Cambio de rol: ${u.nombre}`,
+    antes: rolAnterior, ahora: rolNuevo,
+    justif, tipo: 'acceso',
+  });
+  hideModal('m-cambio-rol');
+  renderPerfiles();
+  toast(`✅ Rol actualizado: ${u.nombre} → ${rolNuevo}`,'g');
+}
+function editarPerfil(id){
+  const u = adminDB.perfiles.find(x=>x.id===id);
+  if(!u) return;
+  _perfTarget = id;
+  document.getElementById('m-perf-t').textContent = 'Editar: '+u.nombre;
+  document.getElementById('pf-nombre').value = u.nombre;
+  document.getElementById('pf-cedula').value = u.cedula||'';
+  document.getElementById('pf-cargo').value  = u.cargo;
+  document.getElementById('pf-area').value   = u.area;
+  document.getElementById('pf-user').value   = u.user;
+  document.getElementById('pf-pass').value   = '';
+  document.getElementById('pf-rol').value    = u.rol;
+  document.getElementById('pf-email').value  = u.email||'';
+  actualizarPermisosViz();
+  showModal('m-perfil');
+}
+
+function togglePerfil(id){
+  const u = adminDB.perfiles.find(x=>x.id===id);
+  if(!u) return;
+  if(!confirm((u.activo?'¿Desactivar':'¿Activar')+' al usuario '+u.nombre+'?')) return;
+  u.activo = !u.activo;
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:(u.activo?'Activar':'Desactivar')+' usuario: '+u.nombre,antes:!u.activo?'Activo':'Inactivo',ahora:u.activo?'Activo':'Inactivo',justif:'Cambio de estado manual',tipo:'acceso'});
+  renderPerfiles();
+  toast((u.activo?'Usuario activado':'Usuario desactivado')+': '+u.nombre,'g');
+}
+
+function guardarPerfil(){
+  const nombre = document.getElementById('pf-nombre').value.trim();
+  const user   = document.getElementById('pf-user').value.trim();
+  if(!nombre||!user){toast('Nombre y usuario son obligatorios','r');return;}
+  // Verificar usuario duplicado
+  const dup = adminDB.perfiles.find(u=>u.user===user&&u.id!==_perfTarget);
+  if(dup){toast('El usuario "'+user+'" ya existe','r');return;}
+  const obj = {
+    id: _perfTarget||('USR-'+String(Date.now()).slice(-4)),
+    nombre, cedula: document.getElementById('pf-cedula').value,
+    cargo: document.getElementById('pf-cargo').value,
+    area:  document.getElementById('pf-area').value,
+    user,
+    rol:   document.getElementById('pf-rol').value,
+    email: document.getElementById('pf-email').value,
+    activo: true,
+    ultimoAcceso: '—',
+  };
+  if(_perfTarget){
+    const idx = adminDB.perfiles.findIndex(x=>x.id===_perfTarget);
+    if(idx>=0) adminDB.perfiles[idx]=obj;
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Editar perfil: '+nombre,antes:'—',ahora:ROLES_DEF[obj.rol]?.label||obj.rol,justif:'Actualización de perfil',tipo:'acceso'});
+  } else {
+    adminDB.perfiles.push(obj);
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Nuevo usuario: '+nombre+' ('+user+')',antes:'—',ahora:ROLES_DEF[obj.rol]?.label||obj.rol,justif:'Creación de perfil',tipo:'acceso'});
+  }
+  _perfTarget = null;
+  hideModal('m-perfil');
+  renderPerfiles();
+  toast('✅ Perfil guardado: '+nombre+' · '+ROLES_DEF[obj.rol]?.label,'g');
+}
+
+
+
+
+// ════════════════════════════════════════════════════════════════
+//  MÓDULO CARGOS PERSONALIZADOS
+// ════════════════════════════════════════════════════════════════
+let _cargoTarget = null;
+
+const CAT_COLOR_CARGO = {
+  'Procedimiento Médico':'#1a3a5c',
+  'Procedimiento de Enfermería':'#2a9d8f',
+  'Material y Suministros':'#b7791f',
+  'Diagnóstico y Laboratorio':'#3182ce',
+  'Terapia y Rehabilitación':'#276749',
+  'Servicios Especiales':'#553c9a',
+  'Administrativo':'#5a7a96',
+  'Otro':'#8baabf',
+};
+
+const AUTH_LABEL = {
+  no:'Aplicación directa',
+  medico:'Orden médica',
+  gerencia:'Autorización Gerencia',
+  seguro:'Autorización Seguro',
+};
+
+function renderCargosKPIs(){
+  const total  = adminDB.cargosPersonalizados.length;
+  const activos= adminDB.cargosPersonalizados.filter(c=>c.activo).length;
+  const hoy    = adminDB.cargosAplicados.length;
+  const totalHoy=adminDB.cargosAplicados.reduce((s,c)=>s+c.total,0);
+  const autorizados=adminDB.cargosPersonalizados.filter(c=>c.auth!=='no'&&c.activo).length;
+  document.getElementById('cargos-kpi-strip').innerHTML=`
+    <div class="kpi"><div class="kpi-bot" style="background:#1a3a5c;"></div><div class="kpi-ic">📦</div><div class="kpi-v" style="color:#1a3a5c;">${total}</div><div class="kpi-l">Total Cargos</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--teal);"></div><div class="kpi-ic">✅</div><div class="kpi-v kv-g">${activos}</div><div class="kpi-l">Activos</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--gold);"></div><div class="kpi-ic">🔐</div><div class="kpi-v kv-a">${autorizados}</div><div class="kpi-l">Con Autorización</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--teal);"></div><div class="kpi-ic">⚡</div><div class="kpi-v kv-g">${hoy}</div><div class="kpi-l">Aplicados Hoy</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:#276749;"></div><div class="kpi-ic">💰</div><div class="kpi-v" style="color:#276749;">$${totalHoy.toFixed(2)}</div><div class="kpi-l">Recaudado Hoy</div></div>`;
+}
+
+function renderCargos(){
+  renderCargosKPIs();
+  const body = document.getElementById('cargos-body');
+  if(!body) return;
+  const q    = (document.getElementById('sq-cargos')?.value||'').toLowerCase();
+  const cat  = document.getElementById('cat-cargos')?.value||'';
+  const est  = document.getElementById('estado-cargos')?.value||'';
+  const items = adminDB.cargosPersonalizados.filter(c=>{
+    if(cat&&c.cat!==cat) return false;
+    if(est==='activo'&&!c.activo) return false;
+    if(est==='inactivo'&&c.activo) return false;
+    return !q||(c.nom+c.cod+c.cat+(c.desc||'')).toLowerCase().includes(q);
+  });
+  document.getElementById('cargos-badge').textContent = adminDB.cargosPersonalizados.length+' cargos';
+  body.innerHTML = items.length ? items.map(cg=>{
+    const col = CAT_COLOR_CARGO[cg.cat]||'#5a7a96';
+    const authCol = cg.auth==='no'?'var(--teal)':cg.auth==='gerencia'?'var(--red)':'var(--gold)';
+    return `<tr style="${cg.activo?'':'opacity:.55'}">
+      <td class="mc">${cg.cod}</td>
+      <td>
+        <div style="font-weight:600;color:#1a2c3d;">${cg.nom}</div>
+        ${cg.desc?`<div style="font-size:.64rem;color:#8baabf;">${cg.desc}</div>`:''}
+      </td>
+      <td><span style="font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:100px;background:${col}18;color:${col};border:1px solid ${col}30;">${cg.cat}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#2a9d8f;font-size:.9rem;">$${cg.valor.toFixed(2)}</td>
+      <td style="font-size:.72rem;color:#5a7a96;">${cg.unidad}</td>
+      <td style="font-size:.7rem;">${cg.iva==='si'?'<span style="color:var(--gold);">+IVA 15%</span>':'Exento'}</td>
+      <td><span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:100px;background:${authCol}15;color:${authCol};border:1px solid ${authCol}28;">${AUTH_LABEL[cg.auth]||cg.auth}</span></td>
+      <td>${cg.activo?'<span class="tag t-ok" style="font-size:.58rem;">Activo</span>':'<span style="font-size:.58rem;padding:2px 7px;border-radius:100px;background:var(--red-l);color:var(--red);border:1px solid rgba(197,48,48,.2);">Inactivo</span>'}</td>
+      <td style="max-width:160px;">${(cg.areas||[]).map(a=>`<span style="font-size:.56rem;padding:1px 6px;border-radius:100px;background:rgba(26,58,92,.08);color:#1a3a5c;border:1px solid rgba(26,58,92,.15);margin:1px;display:inline-block;">${a}</span>`).join('')}</td>
+      <td><div style="display:flex;gap:3px;">
+        <button class="tarifa-save" onclick="editarCargo('${cg.id}')">✏</button>
+        <button class="tarifa-save" onclick="toggleCargo('${cg.id}')" style="background:${cg.activo?'rgba(197,48,48,.08)':'rgba(39,103,73,.08)'};color:${cg.activo?'var(--red)':'var(--teal)'};">${cg.activo?'🔒':'🔓'}</button>
+      </div></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--dim);font-style:italic;">Sin cargos que coincidan con el filtro</td></tr>';
+
+  renderPanelAreasCargo();
+}
+
+function renderPanelAreasCargo(){
+  // Distribución por área
+  const pAreas = document.getElementById('panel-areas-cargo');
+  if(pAreas){
+    const areaMap = {};
+    adminDB.cargosPersonalizados.filter(c=>c.activo).forEach(c=>{
+      (c.areas||[]).forEach(a=>{areaMap[a]=(areaMap[a]||0)+1;});
+    });
+    pAreas.innerHTML = Object.entries(areaMap).sort((a,b)=>b[1]-a[1]).map(([area,n])=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:.74rem;color:#1a2c3d;font-weight:500;">${area}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#2a9d8f;font-size:.78rem;">${n} cargo${n>1?'s':''}</span>
+      </div>`).join('') || '<div style="font-size:.74rem;color:#5a7a96;text-align:center;padding:10px;">Sin cargos activos</div>';
+  }
+
+  // Resumen del catálogo
+  const pRes = document.getElementById('panel-resumen-cargo');
+  if(pRes){
+    const activos = adminDB.cargosPersonalizados.filter(c=>c.activo).length;
+    const inactivos = adminDB.cargosPersonalizados.filter(c=>!c.activo).length;
+    const cats = {};
+    adminDB.cargosPersonalizados.filter(c=>c.activo).forEach(c=>{ cats[c.cat]=(cats[c.cat]||0)+1; });
+    pRes.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px;text-align:center;">
+          <div style="font-size:.56rem;color:#5a7a96;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Activos</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:#2a9d8f;">${activos}</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px;text-align:center;">
+          <div style="font-size:.56rem;color:#5a7a96;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Inactivos</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red);">${inactivos}</div>
+        </div>
+      </div>
+      <div style="font-size:.6rem;font-weight:700;color:#5a7a96;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">Por categoría</div>
+      ${Object.entries(cats).map(([cat,n])=>`
+        <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-size:.72rem;">
+          <span style="color:#1a2c3d;">${cat}</span>
+          <span style="font-weight:700;color:#1a3a5c;">${n}</span>
+        </div>`).join('')}`;
+  }
+
+  // Niveles de autorización
+  const pAuth = document.getElementById('panel-auth-cargo');
+  if(pAuth){
+    const authMap = {no:0,medico:0,gerencia:0,seguro:0};
+    adminDB.cargosPersonalizados.filter(c=>c.activo).forEach(c=>{ authMap[c.auth]=(authMap[c.auth]||0)+1; });
+    const authDef = {no:{l:'Aplicación directa',c:'#2a9d8f'},medico:{l:'Orden médica',c:'#b7791f'},gerencia:{l:'Autorización Gerencia',c:'#c53030'},seguro:{l:'Autorización Seguro',c:'#3182ce'}};
+    pAuth.innerHTML = Object.entries(authDef).map(([k,d])=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:100px;background:${d.c}15;color:${d.c};border:1px solid ${d.c}28;">${d.l}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#1a2c3d;">${authMap[k]||0}</span>
+      </div>`).join('');
+  }
+}
+
+// previewCargo y aplicarCargo individuales eliminados — los cargos son institucionales por área
+
+window.toggleTodasAreas=(cb)=>{
+  const checks = document.querySelectorAll('#cg-areas-wrap input[type=checkbox]');
+  if(cb.checked){
+    checks.forEach(c2=>{if(c2!==cb)c2.checked=false;});
+  }
+};
+// Si se marca cualquier área específica, desmarcar "Todas"
+document.addEventListener('change',e=>{
+  if(e.target.closest('#cg-areas-wrap')&&e.target.value!=='CC-ALL'&&e.target.checked){
+    const todas=document.querySelector('#cg-areas-wrap input[value="Todas las áreas"]');
+    if(todas) todas.checked=false;
+  }
+});
+
+function guardarCargo(){
+  const cod   = document.getElementById('cg-cod')?.value.trim();
+  const nom   = document.getElementById('cg-nom')?.value.trim();
+  const valor = parseFloat(document.getElementById('cg-valor')?.value)||0;
+  if(!cod){toast('Ingrese el código','r');document.getElementById('cg-cod')?.focus();return;}
+  if(!nom){toast('Ingrese el nombre del cargo','r');document.getElementById('cg-nom')?.focus();return;}
+  if(valor<=0){toast('Ingrese un valor válido','r');return;}
+  if(!_cargoTarget&&adminDB.cargosPersonalizados.find(c=>c.cod===cod)){
+    toast('El código "'+cod+'" ya existe','r');return;
+  }
+  const areasChecked = [...document.querySelectorAll('#cg-areas-wrap input[type=checkbox]:checked')].map(cb=>cb.value);
+  if(!areasChecked.length){toast('Seleccione al menos un área de aplicación','r');return;}
+  const obj = {
+    id: _cargoTarget||('CG-'+String(Date.now()).slice(-5)),
+    cod, nom,
+    cat:   document.getElementById('cg-cat')?.value,
+    desc:  document.getElementById('cg-desc')?.value||'',
+    valor,
+    unidad: document.getElementById('cg-unidad')?.value,
+    iva:    document.getElementById('cg-iva')?.value,
+    auth:   document.getElementById('cg-auth')?.value,
+    areas:  areasChecked,
+    notas:  document.getElementById('cg-notas')?.value||'',
+    activo: true,
+    creadoPor: _session?.nombre||'Admin',
+  };
+  if(_cargoTarget){
+    const idx = adminDB.cargosPersonalizados.findIndex(c=>c.id===_cargoTarget);
+    if(idx>=0) adminDB.cargosPersonalizados[idx]={...adminDB.cargosPersonalizados[idx],...obj};
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Editar cargo: '+nom,antes:'—',ahora:'$'+valor.toFixed(2),justif:'Actualización',tipo:'cargo'});
+    toast('✅ Cargo actualizado: '+nom,'g');
+  } else {
+    adminDB.cargosPersonalizados.push(obj);
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Nuevo cargo: '+nom,antes:'—',ahora:'$'+valor.toFixed(2),justif:'Creación',tipo:'cargo'});
+    toast('✅ Cargo creado: '+nom,'g');
+  }
+  _cargoTarget=null;
+  hideModal('m-cargo');
+  renderTarifario();
+  renderCargos();
+}
+
+function editarCargo(id){
+  const cg = adminDB.cargosPersonalizados.find(c=>c.id===id);
+  if(!cg) return;
+  _cargoTarget = id;
+  document.getElementById('m-cargo-t').textContent = 'Editar: '+cg.nom;
+  document.getElementById('cg-cod').value   = cg.cod;
+  document.getElementById('cg-nom').value   = cg.nom;
+  document.getElementById('cg-cat').value   = cg.cat;
+  document.getElementById('cg-desc').value  = cg.desc||'';
+  document.getElementById('cg-valor').value = cg.valor;
+  document.getElementById('cg-unidad').value= cg.unidad;
+  document.getElementById('cg-iva').value   = cg.iva;
+  document.getElementById('cg-auth').value  = cg.auth;
+  // Marcar checkboxes de áreas
+  document.querySelectorAll('#cg-areas-wrap input[type=checkbox]').forEach(cb=>{
+    cb.checked = (cg.areas||[]).includes(cb.value);
+  });
+  document.getElementById('cg-notas').value = cg.notas||'';
+  showModal('m-cargo');
+}
+
+function toggleCargo(id){
+  const cg = adminDB.cargosPersonalizados.find(c=>c.id===id);
+  if(!cg) return;
+  cg.activo = !cg.activo;
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:(cg.activo?'Activar':'Desactivar')+' cargo: '+cg.nom,antes:!cg.activo?'Activo':'Inactivo',ahora:cg.activo?'Activo':'Inactivo',justif:'Cambio de estado',tipo:'cargo'});
+  renderCargos();
+  toast((cg.activo?'Cargo activado':'Cargo desactivado')+': '+cg.nom,'g');
+}
+
+function exportarCargos(){
+  const heads='Código,Nombre,Categoría,Descripción,Valor,Unidad,IVA,Autorización,Aplica a,Estado,Creado por\n';
+  const rows = adminDB.cargosPersonalizados.map(c=>
+    `"${c.cod}","${c.nom}","${c.cat}","${c.desc||''}",${c.valor.toFixed(2)},"${c.unidad}","${c.iva==='si'?'Con IVA':'Exento'}","${AUTH_LABEL[c.auth]||c.auth}","${(c.areas||[]).join(' | ')}","${c.activo?'Activo':'Inactivo'}","${c.creadoPor||''}"`
+  ).join('\n');
+  descargar(heads+rows,'Cargos_Personalizados_'+hoy()+'.csv');
+  toast('Cargos exportados','g');
+}
+
+// Abrir modal limpio para nuevo cargo
+const _origShowModal = window.showModal;
+window.showModal = (id) => {
+  if(id==='m-cargo'&&!_cargoTarget){
+    document.getElementById('m-cargo-t').textContent='➕ Nuevo Cargo';
+    ['cg-cod','cg-nom','cg-desc','cg-valor','cg-notas'].forEach(x=>{
+      const el=document.getElementById(x);if(el)el.value='';
+    });
+    document.querySelectorAll('#cg-areas-wrap input[type=checkbox]').forEach(cb=>cb.checked=false);
+  }
+  _origShowModal(id);
+};
+
+// ════════════════════════════════════════════════════════════════
+//  MOTOR DE CÁLCULO — Quirófano + Anestesia
+//  Lee tipo de anestesia desde Hoja de Anestesia / Protocolo Qx
+// ════════════════════════════════════════════════════════════════
+
+// Tipos de anestesia reconocidos — sincronizados con hoja de anestesia
+const TIPOS_ANESTESIA = {
+  general:    {label:'Anestesia General',                  color:'#c53030', icono:'💉'},
+  conductiva: {label:'Conductiva (Espinal / Epidural)',    color:'#3182ce', icono:'🩹'},
+  sedacion:   {label:'Sedación Consciente / MAC',          color:'#b7791f', icono:'😴'},
+  bloqueo:    {label:'Bloqueo Regional / Periférico',      color:'#553c9a', icono:'🎯'},
+  local:      {label:'Anestesia Local — Sin Cargo',        color:'#2a9d8f', icono:'🔵'},
+};
+
+let _ultimoCalculo = null;
+
+function calcularCargo(){
+  const tipo  = document.getElementById('calc-tipo-anest')?.value;
+  const inicio = document.getElementById('calc-inicio')?.value;
+  const fin    = document.getElementById('calc-fin')?.value;
+
+  // Calcular minutos automáticamente
+  let minutos = 0;
+  if(inicio && fin){
+    const [hI,mI] = inicio.split(':').map(Number);
+    const [hF,mF] = fin.split(':').map(Number);
+    minutos = Math.max(0, (hF*60+mF) - (hI*60+mI));
+  }
+  const el = document.getElementById('calc-minutos');
+  if(el) el.value = minutos;
+
+  const resEl    = document.getElementById('calc-resultado');
+  const localAv  = document.getElementById('calc-local-aviso');
+
+  if(!tipo){
+    if(resEl) resEl.style.display='none';
+    if(localAv) localAv.style.display='none';
+    return;
+  }
+
+  // Calcular cargos usando el motor en adminDB
+  const qxResult    = adminDB.calcularDerechoQx(minutos);
+  const anestResult = adminDB.calcularDerechoAnestesia(tipo, minutos);
+  const total       = qxResult.cargo + anestResult.cargo;
+  const tipoInfo    = TIPOS_ANESTESIA[tipo]||{};
+  const esLocal     = tipo === 'local';
+
+  // Guardar para exportar
+  _ultimoCalculo = {tipo, inicio, fin, minutos, qx:qxResult, anest:anestResult, total};
+
+  // Mostrar resultado
+  if(resEl) resEl.style.display='block';
+  if(localAv) localAv.style.display = esLocal?'block':'none';
+
+  document.getElementById('calc-qx-desc').textContent = qxResult.descripcion;
+  document.getElementById('calc-qx-monto').textContent = '$'+qxResult.cargo.toFixed(2);
+
+  document.getElementById('calc-anest-tipo-badge').innerHTML =
+    `<span style="font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:100px;background:${tipoInfo.color||'#5a7a96'}18;color:${tipoInfo.color||'#5a7a96'};border:1px solid ${tipoInfo.color||'#5a7a96'}30;">${tipoInfo.icono||''} ${tipoInfo.label||tipo}</span>`;
+
+  document.getElementById('calc-anest-desc').textContent = anestResult.descripcion;
+  document.getElementById('calc-anest-monto').textContent = esLocal ? '— SIN CARGO —' : '$'+anestResult.cargo.toFixed(2);
+  document.getElementById('calc-anest-monto').style.color = esLocal ? '#2a9d8f' : '#3182ce';
+
+  document.getElementById('calc-total').textContent = '$'+total.toFixed(2);
+  document.getElementById('calc-total').style.color = total===0?'#2a9d8f':'#276749';
+  const localMsg = document.getElementById('calc-anest-local-msg');
+  if(localMsg) localMsg.style.display = esLocal?'block':'none';
+}
+
+// ── Función pública: recibe datos desde Hoja de Anestesia ────────
+// La hoja de anestesia llama: window.calcularCargosQx(tipo, inicio, fin)
+// y obtiene {qx, anestesia, total} para prellenar la factura.
+window.calcularCargosQx = (tipoAnestesia, horaInicio, horaFin) => {
+  const [hI,mI] = (horaInicio||'00:00').split(':').map(Number);
+  const [hF,mF] = (horaFin||'00:00').split(':').map(Number);
+  const minutos = Math.max(0, (hF*60+mF)-(hI*60+mI));
+  const qx    = adminDB.calcularDerechoQx(minutos);
+  const anest = adminDB.calcularDerechoAnestesia(tipoAnestesia, minutos);
+  return {
+    tipoAnestesia,
+    minutosQx: minutos,
+    derechoQx: qx.cargo,
+    derechoAnestesia: anest.cargo,
+    totalActoQx: +(qx.cargo + anest.cargo).toFixed(2),
+    descripcionQx: qx.descripcion,
+    descripcionAnest: anest.descripcion,
+  };
+};
+
+function exportarCalculo(){
+  if(!_ultimoCalculo) return;
+  const u = _ultimoCalculo;
+  const tipo = TIPOS_ANESTESIA[u.tipo]?.label||u.tipo;
+  const contenido = [
+    'CÁLCULO DE CARGOS QUIRÚRGICOS — MEDIX8 HIS',
+    '===========================================',
+    `Fecha/Hora: ${new Date().toLocaleString('es-EC',{hour12:false})}`,
+    `Usuario: ${_session?.nombre||'—'}`,
+    '',
+    `Tipo de Anestesia: ${tipo}`,
+    `Hora Inicio Qx:    ${u.inicio}`,
+    `Hora Fin Qx:       ${u.fin}`,
+    `Tiempo Quirúrgico: ${u.minutos} minutos`,
+    '',
+    `Derecho de Quirófano: $${u.qx.cargo.toFixed(2)}`,
+    `  → ${u.qx.descripcion}`,
+    '',
+    `Derecho de Anestesia: $${u.anest.cargo.toFixed(2)}`,
+    `  → ${u.anest.descripcion}`,
+    '',
+    `TOTAL ACTO QUIRÚRGICO: $${u.total.toFixed(2)}`,
+    '',
+    'Nota: Los valores están sujetos a convenio del paciente.',
+    'Generado desde Panel Administrativo Medix8 HIS.',
+  ].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([contenido],{type:'text/plain;charset=utf-8;'}));
+  a.download = `Calculo_Qx_${hoy()}.txt`;
+  a.click();
+  toast('Cálculo exportado','g');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  AUTENTICACIÓN
+// ════════════════════════════════════════════════════════════════
+function doLogout(){
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre||'—',rol:_session?.rol||'—',accion:'Reinicio de sesión',antes:'—',ahora:'—',justif:'Acceso automático habilitado',tipo:'acceso'});
+  iniciarSesionAutomatica({mostrarToast:true, registrarLog:false, mensajeToast:'Sesión reiniciada'});
+}
+
+function iniciarSesionAutomatica(opts={}){
+  const {mostrarToast=false, registrarLog=true, mensajeToast='Acceso directo habilitado'} = opts;
+  const user = 'gerencia';
+  const found = USUARIOS[user] || Object.values(USUARIOS)[0];
+  const app = document.getElementById('app');
+  const nameEl = document.getElementById('session-name');
+  const rolEl = document.getElementById('session-rol');
+
+  if(!found) return;
+
+  _session = {user, ...found, ts: new Date().toISOString()};
+  if(app) app.style.display='block';
+  if(nameEl) nameEl.textContent = found.nombre;
+  if(rolEl) rolEl.textContent = 'Rol: ' + found.rol;
+
+  if(registrarLog){
+    adminDB.log.push({
+      fecha:new Date().toLocaleString('es-EC',{hour12:false}),
+      usuario:found.nombre,
+      rol:found.rol,
+      accion:'Acceso automático al panel',
+      antes:'—',
+      ahora:found.rol,
+      justif:'Ingreso sin credenciales',
+      tipo:'acceso'
+    });
+  }
+
+  showTab('tarifario');
+  if(mostrarToast) toast('✅ '+mensajeToast+', '+found.nombre,'g');
+}
+
+iniciarSesionAutomatica();
+
+// ════════════════════════════════════════════════════════════════
+//  NAVEGACIÓN
+// ════════════════════════════════════════════════════════════════
+function showTab(t){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sec-'+t)?.classList.add('on');
+  document.getElementById('tab-'+t)?.classList.add('on');
+  if(t==='tarifario')  {renderTarifario();renderCargos();}
+  if(t==='hoteleria')  renderHoteleria();
+  if(t==='perfiles')   renderPerfiles();
+  if(t==='convenios')  renderConvenios();
+  if(t==='cola')       renderCola();
+  if(t==='log')        renderLog();
+}
+
+function showModal(id){document.getElementById(id)?.classList.add('on');}
+function hideModal(id){document.getElementById(id)?.classList.remove('on');}
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('ov'))e.target.classList.remove('on');
+});
+
+// ════════════════════════════════════════════════════════════════
+//  KPIs
+// ════════════════════════════════════════════════════════════════
+function renderKPIs(){
+  const pendientes=adminDB.cola.filter(c=>c.estado==='PENDIENTE').length;
+  const montoPend=adminDB.cola.filter(c=>c.estado==='PENDIENTE').reduce((s,c)=>s+c.monto,0);
+  const montoSync=adminDB.cola.filter(c=>c.estado==='SINCRONIZADO').reduce((s,c)=>s+c.monto,0);
+  document.getElementById('kpi-strip').innerHTML=`
+    <div class="kpi"><div class="kpi-bot" style="background:#1a3a5c;"></div><div class="kpi-ic">💲</div><div class="kpi-v kv-p">${adminDB.tarifario.length+adminDB.hoteleria.length}</div><div class="kpi-l">Servicios Totales</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--blue);"></div><div class="kpi-ic">👤</div><div class="kpi-v kv-b">${adminDB.perfiles.filter(u=>u.activo).length}</div><div class="kpi-l">Usuarios Activos</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--gold);"></div><div class="kpi-ic">🔄</div><div class="kpi-v kv-a">${pendientes}</div><div class="kpi-l">Cargos Pendientes</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--teal);"></div><div class="kpi-ic">✅</div><div class="kpi-v kv-g">$${montoPend.toFixed(2)}</div><div class="kpi-l">En Cola ($)</div></div>
+    <div class="kpi"><div class="kpi-bot" style="background:var(--red);"></div><div class="kpi-ic">📜</div><div class="kpi-v kv-r">${adminDB.log.length}</div><div class="kpi-l">Entradas en Log</div></div>`;
+  // Badges tabs
+  document.getElementById('tn-cola').textContent=pendientes;
+  document.getElementById('tn-log').textContent=adminDB.log.length;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TARIFARIO
+// ════════════════════════════════════════════════════════════════
+function renderTarifario(){
+  renderKPIs();
+  setTimeout(renderCargos, 0);
+  const body=document.getElementById('tarif-body');
+  if(!body) return;
+
+  const catColor={
+    UCI:'#c53030',Quirófano:'#b7791f',Hospitalización:'#2a9d8f',Anestesia:'#276749',
+    Ambulatorio:'#3182ce',Emergencia:'#c53030',Endoscopía:'#553c9a',
+    'CC-RAD':'#3182ce',Imagenología:'#3182ce',
+    'Procedimiento Médico':'#1a3a5c','Procedimiento de Enfermería':'#2a9d8f',
+    'Material y Suministros':'#b7791f','Diagnóstico y Laboratorio':'#3182ce',
+    'Terapia y Rehabilitación':'#276749','Servicios Especiales':'#553c9a',
+    Administrativo:'#5a7a96',
+  };
+
+  // Unificar tarifario base + cargos personalizados en un solo array
+  const serviciosBase = adminDB.tarifario.filter(t=>t.cat!=='Anestesia').map(t=>({
+    _tipo:'base', key:t.key, cod:t.key, label:t.label, cat:t.cat,
+    valor:t.valor, anterior:t.anterior, ultimoCambio:t.ultimoCambio,
+    usuario:t.usuario, notas:t.notas||'', activo: t.activo!==false,
+  }));
+  const cargosExtra = adminDB.cargosPersonalizados.map(c=>({
+    _tipo:'cargo', key:c.id, cod:c.cod, label:c.nom, cat:c.cat,
+    valor:c.valor, anterior:null, ultimoCambio:null, usuario:c.creadoPor,
+    notas:c.desc||'', activo:c.activo,
+  }));
+  const todos = [...serviciosBase, ...cargosExtra];
+
+  body.innerHTML = todos.map(t=>{
+    const col = catColor[t.cat]||'#5a7a96';
+    const activo = t.activo !== false;
+    const rowStyle = activo ? '' : 'opacity:.5;';
+    const estadoBadge = activo
+      ? '<span class="tag t-ok" style="font-size:.56rem;">Activo</span>'
+      : '<span style="font-size:.56rem;padding:2px 7px;border-radius:100px;background:var(--red-l);color:var(--red);border:1px solid rgba(197,48,48,.2);">Inactivo</span>';
+    const toggleBtn = `<button class="tarifa-save" onclick="toggleServicio('${t.key}','${t._tipo}')" style="background:${activo?'rgba(197,48,48,.08)':'rgba(39,103,73,.08)'};color:${activo?'var(--red)':'var(--teal)'};" title="${activo?'Desactivar':'Activar'}">${activo?'⏸':'▶'}</button>`;
+    const editBtn = `<button class="tarifa-save" onclick="${t._tipo==='base'?`abrirEditarTarifa('${t.key}')`:`editarCargo('${t.key}')`}">✏</button>`;
+    const delBtn = `<button class="tarifa-save" onclick="eliminarServicio('${t.key}','${t._tipo}')" style="background:rgba(197,48,48,.08);color:var(--red);border-color:rgba(197,48,48,.2);" title="Eliminar">🗑</button>`;
+    const tipoBadge = t._tipo==='cargo'
+      ? `<span style="font-size:.52rem;padding:1px 5px;border-radius:100px;background:rgba(39,103,73,.1);color:#276749;border:1px solid rgba(39,103,73,.2);">Personalizado</span>`
+      : `<span style="font-size:.52rem;padding:1px 5px;border-radius:100px;background:rgba(26,58,92,.08);color:#1a3a5c;border:1px solid rgba(26,58,92,.15);">Base</span>`;
+    return `<tr class="tarifa-row" style="${rowStyle}">
+      <td>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#1f7a6e;">${t.cod}</div>
+        <div style="margin-top:2px;">${tipoBadge}</div>
+      </td>
+      <td>
+        <div class="nc">${t.label}</div>
+        ${t.notas?`<div style="font-size:.63rem;color:#8baabf;margin-top:1px;">${t.notas}</div>`:''}
+      </td>
+      <td><span style="font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:100px;background:${col}18;color:${col};border:1px solid ${col}30;">${t.cat}</span></td>
+      <td>${t.valor===0?'<span style="color:#2a9d8f;font-size:.72rem;">Sin cargo</span>':`<span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:.9rem;color:#2a9d8f;">$${t.valor.toFixed(2)}</span>`}</td>
+      <td style="font-size:.68rem;color:var(--muted);">${t.anterior!=null?'$'+t.anterior.toFixed(2):'—'}</td>
+      <td style="font-size:.63rem;color:var(--muted);">${t.ultimoCambio?t.ultimoCambio.slice(0,16)+'<br><span style="color:#1a3a5c;font-weight:600;">'+(t.usuario||'')+'</span>':'—'}</td>
+      <td>${estadoBadge}</td>
+      <td><div style="display:flex;gap:3px;">${editBtn}${toggleBtn}${delBtn}</div></td>
+    </tr>`;
+  }).join('');
+
+  const activos = todos.filter(t=>t.activo!==false).length;
+  document.getElementById('tarif-badge').textContent=`${todos.length} servicios · ${activos} activos`;
+}
+
+function actualizarModalAnest(){
+  const cal=document.getElementById('tarifa-calculo')?.value;
+  const panel=document.getElementById('panel-anestesia');
+  const lbl=document.getElementById('tarifa-val-lbl');
+  if(panel) panel.style.display=(cal==='anestesia'||cal==='tiempo')?'block':'none';
+  if(lbl) lbl.textContent=cal==='tiempo'?'Valor $/min':cal==='anestesia'?'Valor base $':cal==='local'?'Sin cargo':'Valor ($)';
+  if(cal==='local'){const v=document.getElementById('tarifa-val');if(v)v.value='0';}
+}
+
+function abrirNuevoServicio(){
+  _tarifaTarget=null;
+  document.getElementById('m-tarifa-t').textContent='+ Nuevo Servicio';
+  document.getElementById('m-tarifa-info').style.display='none';
+  ['tarifa-key','tarifa-label','tarifa-notas','tarifa-justif'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('tarifa-val').value='';
+  document.getElementById('tarifa-calculo').value='fijo';
+  document.getElementById('tarifa-cat').value='CC-HOSP';
+  document.getElementById('tarifa-unidad').value='Por acto';
+  actualizarModalAnest();
+  showModal('m-tarifa');
+  setTimeout(()=>document.getElementById('tarifa-key')?.focus(),200);
+}
+
+function abrirEditarTarifa(key){
+  const t=adminDB.tarifario.find(x=>x.key===key);
+  if(!t) return;
+  _tarifaTarget=key;
+  document.getElementById('m-tarifa-t').textContent='Editar: '+t.label;
+  const info=document.getElementById('m-tarifa-info');
+  info.style.display='block';
+  info.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div><div style="font-weight:700;color:#1a2c3d;">${t.label}</div>
+    <div style="font-size:.7rem;color:#5a7a96;">${t.cat} · ${t.key}</div></div>
+    <div style="text-align:right;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:800;color:#2a9d8f;">$${t.valor.toFixed(2)}</div>
+      <div style="font-size:.6rem;color:#5a7a96;">tarifa actual</div>
+    </div></div>`;
+  document.getElementById('tarifa-key').value=t.key;
+  document.getElementById('tarifa-label').value=t.label;
+  document.getElementById('tarifa-cat').value=t.cat;
+  document.getElementById('tarifa-calculo').value=t.calculo||'fijo';
+  document.getElementById('tarifa-unidad').value=t.unidad||'Por acto';
+  document.getElementById('tarifa-val').value=t.valor;
+  document.getElementById('tarifa-notas').value=t.notas||'';
+  document.getElementById('tarifa-justif').value='';
+  actualizarModalAnest();
+  showModal('m-tarifa');
+  setTimeout(()=>document.getElementById('tarifa-val').select(),200);
+}
+
+function confirmarTarifa(){
+  const key=document.getElementById('tarifa-key')?.value.trim().replace(/\s+/g,'_');
+  const label=document.getElementById('tarifa-label')?.value.trim();
+  const nuevo=parseFloat(document.getElementById('tarifa-val')?.value)||0;
+  const justif=document.getElementById('tarifa-justif')?.value.trim();
+  const calculo=document.getElementById('tarifa-calculo').value;
+  if(!label){toast('Ingrese el nombre del servicio','r');return;}
+  if(!justif){toast('Justificación obligatoria','r');document.getElementById('tarifa-justif')?.focus();return;}
+  if(calculo!=='local'&&nuevo<=0){toast('Ingrese un valor mayor a cero','r');return;}
+  if(_tarifaTarget){
+    const t=adminDB.tarifario.find(x=>x.key===_tarifaTarget);
+    if(!t) return;
+    const anterior=t.valor;
+    t.label=label;t.cat=document.getElementById('tarifa-cat').value;
+    t.calculo=calculo;t.unidad=document.getElementById('tarifa-unidad').value;
+    t.notas=document.getElementById('tarifa-notas').value;
+    t.anterior=anterior;t.valor=nuevo;
+    t.ultimoCambio=new Date().toLocaleString('es-EC',{hour12:false});
+    t.usuario=_session?.nombre||'—';
+    adminDB.log.push({fecha:t.ultimoCambio,usuario:_session?.nombre,rol:_session?.rol,accion:`Editar servicio "${label}"`,antes:'$'+anterior.toFixed(2),ahora:'$'+nuevo.toFixed(2),justif,tipo:'tarifa'});
+    toast('✅ Servicio actualizado: '+label,'g');
+  } else {
+    if(!key){toast('Ingrese una clave/código','r');return;}
+    if(adminDB.tarifario.find(x=>x.key===key)){toast('La clave "'+key+'" ya existe','r');return;}
+    adminDB.tarifario.push({key,label,cat:document.getElementById('tarifa-cat').value,calculo,unidad:document.getElementById('tarifa-unidad').value,valor:nuevo,anterior:null,ultimoCambio:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre||'—',notas:document.getElementById('tarifa-notas').value,_custom:true});
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Nuevo servicio: '+label,antes:'—',ahora:'$'+nuevo.toFixed(2),justif,tipo:'tarifa'});
+    toast('✅ Nuevo servicio creado: '+label,'g');
+  }
+  hideModal('m-tarifa');renderTarifario();renderKPIs();
+}
+
+function toggleServicio(key, tipo){
+  if(tipo==='base'){
+    const t = adminDB.tarifario.find(x=>x.key===key);
+    if(!t) return;
+    t.activo = t.activo===false ? true : false;
+    const estado = t.activo!==false ? 'Activo' : 'Inactivo';
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:(estado==='Activo'?'Activar':'Desactivar')+' servicio: '+t.label,antes:estado==='Activo'?'Inactivo':'Activo',ahora:estado,justif:'Cambio de estado',tipo:'tarifa'});
+    toast((estado==='Activo'?'✅ Servicio activado':'⏸ Servicio desactivado')+': '+t.label, estado==='Activo'?'g':'a');
+  } else {
+    const c = adminDB.cargosPersonalizados.find(x=>x.id===key);
+    if(!c) return;
+    c.activo = !c.activo;
+    adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:(c.activo?'Activar':'Desactivar')+' cargo: '+c.nom,antes:!c.activo?'Activo':'Inactivo',ahora:c.activo?'Activo':'Inactivo',justif:'Cambio de estado',tipo:'cargo'});
+    toast((c.activo?'✅ Cargo activado':'⏸ Cargo desactivado')+': '+c.nom, c.activo?'g':'a');
+  }
+  renderTarifario();
+}
+
+function eliminarServicio(key, tipo){
+  let label = '';
+  if(tipo==='base'){
+    const t = adminDB.tarifario.find(x=>x.key===key);
+    if(!t) return;
+    label = t.label;
+  } else {
+    const c = adminDB.cargosPersonalizados.find(x=>x.id===key);
+    if(!c) return;
+    label = c.nom;
+  }
+  if(!confirm('¿Eliminar "'+label+'"?\n\nSi ya no se usa pero podría volver, considere desactivarlo en lugar de eliminarlo.')) return;
+  const justif = prompt('Motivo de la eliminación (requerido para auditoría):');
+  if(justif===null) return;
+  if(!justif.trim()){toast('Debe ingresar el motivo para continuar','r');return;}
+  if(tipo==='base'){
+    adminDB.tarifario = adminDB.tarifario.filter(x=>x.key!==key);
+  } else {
+    adminDB.cargosPersonalizados = adminDB.cargosPersonalizados.filter(x=>x.id!==key);
+  }
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Eliminar: '+label,antes:'Activo',ahora:'ELIMINADO',justif:justif.trim(),tipo:'tarifa'});
+  renderTarifario(); renderKPIs();
+  toast('Eliminado: '+label,'r');
+}
+
+function exportarTarifario(){
+  const heads='Clave,Servicio,Categoría,Tarifa Actual,Tarifa Anterior,Último Cambio,Usuario\n';
+  const rows=adminDB.tarifario.map(t=>`"${t.key}","${t.label}","${t.cat}",${t.valor.toFixed(2)},${t.anterior!=null?t.anterior.toFixed(2):''},"${t.ultimoCambio||''}","${t.usuario||''}"`).join('\n');
+  descargar(heads+rows,'Tarifario_Medix8_'+hoy()+'.csv');
+  toast('Tarifario exportado','g');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CONVENIOS
+// ════════════════════════════════════════════════════════════════
+function renderConvenios(){
+  const body=document.getElementById('conv-body');
+  if(!body) return;
+  body.innerHTML=adminDB.convenios.map(cv=>{
+    const pctCol=cv.pct<0?'var(--teal)':cv.pct>0?'var(--red)':'var(--muted)';
+    const pctLabel=cv.pct===0?'Sin ajuste':cv.pct===-100?'Gratuito':cv.pct<0?cv.pct+'% Desc.':'+'+cv.pct+'% Rec.';
+    return `<tr>
+      <td class="nc">${cv.nombre}</td>
+      <td><span class="tag t-ok" style="font-size:.58rem;">Tarifa ${cv.tipo}</span></td>
+      <td><span class="conv-pct" style="color:${pctCol};font-size:.88rem;">${pctLabel}</span></td>
+      <td class="dc">${cv.iva==='si'?'Con IVA 15%':'Exento IVA'}</td>
+      <td class="dc">${cv.tipo==='B'?'✔ Tarifario Nacional':'—'}</td>
+      <td>${cv.activo?'<span class="tag t-ok" style="font-size:.58rem;">Activo</span>':'<span class="tag t-red" style="font-size:.58rem;">Inactivo</span>'}</td>
+      <td>
+        <button class="tarifa-save" onclick="abrirEditarConvenio('${cv.id}')">✏ Editar</button>
+      </td>
+    </tr>`;
+  }).join('');
+  // Llenar simulador
+  const selS=document.getElementById('sim-servicio');
+  const selC=document.getElementById('sim-convenio');
+  if(selS) selS.innerHTML='<option value="">Seleccione servicio...</option>'+adminDB.tarifario.map(t=>`<option value="${t.key}">${t.label} ($${t.valor.toFixed(2)})</option>`).join('');
+  if(selC) selC.innerHTML='<option value="">Seleccione convenio...</option>'+adminDB.convenios.filter(c=>c.activo).map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+}
+
+function abrirEditarConvenio(id){
+  const cv=adminDB.convenios.find(c=>c.id===id);
+  if(!cv) return;
+  _convTarget=id;
+  document.getElementById('m-conv-t').textContent='Editar: '+cv.nombre;
+  document.getElementById('conv-nombre').value=cv.nombre;
+  document.getElementById('conv-tipo').value=cv.tipo;
+  document.getElementById('conv-pct').value=cv.pct;
+  document.getElementById('conv-iva').value=cv.iva;
+  document.getElementById('conv-activo').value=cv.activo?'si':'no';
+  showModal('m-convenio');
+}
+
+function confirmarConvenio(){
+  const cv=adminDB.convenios.find(c=>c.id===_convTarget);
+  if(!cv) return;
+  const anterior={...cv};
+  cv.nombre=document.getElementById('conv-nombre').value.trim()||cv.nombre;
+  cv.tipo=document.getElementById('conv-tipo').value;
+  cv.pct=parseFloat(document.getElementById('conv-pct').value)||0;
+  cv.iva=document.getElementById('conv-iva').value;
+  cv.activo=document.getElementById('conv-activo').value==='si';
+  adminDB.log.push({
+    fecha:new Date().toLocaleString('es-EC',{hour12:false}),
+    usuario:_session?.nombre,rol:_session?.rol,
+    accion:`Cambio convenio "${cv.nombre}"`,
+    antes:`${anterior.pct}% / Tipo ${anterior.tipo}`,
+    ahora:`${cv.pct}% / Tipo ${cv.tipo}`,
+    justif:'Actualización convenio',tipo:'convenio',
+  });
+  hideModal('m-convenio');
+  renderConvenios();
+  toast('Convenio actualizado: '+cv.nombre,'g');
+}
+
+function crearConvenio(){
+  const nombre=document.getElementById('nconv-nombre')?.value.trim();
+  if(!nombre){toast('Ingrese el nombre','r');return;}
+  adminDB.convenios.push({
+    id:'CONV-'+String(Date.now()).slice(-6),nombre,
+    tipo:document.getElementById('nconv-tipo').value,
+    pct:parseFloat(document.getElementById('nconv-pct').value)||0,
+    iva:document.getElementById('nconv-iva').value,
+    activo:true,
+  });
+  adminDB.log.push({fecha:new Date().toLocaleString('es-EC',{hour12:false}),usuario:_session?.nombre,rol:_session?.rol,accion:'Nuevo convenio: '+nombre,antes:'—',ahora:'ACTIVO',justif:'Creación',tipo:'convenio'});
+  hideModal('m-conv-nuevo');
+  renderConvenios();
+  toast('Convenio creado: '+nombre,'g');
+}
+
+function simularTarifa(){
+  const sKey=document.getElementById('sim-servicio')?.value;
+  const cId=document.getElementById('sim-convenio')?.value;
+  const res=document.getElementById('sim-resultado');
+  const det=document.getElementById('sim-detalle');
+  if(!sKey||!cId){if(res)res.textContent='$—';return;}
+  const tarifa=adminDB.tarifario.find(t=>t.key===sKey);
+  const conv=adminDB.convenios.find(c=>c.id===cId);
+  if(!tarifa||!conv) return;
+  const ajuste=conv.pct/100;
+  const base=tarifa.valor;
+  const descuento=base*Math.abs(ajuste)*(ajuste<0?-1:1);
+  const subtotal=base+descuento;
+  const iva=conv.iva==='si'?subtotal*0.15:0;
+  const total=subtotal+iva;
+  if(res) res.textContent='$'+total.toFixed(2);
+  if(det) det.innerHTML=`Base: $${base.toFixed(2)} ${conv.pct!==0?`· Ajuste ${conv.pct}%: $${descuento.toFixed(2)}`:''}${iva>0?`· IVA: $${iva.toFixed(2)}`:''}`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  COLA DE SINCRONIZACIÓN
+// ════════════════════════════════════════════════════════════════
+function renderCola(){
+  renderKPIs();
+  const body=document.getElementById('cola-body');
+  if(!body) return;
+  const pendientes=adminDB.cola.filter(c=>c.estado==='PENDIENTE').length;
+  document.getElementById('cola-badge2').textContent=pendientes+' pendientes';
+  body.innerHTML=adminDB.cola.map(c=>{
+    const col=c.estado==='SINCRONIZADO'?'var(--teal)':'var(--gold)';
+    const badge = c.estado==='SINCRONIZADO'
+      ? c.isLocked
+        ? '<span class="tag t-ok" style="font-size:.56rem;">✔ Sync</span> <span style="font-size:.54rem;padding:1px 5px;border-radius:100px;background:rgba(26,58,92,.1);color:#1a3a5c;border:1px solid rgba(26,58,92,.2);">🔒 Bloqueado</span>'
+        : '<span class="tag t-ok" style="font-size:.56rem;">✔ Sincronizado</span>'
+      : '<span class="tag t-pend" style="font-size:.56rem;">⏳ Pendiente</span>';
+    return `<tr style="${c.estado==='SINCRONIZADO'?'opacity:.55':''}">
+      <td class="mc" style="font-size:.66rem;">${c.fecha}</td>
+      <td><span class="tag t-ok" style="font-size:.56rem;">${c.modulo}</span></td>
+      <td style="font-weight:600;color:var(--white);">${c.concepto}</td>
+      <td class="dc">${c.paciente}</td>
+      <td class="mc">${c.area}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:800;color:${col};">$${c.monto.toFixed(2)}</td>
+      <td class="mc" style="font-size:.66rem;">${c.lote||'—'}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
+
+// ════════════════════════════════════════════════════════════════
+//  INTEGRACIÓN ERP — Cableado Medix8 → Sistema Externo
+// ════════════════════════════════════════════════════════════════
+
+// ── Diccionario de mapeo: área operativa → código centro de costos ──
+const AREA_CODIGO_MAP = {
+  // Camas específicas
+  'UCI-01':'CC-UCI','UCI-02':'CC-UCI','UCI-03':'CC-UCI',
+  'HOSP-03':'CC-HOSP','HOSP-05':'CC-HOSP','HOSP-07':'CC-HOSP','HOSP-08':'CC-HOSP',
+  'NEO-01':'CC-NEO','NEO-02':'CC-NEO',
+  'QX-01':'CC-QX','QX-02':'CC-QX',
+  // Módulos y áreas genéricas — IDs estables, nunca texto libre
+  'POS':'CC-FARMEXT',
+  'Admin':'CC-ADMIN',
+  'UCI':'CC-UCI',
+  'HOSP':'CC-HOSP',
+  'CC-HOSP':'CC-HOSP',
+  'CC-QX':'CC-QX',
+  'CC-NEO':'CC-NEO',
+  'CC-EMERG':'CC-EMERG',
+  'CC-FARM':'CC-FARM',
+  'CC-AMB':'CC-AMB',
+  'CC-ADMIN':'CC-ADMIN',
+  'Despacho Clínico':'CC-FARM',
+  'Venta Pública':'CC-FARMEXT',
+  'Cargo Personalizado':'CC-PROC',
+  '—':'CC-GEN',
+};
+
+// ── Diccionario: módulo/concepto → SKU del ítem ─────────────────
+function resolverSKU(item){
+  const norm = (item||'').toLowerCase();
+  // Buscar en tarifario por label
+  const t = adminDB.tarifario.find(x=>x.label.toLowerCase()===norm||x.key.toLowerCase()===norm);
+  if(t) return t.key.toUpperCase();
+  // Buscar en cargos personalizados
+  const cg = adminDB.cargosPersonalizados.find(x=>x.nom.toLowerCase()===norm||x.cod.toLowerCase()===norm);
+  if(cg) return cg.cod;
+  // Fallback: normalizar el nombre
+  return norm.replace(/[^a-z0-9]/g,'_').slice(0,20).toUpperCase()||'GEN_ITEM';
+}
+
+// ── Diccionario cuenta contable por categoría ───────────────────
+const CUENTA_CONTABLE = {
+  'CC-HOSP': '4.1.01.001',
+  'UCI':             '4.1.01.002',
+  'CC-QX':       '4.1.02.001',
+  'Anestesia':       '4.1.02.002',
+  'Ambulatorio':     '4.1.03.001',
+  'CC-EMERG':      '4.1.03.002',
+  'CC-ENDOSC':      '4.1.04.001',
+  'CC-RAD':    '4.1.04.002',
+  'Imagenología':    '4.1.04.003',
+  'Procedimiento Médico':        '4.2.01.001',
+  'Procedimiento de Enfermería': '4.2.01.002',
+  'Diagnóstico y Laboratorio':   '4.2.02.001',
+  'Terapia y Rehabilitación':    '4.2.03.001',
+  'Servicios Especiales':        '4.2.04.001',
+  'Administrativo':              '4.3.01.001',
+  'CC-FARM':                    '4.1.05.001',
+  'default':                     '4.9.99.001',
+};
+
+// ── Resolver convenio_id desde paciente/área ────────────────────
+function resolverConvenioId(cargo){
+  // Si el cargo trae convenio explícito
+  if(cargo.convenio_id) return cargo.convenio_id;
+  // Por defecto CONV-001 (Privado); en producción se leería de la HCL
+  return 'CONV-001';
+}
+
+// ── BLOQUE 1: exportarLoteFacturacion() ─────────────────────────
+// Genera JSON estructurado listo para consumo del ERP
+function exportarLoteFacturacion(){
+  const pendientes = adminDB.cola.filter(c=>c.estado==='PENDIENTE'&&!c.isLocked);
+  if(!pendientes.length){toast('Sin cargos pendientes para generar lote','a');return null;}
+
+  const loteId = 'LOTE-'+Date.now();
+  const ts = new Date().toISOString();
+
+  const payload = {
+    meta: {
+      transaccion_id: loteId+'_'+ts,
+      lote_id:        loteId,
+      timestamp_utc:  ts,
+      emisor:         'Medix8 HIS v4',
+      receptor:       'ERP Externo',
+      total_items:    pendientes.length,
+      monto_total:    +pendientes.reduce((s,c)=>s+c.monto,0).toFixed(2),
+      generado_por:   _session?.nombre||'SISTEMA',
+      rol:            _session?.rol||'SISTEMA',
+    },
+    items: pendientes.map((cargo,idx)=>{
+      const areaCod = AREA_CODIGO_MAP[cargo.area]||AREA_CODIGO_MAP[cargo.modulo]||'GEN';
+      const sku     = resolverSKU(cargo.concepto||cargo.item||'');
+      const catFind = adminDB.tarifario.find(t=>t.key===sku.toLowerCase())||
+                      adminDB.cargosPersonalizados.find(t=>t.cod===sku);
+      const cat     = catFind?.cat||'default';
+      return {
+        linea_id:          idx+1,
+        transaccion_id:    loteId+'_'+ts,
+        paciente_hcl:      cargo.paciente||'CF',
+        convenio_id:       resolverConvenioId(cargo),
+        item_sku:          sku,
+        item_descripcion:  cargo.concepto||cargo.item||'—',
+        cantidad_neta:     1,
+        precio_unitario:   cargo.monto,
+        monto_total:       cargo.monto,
+        area_codigo:       areaCod,
+        modulo_origen:     cargo.modulo||'—',
+        lote_farmacia:     cargo.lote||'—',
+        fecha_evento:      cargo.fecha||ts,
+        cuenta_contable:   CUENTA_CONTABLE[cat]||CUENTA_CONTABLE.default,
+      };
+    }),
+  };
+
+  // Mostrar preview en panel
+  const panel = document.getElementById('erp-panel');
+  if(panel) panel.style.display='block';
+  const pre = document.getElementById('erp-json-preview');
+  if(pre) pre.textContent = JSON.stringify(payload, null, 2).slice(0, 2000)+(JSON.stringify(payload).length>2000?'\n... (truncado)':'');
+  const txnEl = document.getElementById('erp-txn-id');
+  if(txnEl) txnEl.textContent = payload.meta.transaccion_id;
+  const nEl = document.getElementById('erp-items-n');
+  if(nEl) nEl.textContent = payload.meta.total_items;
+  const mEl = document.getElementById('erp-monto-lote');
+  if(mEl) mEl.textContent = '$'+payload.meta.monto_total.toFixed(2);
+  const loteEl = document.getElementById('erp-lote-id');
+  if(loteEl) loteEl.textContent = loteId;
+
+  // También ofrecer descarga
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = loteId+'.json';
+  a.click();
+
+  toast('📦 Lote '+loteId+' generado — '+pendientes.length+' items','g');
+  return payload;
+}
+
+// ── BLOQUE 2: Bloqueo de auditoría ──────────────────────────────
+// isLocked: true → el cargo no puede modificarse ni eliminarse
+function bloquearCargos(cargos){
+  cargos.forEach(c=>{
+    c.isLocked = true;
+    c.lockedAt = new Date().toISOString();
+    c.lockedBy = _session?.nombre||'SISTEMA';
+  });
+}
+
+function verificarBloqueo(cargo){
+  if(cargo?.isLocked){
+    toast('⛔ Cargo bloqueado — ya fue sincronizado con el ERP. No se puede modificar.','r');
+    return true;
+  }
+  return false;
+}
+
+// ── BLOQUE 3: Endpoint simulado → /api/erp/sync ─────────────────
+async function enviarERP(){
+  if(!_session?.permisos.includes('sync')){
+    toast('Sin permisos de sincronización con ERP','r'); return;
+  }
+  const pendientes = adminDB.cola.filter(c=>c.estado==='PENDIENTE'&&!c.isLocked);
+  if(!pendientes.length){toast('Sin cargos pendientes para enviar','a');return;}
+
+  // Generar lote
+  const payload = exportarLoteFacturacion();
+  if(!payload) return;
+
+  // Actualizar status visual → enviando
+  _erpSetStatus('sending');
+  toast('🔗 Enviando lote al ERP...','a');
+
+  try {
+    // Mock fetch — simula latencia de red (800ms)
+    const respuesta = await _erpFetchMock('/api/erp/sync', payload);
+
+    if(respuesta.status === 200){
+      // ── ÉXITO ──────────────────────────────────────────────
+      // 1. Bloquear los cargos (isLocked: true)
+      bloquearCargos(pendientes);
+      // 2. Marcar como SINCRONIZADO
+      pendientes.forEach(c=>{c.estado='SINCRONIZADO';});
+      // 3. Actualizar timestamp
+      const syncTs = new Date().toLocaleString('es-EC',{hour12:false});
+      document.getElementById('ultima-sync').textContent = syncTs;
+      // 4. Log de auditoría INMUTABLE
+      const total = pendientes.reduce((s,c)=>s+c.monto,0);
+      adminDB.log.push({
+        fecha:     syncTs,
+        usuario:   _session.nombre,
+        rol:       _session.rol,
+        accion:    `ERP SYNC OK — Lote ${payload.meta.lote_id} · ${pendientes.length} items · $${total.toFixed(2)}`,
+        antes:     'PENDIENTE',
+        ahora:     'SINCRONIZADO+BLOQUEADO',
+        justif:    `Respuesta ERP 200 OK · txn_id: ${payload.meta.transaccion_id}`,
+        tipo:      'sync',
+        isLocked:  true,  // El log mismo es inmutable
+        erp_response: respuesta,
+      });
+      // 5. Status visual → ok
+      _erpSetStatus('ok', respuesta);
+      renderCola(); renderKPIs();
+      toast(`✅ ERP sincronizado — ${pendientes.length} cargos bloqueados · $${total.toFixed(2)}`,'g');
+
+    } else {
+      // ── ERROR ERP ──────────────────────────────────────────
+      _erpSetStatus('error', respuesta);
+      adminDB.log.push({
+        fecha: new Date().toLocaleString('es-EC',{hour12:false}),
+        usuario: _session.nombre, rol: _session.rol,
+        accion: `ERP SYNC FALLO — Lote ${payload.meta.lote_id}`,
+        antes: 'PENDIENTE', ahora: 'ERROR_ERP',
+        justif: `HTTP ${respuesta.status}: ${respuesta.message||'Error desconocido'}`,
+        tipo: 'sync',
+      });
+      toast('❌ ERP rechazó el lote: '+respuesta.message,'r');
+    }
+
+  } catch(err){
+    _erpSetStatus('error', {status:0, message:err.message});
+    toast('❌ Error de red: '+err.message,'r');
+  }
+}
+
+// ── Mock fetch — simula /api/erp/sync ──────────────────────────
+function _erpFetchMock(url, payload){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      // Simular respuesta exitosa del ERP
+      // En producción: reemplazar con fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
+      const exito = Math.random() > 0.15; // 85% éxito en demo
+      if(exito){
+        resolve({
+          status:        200,
+          message:       'Lote recibido y procesado',
+          erp_lote_ref:  'ERP-'+Date.now(),
+          items_ok:      payload.items.length,
+          items_error:   0,
+          timestamp_erp: new Date().toISOString(),
+        });
+      } else {
+        resolve({
+          status:  422,
+          message: 'Validación fallida: convenio_id no reconocido',
+          items_ok: 0, items_error: payload.items.length,
+        });
+      }
+    }, 800);
+  });
+}
+
+// ── Estado visual del ERP ───────────────────────────────────────
+function _erpSetStatus(estado, resp){
+  const dot = document.getElementById('erp-dot');
+  const txt = document.getElementById('erp-status-txt');
+  if(!dot||!txt) return;
+  const cfg = {
+    sending: {col:'#3182ce', msg:'ERP: Enviando lote...', anim:true},
+    ok:      {col:'#276749', msg:`ERP: ✅ Sincronizado — ${resp?.items_ok||0} items OK`, anim:false},
+    error:   {col:'#c53030', msg:`ERP: ❌ Error ${resp?.status||0} — ${resp?.message||''}`, anim:false},
+    idle:    {col:'var(--gold)', msg:'ERP: En espera de autorización', anim:true},
+  };
+  const s = cfg[estado]||cfg.idle;
+  dot.style.background = s.col;
+  dot.style.boxShadow = `0 0 8px ${s.col}`;
+  dot.style.animation = s.anim ? 'spulse 1.5s infinite' : 'none';
+  txt.style.color = s.col;
+  txt.textContent = s.msg;
+}
+
+// Exponer API pública para que Medix8 Farmacia llame directamente
+window.Medix8ERP = {
+  exportarLote:  exportarLoteFacturacion,
+  enviar:        enviarERP,
+  verificarLock: verificarBloqueo,
+  calcularCargosQx: window.calcularCargosQx, // re-exportar
+};
+
+function sincronizarTodo(){
+  if(!_session?.permisos.includes('sync')){toast('Sin permisos de sincronización','r');return;}
+  const pendientes=adminDB.cola.filter(c=>c.estado==='PENDIENTE');
+  if(!pendientes.length){toast('No hay cargos pendientes','a');return;}
+  const total=pendientes.reduce((s,c)=>s+c.monto,0);
+  pendientes.forEach(c=>c.estado='SINCRONIZADO');
+  document.getElementById('ultima-sync').textContent=new Date().toLocaleString('es-EC',{hour12:false});
+  adminDB.log.push({
+    fecha:new Date().toLocaleString('es-EC',{hour12:false}),
+    usuario:_session.nombre,rol:_session.rol,
+    accion:`Cierre de lote — ${pendientes.length} cargos por $${total.toFixed(2)}`,
+    antes:'PENDIENTE',ahora:'SINCRONIZADO',
+    justif:'Autorización manual cierre de lote',tipo:'sync',
+  });
+  renderCola();renderKPIs();
+  toast('✅ '+pendientes.length+' cargos sincronizados · $'+total.toFixed(2),'g');
+}
+
+function exportarCola(){
+  const heads='Fecha/Hora,Módulo,Concepto,Paciente,Área,Monto,Lote,Estado\n';
+  const rows=adminDB.cola.map(c=>`"${c.fecha}","${c.modulo}","${c.concepto}","${c.paciente}","${c.area}",${c.monto.toFixed(2)},"${c.lote||''}","${c.estado}"`).join('\n');
+  descargar(heads+rows,'Cola_Cargos_'+hoy()+'.csv');
+  toast('Cola exportada','g');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LOG DE AUDITORÍA
+// ════════════════════════════════════════════════════════════════
+function renderLog(filtro, tipo){
+  const q=(filtro||_logFiltro||'').toLowerCase();
+  const t=(tipo!==undefined?tipo:_logTipo);
+  const body=document.getElementById('log-body');
+  if(!body) return;
+  let items=[...adminDB.log].reverse().filter(l=>{
+    if(t&&!l.tipo?.includes(t)) return false;
+    return !q||(l.usuario+l.accion+l.antes+l.ahora).toLowerCase().includes(q);
+  });
+  document.getElementById('log-badge2').textContent=adminDB.log.length+' registros';
+  body.innerHTML=items.map(l=>`<tr>
+    <td class="mc" style="font-size:.64rem;">${l.fecha}</td>
+    <td class="log-user">${l.usuario||'—'}</td>
+    <td><span class="tag t-ok" style="font-size:.54rem;">${l.rol||'—'}</span></td>
+    <td style="color:var(--white);">${l.accion}</td>
+    <td class="log-antes">${l.antes||'—'}</td>
+    <td class="log-ahora">${l.ahora||'—'}</td>
+    <td class="dc" style="font-size:.68rem;">${l.justif||'—'}</td>
+  </tr>`).join('');
+  renderKPIs();
+}
+
+function filtrarLog(q){_logFiltro=q;renderLog();}
+function filtrarLogTipo(t){_logTipo=t;renderLog();}
+
+function exportarLog(){
+  const heads='Fecha/Hora,Usuario,Rol,Acción,Valor Anterior,Valor Nuevo,Justificación,Tipo\n';
+  const rows=adminDB.log.map(l=>[`"${l.fecha}"`,`"${l.usuario||''}"`,`"${l.rol||''}"`,`"${l.accion}"`,`"${l.antes||''}"`,`"${l.ahora||''}"`,`"${l.justif||''}"`,`"${l.tipo||''}"`].join(',')).join('\n');
+  descargar(heads+rows,'Log_Auditoria_Admin_'+hoy()+'.csv');
+  toast('Log de auditoría exportado','g');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  UTILIDADES
+// ════════════════════════════════════════════════════════════════
+let _toastT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='show'+(type?' '+type:'');
+  clearTimeout(_toastT);_toastT=setTimeout(()=>el.className='',3000);
+}
+function hoy(){return new Date().toISOString().slice(0,10);}
+function descargar(contenido,nombre){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([contenido],{type:'text/csv;charset=utf-8;'}));
+  a.download=nombre;a.click();
+}
+function setV(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+// ── Reloj ───────────────────────────────────────────────────────
+setInterval(()=>{
+  const el=document.getElementById('tb-clk');
+  if(el) el.innerHTML=new Date().toLocaleString('es-EC',{hour12:false,weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+},1000);
+
+</script>
+</body>
+</html>

@@ -38,6 +38,8 @@ import {
   ClipboardList,
   FileText,
   Activity,
+  Pill,
+  PanelTopOpen,
   TimerIcon,
   ArrowBigUp,
 } from 'lucide-react';
@@ -811,6 +813,7 @@ const resumenVitales = [
   };
 
   const isNurseUser = role === ROLES.ENFERMERA;
+  const isAdminUser = role === ROLES.ADMIN;
 
   const getPatientMedicationRows = (mainId) => {
     const planItems = medicationPlanByPatient[mainId] || [];
@@ -991,16 +994,38 @@ const resumenVitales = [
           animate={{ opacity: 1, y: 0 }}
           className="bg-white shadow p-1"
         >
+
           <div className="max-w-9xl mx-auto flex justify-between items-center">
-            <div className="text-[#4ea685] font-bold text-3xl -translate-x-[-80px] text-center  w-full">
+
+            <div className="flex-1 pointer-events-none select-none text-[#4ea685] font-bold text-3xl text-center">
               RACK HOSPITALARIO
             </div>
-            <div className="flex items-center gap-2">
+
+            <div className="relative z-20 flex items-center gap-2">
+              {isAdminUser && (
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => navigate('/farmacia')}
+                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
+                  >
+                    <Pill className="text-white w-6 h-6 mr-2" />
+                    Farmacia
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/Panel-Administrativo')}
+                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
+                  >
+                    <PanelTopOpen className="text-white w-6 h-6 mr-2" />
+                    Panel Administrativo
+                  </Button>
+                </div>
+              )}
               <div className="text-[0.8rem] text-gray-700 font-medium flex items-right gap-1">
                 <User className="w-8 h-8" />
                 {profile?.nombre || user?.email || 'Usuario'}
                 {role ? ` (${role})` : ''}
               </div>
+
               <Button
                 onClick={handleLogout}
                 variant="outline"
@@ -1008,7 +1033,9 @@ const resumenVitales = [
               >
                 <LogOut className=" w-4 h-4 mr-2" /> Salir
               </Button>
+
             </div>
+
           </div>
         </motion.header>
         {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
