@@ -14,7 +14,7 @@ import NursingModule from '@/pages/NursingModule';
 import Anamnesis from '@/pages/Anamnesis';
 import Emergencia from '@/pages/Emergencia';
 import Epicrisis from '@/pages/Epicrisis';
-import Evolucion from '@/pages/Evolucion';
+import Evolucion from '@/modules/medico/evolucion/Evolucion.jsx';
 import Interconsulta from '@/pages/Interconsulta';
 import Protocolo from '@/pages/Protocolo';
 import Consentimientos from '@/pages/Consentimientos';

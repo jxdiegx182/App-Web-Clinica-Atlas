@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hoja de Evolución — Clínicas Atlas</title>
+<!-- FIX #1: Eliminado 'Syne' (nunca se usaba, ~50KB cargados inútilmente) -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#dde7f0;--bg-grad-from:#c5d5e5;--bg-grad-to:#e8edf5;
+  --white:#ffffff;--surface:#f0f5fa;--surface2:#e8edf5;
+  --border:#b0c4d8;--border2:#90aac4;
+  --text:#1a2c3d;--muted:#5a7a96;--dim:#8baabf;
+  --teal:#2a9d8f;--teal-d:#1f7a6e;--teal-l:#d8f2ef;--teal-mid:#4db6ac;
+  --navy:#1a3a5c;--navy-d:#0f2440;--navy-l:#e8f0f8;--navy-mid:#2a5278;
+  --red:#c53030;--red-l:#fff0f0;--red-mid:#fc8181;
+  --green:#276749;--green-l:#f0fff4;--green-mid:#68d391;
+  --amber:#b7791f;--amber-l:#fffaf0;--amber-mid:#f6ad55;
+  --purple:#553c9a;--purple-l:#f5f3ff;--purple-mid:#c4b5fd;
+  --blue:#3182ce;--blue-l:#ebf8ff;
+  --shadow-sm:0 1px 4px rgba(26,58,92,.09);
+  --shadow:0 2px 12px rgba(26,58,92,.12);
+  --shadow-lg:0 6px 28px rgba(26,58,92,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:linear-gradient(160deg,var(--bg-grad-from) 0%,var(--bg-grad-to) 100%);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:var(--surface);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* HEADER */
+.atlas-header{background:var(--navy);border-bottom:2px solid var(--navy-d);padding:10px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:500;box-shadow:0 3px 16px rgba(15,36,64,.4);}
+.atlas-header *{color:white!important;}
+.brand-text{font-family:Georgia,serif;font-size:1.1rem;font-weight:700;}
+.brand-text span{color:var(--teal-mid)!important;}
+.brand-sub{font-size:.56rem;color:rgba(255,255,255,.45)!important;letter-spacing:.1em;text-transform:uppercase;}
+.doc-title{font-size:.9rem;font-weight:800;color:var(--teal-mid)!important;letter-spacing:.06em;text-transform:uppercase;}
+.doc-sub{font-size:.58rem;color:rgba(255,255,255,.4)!important;}
+#atl-clock{font-family:'Courier New',monospace;font-size:.68rem;color:rgba(255,255,255,.5)!important;text-align:right;line-height:1.7;}
+.hdr-btn{padding:7px 14px;background:transparent;border:1.5px solid rgba(255,255,255,.25);border-radius:7px;color:white!important;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.hdr-btn:hover{border-color:var(--teal-mid);}
+.hdr-btn-teal{background:var(--teal)!important;border-color:var(--teal)!important;}
+
+/* APP */
+.app{max-width:1200px;margin:0 auto;padding:18px 20px 120px;display:flex;flex-direction:column;gap:14px;}
+
+/* FIX #6: .card overflow:visible para que los dropdowns CIE-10 y medicamentos
+   no sean cortados por el border-radius del card. Se reaplica el clip solo al header */
+.card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:11px;
+  overflow:visible; /* FIX: era overflow:hidden, cortaba los dropdowns */
+  box-shadow:var(--shadow-sm);
+}
+/* El header y body sí necesitan el clip para que el radius se vea */
+.card-header{
+  padding:9px 18px;
+  background:var(--navy);
+  border-bottom:1px solid var(--navy-d);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-radius:10px 10px 0 0; /* FIX: re-aplica radius al header */
+}
+.card-header *{color:white!important;}
+.card-icon{width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;}
+.card-title{font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.card-badge{margin-left:auto;font-size:.62rem;padding:2px 9px;border-radius:100px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.15);color:white!important;}
+.card-body{
+  padding:16px 18px;
+  border-radius:0 0 10px 10px; /* FIX: re-aplica radius inferior al body */
+}
+.ch-teal{background:linear-gradient(135deg,var(--teal),var(--teal-d))!important;}
+.ch-amber{background:linear-gradient(135deg,var(--amber),#975a16)!important;}
+.ch-green{background:linear-gradient(135deg,var(--green),#1a5c35)!important;}
+.ch-purple{background:linear-gradient(135deg,var(--purple),#44337a)!important;}
+.ch-red{background:linear-gradient(135deg,var(--red),#9b2c2c)!important;}
+.ch-blue{background:linear-gradient(135deg,var(--blue),#2b6cb0)!important;}
+.ch-navy{background:linear-gradient(135deg,var(--navy),var(--navy-d))!important;}
+
+/* CAMPOS */
+.fl{display:block;font-size:.67rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.fi,.fs,.fta{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12);}
+.fi::placeholder,.fta::placeholder{color:var(--dim);}
+.fta{resize:vertical;min-height:72px;line-height:1.6;}
+.fg{margin-bottom:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+/* FIX #2: .g5 con grid responsive — antes 5 cols fijas colapsaban en pantallas medianas */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+
+/* SECCIÓN LABEL */
+.sl{font-size:.65rem;font-weight:700;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* CIE-10 BUSCADOR */
+.cie-wrap{position:relative;}
+.cie-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:9px 38px 9px 12px;font-family:'Inter',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.cie-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12);}
+.cie-input::placeholder{color:var(--dim);}
+.cie-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.9rem;}
+/* FIX #6b: z-index aumentado para garantizar que el dropdown aparezca sobre cards adyacentes */
+.cie-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:10px;max-height:240px;overflow-y:auto;z-index:200;display:none;box-shadow:var(--shadow-lg);}
+.cie-drop.open{display:block;}
+.cie-opt{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--surface2);transition:background .12s;display:flex;align-items:flex-start;gap:10px;}
+.cie-opt:last-child{border-bottom:none;}
+.cie-opt:hover{background:var(--teal-l);}
+/* FIX #5b: min-width flexible para códigos CIE */
+.cie-opt-code{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:var(--navy);min-width:52px;flex-shrink:0;margin-top:1px;}
+.cie-opt-desc{font-size:.82rem;color:var(--text);line-height:1.3;}
+.cie-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:28px;}
+.cie-tag{display:inline-flex;align-items:center;gap:5px;background:var(--navy-l);border:1px solid var(--border);border-radius:100px;padding:4px 10px;font-size:.76rem;}
+.cie-tag-code{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);}
+.cie-tag-name{color:var(--text);}
+.cie-tag-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0;line-height:1;transition:color .15s;}
+.cie-tag-del:hover{color:var(--red);}
+
+/* TABLAS */
+.tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
+.tbl th{padding:8px 10px;background:var(--navy);color:white;font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left;white-space:nowrap;}
+.tbl td{padding:5px 6px;border-bottom:1px solid var(--surface2);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--teal-l);}
+.tbl .fi{padding:5px 8px;font-size:.79rem;border-radius:5px;}
+.tbl .fs{padding:5px 8px;font-size:.79rem;border-radius:5px;}
+/* FIX #12: columna de eliminar con ancho fijo para evitar expansión en Firefox */
+.tbl td:last-child{width:36px;text-align:center;padding:4px 6px;}
+.btn-add-row{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:transparent;border:1.5px dashed var(--teal);border-radius:8px;color:var(--teal-d);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:10px;}
+.btn-add-row:hover{background:var(--teal-l);}
+.btn-del-row{width:26px;height:26px;border-radius:5px;background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.btn-del-row:hover{background:var(--red);color:white;}
+
+/* SOABIE */
+/* FIX #4: .soabie-grid responsive — antes 2 cols fijas en pantallas pequeñas */
+.soabie-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.soabie-card{border:1.5px solid var(--border);border-radius:9px;overflow:hidden;}
+.soabie-header{padding:7px 12px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px;}
+.soabie-body{padding:8px 10px;}
+/* FIX #17: Agregado outline:none en textarea dentro de soabie-body para evitar
+   doble borde (outline del browser + borde del card) al hacer focus */
+.soabie-body .fta{border:none;background:transparent;padding:4px 0;font-size:.84rem;resize:none;min-height:80px;outline:none;}
+.soabie-body .fta:focus{background:var(--surface);outline:none;box-shadow:none;}
+
+/* PRESCRIPCIÓN */
+.rx-item{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;position:relative;transition:border-color .2s;}
+.rx-item:hover{border-color:var(--teal);}
+.rx-item.rx-urgente{border-color:var(--red-mid);background:var(--red-l);}
+.rx-item.rx-enviada{border-color:var(--green-mid);background:var(--green-l);}
+.rx-item.rx-despachada{border-color:var(--teal);background:var(--teal-l);}
+.rx-num{position:absolute;top:10px;left:14px;width:22px;height:22px;background:var(--navy);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;}
+.rx-body{padding-left:32px;}
+/* FIX #8: flex-wrap:wrap en filas de prescripción para evitar overflow horizontal */
+.rx-body > div[style*="display:flex"]{flex-wrap:wrap;}
+.rx-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;}
+.rx-status-badge.pendiente{background:var(--amber-l);border:1px solid var(--amber-mid);color:var(--amber);}
+.rx-status-badge.enviada{background:var(--blue-l);border:1px solid #93c5fd;color:var(--blue);}
+.rx-status-badge.despachada{background:var(--green-l);border:1px solid var(--green-mid);color:var(--green);}
+.rx-status-badge.urgente{background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);}
+.rx-send-btn{padding:5px 12px;border-radius:7px;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:5px;}
+.rx-send-btn.send{background:var(--teal);color:white;}
+.rx-send-btn.send:hover{background:var(--teal-d);}
+.rx-send-btn.urgent{background:var(--red);color:white;}
+.rx-send-btn.urgent:hover{background:#9b2c2c;}
+.rx-send-btn.disabled{background:var(--green-l);border:1px solid var(--green-mid);color:var(--green);cursor:default;}
+
+/* FARMACIA PANEL */
+.farmacia-panel{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:11px;overflow:hidden;box-shadow:var(--shadow-lg);}
+.farmacia-header{padding:14px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.1);}
+.farmacia-icon{width:42px;height:42px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.farmacia-title{font-size:.9rem;font-weight:800;color:white;letter-spacing:.03em;}
+.farmacia-sub{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:1px;}
+/* FIX #7: padding-bottom faltante en farmacia-body */
+.farmacia-body{padding:14px 22px 20px;}
+.farmacia-queue{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;}
+.fq-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:12px;transition:all .2s;}
+.fq-item:hover{background:rgba(255,255,255,.1);}
+.fq-item.urgente{border-color:var(--red-mid);background:rgba(197,48,48,.15);}
+.fq-item.despachada{border-color:var(--green-mid);background:rgba(39,103,73,.15);opacity:.7;}
+.fq-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:800;color:white;flex-shrink:0;}
+.fq-info{flex:1;}
+.fq-med{font-size:.84rem;font-weight:700;color:white;}
+.fq-detail{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:1px;}
+.fq-pac{font-size:.7rem;color:var(--teal-mid);font-weight:600;}
+.fq-actions{display:flex;gap:5px;}
+.fq-btn{padding:4px 10px;border-radius:6px;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.fq-btn.despachar{background:var(--teal);color:white;}
+.fq-btn.despachar:hover{background:var(--teal-d);}
+.fq-btn.done{background:rgba(39,103,73,.3);color:var(--green-mid);cursor:default;}
+.fq-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.fq-dot.pendiente{background:var(--amber-mid);box-shadow:0 0 6px rgba(246,173,85,.53);animation:pulseQ 2s infinite;}
+.fq-dot.urgente{background:var(--red-mid);box-shadow:0 0 6px rgba(252,129,129,.53);animation:pulseQ .8s infinite;}
+.fq-dot.despachada{background:var(--green-mid);}
+@keyframes pulseQ{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+/* ALERTA FARMACIA */
+/* FIX #10: z-index bajado a 790 para que el modal (z:800) aparezca por encima */
+.farmacia-alert{position:fixed;top:78px;right:20px;z-index:790;display:flex;flex-direction:column;gap:8px;max-width:340px;}
+.f-alert{background:var(--navy);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--teal);transform:translateX(120%);transition:transform .3s ease;display:flex;align-items:flex-start;gap:10px;}
+.f-alert.show{transform:translateX(0);}
+.f-alert.urgente{border-left-color:var(--red);}
+.f-alert-icon{font-size:1.2rem;flex-shrink:0;margin-top:1px;}
+.f-alert-body{flex:1;}
+.f-alert-title{font-size:.8rem;font-weight:800;color:white;}
+.f-alert-sub{font-size:.72rem;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.4;}
+.f-alert-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:1rem;padding:0;line-height:1;}
+.f-alert-close:hover{color:white;}
+
+/* VITALES — SEMÁFORO */
+/* FIX #3: font-family explícita en vital-badge para consistencia tipográfica */
+.vital-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 11px;
+  border-radius:7px;
+  border:1.5px solid var(--border);
+  background:var(--white);
+  font-family:'JetBrains Mono',monospace; /* FIX: antes heredaba Inter mezclado */
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--navy);
+}
+/* FIX #3b: la label interior (tipo "PA", "FC") vuelve a Inter para legibilidad */
+.vital-badge > span:first-child{
+  font-family:'Inter',sans-serif;
+  font-size:.68rem;
+  font-weight:600;
+  margin-right:2px;
+}
+.vital-badge.alert{border-color:var(--red-mid);background:var(--red-l);color:var(--red);}
+.vital-badge.warn{border-color:var(--amber-mid);background:var(--amber-l);color:var(--amber);}
+.vital-badge.ok{border-color:var(--green-mid);background:var(--green-l);color:var(--green);}
+
+/* BOTTOM BAR */
+/* FIX #11: padding-bottom aumentado para compensar el btm más alto en responsive */
+.btm{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--navy-d);padding:11px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(15,36,64,.3);}
+.btm-stats{display:flex;gap:22px;align-items:center;}
+.btm-s{display:flex;flex-direction:column;gap:1px;}
+.btm-sl{font-size:.6rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.btm-sv{font-family:'JetBrains Mono',monospace;font-size:.84rem;color:var(--teal-mid);font-weight:700;}
+.btm-actions{display:flex;gap:8px;}
+.btn-outline{padding:8px 16px;background:transparent;color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.25);border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--teal-mid);color:var(--teal-mid);}
+.btn-primary{padding:9px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--teal-d);transform:translateY(-1px);}
+
+/* TOAST */
+#toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--teal);color:white;padding:10px 20px;border-radius:9px;font-size:.82rem;font-weight:700;box-shadow:var(--shadow-lg);opacity:0;transition:all .3s;z-index:9998;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* DOSIS ADMINISTRADAS */
+.dosis-timeline{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.dosis-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:7px;background:var(--surface);border:1px solid var(--border);font-size:.78rem;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dosis-row.admin{border-color:var(--green-mid);background:var(--green-l);}
+.dosis-row.omitida{border-color:var(--amber-mid);background:var(--amber-l);}
+.dosis-hora{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);font-size:.76rem;min-width:46px;}
+.dosis-badge{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em;}
+.dosis-badge.adm{background:var(--green);color:white;}
+.dosis-badge.omit{background:var(--amber);color:white;}
+.dosis-prog-bar{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;margin-top:4px;}
+.dosis-prog-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+/* DESCONTINUADO */
+.rx-item.rx-descontinuada{border-color:#a0aec0;background:#f7fafc;opacity:.75;}
+.rx-descontinuada .rx-body *{color:#718096!important;}
+.rx-discont-banner{background:#fed7d7;border:1px solid #fc8181;border-radius:7px;padding:6px 12px;font-size:.76rem;color:#c53030;font-weight:600;display:flex;align-items:center;gap:6px;margin-top:6px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,39,68,.6);backdrop-filter:blur(4px);z-index:800;display:flex;align-items:center;justify-content:center;}
+.modal-box{background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);width:min(640px,95vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-header{padding:14px 20px;background:var(--navy);display:flex;align-items:center;gap:10px;}
+.modal-header *{color:white!important;}
+/* FIX #13: overflow-x:hidden en modal-body evita scroll horizontal inesperado */
+.modal-body{padding:18px 20px;overflow-y:auto;overflow-x:hidden;flex:1;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — FIX #2, #4, #10
+═══════════════════════════════════════════ */
+/* Pantallas medianas: tablets en landscape */
+@media(max-width:1100px){
+  .g4{grid-template-columns:1fr 1fr;}
+  .g5{grid-template-columns:1fr 1fr 1fr;}
+}
+
+/* Tablets portrait */
+@media(max-width:900px){
+  /* FIX #4: soabie-grid colapsa a 1 columna */
+  .soabie-grid{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .g5{grid-template-columns:1fr 1fr;}
+}
+
+/* Móviles */
+@media(max-width:600px){
+  .atlas-header{padding:8px 14px;gap:10px;}
+  .app{padding:12px 10px 130px;}
+  .g2,.g3,.g4,.g5{grid-template-columns:1fr;}
+  .card-body{padding:12px 14px;}
+  .card-header{padding:8px 14px;}
+  /* FIX #10: btm-stats wrap en móvil para evitar overflow */
+  .btm{flex-direction:column;gap:8px;padding:10px 14px;}
+  .btm-stats{flex-wrap:wrap;gap:10px;justify-content:center;}
+  .btm-actions{flex-wrap:wrap;justify-content:center;gap:6px;}
+  .btm-actions .btn-outline,.btm-actions .btn-primary{font-size:.74rem;padding:7px 12px;}
+  /* farmacia header responsive */
+  .farmacia-header{flex-wrap:wrap;gap:8px;}
+}
+
+/* ═══════════════════════════════════════════
+   PRINT — FIX #11 (headers de tabla visibles)
+═══════════════════════════════════════════ */
+@media print{
+  @page{margin:.8cm 1cm;size:A4 portrait;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:white!important;}
+  .atlas-header,.btm,.farmacia-panel,.farmacia-alert,.btn-add-row,.btn-del-row,
+  .rx-send-btn,.cie-wrap .cie-input,.cie-icon,.cie-drop{display:none!important;}
+  .app{padding:4px 0!important;gap:5px!important;}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;border-radius:4px!important;break-inside:avoid;margin-bottom:4px!important;overflow:hidden!important;}
+  .card-header{padding:4px 10px!important;border-radius:3px 3px 0 0!important;}
+  .card-body{padding:6px 10px!important;}
+  .fi,.fs,.fta{padding:3px 6px!important;font-size:7.5pt!important;border:1px solid #ccc!important;}
+  /* FIX #11: En impresión, headers de tabla con fondo gris claro + texto negro */
+  .tbl th{padding:3px 6px!important;font-size:7pt!important;background:#e8edf5!important;color:#1a2c3d!important;}
+  .tbl td{padding:3px 6px!important;font-size:7pt!important;}
+  .rx-item{padding:6px 10px!important;}
+  .cie-tags{margin-top:4px!important;}
+  .cie-tag{font-size:7pt!important;padding:2px 7px!important;}
+  .soabie-grid{grid-template-columns:1fr 1fr!important;}
+  .card{overflow:hidden!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="atlas-header">
+  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <svg viewBox="0 0 44 44" width="40" height="40"><rect width="44" height="44" rx="9" fill="#0f2440"/><text x="22" y="30" font-family="Georgia,serif" font-size="24" font-weight="bold" fill="#4db6ac" text-anchor="middle">A</text></svg>
+    <div><div class="brand-text">Clínicas <span>ATLAS</span></div><div class="brand-sub">Sistema de Gestión Médica</div></div>
+  </div>
+  <div style="width:1px;height:34px;background:rgba(255,255,255,.18);flex-shrink:0;"></div>
+  <div style="flex:1;">
+    <div class="doc-title">Hoja de Evolución</div>
+    <div class="doc-sub">MSP · HCU · Clínicas Atlas · Ecuador</div>
+  </div>
+  <div id="atl-clock"></div>
+  <button class="hdr-btn" onclick="window.print()">🖨️ Imprimir</button>
+  <button class="hdr-btn hdr-btn-teal" onclick="guardar()">💾 Guardar</button>
+</div>
+
+<div id="toast"></div>
+<div class="farmacia-alert" id="farmacia-alert-wrap"></div>
+
+<!-- MODAL DESCONTINUAR -->
+<div id="modal-discont" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header"><div class="card-icon">⛔</div><span style="font-size:.85rem;font-weight:800;">Descontinuar Medicamento</span></div>
+    <div class="modal-body">
+      <div id="discont-med-name" style="font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:12px;"></div>
+      <div class="fg" style="margin-bottom:10px;"><label class="fl">Motivo de descontinuación</label>
+        <select class="fs" id="discont-motivo">
+          <option value="">— Seleccionar motivo —</option>
+          <option>Tratamiento completado</option>
+          <option>Reacción adversa / Efecto secundario</option>
+          <option>Sin respuesta al tratamiento</option>
+          <option>Cambio de esquema terapéutico</option>
+          <option>Contraindicación identificada</option>
+          <option>Alta del paciente</option>
+          <option>Solicitud del paciente</option>
+          <option>Error de prescripción — corregido</option>
+          <option>Interacción medicamentosa</option>
+          <option>Resultado de laboratorio</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Observación adicional</label>
+        <textarea class="fta" id="discont-obs" placeholder="Detalles del motivo de descontinuación..." style="min-height:60px;"></textarea>
+      </div>
+      <div id="discont-devolucion" style="margin-top:12px;padding:10px 14px;background:var(--amber-l);border:1.5px solid var(--amber-mid);border-radius:9px;display:none;">
+        <div style="font-size:.7rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">📦 Devolución a Farmacia</div>
+        <div id="discont-devolucion-txt" style="font-size:.84rem;font-weight:600;color:var(--text);"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" style="color:var(--text);border-color:var(--border);" onclick="cerrarDiscont()">Cancelar</button>
+      <button class="btn-primary" style="background:var(--red);" onclick="confirmarDiscont()">⛔ Descontinuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DEVOLUCIÓN / AUDITORÍA -->
+<div id="modal-devolucion" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header"><div class="card-icon">📦</div><span style="font-size:.85rem;font-weight:800;">Auditoría de Medicamentos — Devolución a Farmacia</span></div>
+    <div class="modal-body" id="devolucion-body"></div>
+    <div class="modal-footer">
+      <button class="btn-outline" style="color:var(--text);border-color:var(--border);" onclick="document.getElementById('modal-devolucion').style.display='none'">Cerrar</button>
+      <button class="btn-primary" onclick="confirmarDevolucion()">📦 Confirmar Devolución</button>
+    </div>
+  </div>
+</div>
+
+<main class="app">
+
+<!-- 1. DATOS DEL PACIENTE -->
+<div class="card">
+  <div class="card-header ch-teal">
+    <div class="card-icon">👤</div><span class="card-title">Datos del Paciente</span>
+    <span class="card-badge" id="badge-fecha"></span>
+  </div>
+  <div class="card-body">
+    <div class="g4" style="margin-bottom:12px;">
+      <div class="fg"><label class="fl">Apellidos y Nombres</label><input class="fi" id="pac-nombre" type="text" placeholder="Apellido Apellido, Nombre Nombre" oninput="updateStats()"></div>
+      <div class="fg"><label class="fl">Cédula / HCL</label><input class="fi" id="pac-cedula" type="text" placeholder="0000000000" style="font-family:'JetBrains Mono',monospace;font-weight:700;"></div>
+      <div class="fg"><label class="fl">Edad</label><input class="fi" id="pac-edad" type="text" placeholder="—"></div>
+      <div class="fg"><label class="fl">Fecha de Evolución</label><input class="fi" id="pac-fecha" type="date" oninput="updateStats()"></div>
+    </div>
+    <div class="g5">
+      <div class="fg"><label class="fl">Servicio / Sala</label><input class="fi" id="pac-sala" type="text" placeholder="Cirugía · Sala 2"></div>
+      <div class="fg"><label class="fl">Cama</label><input class="fi" id="pac-cama" type="text" placeholder="204-B" style="font-family:'JetBrains Mono',monospace;font-weight:700;"></div>
+      <div class="fg"><label class="fl">Médico Tratante</label><input class="fi" id="pac-medico" type="text" placeholder="Dr. Apellido Nombre"></div>
+      <div class="fg"><label class="fl">Días de Hospitalización</label><input class="fi" id="pac-dias" type="number" placeholder="0" style="font-family:'JetBrains Mono',monospace;"></div>
+      <div class="fg"><label class="fl">Alergias ⚠️</label><input class="fi" id="pac-alerg" type="text" placeholder="NKDA o especifique" style="color:var(--red);font-weight:700;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. SIGNOS VITALES -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">💊</div><span class="card-title">Signos Vitales</span><span class="card-badge" id="badge-vitales">Pendiente</span></div>
+  <div class="card-body">
+    <div class="g4" style="margin-bottom:10px;">
+      <div class="fg"><label class="fl">PA (mmHg)</label><input class="fi" id="sv-pa" type="text" placeholder="120/80" oninput="evalVitales()"></div>
+      <div class="fg"><label class="fl">FC (lpm)</label><input class="fi" id="sv-fc" type="number" placeholder="72" oninput="evalVitales()"></div>
+      <div class="fg"><label class="fl">FR (rpm)</label><input class="fi" id="sv-fr" type="number" placeholder="16" oninput="evalVitales()"></div>
+      <div class="fg"><label class="fl">Temp (°C)</label><input class="fi" id="sv-temp" type="number" step="0.1" placeholder="36.5" oninput="evalVitales()"></div>
+    </div>
+    <div class="g4" style="margin-bottom:12px;">
+      <div class="fg"><label class="fl">SpO₂ (%)</label><input class="fi" id="sv-spo2" type="number" placeholder="98" oninput="evalVitales()"></div>
+      <div class="fg"><label class="fl">Glucosa (mg/dl)</label><input class="fi" id="sv-gluc" type="number" placeholder="—"></div>
+      <div class="fg"><label class="fl">Peso (kg)</label><input class="fi" id="sv-peso" type="number" step="0.1" placeholder="—"></div>
+      <div class="fg"><label class="fl">Diuresis (ml/h)</label><input class="fi" id="sv-diuresis" type="number" placeholder="—"></div>
+    </div>
+    <!-- Semáforo vitales -->
+    <div id="vital-semaforo" style="display:flex;flex-wrap:wrap;gap:7px;"></div>
+    <div style="margin-top:12px;" class="g2">
+      <div class="fg"><label class="fl">Actividad / Movilización</label><input class="fi" id="sv-actividad" type="text" placeholder="Reposo absoluto / Deambulación asistida..."></div>
+      <div class="fg"><label class="fl">Dieta Indicada</label><input class="fi" id="sv-dieta" type="text" placeholder="Ayuno / Dieta blanda / Normal..."></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. EVOLUCIÓN SOABIE -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">📋</div><span class="card-title">Evolución — Método SOABIE</span></div>
+  <div class="card-body">
+    <div class="soabie-grid">
+      <div class="soabie-card" style="border-color:#3b82f6;">
+        <div class="soabie-header" style="background:#eff6ff;color:#1d4ed8;"><span>S</span> Subjetivo</div>
+        <div class="soabie-body"><textarea class="fta" id="s-subjetivo" placeholder="Lo que el paciente refiere: dolor, síntomas, quejas, percepción del estado..."></textarea></div>
+      </div>
+      <div class="soabie-card" style="border-color:#8b5cf6;">
+        <div class="soabie-header" style="background:#f5f3ff;color:#553c9a;"><span>O</span> Objetivo</div>
+        <div class="soabie-body"><textarea class="fta" id="s-objetivo" placeholder="Hallazgos clínicos observados: exploración física, signos vitales, aspecto general..."></textarea></div>
+      </div>
+      <div class="soabie-card" style="border-color:#f59e0b;">
+        <div class="soabie-header" style="background:#fffaf0;color:#b7791f;"><span>A</span> Análisis</div>
+        <div class="soabie-body"><textarea class="fta" id="s-analisis" placeholder="Impresión diagnóstica, correlación clínica, evolución respecto al día anterior..."></textarea></div>
+      </div>
+      <div class="soabie-card" style="border-color:#2a9d8f;">
+        <div class="soabie-header" style="background:var(--teal-l);color:var(--teal-d);"><span>B</span> Bienestar</div>
+        <div class="soabie-body"><textarea class="fta" id="s-bienestar" placeholder="Estado emocional, nivel de dolor (EVA 0-10), confort, ansiedad..."></textarea></div>
+      </div>
+      <div class="soabie-card" style="border-color:#276749;">
+        <div class="soabie-header" style="background:var(--green-l);color:var(--green);"><span>I</span> Intervenciones</div>
+        <div class="soabie-body"><textarea class="fta" id="s-intervenciones" placeholder="Procedimientos realizados, curaciones, cambios de catéter, administración de fármacos..."></textarea></div>
+      </div>
+      <div class="soabie-card" style="border-color:#c53030;">
+        <div class="soabie-header" style="background:var(--red-l);color:var(--red);"><span>E</span> Evaluación / Plan</div>
+        <div class="soabie-body"><textarea class="fta" id="s-evaluacion" placeholder="Respuesta al tratamiento, plan para próximas horas, indicaciones, cambios de manejo..."></textarea></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;" class="g2">
+      <div class="fg"><label class="fl">Comunicar a Enfermería</label><textarea class="fta" id="s-enfermeria" placeholder="Indicaciones específicas para el equipo de enfermería..." style="min-height:60px;"></textarea></div>
+      <div class="fg"><label class="fl">Observaciones Generales</label><textarea class="fta" id="s-observaciones" placeholder="Notas generales del equipo médico..." style="min-height:60px;"></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. DIAGNÓSTICO CIE-10 -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">🔵</div><span class="card-title">Diagnóstico — CIE-10</span><span class="card-badge" id="badge-dx">Sin diagnóstico</span></div>
+  <div class="card-body">
+    <div class="g2" style="gap:16px;">
+      <div>
+        <div class="sl">Diagnóstico Principal</div>
+        <div class="cie-wrap">
+          <input class="cie-input" id="cie-main-search" type="text" placeholder="🔍 Buscar por código o descripción CIE-10..." oninput="searchCIE('main',this.value)" onfocus="openCIE('main')" onblur="setTimeout(()=>closeCIE('main'),200)" autocomplete="off">
+          <span class="cie-icon">🔍</span>
+          <div class="cie-drop" id="cie-drop-main"></div>
+        </div>
+        <div class="cie-tags" id="cie-tags-main"><span style="font-size:.76rem;color:var(--dim);font-style:italic;">Sin diagnóstico principal seleccionado</span></div>
+      </div>
+      <div>
+        <div class="sl">Diagnósticos Secundarios</div>
+        <div class="cie-wrap">
+          <input class="cie-input" id="cie-sec-search" type="text" placeholder="🔍 Buscar diagnósticos secundarios..." oninput="searchCIE('sec',this.value)" onfocus="openCIE('sec')" onblur="setTimeout(()=>closeCIE('sec'),200)" autocomplete="off">
+          <span class="cie-icon">🔍</span>
+          <div class="cie-drop" id="cie-drop-sec"></div>
+        </div>
+        <div class="cie-tags" id="cie-tags-sec"><span style="font-size:.76rem;color:var(--dim);font-style:italic;">Sin diagnósticos secundarios</span></div>
+      </div>
+    </div>
+    <!-- Tabla diagnóstico detallada -->
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+      <div class="sl">Detalle del Diagnóstico</div>
+      <div style="overflow-x:auto;">
+        <table class="tbl" id="dx-table">
+          <thead><tr>
+            <th>Código CIE-10</th><th>Descripción</th><th>Tipo</th><th>Estado</th><th>Observación</th><th></th>
+          </tr></thead>
+          <tbody id="dx-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-add-row" onclick="addDxRow()">+ Agregar diagnóstico</button>
+    </div>
+  </div>
+</div>
+
+<!-- 5. INFUSIONES INTRAVENOSAS -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">💧</div><span class="card-title">Infusiones Intravenosas</span></div>
+  <div class="card-body">
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="inf-table">
+        <thead><tr>
+          <th>Solución / Infusión</th><th>Volumen (ml)</th><th>Velocidad (ml/h)</th><th>Aditivos</th><th>Vía</th><th>Inicio</th><th>Duración</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody id="inf-body"></tbody>
+      </table>
+    </div>
+    <button class="btn-add-row" onclick="addInfRow()">+ Agregar infusión</button>
+  </div>
+</div>
+
+<!-- 6. PRESCRIPCIÓN MÉDICA + FARMACIA -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">💊</div><span class="card-title">Prescripción Médica</span><span class="card-badge" id="badge-rx">0 medicamentos</span></div>
+  <div class="card-body">
+    <div class="sl">Buscador de Medicamentos</div>
+    <div class="cie-wrap" style="margin-bottom:14px;">
+      <input class="cie-input" id="med-search" type="text" placeholder="🔍 Buscar medicamento por nombre genérico o comercial..." oninput="searchMed(this.value)" onfocus="openMedDrop()" onblur="setTimeout(closeMedDrop,200)" autocomplete="off">
+      <span class="cie-icon">💊</span>
+      <div class="cie-drop" id="med-drop"></div>
+    </div>
+    <!-- Lista de prescripciones -->
+    <div id="rx-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+      <div style="text-align:center;padding:20px;color:var(--dim);font-size:.84rem;border:1.5px dashed var(--border);border-radius:9px;background:var(--surface);">
+        Sin prescripciones — busque un medicamento para agregar
+      </div>
+    </div>
+    <button class="btn-add-row" onclick="abrirSolicitudFarmacia()">🔎 Solicitar medicamento no disponible en listado</button>
+  </div>
+</div>
+
+<!-- MODAL SOLICITUD FARMACIA -->
+<div id="modal-solicitud-farm" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="width:min(480px,95vw);">
+    <div class="modal-header" style="background:linear-gradient(135deg,var(--amber),#975a16);">
+      <div class="card-icon">🔎</div>
+      <span style="font-size:.85rem;font-weight:800;">Solicitar Medicamento a Farmacia</span>
+    </div>
+    <div class="modal-body">
+      <div style="padding:9px 12px;background:var(--amber-l);border:1px solid var(--amber-mid);border-radius:8px;font-size:.76rem;color:var(--amber);font-weight:600;margin-bottom:14px;">
+        ⚠ El medicamento no está en el listado de la clínica. Farmacia lo buscará y confirmará disponibilidad o sugerirá alternativa.
+      </div>
+      <div class="fg" style="margin-bottom:10px;">
+        <label class="fl">Nombre del Medicamento <span style="color:var(--red);">*</span></label>
+        <input class="fi" id="sf-nombre" placeholder="Nombre genérico o comercial completo" style="font-weight:600;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;">
+        <div class="fg" style="margin:0;">
+          <label class="fl">Concentración / Presentación</label>
+          <input class="fi" id="sf-conc" placeholder="ej: 500mg/tab, 1g/amp">
+        </div>
+        <div class="fg" style="margin:0;">
+          <label class="fl">Dosis requerida</label>
+          <input class="fi" id="sf-dosis" placeholder="ej: 500mg, 1g">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;">
+        <div class="fg" style="margin:0;">
+          <label class="fl">Vía</label>
+          <select class="fs" id="sf-via">
+            <option value="">— Vía —</option>
+            <option>VO — Vía oral</option><option>IV — Intravenosa</option>
+            <option>IM — Intramuscular</option><option>SC — Subcutánea</option>
+            <option>Nebulización inhalatoria</option><option>Tópico</option><option>Otra</option>
+          </select>
+        </div>
+        <div class="fg" style="margin:0;">
+          <label class="fl">Frecuencia</label>
+          <select class="fs" id="sf-frec">
+            <option value="">— Frec. —</option>
+            <option>c/4h — Cada 4 horas (6 dosis/día)</option>
+            <option>c/6h — Cada 6 horas (4 dosis/día)</option>
+            <option>c/8h — Cada 8 horas (3 dosis/día)</option>
+            <option>c/12h — Cada 12 horas (2 dosis/día)</option>
+            <option>c/24h — Una vez al día</option>
+            <option>Una sola dosis (dosis única)</option>
+            <option>PRN — A necesidad</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Indicaciones / Motivo clínico</label>
+        <textarea class="fta" id="sf-indicaciones" placeholder="Motivo de prescripción, urgencia, alternativas aceptables..." style="min-height:52px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" style="color:var(--text);border-color:var(--border);" onclick="cerrarSolicitudFarmacia()">Cancelar</button>
+      <button class="btn-primary" style="background:var(--amber);" onclick="confirmarSolicitudFarmacia()">🔎 Enviar Solicitud a Farmacia</button>
+    </div>
+  </div>
+</div>
+
+<!-- 7. PANEL FARMACIA -->
+<div class="farmacia-panel">
+  <div class="farmacia-header">
+    <div class="farmacia-icon">🏥</div>
+    <div style="flex:1;min-width:0;">
+      <div class="farmacia-title">Panel de Farmacia</div>
+      <div class="farmacia-sub">Cola de despacho en tiempo real — Clínicas Atlas · Farmacia Central</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <div style="width:9px;height:9px;border-radius:50%;background:var(--green-mid);box-shadow:0 0 7px rgba(104,211,145,.6);animation:pulseQ 2s infinite;"></div>
+      <span style="font-size:.72rem;color:rgba(255,255,255,.5);">Farmacia en línea</span>
+      <span id="farmacia-queue-count" style="background:var(--teal);color:white;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:100px;white-space:nowrap;">0 pendientes</span>
+    </div>
+  </div>
+  <div class="farmacia-body">
+    <div id="farmacia-queue" class="farmacia-queue">
+      <div style="text-align:center;padding:24px;color:rgba(255,255,255,.3);font-size:.84rem;">
+        Cola vacía — envíe prescripciones desde el panel de medicamentos
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7b. MEDICACIÓN HABITUAL -->
+<div class="card">
+  <div class="card-header ch-teal">
+    <div class="card-icon">📋</div>
+    <span class="card-title">Medicación Habitual del Paciente</span>
+    <span class="card-badge" id="badge-medhab">Pendiente registro</span>
+  </div>
+  <div class="card-body">
+    <div class="sl">Medicamentos que el paciente toma de forma crónica o habitual</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="medh-table">
+        <thead><tr>
+          <th>Medicamento</th><th>Dosis Habitual</th><th>Frecuencia</th><th>Vía</th><th>Indicación / Motivo</th><th>¿Continuar?</th><th>Observación</th><th></th>
+        </tr></thead>
+        <tbody id="medh-body"></tbody>
+      </table>
+    </div>
+    <button class="btn-add-row" onclick="addMedHabRow()">+ Agregar medicación habitual</button>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+      <div class="sl">Búsqueda rápida de medicamento habitual</div>
+      <div class="cie-wrap" style="margin-bottom:8px;">
+        <input class="cie-input" id="medh-search" type="text" placeholder="🔍 Buscar medicamento habitual por nombre..." oninput="searchMedH(this.value)" onfocus="openMedHDrop()" onblur="setTimeout(closeMedHDrop,200)" autocomplete="off">
+        <span class="cie-icon">💊</span>
+        <div class="cie-drop" id="medh-drop"></div>
+      </div>
+    </div>
+    <div style="margin-top:10px;" class="g2">
+      <div class="fg"><label class="fl">Alergias a medicamentos conocidas</label>
+        <textarea class="fta" id="medh-alergias" placeholder="Especifique reacciones adversas conocidas: Penicilina → anafilaxia · AINEs → urticaria..." style="min-height:56px;color:var(--red);font-weight:600;border-color:var(--red-mid);"></textarea>
+      </div>
+      <div class="fg"><label class="fl">Observaciones sobre medicación habitual</label>
+        <textarea class="fta" id="medh-obs" placeholder="Adherencia al tratamiento · Automedicación · Plantas medicinales · Suplementos..." style="min-height:56px;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8. OTROS EXÁMENES -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">🔬</div><span class="card-title">Exámenes Complementarios</span></div>
+  <div class="card-body">
+    <div class="g2">
+      <div class="fg"><label class="fl">Exámenes Solicitados</label><textarea class="fta" id="examenes-sol" placeholder="Lab: BH, QS, TP, TTP&#10;Imagen: Rx Tórax, ECO abdominal&#10;Otros: ECG, Cultivos..."></textarea></div>
+      <div class="fg"><label class="fl">Resultados / Interpretación</label><textarea class="fta" id="examenes-res" placeholder="Resultados relevantes y su interpretación clínica..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9. FIRMA -->
+<div class="card">
+  <div class="card-header ch-teal"><div class="card-icon">✍️</div><span class="card-title">Firma y Responsable</span></div>
+  <div class="card-body">
+    <div class="g3">
+      <div class="fg"><label class="fl">Médico Responsable</label><input class="fi" id="firma-medico" type="text" placeholder="Dr. Apellido Nombre"></div>
+      <div class="fg"><label class="fl">Código / Matrícula</label><input class="fi" id="firma-codigo" type="text" placeholder="SEN-XXXX" style="font-family:'JetBrains Mono',monospace;font-weight:700;"></div>
+      <div class="fg"><label class="fl">Fecha y Hora</label><input class="fi" id="firma-fecha" type="datetime-local"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- BOTTOM BAR -->
+<div class="btm">
+  <div class="btm-stats">
+    <div class="btm-s"><span class="btm-sl">Paciente</span><span class="btm-sv" id="stat-pac">—</span></div>
+    <div class="btm-s"><span class="btm-sl">Dx Principal</span><span class="btm-sv" id="stat-dx">—</span></div>
+    <div class="btm-s"><span class="btm-sl">Prescripciones</span><span class="btm-sv" id="stat-rx">0</span></div>
+    <div class="btm-s"><span class="btm-sl">En Farmacia</span><span class="btm-sv" id="stat-farm">0 pendientes</span></div>
+  </div>
+  <div class="btm-actions">
+    <button class="btn-outline" onclick="verificarTodasDevoluciones()">📦 Auditoría / Devolución</button>
+    <button class="btn-outline" onclick="enviarTodasFarmacia()">📤 Enviar todo a Farmacia</button>
+    <button class="btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn-primary" onclick="guardar()">💾 Guardar Evolución</button>
+  </div>
+</div>
+
+<script>
+// ── RELOJ ──
+(function(){
+  function tick(){
+    const n=new Date();
+    const d=n.toLocaleDateString('es-EC',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'}).toUpperCase();
+    const h=n.toTimeString().slice(0,8);
+    const el=document.getElementById('atl-clock');
+    if(el) el.innerHTML=d+'<br>'+h;
+  }
+  tick(); setInterval(tick,1000);
+  document.getElementById('badge-fecha').textContent = new Date().toLocaleDateString('es-EC',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+})();
+
+// ══════════════════════════════════════════════════════
+// BASE DE DATOS CIE-10
+// ══════════════════════════════════════════════════════
+const CIE10_DB=[
+  {c:'A00',d:'Cólera'},{c:'A01',d:'Fiebre tifoidea y paratifoidea'},{c:'A02',d:'Otras infecciones debidas a Salmonella'},
+  {c:'A04',d:'Otras infecciones intestinales bacterianas'},{c:'A09',d:'Gastroenteritis y colitis de origen infeccioso'},
+  {c:'A15',d:'Tuberculosis respiratoria'},{c:'A41',d:'Septicemia, no especificada'},{c:'A49',d:'Infección bacteriana de sitio no especificado'},
+  {c:'B00',d:'Infecciones herpéticas'},{c:'B18',d:'Hepatitis vírica crónica'},{c:'B20',d:'Enfermedad por VIH'},
+  {c:'B37',d:'Candidiasis'},{c:'C18',d:'Tumor maligno del colon'},{c:'C34',d:'Tumor maligno del bronquio y del pulmón'},
+  {c:'C50',d:'Tumor maligno de la mama'},{c:'C61',d:'Tumor maligno de la próstata'},{c:'C67',d:'Tumor maligno de la vejiga urinaria'},
+  {c:'D50',d:'Anemia por deficiencia de hierro'},{c:'D64',d:'Otras anemias'},{c:'E10',d:'Diabetes mellitus tipo 1'},
+  {c:'E11',d:'Diabetes mellitus tipo 2'},{c:'E14',d:'Diabetes mellitus, no especificada'},{c:'E43',d:'Desnutrición proteico-calórica severa'},
+  {c:'E66',d:'Obesidad'},{c:'E87',d:'Otros trastornos de los líquidos, electrolitos y equilibrio ácido-base'},
+  {c:'F10',d:'Trastornos mentales y del comportamiento debidos al uso de alcohol'},
+  {c:'F32',d:'Episodio depresivo'},{c:'G20',d:'Enfermedad de Parkinson'},{c:'G30',d:'Enfermedad de Alzheimer'},
+  {c:'G40',d:'Epilepsia'},{c:'G43',d:'Migraña'},{c:'G45',d:'Ataques de isquemia cerebral transitoria'},
+  {c:'H25',d:'Catarata senil'},{c:'H35',d:'Otros trastornos de la retina'},
+  {c:'I10',d:'Hipertensión esencial (primaria)'},{c:'I20',d:'Angina de pecho'},{c:'I21',d:'Infarto agudo de miocardio'},
+  {c:'I25',d:'Enfermedad isquémica crónica del corazón'},{c:'I48',d:'Fibrilación y aleteo auricular'},
+  {c:'I50',d:'Insuficiencia cardíaca'},{c:'I63',d:'Infarto cerebral'},{c:'I64',d:'Accidente vascular encefálico'},
+  {c:'I70',d:'Aterosclerosis'},{c:'I80',d:'Flebitis y tromboflebitis'},
+  {c:'J00',d:'Rinofaringitis aguda (resfriado común)'},{c:'J06',d:'Infecciones agudas de las vías respiratorias superiores'},
+  {c:'J18',d:'Neumonía, no especificada'},{c:'J20',d:'Bronquitis aguda'},{c:'J44',d:'Otras enfermedades pulmonares obstructivas crónicas'},
+  {c:'J45',d:'Asma'},{c:'J81',d:'Edema pulmonar'},{c:'J90',d:'Derrame pleural'},
+  {c:'K25',d:'Úlcera gástrica'},{c:'K26',d:'Úlcera duodenal'},{c:'K35',d:'Apendicitis aguda con peritonitis'},
+  {c:'K37',d:'Apendicitis, no especificada'},{c:'K40',d:'Hernia inguinal'},{c:'K57',d:'Enfermedad diverticular del intestino'},
+  {c:'K74',d:'Fibrosis y cirrosis del hígado'},{c:'K80',d:'Colelitiasis'},{c:'K81',d:'Colecistitis'},{c:'K85',d:'Pancreatitis aguda'},
+  {c:'K92',d:'Otras enfermedades del aparato digestivo'},
+  {c:'L89',d:'Úlcera de decúbito'},{c:'L03',d:'Celulitis'},{c:'L50',d:'Urticaria'},
+  {c:'M05',d:'Artritis reumatoide seropositiva'},{c:'M10',d:'Gota'},{c:'M16',d:'Coxartrosis'},
+  {c:'M17',d:'Gonartrosis'},{c:'M47',d:'Espondilosis'},{c:'M54',d:'Dorsalgia'},
+  {c:'N18',d:'Enfermedad renal crónica'},{c:'N20',d:'Cálculos del riñón y del uréter'},
+  {c:'N39',d:'Otros trastornos del sistema urinario'},{c:'N40',d:'Hiperplasia de la próstata'},
+  {c:'O80',d:'Parto único espontáneo'},{c:'O82',d:'Parto por cesárea'},
+  {c:'R00',d:'Anomalías del latido cardíaco'},{c:'R05',d:'Tos'},{c:'R06',d:'Anomalías de la respiración'},
+  {c:'R10',d:'Dolor abdominal y pélvico'},{c:'R55',d:'Síncope y colapso'},{c:'R65',d:'Síndrome de respuesta inflamatoria sistémica'},
+  {c:'S02',d:'Fractura del cráneo y huesos de la cara'},{c:'S22',d:'Fractura de costillas'},
+  {c:'S32',d:'Fractura de la columna lumbar y pelvis'},{c:'S42',d:'Fractura del hombro y brazo'},
+  {c:'S52',d:'Fractura del antebrazo'},{c:'S72',d:'Fractura del fémur'},{c:'S82',d:'Fractura de la pierna'},
+  {c:'T36',d:'Intoxicación por antibióticos sistémicos'},{c:'T41',d:'Intoxicación por anestésicos'},
+  {c:'Z48',d:'Atención posterior a procedimientos quirúrgicos'},{c:'Z87',d:'Historia personal de enfermedades'},
+  {c:'Z96',d:'Presencia de implantes funcionales'},
+];
+
+const cieSelected={main:[],sec:[]};
+
+function searchCIE(scope,q){
+  const dd=document.getElementById('cie-drop-'+scope);
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=CIE10_DB.filter(r=>r.c.toLowerCase().includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados en CIE-10</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(r=>`<div class="cie-opt" onclick="addCIE('${scope}','${r.c}','${r.d.replace(/'/g,"\\'")}')">
+    <span class="cie-opt-code">${r.c}</span><span class="cie-opt-desc">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+function openCIE(scope){const inp=document.getElementById('cie-'+scope+'-search');if(inp&&inp.value.length>=2)searchCIE(scope,inp.value);}
+function closeCIE(scope){document.getElementById('cie-drop-'+scope)?.classList.remove('open');}
+function addCIE(scope,code,desc){
+  if(cieSelected[scope].find(x=>x.c===code))return;
+  cieSelected[scope].push({c:code,d:desc});
+  renderCIETags(scope);
+  document.getElementById('cie-'+scope+'-search').value='';
+  closeCIE(scope);
+  addDxRowData(code,desc,scope==='main'?'Principal':'Secundario');
+  updateBadgeDx();
+}
+function removeCIE(scope,code){
+  cieSelected[scope]=cieSelected[scope].filter(x=>x.c!==code);
+  renderCIETags(scope);updateBadgeDx();
+}
+function renderCIETags(scope){
+  const cont=document.getElementById('cie-tags-'+scope);
+  if(!cieSelected[scope].length){
+    cont.innerHTML=`<span style="font-size:.76rem;color:var(--dim);font-style:italic;">${scope==='main'?'Sin diagnóstico principal':'Sin diagnósticos secundarios'}</span>`;return;
+  }
+  cont.innerHTML=cieSelected[scope].map(x=>`<span class="cie-tag">
+    <span class="cie-tag-code">${x.c}</span><span class="cie-tag-name">${x.d}</span>
+    <button class="cie-tag-del" onclick="removeCIE('${scope}','${x.c}')">✕</button>
+  </span>`).join('');
+}
+function updateBadgeDx(){
+  const tot=cieSelected.main.length+cieSelected.sec.length;
+  const b=document.getElementById('badge-dx');
+  b.textContent=tot?tot+' diagnóstico'+(tot>1?'s':''):'Sin diagnóstico';
+  document.getElementById('stat-dx').textContent=cieSelected.main[0]?.c||'—';
+}
+
+// ── TABLA DIAGNÓSTICO ──
+let dxCounter=0;
+function addDxRow(){
+  dxCounter++;
+  const tb=document.getElementById('dx-body');
+  const tr=document.createElement('tr');tr.id='dx-'+dxCounter;
+  tr.innerHTML=`
+    <td><input class="fi" type="text" placeholder="Ej: K37" style="width:80px;font-family:'JetBrains Mono',monospace;font-weight:700;"></td>
+    <td><input class="fi" type="text" placeholder="Descripción diagnóstico" style="min-width:180px;"></td>
+    <td><select class="fs" style="width:100px;"><option>Principal</option><option>Secundario</option><option>Complicación</option></select></td>
+    <td><select class="fs" style="width:110px;"><option>Presuntivo</option><option>Definitivo</option><option>Descartado</option></select></td>
+    <td><input class="fi" type="text" placeholder="Observación" style="min-width:140px;"></td>
+    <td><button class="btn-del-row" onclick="document.getElementById('dx-${dxCounter}').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+function addDxRowData(code,desc,tipo){
+  dxCounter++;
+  const tb=document.getElementById('dx-body');
+  const tr=document.createElement('tr');tr.id='dx-'+dxCounter;
+  tr.innerHTML=`
+    <td><input class="fi" type="text" value="${code}" style="width:80px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);"></td>
+    <td><input class="fi" type="text" value="${desc}" style="min-width:180px;"></td>
+    <td><select class="fs" style="width:100px;"><option ${tipo==='Principal'?'selected':''}>Principal</option><option ${tipo==='Secundario'?'selected':''}>Secundario</option><option>Complicación</option></select></td>
+    <td><select class="fs" style="width:110px;"><option>Presuntivo</option><option>Definitivo</option><option>Descartado</option></select></td>
+    <td><input class="fi" type="text" placeholder="Observación" style="min-width:140px;"></td>
+    <td><button class="btn-del-row" onclick="document.getElementById('dx-${dxCounter}').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+
+// ── TABLA INFUSIONES ──
+let infCounter=0;
+function addInfRow(data={}){
+  infCounter++;
+  const tb=document.getElementById('inf-body');
+  const tr=document.createElement('tr');tr.id='inf-'+infCounter;
+  tr.innerHTML=`
+    <td><input class="fi" type="text" value="${data.sol||''}" placeholder="Lactato Ringer / SS 0.9%" style="min-width:150px;"></td>
+    <td><input class="fi" type="number" value="${data.vol||''}" placeholder="500" style="width:75px;text-align:center;font-family:'JetBrains Mono',monospace;"></td>
+    <td><input class="fi" type="text" value="${data.vel||''}" placeholder="42" style="width:65px;text-align:center;font-family:'JetBrains Mono',monospace;"></td>
+    <td><input class="fi" type="text" value="${data.adit||''}" placeholder="KCl 20 mEq" style="min-width:110px;"></td>
+    <td><select class="fs" style="width:110px;"><option>IV periférica</option><option>IV central</option><option>SC</option></select></td>
+    <td><input class="fi" type="time" value="${data.inicio||''}" style="width:90px;font-family:'JetBrains Mono',monospace;"></td>
+    <td><input class="fi" type="text" value="${data.dur||''}" placeholder="8h" style="width:55px;text-align:center;"></td>
+    <td><select class="fs" style="width:120px;" onchange="updateInfStatus(this)"><option value="prog">Programada</option><option value="adm">Administrada</option><option value="susp">Suspendida</option></select></td>
+    <td><button class="btn-del-row" onclick="document.getElementById('inf-${infCounter}').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+function updateInfStatus(sel){
+  sel.style.color=sel.value==='adm'?'var(--green)':sel.value==='susp'?'var(--red)':'var(--amber)';
+}
+
+// ══════════════════════════════════════════════════════
+// BASE DE DATOS MEDICAMENTOS
+// ══════════════════════════════════════════════════════
+const MED_DB=[
+  {n:'Paracetamol',com:'Panadol · Atamel',conc:'500mg/tab',dos:'1g',via:'VO/IV',pres:'Tableta/Amp',frec:'c/6h',dur:'5d',cat:'Analgésico'},
+  {n:'Ibuprofeno',com:'Advil · Motrin',conc:'400mg/tab',dos:'400mg',via:'VO',pres:'Tableta',frec:'c/8h',dur:'5d',cat:'AINE'},
+  {n:'Ketorolaco',com:'Toradol · Dolac',conc:'30mg/ml',dos:'30mg',via:'IV/IM',pres:'Ampolla',frec:'c/8h',dur:'5d',cat:'AINE'},
+  {n:'Diclofenaco',com:'Voltaren · Cataflam',conc:'75mg/ml',dos:'75mg',via:'IM/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'7d',cat:'AINE'},
+  {n:'Metamizol',com:'Dipirona · Novalgina',conc:'1g/2ml',dos:'2g',via:'IV/IM',pres:'Ampolla',frec:'c/6-8h',dur:'3d',cat:'Analgésico'},
+  {n:'Morfina',com:'Dimorf',conc:'10mg/ml',dos:'5mg',via:'IV/SC',pres:'Ampolla',frec:'c/4h PRN',dur:'3d',cat:'Opioide'},
+  {n:'Tramadol',com:'Tramal · Ultram',conc:'100mg/2ml',dos:'100mg',via:'IV/IM/VO',pres:'Ampolla/Cap',frec:'c/8h',dur:'5d',cat:'Opioide débil'},
+  {n:'Ampicilina/Sulbactam',com:'Unasyn',conc:'1.5g/amp',dos:'3g',via:'IV',pres:'Frasco-amp',frec:'c/6h',dur:'7d',cat:'Antibiótico'},
+  {n:'Ceftriaxona',com:'Rocephin · Cefotrex',conc:'1g/amp',dos:'2g',via:'IV/IM',pres:'Frasco-amp',frec:'c/24h',dur:'7d',cat:'Antibiótico'},
+  {n:'Ciprofloxacina',com:'Cipro · Ciproflox',conc:'200mg/100ml',dos:'400mg',via:'IV/VO',pres:'Bolsa IV/Tab',frec:'c/12h',dur:'7d',cat:'Antibiótico'},
+  {n:'Clindamicina',com:'Dalacin C',conc:'300mg/2ml',dos:'600mg',via:'IV/VO',pres:'Ampolla/Cap',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Imipenem',com:'Tienam',conc:'500mg/amp',dos:'500mg',via:'IV',pres:'Frasco-amp',frec:'c/6-8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Metronidazol',com:'Flagyl',conc:'500mg/100ml',dos:'500mg',via:'IV/VO',pres:'Bolsa IV/Tab',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Piperacilina/Tazobactam',com:'Tazocin',conc:'4.5g/amp',dos:'4.5g',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Vancomicina',com:'Vancocin',conc:'500mg/amp',dos:'1g',via:'IV',pres:'Frasco-amp',frec:'c/12h',dur:'7d',cat:'Antibiótico'},
+  {n:'Enalapril',com:'Lotrial · Renitec',conc:'10mg/tab',dos:'10mg',via:'VO',pres:'Tableta',frec:'c/12h',dur:'crónico',cat:'IECA'},
+  {n:'Enalaprilato',com:'Vasotec IV',conc:'1.25mg/ml',dos:'1.25mg',via:'IV',pres:'Ampolla',frec:'c/6h',dur:'PRN',cat:'IECA IV'},
+  {n:'Losartán',com:'Cozaar',conc:'50mg/tab',dos:'50mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'ARA-II'},
+  {n:'Metoprolol',com:'Lopressor · Betaloc',conc:'50mg/tab',dos:'50mg',via:'VO',pres:'Tableta',frec:'c/12h',dur:'crónico',cat:'Beta-bloqueante'},
+  {n:'Amlodipino',com:'Norvasc',conc:'10mg/tab',dos:'10mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Calcio-antagonista'},
+  {n:'Hidralazina',com:'Apresoline',conc:'20mg/ml',dos:'20mg',via:'IV',pres:'Ampolla',frec:'c/4-6h PRN',dur:'PRN',cat:'Vasodilatador'},
+  {n:'Enoxaparina',com:'Clexane · Lovenox',conc:'40mg/0.4ml',dos:'40mg',via:'SC',pres:'Jeringa precargada',frec:'c/24h',dur:'10d',cat:'Anticoagulante'},
+  {n:'Heparina sódica',com:'Heparina sodica',conc:'5000UI/ml',dos:'5000UI',via:'IV/SC',pres:'Ampolla',frec:'c/8-12h',dur:'PRN',cat:'Anticoagulante'},
+  {n:'Warfarina',com:'Coumadin · Aldocumar',conc:'5mg/tab',dos:'5mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Anticoagulante oral'},
+  {n:'Omeprazol',com:'Prilosec · Ulcozol',conc:'40mg/amp',dos:'40mg',via:'VO/IV',pres:'Cap/Amp',frec:'c/24h',dur:'30d',cat:'IBP'},
+  {n:'Pantoprazol',com:'Protonix · Ulcepan',conc:'40mg/amp',dos:'40mg',via:'VO/IV',pres:'Tableta/Amp',frec:'c/24h',dur:'30d',cat:'IBP'},
+  {n:'Metoclopramida',com:'Primperan · Plasil',conc:'10mg/2ml',dos:'10mg',via:'IV/IM/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'5d',cat:'Antinauseoso'},
+  {n:'Ondansetrón',com:'Zofran',conc:'4mg/2ml',dos:'8mg',via:'IV/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'3d',cat:'Antinauseoso'},
+  {n:'Ranitidina',com:'Zantac',conc:'50mg/2ml',dos:'50mg',via:'IV',pres:'Ampolla',frec:'c/8h',dur:'7d',cat:'Anti-H2'},
+  {n:'Dexametasona',com:'Decadrón · Dexametax',conc:'4mg/ml',dos:'8mg',via:'IV/IM',pres:'Ampolla',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Hidrocortisona',com:'Solu-Cortef',conc:'100mg/amp',dos:'100mg',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Metilprednisolona',com:'Solu-Medrol',conc:'125mg/amp',dos:'125mg',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Furosemida',com:'Lasix',conc:'20mg/2ml',dos:'40mg',via:'IV/IM/VO',pres:'Ampolla/Tab',frec:'c/12h',dur:'PRN',cat:'Diurético'},
+  {n:'Espironolactona',com:'Aldactone',conc:'25mg/tab',dos:'25mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Diurético K+'},
+  {n:'Salbutamol',com:'Ventolin · Salbulair',conc:'2.5mg/2.5ml',dos:'2.5mg',via:'Nebulización',pres:'Nébula',frec:'c/4-6h',dur:'5d',cat:'Broncodilatador'},
+  {n:'Ipratropio',com:'Atrovent',conc:'0.5mg/2ml',dos:'0.5mg',via:'Nebulización',pres:'Nébula',frec:'c/6-8h',dur:'5d',cat:'Broncodilatador'},
+  {n:'Insulina Regular',com:'Humulin R · Actrapid',conc:'100UI/ml',dos:'10UI',via:'IV/SC',pres:'Frasco/Pluma',frec:'Según protocolo',dur:'PRN',cat:'Insulina'},
+  {n:'Insulina Glargina',com:'Lantus · Toujeo',conc:'100UI/ml',dos:'10UI',via:'SC',pres:'Pluma',frec:'c/24h',dur:'crónico',cat:'Insulina basal'},
+  {n:'Ácido fólico',com:'Folacid',conc:'5mg/tab',dos:'5mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'30d',cat:'Vitamina'},
+  {n:'Vitamina C',com:'Redoxon',conc:'1g/amp',dos:'1g',via:'VO/IV',pres:'Tab/Ampolla',frec:'c/24h',dur:'15d',cat:'Vitamina'},
+  {n:'Calcio gluconato',com:'Calcio gluconato',conc:'1g/10ml',dos:'1g',via:'IV',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Electrolito'},
+  {n:'Cloruro de potasio',com:'KCl',conc:'2mEq/ml',dos:'20mEq',via:'IV (diluido)',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Electrolito'},
+  {n:'Atropina',com:'Atropina sulfato',conc:'0.5mg/ml',dos:'0.5mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Anticolinérgico'},
+  {n:'Lorazepam',com:'Ativan',conc:'2mg/ml',dos:'2mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'3d',cat:'Benzodiacepina'},
+  {n:'Haloperidol',com:'Haldol',conc:'5mg/ml',dos:'5mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Antipsicótico'},
+];
+
+function searchMed(q){
+  const dd=document.getElementById('med-drop');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=MED_DB.filter(m=>m.n.toLowerCase().includes(q2)||m.com.toLowerCase().includes(q2)||m.cat.toLowerCase().includes(q2)).slice(0,10);
+  if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados — escriba el nombre genérico o comercial</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addRxFromDB(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+    <span class="cie-opt-code" style="min-width:80px;color:var(--green);">${m.cat}</span>
+    <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n} <span style="font-size:.72rem;color:var(--muted);">(${m.com})</span></div>
+    <div style="font-size:.72rem;color:var(--muted);">${m.conc} · ${m.via} · ${m.frec}</div></div>
+  </div>`).join('');
+  dd.classList.add('open');
+}
+function openMedDrop(){const v=document.getElementById('med-search').value;if(v.length>=2)searchMed(v);}
+function closeMedDrop(){document.getElementById('med-drop').classList.remove('open');}
+
+// ══════════════════════════════════════════════════════════════════
+//  MÓDULO PRESCRIPCIONES MÉDICAS — Medix8 HIS
+//  Variables globales, motor de cálculo, estados y auditoría de farmacia
+// ══════════════════════════════════════════════════════════════════
+
+// ── 1. ESTADO GLOBAL ─────────────────────────────────────────────
+// Única fuente de verdad para prescripciones y cola de farmacia.
+// No duplicar estas variables en ningún otro scope.
+let rxList        = [];   // Array de prescripciones activas {id, nom, status, dosisLog, ...}
+let rxCounter     = 0;    // Autoincrement de IDs de prescripción
+let farmaciaQueue = [];   // Cola de despacho enviada a Farmacia Central
+let discontTarget = null; // ID de la prescripción en proceso de descontinuación
+
+// ── 2. TABLA DE FRECUENCIAS → DOSIS/DÍA ─────────────────────────
+// Clave exacta del valor del <select> de frecuencia → número de tomas por día.
+// null = frecuencia indeterminada (PRN, dosis única), no genera total automático.
+const FREC_DOSIS_DIA = {
+  'c/1h — Cada hora'                  : 24,
+  'c/2h — Cada 2 horas'              : 12,
+  'c/4h — Cada 4 horas (6 dosis/día)': 6,
+  'c/6h — Cada 6 horas (4 dosis/día)': 4,
+  'c/8h — Cada 8 horas (3 dosis/día)': 3,
+  'c/12h — Cada 12 horas (2 dosis/día)': 2,
+  'c/24h — Una vez al día'            : 1,
+  'c/48h — Cada 48 horas'             : 0.5,
+  'c/72h — Cada 72 horas'             : 0.33,
+  'Nocturno (al acostarse)'           : 1,
+  'Lunes, Miércoles, Viernes'         : 3/7,
+  'Lunes a Viernes'                   : 5/7,
+  'Una sola dosis (dosis única)'      : null,  // manejo especial abajo
+};
+
+// ── 3. HELPERS DE ENTRADA ────────────────────────────────────────
+
+// Agrega prescripción desde la base de datos de medicamentos
+function addRxFromDB(med){
+  document.getElementById('med-search').value = '';
+  closeMedDrop();
+  addRx(med.n, med.com, med.conc, med.via, med.pres, med.frec, '', false, med.dos||'');
+}
+
+// Agrega prescripción en blanco para llenado manual
+function addRxManual(){ addRx('','','','','','','',false,''); }
+
+// ── SOLICITUD DE MEDICAMENTO NO DISPONIBLE ───────────────────────
+// El médico describe el medicamento; Farmacia lo busca y confirma.
+function abrirSolicitudFarmacia(){
+  ['sf-nombre','sf-conc','sf-dosis','sf-indicaciones'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('sf-via').value='';
+  document.getElementById('sf-frec').value='';
+  document.getElementById('modal-solicitud-farm').style.display='flex';
+  setTimeout(()=>document.getElementById('sf-nombre')?.focus(),150);
+}
+
+function cerrarSolicitudFarmacia(){
+  document.getElementById('modal-solicitud-farm').style.display='none';
+}
+
+function confirmarSolicitudFarmacia(){
+  const nombre = document.getElementById('sf-nombre')?.value.trim();
+  if(!nombre){ document.getElementById('sf-nombre').style.borderColor='var(--red)'; return; }
+  const conc    = document.getElementById('sf-conc')?.value.trim();
+  const dosis   = document.getElementById('sf-dosis')?.value.trim();
+  const via     = document.getElementById('sf-via')?.value;
+  const frec    = document.getElementById('sf-frec')?.value;
+  const indic   = document.getElementById('sf-indicaciones')?.value.trim();
+  cerrarSolicitudFarmacia();
+  // Crear prescripción marcada como solicitud pendiente de búsqueda
+  rxCounter++;
+  const id = rxCounter;
+  rxList.push({
+    id, nom: nombre, com: '— Solicitud a Farmacia —',
+    conc: conc||'', dosis: dosis||'', via: via||'', frec: frec||'',
+    pres:'', dur:'', urgente:false,
+    obsCustom: indic||'',
+    status:'pendiente',
+    dosisLog:[], cantAuto:false,
+    solicitudFarmacia: true,   // bandera: Farmacia debe buscar este ítem
+  });
+  renderRxList();
+  showToast(`🔎 Solicitud enviada a Farmacia: ${nombre}`,'a');
+}
+
+// Constructor de prescripción: crea el objeto y lo agrega a rxList
+function addRx(nom, com, conc, via, pres, frec, dur, urgente, dosis){
+  rxCounter++;
+  const id = rxCounter;
+  rxList.push({
+    id, nom, com, conc, via, pres, frec, dur,
+    urgente,
+    dosis    : dosis||'',
+    status   : 'pendiente',  // pendiente | enviada | despachada | descontinuada
+    dosisLog : [],            // [{hora, tipo:'admin'|'omitida', nota}]
+    cantAuto : false,         // true si el total fue calculado automáticamente
+  });
+  renderRxList();
+  // Calcular dosis en el siguiente frame para que el DOM ya exista
+  if(dosis && conc){ requestAnimationFrame(()=>calcDosis(id)); }
+}
+
+// ── 4. MOTOR DE CÁLCULO DE DOSIS (calcDosis) ────────────────────
+// Determina cuántas unidades de presentación (amp, tab, frasco…)
+// se necesitan por toma y en total para el periodo prescrito.
+// Opera en silencio — actualiza rx.farmUnidades, rx.cant y el DOM.
+function calcDosis(id){
+  const rx = rxList.find(r=>r.id===id);
+  if(!rx) return;
+
+  const frec = rx.frec||'';
+  const dur  = rx.dur||'';
+  const conc = rx.conc||'';
+  const dosis= rx.dosis||'';
+
+  // 4a. Tabla de conversión de unidades → miligramos equivalentes
+  const toMg = {
+    g:1000, gr:1000, mg:1, mcg:0.001,
+    'µg':0.001, 'μg':0.001,
+    ui:1, u:1, meq:1, mmol:1, ml:1, l:1000,
+  };
+
+  // 4b. Parser genérico "número + unidad" → {n, u}
+  function parseVal(s){
+    if(!s) return null;
+    const m = s.trim().match(/^([\d]+(?:[.,]\d+)?)\s*([a-záéíóúüñµμ%\/]+)?/i);
+    if(!m) return null;
+    return { n: parseFloat(m[1].replace(',','.')), u: (m[2]||'').toLowerCase().replace(/[\/\s].*/,'') };
+  }
+
+  // 4c. Normalizar valor a mg equivalente
+  function norm(v){ return v ? v.n * (toMg[v.u] || v.n) : null; }
+
+  // 4d. Detectar presentación desde el string de concentración
+  //     Ejemplos: "500mg/amp" → 'amp', "10mg/tab" → 'tab', "1g/frasco" → 'frasco'
+  function labelPres(s){
+    const v = (s||'').toLowerCase();
+    if(v.includes('amp') || v.includes('vial'))  return 'amp';
+    if(v.includes('frasco'))                      return 'frasco';
+    if(v.includes('tab')  || v.includes('comp'))  return 'tab';
+    if(v.includes('cáp')  || v.includes('cap'))   return 'cáp';
+    if(v.includes('sob'))                         return 'sobre';
+    if(v.includes('jer'))                         return 'jer';
+    return 'unid';
+  }
+  const pres = labelPres(conc);  // etiqueta de presentación para mostrar
+
+  // 4e. Calcular unidades por toma (upToma)
+  let upToma    = null;
+  let upTomaStr = '';
+  let alertMsg  = '';
+
+  if(dosis && conc){
+    // Caso 1: la dosis ya viene expresada en unidades de presentación
+    //   ej: "2 tab", "1 amp", "0.5 cáp"
+    const unitPresM = dosis.match(/^([\d.,]+)\s*(tab|comp|comprimido[s]?|grag|cáp|cap|cápsula[s]?|amp|ampolla[s]?|jer|suposit|sobre[s]?|parche[s]?|gota[s]?|puff[s]?|inhal)/i);
+    if(unitPresM){
+      upToma    = parseFloat(unitPresM[1].replace(',','.'));
+      upTomaStr = `${upToma} ${unitPresM[2]}`;
+    } else {
+      // Caso 2: dosis en masa (mg, g, mcg) → dividir por concentración por unidad
+      //   ej: dosis="1g", conc="500mg/tab" → 1000mg ÷ 500mg = 2 tab
+      const dosV    = parseVal(dosis);
+      const concNum = conc.split('/')[0].trim();   // numerador de conc: "500mg"
+      const concV   = parseVal(concNum);
+
+      if(dosV && concV && concV.n > 0){
+        const dNorm = norm(dosV);
+        const cNorm = norm(concV);
+
+        if(dNorm !== null && cNorm !== null && cNorm > 0){
+          upToma = Math.ceil(dNorm / cNorm);   // siempre redondear ARRIBA (seguridad)
+
+          // Construir texto descriptivo del cálculo
+          const concParts  = conc.split('/');
+          const denomStr   = concParts.length >= 2 ? concParts[1].trim() : '';
+          const denomVolM  = denomStr.match(/^([\d.,]+)\s*(ml|l|cc)/i);
+
+          if(denomVolM){
+            // Concentración volumétrica: "10mg/ml" → indicar amp
+            upTomaStr = `${upToma} amp (${dosis} ÷ ${concNum}/${denomStr})`;
+          } else {
+            // Concentración por unidad: "500mg/tab" → indicar tab/amp/etc.
+            const ul = denomStr.match(/amp/i) ? 'amp'
+                     : denomStr.match(/tab|comp/i) ? 'tab'
+                     : pres;
+            upTomaStr = `${upToma} ${ul} (${dosis} ÷ ${concNum})`;
+          }
+
+          // Alerta si el resultado parece clínicamente excesivo
+          if(upToma > 10) alertMsg = `⚠️ Verifique: ${upToma} unidades/toma parece excesivo`;
+        }
+      }
+    }
+  }
+
+  // 4f. Calcular total para farmacia según frecuencia
+  const dosisDia = FREC_DOSIS_DIA[frec];
+  let total       = null;
+  let farmUnidades= null;
+  let calcTxt     = '';
+
+  if(frec === 'Una sola dosis (dosis única)'){
+    // Dosis única: 1 toma, sin importar duración
+    total       = upToma || 1;
+    farmUnidades= total;
+    rx.cantAuto = true;
+    calcTxt     = upToma
+      ? `${dosis} ÷ ${conc} = ${upTomaStr} · Dosis única`
+      : `Dosis única → 1 ${pres}`;
+
+  } else if(frec.startsWith('PRN') || frec === 'Infusión continua 24h'){
+    // PRN o infusión continua: no se puede calcular total automático
+    rx.cantAuto = false;
+    calcTxt     = upToma ? `${upTomaStr}/toma · PRN` : dosis ? `${dosis}/toma · PRN` : 'PRN';
+
+  } else if(upToma && dosisDia){
+    // Caso normal: upToma × tomas/día = total diario
+    total       = Math.ceil(upToma * dosisDia);
+    farmUnidades= total;
+    rx.cantAuto = true;
+    calcTxt     = `${upTomaStr}/toma × ${dosisDia}/día = ${total} ${pres}/día`;
+
+  } else if(upToma && !dosisDia){
+    // Hay unidades por toma pero sin frecuencia seleccionada
+    total       = upToma;
+    farmUnidades= total;
+    rx.cantAuto = true;
+    calcTxt     = `${upTomaStr}/toma · seleccione frecuencia`;
+
+  } else if(!upToma && dosis && conc){
+    calcTxt = 'Ingrese dosis en mg/g para calcular unidades';
+  } else if(dosis && !conc){
+    calcTxt = 'Ingrese gramaje (ej: 500mg/tab)';
+  }
+
+  if(alertMsg) calcTxt += ' · ' + alertMsg;
+
+  // 4g. Persistir en el objeto rx (usado por el bridge HCU→Farmacia)
+  rx.calcTxt    = calcTxt;
+  rx.farmUnidades = farmUnidades;
+  rx.upTomaStr  = upTomaStr || (upToma ? String(upToma)+' unid' : '—');
+
+  // 4h. Actualizar DOM — elementos ocultos (cálculo en background)
+  const upTomaEl = document.getElementById('rx-uptoma-'+id);
+  if(upTomaEl) upTomaEl.textContent = rx.upTomaStr;
+
+  const row = document.getElementById('rx-calc-row-'+id);
+  const txt = document.getElementById('rx-calc-txt-'+id);
+  // El row permanece oculto — solo actualizar el texto interno
+  if(txt) txt.textContent = calcTxt;
+
+  // 4i. Actualizar campo "Total Farmacia" si el cálculo es automático
+  const inp = document.getElementById('rx-cant-'+id);
+  if(inp && total !== null){
+    inp.value    = total;
+    rx.cant      = total;
+    inp.style.cssText = "padding:2px 6px;font-size:.72rem;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;background:var(--teal-l);border-color:var(--teal);color:var(--teal-d);";
+  } else if(inp && !rx.cantAuto){
+    inp.style.cssText = "padding:2px 6px;font-size:.72rem;text-align:center;font-family:'JetBrains Mono',monospace;";
+  }
+
+  // 4j. Badge de dosis en el header de la tarjeta
+  const hdrDosis = document.getElementById('rx-hdr-dosis-'+id);
+  if(hdrDosis){
+    if(rx.dosis){ hdrDosis.textContent = '💊 '+rx.dosis+'/toma'; hdrDosis.style.display='inline'; }
+    else         { hdrDosis.style.display = 'none'; }
+  }
+  const hdrUnits = document.getElementById('rx-hdr-units-'+id);
+  if(hdrUnits){
+    if(farmUnidades){ hdrUnits.textContent = '📦 '+farmUnidades+' unid.'; hdrUnits.style.display='inline'; }
+    else            { hdrUnits.style.display = 'none'; }
+  }
+}
+
+// ── 5. RENDERIZADO DE LA LISTA DE PRESCRIPCIONES ────────────────
+// Genera el HTML completo de cada tarjeta. No modifica rxList.
+function renderRxList(){
+  const cont = document.getElementById('rx-list');
+  if(!rxList.length){
+    cont.innerHTML = '<div style="text-align:center;padding:20px;color:var(--dim);font-size:.84rem;border:1.5px dashed var(--border);border-radius:9px;background:var(--surface);">Sin prescripciones — busque un medicamento para agregar</div>';
+    updateRxStats();
+    return;
+  }
+  cont.innerHTML = rxList.map((rx, i) => {
+    // Contadores de dosis para la barra de progreso
+    const adminN  = (rx.dosisLog||[]).filter(d=>d.tipo==='admin').length;
+    const omitN   = (rx.dosisLog||[]).filter(d=>d.tipo==='omitida').length;
+    const cantN   = parseInt(rx.cant)||0;
+    const pct     = cantN ? Math.min(100, Math.round(adminN/cantN*100)) : 0;
+    const completo= cantN && adminN >= cantN;  // ciclo completo de dosis
+
+    // Color del borde izquierdo y badges según estado + urgencia
+    const statusColor =
+      rx.urgente              ? 'var(--red)'   :
+      rx.status==='despachada'? 'var(--green)'  :
+      rx.status==='descontinuada'? '#718096'    :
+      rx.status==='enviada'   ? 'var(--blue)'  :
+                                'var(--muted)';
+
+    return `
+    <div class="rx-item ${rx.urgente?'rx-urgente':''} ${rx.status==='enviada'?'rx-enviada':''} ${rx.status==='despachada'?'rx-despachada':''} ${rx.status==='descontinuada'?'rx-descontinuada':''}"
+         id="rx-item-${rx.id}" style="border-left:3px solid ${statusColor};padding:10px 14px;">
+      <div class="rx-num">${i+1}</div>
+      <div class="rx-body">
+
+        <!-- CABECERA: nombre · presentación comercial · estado -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+          <span style="font-size:.9rem;font-weight:800;color:var(--navy);">${rx.nom||'Medicamento'}</span>
+          ${rx.com ? `<span style="font-size:.72rem;color:var(--muted);">${rx.com}</span>` : ''}
+          ${rx.solicitudFarmacia ? `<span style="font-size:.66rem;font-weight:800;padding:2px 9px;border-radius:100px;background:var(--amber-l);border:1px solid var(--amber-mid);color:var(--amber);">🔎 BÚSQUEDA FARMACIA</span>` : ''}
+          ${rx.farmUnidades
+            ? `<span id="rx-hdr-units-${rx.id}" style="font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:800;padding:2px 8px;border-radius:5px;background:${completo?'var(--green-l)':'var(--teal-l)'};border:1px solid ${completo?'var(--green-mid)':'var(--teal)'};color:${completo?'var(--green)':'var(--teal-d)'};">📦 ${rx.farmUnidades} unid.</span>`
+            : `<span id="rx-hdr-units-${rx.id}" style="display:none;"></span>`}
+          ${rx.status !== 'pendiente'
+            ? `<span style="font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:100px;background:${statusColor}20;border:1px solid ${statusColor}55;color:${statusColor};margin-left:auto;">${
+                rx.status==='enviada'         ? 'En Farmacia' :
+                rx.status==='despachada'      ? 'Despachado'  :
+                rx.status==='descontinuada'   ? 'Descontinuado' : ''}</span>` : ''}
+        </div>
+
+        <!-- FILA ÚNICA: Gramaje · Dosis · Vía · Frecuencia · Total -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.4fr 0.6fr;gap:4px;margin-bottom:3px;align-items:end;">
+          <div>
+            <label class="fl" style="margin-bottom:1px;font-size:.55rem;">Gramaje</label>
+            <input class="fi" value="${rx.conc||''}" placeholder="30mg/amp"
+              oninput="updateRxField(${rx.id},'conc',this.value);calcDosis(${rx.id})"
+              style="padding:2px 5px;font-size:.7rem;font-family:'JetBrains Mono',monospace;">
+          </div>
+          <div>
+            <label class="fl" style="margin-bottom:1px;font-size:.55rem;">Dosis/toma
+              <span id="rx-hdr-dosis-${rx.id}" style="font-weight:800;color:var(--teal-d);font-family:'JetBrains Mono',monospace;display:${rx.dosis?'inline':'none'};">${rx.dosis||''}</span>
+            </label>
+            <input class="fi" id="rx-dosis-${rx.id}" value="${rx.dosis||''}" placeholder="60mg"
+              oninput="updateRxField(${rx.id},'dosis',this.value);calcDosis(${rx.id})"
+              style="padding:2px 5px;font-size:.7rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);">
+          </div>
+          <div>
+            <label class="fl" style="margin-bottom:1px;font-size:.55rem;">Vía</label>
+            <select class="fs" style="padding:2px 4px;font-size:.7rem;"
+              onchange="updateRxField(${rx.id},'via',this.value)">
+              ${['','VO','SL','IV directa','IV continua','IV intermitente','IM','SC','ID','IO','IT','Tópico','Nebulización','Rectal','Ótica','Oftálmica','Nasal','SNG','Epidural'].map((o,idx)=>{
+                const vals=['','VO — Vía oral','SL — Sublingual','IV — Intravenosa directa','IV — Infusión continua','IV — Infusión intermitente','IM — Intramuscular','SC — Subcutánea','ID — Intradérmica','IO — Intraósea','IT — Intratecal','Tópico','Nebulización inhalatoria','Rectal — Supositorio','Ótica','Oftálmica','Nasal','SNG — Sonda nasogástrica','Epidural'];
+                return `<option value="${vals[idx]}" ${rx.via===vals[idx]?'selected':''}>${o||'— Vía —'}</option>`;
+              }).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="fl" style="margin-bottom:1px;font-size:.55rem;">Frecuencia</label>
+            <select class="fs" style="padding:2px 4px;font-size:.7rem;"
+              onchange="updateRxField(${rx.id},'frec',this.value);calcDosis(${rx.id})">
+              ${['','c/1h','c/2h','c/4h','c/6h','c/8h','c/12h','c/24h','c/48h','c/72h','Dosis única','PRN','PRN c/4h','PRN c/6h','PRN c/8h','Inf. continua','L-M-V','L a V','Nocturno'].map((o,idx)=>{
+                const vals=['','c/1h — Cada hora','c/2h — Cada 2 horas','c/4h — Cada 4 horas (6 dosis/día)','c/6h — Cada 6 horas (4 dosis/día)','c/8h — Cada 8 horas (3 dosis/día)','c/12h — Cada 12 horas (2 dosis/día)','c/24h — Una vez al día','c/48h — Cada 48 horas','c/72h — Cada 72 horas','Una sola dosis (dosis única)','PRN — A necesidad','PRN c/4h — A necesidad c/4h','PRN c/6h — A necesidad c/6h','PRN c/8h — A necesidad c/8h','Infusión continua 24h','Lunes, Miércoles, Viernes','Lunes a Viernes','Nocturno (al acostarse)'];
+                return `<option value="${vals[idx]}" ${rx.frec===vals[idx]?'selected':''}>${o||'— Frec. —'}</option>`;
+              }).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="fl" style="margin-bottom:1px;font-size:.55rem;">Total Farm.</label>
+            <input class="fi" type="text" id="rx-cant-${rx.id}" value="${rx.cant||''}" placeholder="Auto"
+              oninput="updateRxField(${rx.id},'cant',this.value);const r=rxList.find(x=>x.id===${rx.id});if(r)r.cantAuto=false;"
+              style="padding:2px 5px;font-size:.7rem;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:800;
+                     background:${rx.cantAuto?'var(--teal-l)':'var(--white)'};
+                     border-color:${rx.cantAuto?'var(--teal)':'var(--border)'};
+                     color:${rx.cantAuto?'var(--teal-d)':'var(--text)'};">
+          </div>
+        </div>
+
+        <!-- CÁLCULO OCULTO (opera en background) + INDICACIONES -->
+        <div style="display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;margin-top:2px;">
+          <!-- Elementos ocultos: actualizados por calcDosis(), leídos por el bridge de Farmacia -->
+          <div id="rx-calc-row-${rx.id}" style="display:none;">
+            <span id="rx-calc-txt-${rx.id}">${rx.calcTxt||''}</span>
+          </div>
+          <div id="rx-uptoma-${rx.id}" style="display:none;">${rx.upTomaStr||''}</div>
+          <!-- Indicaciones visibles al médico -->
+          <input class="fi" id="rx-obs-custom-${rx.id}" value="${rx.obsCustom||''}"
+            placeholder="Indicaciones..."
+            oninput="updateRxField(${rx.id},'obsCustom',this.value)"
+            style="flex:1;padding:5px 8px;font-size:.78rem;">
+        </div>
+
+        <!-- BANNER DE DESCONTINUACIÓN -->
+        ${rx.status==='descontinuada' ? `
+        <div class="rx-discont-banner" style="margin-top:6px;">
+          ⛔ ${rx.discontMotivo||'Descontinuado'} · ${rx.discontHora||''}
+          ${rx.discontObs ? '— '+rx.discontObs : ''}
+        </div>` : ''}
+
+        <!-- ACCIONES PRINCIPALES -->
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid var(--surface2);flex-wrap:wrap;">
+          ${rx.status==='pendiente' ? `
+            <button class="rx-send-btn ${rx.urgente?'urgent':'send'}" onclick="enviarFarmacia(${rx.id})">
+              ${rx.urgente ? '🚨 Urgente' : '📤 Enviar a Farmacia'}
+            </button>
+            <button onclick="toggleUrgente(${rx.id})"
+              style="padding:3px 9px;border-radius:5px;background:${rx.urgente?'var(--red-l)':'var(--surface)'};border:1px solid ${rx.urgente?'var(--red-mid)':'var(--border)'};font-size:.7rem;cursor:pointer;color:${rx.urgente?'var(--red)':'var(--muted)'};">
+              ${rx.urgente ? 'Quitar urgente' : '⚡ Urgente'}
+            </button>`
+          : rx.status==='enviada'
+            ? `<span class="rx-send-btn disabled" style="font-size:.74rem;">✅ En Farmacia</span>`
+          : rx.status==='despachada'
+            ? `<span class="rx-send-btn disabled" style="background:var(--teal-l);color:var(--teal-d);border-color:var(--teal);font-size:.74rem;">✅ Despachado</span>`
+            : `<span class="rx-send-btn disabled" style="background:#fed7d7;color:var(--red);border-color:var(--red-mid);font-size:.74rem;">⛔ Descontinuado</span>`}
+
+          <div style="margin-left:auto;display:flex;gap:5px;">
+            ${rx.status !== 'descontinuada'
+              ? `<button onclick="abrirDescontinuar(${rx.id})" style="padding:3px 9px;border-radius:5px;border:1px solid var(--border);background:transparent;font-size:.72rem;cursor:pointer;color:var(--muted);">⛔ Descontinuar</button>`
+              : ''}
+            <button onclick="removeRx(${rx.id})" style="padding:3px 8px;border-radius:5px;background:transparent;border:1px solid var(--border);color:var(--dim);font-size:.72rem;cursor:pointer;">Eliminar</button>
+          </div>
+        </div>
+
+        <!-- PANEL DE REGISTRO DE DOSIS (solo visible cuando está en Farmacia o despachado) -->
+        ${rx.status !== 'pendiente' && rx.status !== 'descontinuada' ? `
+        <div style="margin-top:8px;padding:8px 10px;background:var(--surface);border-radius:7px;border:1px solid var(--surface2);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+            <span style="font-size:.66rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Registro de dosis</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:${completo?'var(--green)':'var(--navy)'};">${adminN}/${cantN||'—'}</span>
+            ${completo ? `<span style="font-size:.66rem;font-weight:700;color:var(--green);">✅ Ciclo completo</span>` : ''}
+            <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;max-width:120px;">
+              <div style="height:100%;width:${pct}%;background:${completo?'var(--green)':'var(--teal)'};border-radius:2px;transition:width .3s;"></div>
+            </div>
+            <!-- Selector de hora para registrar dosis -->
+            <input type="time" id="dosis-hora-${rx.id}" value="${new Date().toTimeString().slice(0,5)}"
+              style="padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:.75rem;outline:none;margin-left:auto;">
+            <button onclick="registrarDosis(${rx.id},'admin')"
+              style="padding:3px 10px;background:var(--green);border:none;border-radius:5px;color:white;font-size:.72rem;font-weight:700;cursor:pointer;">✓ Admin.</button>
+            <button onclick="registrarDosis(${rx.id},'omitida')"
+              style="padding:3px 10px;background:var(--amber);border:none;border-radius:5px;color:white;font-size:.72rem;font-weight:700;cursor:pointer;">— Omitir</button>
+          </div>
+          <!-- Timeline de dosis administradas/omitidas (más reciente primero) -->
+          <div id="dosis-timeline-${rx.id}" style="display:flex;flex-direction:column;gap:3px;">
+            ${(rx.dosisLog||[]).length === 0
+              ? `<span style="font-size:.72rem;color:var(--dim);font-style:italic;">Sin registros aún</span>`
+              : (rx.dosisLog||[]).slice().reverse().map((d,idx)=>`
+                <div style="display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:5px;
+                     background:${d.tipo==='admin'?'var(--green-l)':'var(--amber-l)'};
+                     border:1px solid ${d.tipo==='admin'?'var(--green-mid)':'var(--amber-mid)'};">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--navy);min-width:38px;">${d.hora}</span>
+                  <span style="font-size:.68rem;font-weight:700;color:${d.tipo==='admin'?'var(--green)':'var(--amber)'};">
+                    ${d.tipo==='admin' ? 'Administrada' : 'Omitida'}
+                  </span>
+                  <span style="font-size:.7rem;color:var(--muted);flex:1;">${d.nota||''}</span>
+                  <button onclick="eliminarDosis(${rx.id},${(rx.dosisLog||[]).length-1-idx})"
+                    style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:.75rem;padding:0;line-height:1;">✕</button>
+                </div>`).join('')}
+          </div>
+        </div>`
+        : rx.status==='descontinuada' && (rx.dosisLog||[]).length > 0 ? `
+        <div style="margin-top:6px;font-size:.72rem;color:var(--muted);">
+          ${adminN} dosis administradas · ${omitN} omitidas antes de descontinuar
+        </div>` : ''}
+
+      </div>
+    </div>`;
+  }).join('');
+  updateRxStats();
+}
+
+// ── 6. ACTUALIZACIÓN DE CAMPOS ───────────────────────────────────
+// Sincroniza un campo del objeto rx con el valor del DOM
+function updateRxField(id, field, val){
+  const rx = rxList.find(r=>r.id===id);
+  if(rx) rx[field] = val;
+}
+
+// ── 7. REGISTRO DE DOSIS ADMINISTRADAS ──────────────────────────
+// Añade una entrada al dosisLog del rx. Si adminN llega al total,
+// dispara alerta de ciclo completo y verifica devolución a Farmacia.
+function registrarDosis(id, tipo){
+  const rx = rxList.find(r=>r.id===id);
+  if(!rx) return;
+  if(!rx.dosisLog) rx.dosisLog = [];
+
+  const horaEl = document.getElementById('dosis-hora-'+id);
+  const hora   = horaEl ? horaEl.value : new Date().toTimeString().slice(0,5);
+
+  rx.dosisLog.push({
+    hora,
+    tipo,  // 'admin' | 'omitida'
+    nota : tipo==='omitida' ? 'Dosis omitida — registrar motivo' : '',
+  });
+
+  renderRxList();
+
+  // Verificar si se completó el ciclo prescrito
+  const adminCount = rx.dosisLog.filter(d=>d.tipo==='admin').length;
+  if(rx.cant && adminCount >= parseInt(rx.cant)){
+    showToast(`✅ ${rx.nom} — ciclo completo: ${adminCount} dosis administradas`);
+    // Pequeño delay para que el toast sea visible antes del modal
+    setTimeout(()=>verificarDevolucion(id), 800);
+  }
+}
+
+// Elimina una entrada puntual del dosisLog por índice
+function eliminarDosis(rxId, idx){
+  const rx = rxList.find(r=>r.id===rxId);
+  if(rx && rx.dosisLog){ rx.dosisLog.splice(idx, 1); renderRxList(); }
+}
+
+// ── 8. PROTOCOLO DE DESCONTINUACIÓN ─────────────────────────────
+// Fórmula de devolución: Total Despachado − Unidades Administradas
+function abrirDescontinuar(id){
+  const rx = rxList.find(r=>r.id===id);
+  if(!rx) return;
+  discontTarget = id;
+
+  // Mostrar nombre del medicamento en el modal
+  document.getElementById('discont-med-name').textContent =
+    `💊 ${rx.nom||'Medicamento'} ${rx.conc||''} · ${rx.frec||''}`;
+  document.getElementById('discont-motivo').value = '';
+  document.getElementById('discont-obs').value    = '';
+
+  // Calcular devolución: despachadas − administradas
+  const adminCount = (rx.dosisLog||[]).filter(d=>d.tipo==='admin').length;
+  const total      = parseInt(rx.cant)||0;
+  const devolucion = Math.max(0, total - adminCount);  // nunca negativo
+
+  const divDev = document.getElementById('discont-devolucion');
+  const txtDev = document.getElementById('discont-devolucion-txt');
+  if(devolucion > 0 && total > 0){
+    divDev.style.display = 'block';
+    txtDev.innerHTML = `Despachadas: <strong>${total}</strong> · Administradas: <strong>${adminCount}</strong> · <strong style="color:var(--amber);">Devolver: ${devolucion} unidad${devolucion>1?'es':''}</strong>`;
+  } else {
+    divDev.style.display = 'none';
+  }
+  document.getElementById('modal-discont').style.display = 'flex';
+}
+
+function cerrarDiscont(){
+  document.getElementById('modal-discont').style.display = 'none';
+  discontTarget = null;
+}
+
+function confirmarDiscont(){
+  const motivo = document.getElementById('discont-motivo').value;
+  const obs    = document.getElementById('discont-obs').value;
+  if(!motivo){
+    document.getElementById('discont-motivo').style.borderColor = 'var(--red)';
+    return;
+  }
+  const rx = rxList.find(r=>r.id===discontTarget);
+  if(rx){
+    rx.status        = 'descontinuada';
+    rx.discontMotivo = motivo;
+    rx.discontObs    = obs;
+    rx.discontHora   = new Date().toTimeString().slice(0,5);
+    // Propagar estado a la cola de Farmacia
+    const fq = farmaciaQueue.find(f=>f.id===discontTarget);
+    if(fq) fq.status = 'descontinuada';
+    renderRxList();
+    renderFarmaciaQueue();
+    verificarDevolucion(discontTarget);
+  }
+  cerrarDiscont();
+  showToast(`⛔ ${rx?.nom||'Medicamento'} descontinuado — ${motivo}`);
+}
+
+// ── 9. VERIFICACIÓN Y AUDITORÍA DE DEVOLUCIÓN ───────────────────
+// Se dispara al completar el ciclo o al descontinuar.
+// Calcula cuántas unidades deben volver a Farmacia.
+function verificarDevolucion(id){
+  const rx = rxList.find(r=>r.id===id);
+  if(!rx) return;
+  const total      = parseInt(rx.cant)||0;
+  if(!total) return;
+  const adminCount = (rx.dosisLog||[]).filter(d=>d.tipo==='admin').length;
+  const devolucion = Math.max(0, total - adminCount);
+  if(devolucion > 0){
+    rx.devolucion = devolucion;  // persistir para auditoría global
+    showFarmaciaAlert(
+      { nom:`${rx.nom} — Devolución: ${devolucion} unidades`, urgente:false },
+      document.getElementById('pac-nombre')?.value||'Paciente'
+    );
+  }
+}
+
+// Auditoría global: revisa todas las prescripciones despachadas/descontinuadas
+function verificarTodasDevoluciones(){
+  const resultados = rxList
+    .filter(r=>r.status==='despachada'||r.status==='descontinuada')
+    .map(rx=>{
+      const total      = parseInt(rx.cant)||0;
+      const admin      = (rx.dosisLog||[]).filter(d=>d.tipo==='admin').length;
+      const omit       = (rx.dosisLog||[]).filter(d=>d.tipo==='omitida').length;
+      const devolucion = Math.max(0, total-admin);
+      return { ...rx, total, admin, omit, devolucion };
+    });
+
+  const cont  = document.getElementById('devolucion-body');
+  const pac   = document.getElementById('pac-nombre')?.value||'Paciente';
+  const fecha = new Date().toLocaleDateString('es-EC');
+  let totalDevolver = 0;
+
+  let html = `<div style="margin-bottom:14px;padding:10px 14px;background:var(--navy-l);border:1px solid var(--border);border-radius:8px;">
+    <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Auditoría de Medicamentos</div>
+    <div style="font-size:.88rem;font-weight:700;color:var(--navy);margin-top:2px;">Paciente: ${pac} · Fecha: ${fecha}</div>
+  </div>`;
+
+  if(!resultados.length){
+    html += '<div style="text-align:center;padding:20px;color:var(--muted);">No hay medicamentos despachados para auditar</div>';
+  } else {
+    html += `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.8rem;">
+      <thead><tr style="background:var(--navy);">
+        <th style="padding:8px 10px;color:white;text-align:left;">Medicamento</th>
+        <th style="padding:8px 10px;color:white;text-align:center;">Despachadas</th>
+        <th style="padding:8px 10px;color:white;text-align:center;">Administradas</th>
+        <th style="padding:8px 10px;color:white;text-align:center;">Omitidas</th>
+        <th style="padding:8px 10px;color:white;text-align:center;">A Devolver</th>
+        <th style="padding:8px 10px;color:white;text-align:center;">Estado</th>
+      </tr></thead><tbody>`;
+
+    resultados.forEach((r, i)=>{
+      totalDevolver += r.devolucion;
+      const pct = r.total ? Math.round((r.admin/r.total)*100) : 0;
+      html += `<tr style="${i%2===0?'':'background:var(--surface);'}">
+        <td style="padding:8px 10px;font-weight:600;">${r.nom||'—'}
+          <div style="font-size:.7rem;color:var(--muted);">${r.conc||''} · ${r.frec||''}</div>
+        </td>
+        <td style="padding:8px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;">${r.total}</td>
+        <td style="padding:8px 10px;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:700;">${r.admin}</td>
+        <td style="padding:8px 10px;text-align:center;font-family:'JetBrains Mono',monospace;color:var(--amber);font-weight:700;">${r.omit}</td>
+        <td style="padding:8px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:800;color:${r.devolucion>0?'var(--red)':'var(--green)'};">
+          ${r.devolucion>0 ? r.devolucion+' unid.' : '✅ 0'}
+        </td>
+        <td style="padding:8px 10px;text-align:center;">
+          <span style="font-size:.68rem;padding:2px 8px;border-radius:100px;font-weight:700;
+            background:${r.status==='descontinuada'?'var(--red-l)':pct>=100?'var(--green-l)':'var(--amber-l)'};
+            color:${r.status==='descontinuada'?'var(--red)':pct>=100?'var(--green)':'var(--amber)'};
+            border:1px solid ${r.status==='descontinuada'?'var(--red-mid)':pct>=100?'var(--green-mid)':'var(--amber-mid)'};">
+            ${r.status==='descontinuada' ? 'Descontinuado' : pct>=100 ? 'Completado' : pct+'% admin.'}
+          </span>
+        </td>
+      </tr>`;
+    });
+
+    html += `</tbody></table></div>
+    <div style="margin-top:14px;padding:12px 16px;border-radius:9px;
+      background:${totalDevolver>0?'var(--amber-l)':'var(--green-l)'};
+      border:1.5px solid ${totalDevolver>0?'var(--amber-mid)':'var(--green-mid)'};">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+        color:${totalDevolver>0?'var(--amber)':'var(--green)'};margin-bottom:4px;">
+        ${totalDevolver>0?'📦 Devolución requerida':'✅ Sin devolución pendiente'}
+      </div>
+      <div style="font-size:.9rem;font-weight:800;color:${totalDevolver>0?'var(--amber)':'var(--green)'};">
+        ${totalDevolver>0
+          ? `Total a devolver a Farmacia: ${totalDevolver} unidades`
+          : 'Todos los medicamentos fueron administrados correctamente'}
+      </div>
+    </div>`;
+  }
+
+  cont.innerHTML = html;
+  document.getElementById('modal-devolucion').style.display = 'flex';
+}
+
+function confirmarDevolucion(){
+  showToast('📦 Devolución confirmada — Farmacia notificada');
+  document.getElementById('modal-devolucion').style.display = 'none';
+  rxList.forEach(rx=>{ if(rx.devolucion) rx.devolucionConfirmada=true; });
+}
+
+// ── 10. HELPERS DE ESTADO ────────────────────────────────────────
+function toggleUrgente(id){
+  const rx = rxList.find(r=>r.id===id);
+  if(rx){ rx.urgente = !rx.urgente; renderRxList(); }
+}
+function removeRx(id){
+  rxList = rxList.filter(r=>r.id!==id);
+  renderRxList();
+}
+
+// ── MEDICACIÓN HABITUAL ──
+let medHCounter=0;
+function addMedHabRow(nom,dosis,frec,via,indicacion){
+  medHCounter++;
+  const tb=document.getElementById('medh-body');
+  const tr=document.createElement('tr');tr.id='medh-'+medHCounter;const id=medHCounter;
+  tr.innerHTML=`
+    <td><input class="fi" type="text" value="${nom||''}" placeholder="Nombre genérico" style="min-width:130px;padding:5px 8px;font-size:.79rem;"></td>
+    <td><input class="fi" type="text" value="${dosis||''}" placeholder="Ej: 10mg" style="width:85px;padding:5px 8px;font-size:.79rem;font-family:'JetBrains Mono',monospace;font-weight:700;"></td>
+    <td><select class="fs" style="padding:5px 8px;font-size:.79rem;width:120px;">
+      ${['','c/4h','c/6h','c/8h','c/12h','c/24h','c/48h','c/72h','Lunes/Miér./Vier.','Lunes a Viernes','Nocturno','PRN','Según necesidad'].map(o=>`<option ${frec===o?'selected':''}>${o||'— Frecuencia —'}</option>`).join('')}
+    </select></td>
+    <td><select class="fs" style="padding:5px 8px;font-size:.79rem;width:105px;">
+      ${['','VO','IV','IM','SC','Inhalado','Tópico','Sublingual','Transdérmico'].map(o=>`<option ${via===o?'selected':''}>${o||'— Vía —'}</option>`).join('')}
+    </select></td>
+    <td><input class="fi" type="text" value="${indicacion||''}" placeholder="HTA, DM2, dolor..." style="min-width:120px;padding:5px 8px;font-size:.79rem;"></td>
+    <td><select class="fs" style="padding:5px 8px;font-size:.79rem;width:110px;" onchange="updateMedHBadge()">
+      <option value="si" style="color:var(--green);">✅ Continuar</option>
+      <option value="suspender" style="color:var(--red);">⛔ Suspender</option>
+      <option value="modificar" style="color:var(--amber);">⚠️ Modificar</option>
+      <option value="evaluar">🔍 Evaluar</option>
+    </select></td>
+    <td><input class="fi" type="text" placeholder="Ajuste de dosis, suspender por cirugía..." style="min-width:140px;padding:5px 8px;font-size:.79rem;"></td>
+    <td><button class="btn-del-row" onclick="document.getElementById('medh-${id}').remove();updateMedHBadge()">✕</button></td>`;
+  tb.appendChild(tr);
+  updateMedHBadge();
+}
+function updateMedHBadge(){
+  const rows=document.querySelectorAll('#medh-body tr');
+  const b=document.getElementById('badge-medhab');
+  if(b) b.textContent=rows.length?rows.length+' medicamento'+(rows.length>1?'s':''):'Pendiente registro';
+}
+function searchMedH(q){
+  const dd=document.getElementById('medh-drop');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=MED_DB.filter(m=>m.n.toLowerCase().includes(q2)||m.com.toLowerCase().includes(q2)).slice(0,8);
+  if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addMedHabRow('${m.n.replace(/'/g,"\\'")}','${m.conc}','','${m.via.split('/')[0]}','')">
+    <span class="cie-opt-code" style="min-width:80px;color:var(--purple);">${m.cat}</span>
+    <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n}</div>
+    <div style="font-size:.72rem;color:var(--muted);">${m.com} · ${m.conc}</div></div>
+  </div>`).join('');
+  dd.classList.add('open');
+}
+function openMedHDrop(){const v=document.getElementById('medh-search').value;if(v.length>=2)searchMedH(v);}
+function closeMedHDrop(){document.getElementById('medh-drop')?.classList.remove('open');}
+
+function updateRxStats(){
+  document.getElementById('badge-rx').textContent=rxList.length+' medicamento'+(rxList.length!==1?'s':'');
+  document.getElementById('stat-rx').textContent=rxList.length;
+  updateFarmaciaStats();
+}
+
+// ── FARMACIA BRIDGE ── HCU → Medix8 (IDs estables, sin nombres como llaves)
+// Mapa: sala HCU → cama_id Medix8
+const HCU_CAMA_MAP = {
+  'UCI':'CC-UCI','HOSP':'CC-HOSP','NEO':'CC-NEO',
+  'QX':'CC-QX','EMERG':'CC-EMERG',
+};
+
+function _resolverCamaId(){
+  // Lee cama del formulario de paciente — ej: "UCI-01" ya es el ID correcto
+  const cama = (document.getElementById('pac-cama')?.value||'').trim().toUpperCase();
+  return cama||'SIN-CAMA';
+}
+
+function _resolverConvenioId(){
+  // Lee convenio del formulario si existe, default CONV-001
+  const sel = document.getElementById('pac-convenio')?.value;
+  return sel||'CONV-001';
+}
+
+function _buildPedidoPayload(rx){
+  const paciente   = document.getElementById('pac-nombre')?.value||'';
+  const cedula     = document.getElementById('pac-cedula')?.value||'';
+  const medico     = document.getElementById('pac-medico')?.value||'';
+  const camaId     = _resolverCamaId();
+  const convenioId = _resolverConvenioId();
+  return {
+    // IDs estables — nunca nombres como llaves
+    pedido_id:    'PED-HCU-'+Date.now()+'-'+rx.id,
+    origen:       'HCU',
+    ts_emision:   new Date().toISOString(),
+    // Entidades por ID
+    cama_id:      camaId,
+    convenio_id:  convenioId,
+    // Datos del paciente (solo como display, no como clave)
+    paciente_display: paciente,
+    cedula:       cedula,
+    medico_display:   medico,
+    // Datos del medicamento
+    item_nombre:  rx.nom||'',
+    item_com:     rx.com||'',
+    item_conc:    rx.conc||'',
+    item_via:     rx.via||'',
+    item_frec:    rx.frec||'',
+    item_dosis:   rx.dosis||'',
+    item_cant:    rx.farmUnidades||rx.cant||1,
+    item_instr:   rx.pres||'',
+    urgente:      !!rx.urgente,
+    estado:       'PENDIENTE',
+    // Para trazabilidad
+    hcu_rx_id:    rx.id,
+  };
+}
+
+function _syncFarmacia(){
+  try{
+    const camaId     = _resolverCamaId();
+    const convenioId = _resolverConvenioId();
+    const paciente   = document.getElementById('pac-nombre')?.value||'';
+    const cedula     = document.getElementById('pac-cedula')?.value||'';
+    const medico     = document.getElementById('pac-medico')?.value||'';
+    // Payload con IDs — lo que lee Medix8
+    const payload = {
+      ts:          Date.now(),
+      origen:      'HCU',
+      cama_id:     camaId,
+      convenio_id: convenioId,
+      // Display sólo para UI de Farmacia
+      pac_display: paciente,
+      cedula:      cedula,
+      medico_display: medico,
+      pedidos: farmaciaQueue.map(rx=>_buildPedidoPayload(rx)),
+    };
+    localStorage.setItem('M8_BRIDGE_HCU_FARMACIA', JSON.stringify(payload));
+    // Notificar a Medix8 si está abierto en la misma sesión
+    if(typeof window.M8_recibirPedidosHCU === 'function'){
+      window.M8_recibirPedidosHCU(payload);
+    }
+  }catch(e){ console.warn('Bridge HCU→Farmacia error:', e); }
+}
+
+function enviarFarmacia(id){
+  const rx=rxList.find(r=>r.id===id);
+  if(!rx||rx.status!=='pendiente') return;
+  if(!rx.farmUnidades&&rx.dosis&&rx.conc) calcDosis(id);
+  rx.status='enviada';
+  const pac=document.getElementById('pac-nombre')?.value||'Paciente';
+  const hora=new Date().toTimeString().slice(0,5);
+  // Enriquecer con IDs estables antes de encolar
+  const entrada = {
+    ...rx,
+    pac,
+    hora,
+    cama_id:     _resolverCamaId(),
+    convenio_id: _resolverConvenioId(),
+    pedido_id:   'PED-HCU-'+Date.now()+'-'+rx.id,
+    origen:      'HCU',
+  };
+  farmaciaQueue.push(entrada);
+  renderRxList(); renderFarmaciaQueue(); showFarmaciaAlert(rx,pac);
+  _syncFarmacia();
+}
+
+function enviarTodasFarmacia(){
+  const pendientes=rxList.filter(r=>r.status==='pendiente');
+  if(!pendientes.length){showToast('No hay prescripciones pendientes');return;}
+  const pac=document.getElementById('pac-nombre')?.value||'Paciente';
+  const hora=new Date().toTimeString().slice(0,5);
+  const camaId=_resolverCamaId();
+  const convenioId=_resolverConvenioId();
+  pendientes.forEach(rx=>{
+    if(!rx.farmUnidades&&rx.dosis&&rx.conc) calcDosis(rx.id);
+    rx.status='enviada';
+    farmaciaQueue.push({
+      ...rx, pac, hora,
+      cama_id:     camaId,
+      convenio_id: convenioId,
+      pedido_id:   'PED-HCU-'+Date.now()+'-'+rx.id,
+      origen:      'HCU',
+    });
+  });
+  renderRxList(); renderFarmaciaQueue();
+  showFarmaciaAlert({nom:`${pendientes.length} medicamentos`,urgente:pendientes.some(r=>r.urgente)},pac,true);
+  _syncFarmacia();
+}
+
+function renderFarmaciaQueue(){
+  const cont=document.getElementById('farmacia-queue');
+  if(!farmaciaQueue.length){
+    cont.innerHTML='<div style="text-align:center;padding:24px;color:rgba(255,255,255,.3);font-size:.84rem;">Cola vacía — envíe prescripciones desde el panel de medicamentos</div>';
+    updateFarmaciaStats(); return;
+  }
+  cont.innerHTML=farmaciaQueue.map((item,i)=>{
+    const rx=rxList.find(r=>r.id===item.id);
+    const admin=(rx?.dosisLog||[]).filter(d=>d.tipo==='admin').length;
+    const total=parseInt(item.cant)||parseInt(rx?.cant)||0;
+    const devol=Math.max(0,total-admin);
+    const pct=total?Math.round((admin/total)*100):0;
+    const isDisc=item.status==='descontinuada'||rx?.status==='descontinuada';
+    return `<div class="fq-item ${item.urgente&&!isDisc?'urgente':''} ${item.status==='despachada'&&!isDisc?'despachada':''} ${isDisc?'despachada':''}" id="fq-${item.id}" style="${isDisc?'border-color:#fc8181;background:rgba(197,48,48,.12);':''}">
+      <div class="fq-num" style="background:${isDisc?'var(--red)':item.urgente?'var(--red)':item.status==='despachada'?'var(--green)':'var(--teal)'};">${i+1}</div>
+      <div class="fq-dot ${isDisc?'urgente':item.status==='despachada'?'despachada':'pendiente'}"></div>
+      <div class="fq-info" style="flex:1;min-width:0;">
+        <div class="fq-med" style="word-break:break-word;">${item.nom||'Medicamento'}
+          ${item.solicitudFarmacia?'<span style="font-size:.65rem;background:var(--amber);color:white;padding:1px 7px;border-radius:100px;margin-left:4px;font-weight:800;">🔎 BUSCAR</span>':''}
+          ${item.dosis?`<span style="font-family:'JetBrains Mono',monospace;font-size:.68rem;background:var(--teal);color:white;padding:1px 6px;border-radius:100px;margin-left:4px;">💊 ${item.dosis}/toma</span>`:''}
+          ${item.urgente&&!isDisc?'<span style="font-size:.65rem;background:var(--red);color:white;padding:1px 6px;border-radius:100px;margin-left:4px;">URGENTE</span>':''}
+          ${isDisc?'<span style="font-size:.65rem;background:var(--red);color:white;padding:1px 6px;border-radius:100px;margin-left:4px;">DESCONTINUADO</span>':''}
+        </div>
+        <div class="fq-detail">${item.solicitudFarmacia?`<span style="color:var(--amber);font-weight:600;">Solicitud de búsqueda — no disponible en listado</span>`:''} ${item.conc||'—'} · ${item.via||'—'} · ${item.frec||'—'} ${item.farmUnidades?`· <strong style="color:var(--teal-mid);">Total: ${item.farmUnidades} unid.</strong>`:''}</div>
+        <div class="fq-pac">👤 ${item.pac} · ${item.hora}</div>
+        ${total?`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <div style="flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:${pct>=100?'var(--green-mid)':'var(--teal-mid)'};border-radius:2px;"></div>
+          </div>
+          <span style="font-size:.65rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;white-space:nowrap;">${admin}/${total} · ${devol>0?`<span style="color:var(--amber-mid);">Devolver ${devol}</span>`:'✅'}</span>
+        </div>`:''}
+      </div>
+      <div class="fq-actions" style="flex-shrink:0;">
+        ${isDisc&&devol>0?`<button class="fq-btn" onclick="verificarDevolucion(${item.id})" style="background:var(--amber);color:white;">📦 ${devol} devol.</button>`
+        :item.status!=='despachada'&&!isDisc?`<button class="fq-btn despachar" onclick="despacharMed(${item.id})">✅ Despachar</button>`
+        :`<button class="fq-btn done">Despachado</button>`}
+      </div>
+    </div>`;
+  }).join('');
+  updateFarmaciaStats();
+}
+
+function despacharMed(id){
+  const item=farmaciaQueue.find(f=>f.id===id);
+  const rx=rxList.find(r=>r.id===id);
+  if(item)item.status='despachada';
+  if(rx)rx.status='despachada';
+  renderFarmaciaQueue(); renderRxList();
+  showToast(`✅ ${item?.nom||'Medicamento'} despachado desde farmacia`);
+  // Notificar retorno a Medix8 Farmacia via bridge
+  _syncFarmacia();
+  try{
+    const ack = {
+      origen: 'HCU_DESPACHO',
+      ts: Date.now(),
+      pedido_id: item?.pedido_id||null,
+      hcu_rx_id: id,
+      cama_id: item?.cama_id||_resolverCamaId(),
+      item_nombre: item?.nom||'',
+      estado: 'DESPACHADO',
+    };
+    localStorage.setItem('M8_BRIDGE_FARMACIA_HCU_ACK', JSON.stringify(ack));
+    if(typeof window.M8_confirmarDespacho==='function') window.M8_confirmarDespacho(ack);
+  }catch(e){}
+}
+
+function updateFarmaciaStats(){
+  const pend=farmaciaQueue.filter(f=>f.status!=='despachada').length;
+  document.getElementById('farmacia-queue-count').textContent=pend+' pendiente'+(pend!==1?'s':'');
+  document.getElementById('stat-farm').textContent=pend+' pendiente'+(pend!==1?'s':'');
+}
+
+function showFarmaciaAlert(rx,pac){
+  const wrap=document.getElementById('farmacia-alert-wrap');
+  const div=document.createElement('div');
+  div.className='f-alert'+(rx.urgente?' urgente':'');
+  div.innerHTML=`
+    <span class="f-alert-icon">${rx.urgente?'🚨':'💊'}</span>
+    <div class="f-alert-body">
+      <div class="f-alert-title">${rx.urgente?'⚠️ PRESCRIPCIÓN URGENTE':'📤 Nueva prescripción en Farmacia'}</div>
+      <div class="f-alert-sub">${rx.nom} — Paciente: ${pac}<br>Hora: ${new Date().toTimeString().slice(0,5)}${rx.urgente?' · <strong style="color:var(--red-mid);">Despacho inmediato requerido</strong>':''}</div>
+    </div>
+    <button class="f-alert-close" onclick="this.closest('.f-alert').remove()">✕</button>`;
+  wrap.appendChild(div);
+  requestAnimationFrame(()=>div.classList.add('show'));
+  setTimeout(()=>{div.classList.remove('show');setTimeout(()=>div.remove(),400);},rx.urgente?8000:4000);
+}
+
+// ── VITALES ──
+function evalVitales(){
+  const pa=document.getElementById('sv-pa').value;
+  const fc=parseInt(document.getElementById('sv-fc').value)||0;
+  const fr=parseInt(document.getElementById('sv-fr').value)||0;
+  const temp=parseFloat(document.getElementById('sv-temp').value)||0;
+  const spo2=parseInt(document.getElementById('sv-spo2').value)||0;
+  const items=[];
+  if(pa){const pts=pa.split('/').map(Number);const s=pts[0],d=pts[1]||0;
+    const cls=s>=180||s<90||d>=110?'alert':s>=140||d>=90?'warn':'ok';
+    items.push({l:'PA',v:pa,c:cls});}
+  if(fc) items.push({l:'FC',v:fc+'lpm',c:fc>100||fc<60?'warn':'ok'});
+  if(fr) items.push({l:'FR',v:fr+'rpm',c:fr>20||fr<12?'warn':'ok'});
+  if(temp) items.push({l:'Temp',v:temp+'°C',c:temp>=38.5?'alert':temp>=37.5||temp<36?'warn':'ok'});
+  if(spo2) items.push({l:'SpO₂',v:spo2+'%',c:spo2<90?'alert':spo2<94?'warn':'ok'});
+  const sem=document.getElementById('vital-semaforo');
+  sem.innerHTML=items.map(it=>`<div class="vital-badge ${it.c}">
+    ${it.c==='alert'?'⚠️':it.c==='warn'?'⚡':''}
+    <span>${it.l}</span>${it.v}</div>`).join('');
+  const hasAlert=items.some(i=>i.c==='alert');
+  document.getElementById('badge-vitales').textContent=hasAlert?'⚠️ Valores críticos':items.length?'✓ Registrado':'Pendiente';
+  document.getElementById('badge-vitales').style.background=hasAlert?'var(--red)':'';
+}
+
+function updateStats(){
+  const pac=document.getElementById('pac-nombre').value||'—';
+  document.getElementById('stat-pac').textContent=pac.split(',')[0]||pac.split(' ')[0];
+}
+
+function guardar(){showToast('✅ Evolución guardada correctamente');}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pac-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('firma-fecha').value=new Date().toISOString().slice(0,16);
+  addInfRow({sol:'Lactato Ringer',vol:'1000',vel:'125'});
+  addInfRow();
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#cie-main-search')&&!e.target.closest('#cie-drop-main')) closeCIE('main');
+    if(!e.target.closest('#cie-sec-search')&&!e.target.closest('#cie-drop-sec')) closeCIE('sec');
+    if(!e.target.closest('#med-search')&&!e.target.closest('#med-drop')) closeMedDrop();
+    if(!e.target.closest('#medh-search')&&!e.target.closest('#medh-drop')) closeMedHDrop();
+  });
+});
+</script>
+</body>
+</html>

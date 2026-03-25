@@ -92,6 +92,127 @@ src/
 ```
 
 ---
+✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+*******************************************************************************************************
+*******************************************************************************************************
+-- lo QUE ME DIJO CHATGPT ASI DEBE SER MEJOR 
+src/
+├── core/                         # 🔥 Núcleo de la app (infraestructura)
+│   ├── api/                      # Cliente API (Supabase / Axios)
+│   │   └── supabaseClient.js
+│   │
+│   ├── auth/                     # Autenticación y roles
+│   │   ├── authService.js
+│   │   ├── useAuth.js
+│   │   └── ProtectedRoute.jsx
+│   │
+│   ├── routing/                  # Rutas centralizadas
+│   │   └── AppRoutes.jsx
+│   │
+│   └── config/                   # Config global
+│       └── env.js
+│
+├── modules/                      # 🔥 FEATURES (lo más importante)
+│
+│   ├── medico/
+│   │   ├── dashboard/
+│   │   │   ├── pages/
+│   │   │   │   └── DashboardMedico.jsx
+│   │   │   └── components/
+│   │   │
+│   │   ├── emergencia/
+│   │   │   ├── pages/EmergenciaPage.jsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   │
+│   │   ├── anamnesis/
+│   │   │   ├── pages/AnamnesisPage.jsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── services/
+│   │   │   └── types/
+│   │   │
+│   │   ├── evolucion/
+│   │   │   └── ...
+│   │
+│   │   ├── receta/
+│   │   │   └── ...
+│   │
+│   │   ├── epicrisis/
+│   │   │   └── ...
+│   │
+│   │   ├── interconsulta/
+│   │   │   └── ...
+│   │
+│   │   ├── certificados/
+│   │   │   └── ...
+│   │
+│   │   └── consentimientos/
+│   │       └── ...
+│
+│   ├── enfermeria/
+│   │   ├── dashboard/
+│   │   │   └── pages/DashboardEnfermeria.jsx
+│   │   │
+│   │   ├── signos-vitales/
+│   │   │   ├── pages/SignosVitalesPage.jsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   └── services/
+│   │   │
+│   │   ├── medicacion/
+│   │   ├── hidratacion/
+│   │   ├── oxigeno/
+│   │   ├── balance/
+│   │   └── cuidados/
+│
+│   ├── quirurgico/
+│   │   ├── prequirurgico/
+│   │   ├── anestesia/
+│   │   │   └── pages/RegistroAnestesiaPage.jsx
+│   │   ├── protocolo/
+│   │   └── recuperacion/
+│
+│   ├── admin/
+│   │   └── users/
+│   │       └── pages/AdminUsersPage.jsx
+│
+│   ├── ai/
+│   │   └── chatbot/
+│   │       └── pages/ChatbotPage.jsx
+│
+│   └── auth/
+│       ├── login/
+│       │   └── pages/LoginPage.jsx
+│       └── unauthorized/
+│           └── pages/UnauthorizedPage.jsx
+│
+├── shared/                       # 🔁 Reutilizable en TODA la app
+│   ├── ui/                       # Button, Card, Badge, Modal
+│   ├── forms/                    # Inputs médicos reutilizables
+│   ├── layout/                   # Navbar, Sidebar
+│   ├── feedback/                 # Alerts, Toasts
+│   ├── hooks/                    # useForm, useDebounce, etc
+│   ├── utils/                    # helpers
+│   └── constants/
+│
+├── services/                     # (opcional global)
+│   └── globalService.js
+│
+├── contexts/                     # React Context
+│   └── AuthContext.jsx
+│
+├── types/                        # Tipos globales
+│   ├── patient.types.js
+│   ├── user.types.js
+│   └── index.js
+│
+├── App.jsx
+└── main.jsx
+
 
 ## 🎨 SISTEMA DE DISEÑO CREADO
 
