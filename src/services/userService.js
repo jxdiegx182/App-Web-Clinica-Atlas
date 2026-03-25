@@ -1,5 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { supabase } from '@/supabaseClient';
 import { ALL_ROLES } from '@/constants/roles';
 
 export async function getUserProfileByUid(uid) {
@@ -7,15 +6,17 @@ export async function getUserProfileByUid(uid) {
     throw new Error('UID de usuario no proporcionado.');
   }
 
-  const userRef = doc(db, 'users', uid);
-  const userSnap = await getDoc(userRef);
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', uid)
+    .single();
 
-  if (!userSnap.exists()) {
-    throw new Error('No existe perfil para este usuario en Firestore.');
+  if (error || !data) {
+    throw new Error('No existe perfil para este usuario en Supabase.');
   }
 
-  const profile = userSnap.data();
-  const normalizedRole = String(profile?.rol || '')
+  const normalizedRole = String(data?.rol || '')
     .trim()
     .toLowerCase();
 
@@ -24,9 +25,9 @@ export async function getUserProfileByUid(uid) {
   }
 
   return {
-    uid,
-    nombre: profile.nombre || '',
-    email: profile.email || '',
+    uid: data.id,
+    nombre: data.nombre || '',
+    email: data.email || '',
     rol: normalizedRole,
   };
 }

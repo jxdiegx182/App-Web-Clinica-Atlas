@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/firebaseConfig';
+import { supabase } from '@/supabaseClient';
 import { ROLES } from '@/constants/roles';
 import { loginWithEmailPassword, logoutUser, registerUserByAdmin } from '@/services/authService';
 import { getUserProfileByUid } from '@/services/userService';
@@ -24,49 +23,63 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
+  let isMounted = true;
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+  async function handleSession(session) {
+    if (!isMounted) return;
+
+    setLoading(true);
+
+    const user = session?.user;
+
+    if (!user) {
+      setUser(null);
+      setProfile(null);
+      setRole(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const profileData = await getUserProfileByUid(user.id);
+
       if (!isMounted) return;
-      setLoading(true);
 
-      if (!firebaseUser) {
-        setUser(null);
-        setProfile(null);
-        setRole(null);
-        setLoading(false);
-        return;
-      }
+      setUser(user);
+      setProfile(profileData);
+      setRole(profileData.rol);
+    } catch (error) {
+      console.error('Error cargando perfil:', error);
 
-      try {
-        const firestoreProfile = await getUserProfileByUid(firebaseUser.uid);
+      setUser(null);
+      setProfile(null);
+      setRole(null);
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  }
 
-        if (!isMounted) return;
+  // 🔥 1. Cargar sesión inicial
+  supabase.auth.getSession().then(({ data }) => {
+    handleSession(data.session);
+  });
 
-        setUser(firebaseUser);
-        setProfile(firestoreProfile);
-        setRole(firestoreProfile.rol);
-      } catch (error) {
-        console.error('Error cargando rol/perfil del usuario:', error);
-        await logoutUser();
+  // 🔥 2. Escuchar cambios
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      handleSession(session);
+    }
+  );
 
-        if (!isMounted) return;
+  return () => {
+    isMounted = false;
+    listener?.subscription?.unsubscribe();
+  };
+}, []);
 
-        setUser(null);
-        setProfile(null);
-        setRole(null);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    });
 
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, []);
+
+
 
   const login = useCallback(async ({ email, password }) => {
     setLoading(true);
@@ -98,10 +111,10 @@ export function AuthProvider({ children }) {
         email,
         password,
         rol,
-        createdByUid: user?.uid,
+        createdByUid: user?.id,
       });
     },
-    [role, user?.uid]
+    [role, user?.id]
   );
 
   const value = {
