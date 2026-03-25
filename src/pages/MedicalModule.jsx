@@ -9,7 +9,7 @@ import Anamnesis from './Anamnesis';
 import { Stethoscope, Building, } from 'lucide-react';
 import Emergencia from './Emergencia';
 import Epicrisis from './Epicrisis';
-import Evolucion from '@/modules/medico/evolucion/evolucion.jsx';
+import Evolucion from '@/modules/medico/evolucion/Evolucion.jsx';
 import Interconsulta from './Interconsulta';
 import Certificado from './Certificado';
 import Receta from './Receta';
