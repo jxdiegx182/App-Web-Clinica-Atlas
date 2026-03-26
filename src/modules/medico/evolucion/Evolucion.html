@@ -6,7 +6,6 @@
 <title>Hoja de Evolución — Clínicas Atlas</title>
 <!-- FIX #1: Eliminado 'Syne' (nunca se usaba, ~50KB cargados inútilmente) -->
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#dde7f0;--bg-grad-from:#c5d5e5;--bg-grad-to:#e8edf5;
@@ -335,6 +334,24 @@ body{font-family:'Inter',sans-serif;background:linear-gradient(160deg,var(--bg-g
   .card{overflow:hidden!important;}
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </head>
 <body>
 
@@ -858,70 +875,66 @@ function updateInfStatus(sel){
 // ══════════════════════════════════════════════════════
 // BASE DE DATOS MEDICAMENTOS
 // ══════════════════════════════════════════════════════
-// MED_DB reemplazado por consulta Supabase (medicamentos_catalogo)
-
-const medSupabaseUrl = window.VITE_SUPABASE_URL || 'https://ivrqnbqajpifgshyvxwz.supabase.co';
-const medSupabaseAnonKey =
-  window.VITE_SUPABASE_ANON_KEY || 'sb_publishable_vzgXVF7qAF3sLaJAavnFSg_EVwcKBCh';
-const medSupabase = window.supabase?.createClient(medSupabaseUrl, medSupabaseAnonKey);
-
-async function searchMedicamentos(scope,q){
-  const query=(q||'').trim();
-  if(!query) return [];
-
-  console.log("Buscando medicamento:", query);
-
-  if(!medSupabase){
-    console.error('Supabase no está inicializado en Evolucion.html');
-    return [];
-  }
-
-  try{
-    const safeQuery=query.replace(/,/g,'\\,');
-    const { data, error } = await medSupabase
-      .from("medicamentos_catalogo")
-      .select("*")
-      .or(`nombre.ilike.%${safeQuery}%,comercial.ilike.%${safeQuery}%`)
-      .limit(12);
-
-    console.log("Resultados:", data);
-
-    if(error){
-      console.error(error);
-      return [];
-    }
-
-    const mapped=(Array.isArray(data)?data:[]).map(r=>({
-      n: r.nombre || '',
-      com: r.comercial || '',
-      conc: r.concentracion || '',
-      dos: r.dosis || '',
-      via: r.via || '',
-      pres: r.presentacion || '',
-      frec: r.frecuencia || '',
-      dur: r.duracion || '',
-      cat: r.categoria || ''
-    }));
-
-    return scope==='medh' ? mapped.slice(0,8) : mapped.slice(0,10);
-  }catch(err){
-    console.error(err);
-    return [];
-  }
-}
+const MED_DB=[
+  {n:'Paracetamol',com:'Panadol · Atamel',conc:'500mg/tab',dos:'1g',via:'VO/IV',pres:'Tableta/Amp',frec:'c/6h',dur:'5d',cat:'Analgésico'},
+  {n:'Ibuprofeno',com:'Advil · Motrin',conc:'400mg/tab',dos:'400mg',via:'VO',pres:'Tableta',frec:'c/8h',dur:'5d',cat:'AINE'},
+  {n:'Ketorolaco',com:'Toradol · Dolac',conc:'30mg/ml',dos:'30mg',via:'IV/IM',pres:'Ampolla',frec:'c/8h',dur:'5d',cat:'AINE'},
+  {n:'Diclofenaco',com:'Voltaren · Cataflam',conc:'75mg/ml',dos:'75mg',via:'IM/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'7d',cat:'AINE'},
+  {n:'Metamizol',com:'Dipirona · Novalgina',conc:'1g/2ml',dos:'2g',via:'IV/IM',pres:'Ampolla',frec:'c/6-8h',dur:'3d',cat:'Analgésico'},
+  {n:'Morfina',com:'Dimorf',conc:'10mg/ml',dos:'5mg',via:'IV/SC',pres:'Ampolla',frec:'c/4h PRN',dur:'3d',cat:'Opioide'},
+  {n:'Tramadol',com:'Tramal · Ultram',conc:'100mg/2ml',dos:'100mg',via:'IV/IM/VO',pres:'Ampolla/Cap',frec:'c/8h',dur:'5d',cat:'Opioide débil'},
+  {n:'Ampicilina/Sulbactam',com:'Unasyn',conc:'1.5g/amp',dos:'3g',via:'IV',pres:'Frasco-amp',frec:'c/6h',dur:'7d',cat:'Antibiótico'},
+  {n:'Ceftriaxona',com:'Rocephin · Cefotrex',conc:'1g/amp',dos:'2g',via:'IV/IM',pres:'Frasco-amp',frec:'c/24h',dur:'7d',cat:'Antibiótico'},
+  {n:'Ciprofloxacina',com:'Cipro · Ciproflox',conc:'200mg/100ml',dos:'400mg',via:'IV/VO',pres:'Bolsa IV/Tab',frec:'c/12h',dur:'7d',cat:'Antibiótico'},
+  {n:'Clindamicina',com:'Dalacin C',conc:'300mg/2ml',dos:'600mg',via:'IV/VO',pres:'Ampolla/Cap',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Imipenem',com:'Tienam',conc:'500mg/amp',dos:'500mg',via:'IV',pres:'Frasco-amp',frec:'c/6-8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Metronidazol',com:'Flagyl',conc:'500mg/100ml',dos:'500mg',via:'IV/VO',pres:'Bolsa IV/Tab',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Piperacilina/Tazobactam',com:'Tazocin',conc:'4.5g/amp',dos:'4.5g',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'7d',cat:'Antibiótico'},
+  {n:'Vancomicina',com:'Vancocin',conc:'500mg/amp',dos:'1g',via:'IV',pres:'Frasco-amp',frec:'c/12h',dur:'7d',cat:'Antibiótico'},
+  {n:'Enalapril',com:'Lotrial · Renitec',conc:'10mg/tab',dos:'10mg',via:'VO',pres:'Tableta',frec:'c/12h',dur:'crónico',cat:'IECA'},
+  {n:'Enalaprilato',com:'Vasotec IV',conc:'1.25mg/ml',dos:'1.25mg',via:'IV',pres:'Ampolla',frec:'c/6h',dur:'PRN',cat:'IECA IV'},
+  {n:'Losartán',com:'Cozaar',conc:'50mg/tab',dos:'50mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'ARA-II'},
+  {n:'Metoprolol',com:'Lopressor · Betaloc',conc:'50mg/tab',dos:'50mg',via:'VO',pres:'Tableta',frec:'c/12h',dur:'crónico',cat:'Beta-bloqueante'},
+  {n:'Amlodipino',com:'Norvasc',conc:'10mg/tab',dos:'10mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Calcio-antagonista'},
+  {n:'Hidralazina',com:'Apresoline',conc:'20mg/ml',dos:'20mg',via:'IV',pres:'Ampolla',frec:'c/4-6h PRN',dur:'PRN',cat:'Vasodilatador'},
+  {n:'Enoxaparina',com:'Clexane · Lovenox',conc:'40mg/0.4ml',dos:'40mg',via:'SC',pres:'Jeringa precargada',frec:'c/24h',dur:'10d',cat:'Anticoagulante'},
+  {n:'Heparina sódica',com:'Heparina sodica',conc:'5000UI/ml',dos:'5000UI',via:'IV/SC',pres:'Ampolla',frec:'c/8-12h',dur:'PRN',cat:'Anticoagulante'},
+  {n:'Warfarina',com:'Coumadin · Aldocumar',conc:'5mg/tab',dos:'5mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Anticoagulante oral'},
+  {n:'Omeprazol',com:'Prilosec · Ulcozol',conc:'40mg/amp',dos:'40mg',via:'VO/IV',pres:'Cap/Amp',frec:'c/24h',dur:'30d',cat:'IBP'},
+  {n:'Pantoprazol',com:'Protonix · Ulcepan',conc:'40mg/amp',dos:'40mg',via:'VO/IV',pres:'Tableta/Amp',frec:'c/24h',dur:'30d',cat:'IBP'},
+  {n:'Metoclopramida',com:'Primperan · Plasil',conc:'10mg/2ml',dos:'10mg',via:'IV/IM/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'5d',cat:'Antinauseoso'},
+  {n:'Ondansetrón',com:'Zofran',conc:'4mg/2ml',dos:'8mg',via:'IV/VO',pres:'Ampolla/Tab',frec:'c/8h',dur:'3d',cat:'Antinauseoso'},
+  {n:'Ranitidina',com:'Zantac',conc:'50mg/2ml',dos:'50mg',via:'IV',pres:'Ampolla',frec:'c/8h',dur:'7d',cat:'Anti-H2'},
+  {n:'Dexametasona',com:'Decadrón · Dexametax',conc:'4mg/ml',dos:'8mg',via:'IV/IM',pres:'Ampolla',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Hidrocortisona',com:'Solu-Cortef',conc:'100mg/amp',dos:'100mg',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Metilprednisolona',com:'Solu-Medrol',conc:'125mg/amp',dos:'125mg',via:'IV',pres:'Frasco-amp',frec:'c/8h',dur:'3d',cat:'Corticoide'},
+  {n:'Furosemida',com:'Lasix',conc:'20mg/2ml',dos:'40mg',via:'IV/IM/VO',pres:'Ampolla/Tab',frec:'c/12h',dur:'PRN',cat:'Diurético'},
+  {n:'Espironolactona',com:'Aldactone',conc:'25mg/tab',dos:'25mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'crónico',cat:'Diurético K+'},
+  {n:'Salbutamol',com:'Ventolin · Salbulair',conc:'2.5mg/2.5ml',dos:'2.5mg',via:'Nebulización',pres:'Nébula',frec:'c/4-6h',dur:'5d',cat:'Broncodilatador'},
+  {n:'Ipratropio',com:'Atrovent',conc:'0.5mg/2ml',dos:'0.5mg',via:'Nebulización',pres:'Nébula',frec:'c/6-8h',dur:'5d',cat:'Broncodilatador'},
+  {n:'Insulina Regular',com:'Humulin R · Actrapid',conc:'100UI/ml',dos:'10UI',via:'IV/SC',pres:'Frasco/Pluma',frec:'Según protocolo',dur:'PRN',cat:'Insulina'},
+  {n:'Insulina Glargina',com:'Lantus · Toujeo',conc:'100UI/ml',dos:'10UI',via:'SC',pres:'Pluma',frec:'c/24h',dur:'crónico',cat:'Insulina basal'},
+  {n:'Ácido fólico',com:'Folacid',conc:'5mg/tab',dos:'5mg',via:'VO',pres:'Tableta',frec:'c/24h',dur:'30d',cat:'Vitamina'},
+  {n:'Vitamina C',com:'Redoxon',conc:'1g/amp',dos:'1g',via:'VO/IV',pres:'Tab/Ampolla',frec:'c/24h',dur:'15d',cat:'Vitamina'},
+  {n:'Calcio gluconato',com:'Calcio gluconato',conc:'1g/10ml',dos:'1g',via:'IV',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Electrolito'},
+  {n:'Cloruro de potasio',com:'KCl',conc:'2mEq/ml',dos:'20mEq',via:'IV (diluido)',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Electrolito'},
+  {n:'Atropina',com:'Atropina sulfato',conc:'0.5mg/ml',dos:'0.5mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Anticolinérgico'},
+  {n:'Lorazepam',com:'Ativan',conc:'2mg/ml',dos:'2mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'3d',cat:'Benzodiacepina'},
+  {n:'Haloperidol',com:'Haldol',conc:'5mg/ml',dos:'5mg',via:'IV/IM',pres:'Ampolla',frec:'PRN',dur:'PRN',cat:'Antipsicótico'},
+];
 
 function searchMed(q){
   const dd=document.getElementById('med-drop');
   if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
-  searchMedicamentos('med',q).then(res=>{
-    if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados — escriba el nombre genérico o comercial</div>';dd.classList.add('open');return;}
-    dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addRxFromDB(${JSON.stringify(m).replace(/"/g,'&quot;')})">
-      <span class="cie-opt-code" style="min-width:80px;color:var(--green);">${m.cat}</span>
-      <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n} <span style="font-size:.72rem;color:var(--muted);">(${m.com})</span></div>
-      <div style="font-size:.72rem;color:var(--muted);">${m.conc} · ${m.via} · ${m.frec}</div></div>
-    </div>`).join('');
-    dd.classList.add('open');
-  });
+  const q2=q.toLowerCase();
+  const res=MED_DB.filter(m=>m.n.toLowerCase().includes(q2)||m.com.toLowerCase().includes(q2)||m.cat.toLowerCase().includes(q2)).slice(0,10);
+  if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados — escriba el nombre genérico o comercial</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addRxFromDB(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+    <span class="cie-opt-code" style="min-width:80px;color:var(--green);">${m.cat}</span>
+    <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n} <span style="font-size:.72rem;color:var(--muted);">(${m.com})</span></div>
+    <div style="font-size:.72rem;color:var(--muted);">${m.conc} · ${m.via} · ${m.frec}</div></div>
+  </div>`).join('');
+  dd.classList.add('open');
 }
 function openMedDrop(){const v=document.getElementById('med-search').value;if(v.length>=2)searchMed(v);}
 function closeMedDrop(){document.getElementById('med-drop').classList.remove('open');}
@@ -1634,15 +1647,15 @@ function updateMedHBadge(){
 function searchMedH(q){
   const dd=document.getElementById('medh-drop');
   if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
-  searchMedicamentos('medh',q).then(res=>{
-    if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados</div>';dd.classList.add('open');return;}
-    dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addMedHabRow('${m.n.replace(/'/g,"\\'")}','${m.conc}','','${m.via.split('/')[0]}','')">
-      <span class="cie-opt-code" style="min-width:80px;color:var(--purple);">${m.cat}</span>
-      <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n}</div>
-      <div style="font-size:.72rem;color:var(--muted);">${m.com} · ${m.conc}</div></div>
-    </div>`).join('');
-    dd.classList.add('open');
-  });
+  const q2=q.toLowerCase();
+  const res=MED_DB.filter(m=>m.n.toLowerCase().includes(q2)||m.com.toLowerCase().includes(q2)).slice(0,8);
+  if(!res.length){dd.innerHTML='<div class="cie-opt" style="cursor:default;color:var(--muted);">Sin resultados</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(m=>`<div class="cie-opt" onclick="addMedHabRow('${m.n.replace(/'/g,"\\'")}','${m.conc}','','${m.via.split('/')[0]}','')">
+    <span class="cie-opt-code" style="min-width:80px;color:var(--purple);">${m.cat}</span>
+    <div><div style="font-size:.84rem;font-weight:600;color:var(--text);">${m.n}</div>
+    <div style="font-size:.72rem;color:var(--muted);">${m.com} · ${m.conc}</div></div>
+  </div>`).join('');
+  dd.classList.add('open');
 }
 function openMedHDrop(){const v=document.getElementById('medh-search').value;if(v.length>=2)searchMedH(v);}
 function closeMedHDrop(){document.getElementById('medh-drop')?.classList.remove('open');}

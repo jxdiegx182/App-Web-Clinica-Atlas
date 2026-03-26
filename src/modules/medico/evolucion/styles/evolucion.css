@@ -19,8 +19,8 @@
   --surface: #ffffff;    /* 🔥 CLAVE */
   --bg: #f7fbff;
   --bg:#dde7f0;--bg-grad-from:#c5d5e5;--bg-grad-to:#e8edf5;
-  --white:#ffffff;--surface:#f0f5fa;--surface2:#e8edf5;
-  --border:#b0c4d8;--border2:#90aac4;
+  --white:#ffffff5f;--surface:#13416e;--surface2:#e8edf5;
+  --border:#7c0808;--border2:#90aac4;
  
   
   --navy:#1a3a5c;--navy-d:#0f2440;--navy-l:#e8f0f8;--navy-mid:#2a5278;
@@ -102,7 +102,7 @@ textarea::placeholder {
   padding:16px 18px;
   border-radius:0 0 10px 10px; /* FIX: re-aplica radius inferior al body */
    padding: 14px;
-  background: white;
+  background: rgb(143, 189, 199);
 }
 .ch-teal{background:linear-gradient(135deg,var(--teal),var(--teal-d))!important;}
 .ch-amber{background:linear-gradient(135deg,var(--amber),#975a16)!important;}
