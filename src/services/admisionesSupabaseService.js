@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient.js';
 
 const ADMISIONES_TABLE = import.meta.env.VITE_SUPABASE_ADMISIONES_TABLE || 'admisiones';
 const PACIENTES_TABLE = import.meta.env.VITE_SUPABASE_PACIENTES_TABLE || 'pacientes';

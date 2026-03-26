@@ -1,4 +1,4 @@
-import { supabase } from '@/supabaseClient';
+import { supabase } from '@/supabaseClient.js';
 import { ALL_ROLES } from '@/constants/roles';
 import { getFirebaseAuthErrorMessage } from '@/utils/firebaseAuthErrors';
 

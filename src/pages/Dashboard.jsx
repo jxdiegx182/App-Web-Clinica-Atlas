@@ -28,7 +28,7 @@ import {
   subscribeAdmisionesAdmitidas,
   updateAdmisionById,
 } from '@/services/admisionesSupabaseService';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient.js';
 import {
   LogOut,
   User,

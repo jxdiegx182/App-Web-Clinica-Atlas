@@ -9,7 +9,7 @@ import {
   searchAdmisionesByField,
   updateAdmisionById,
 } from '@/services/admisionesSupabaseService';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient.js';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
@@ -249,9 +249,14 @@ function Admision() {
       setSearchResults([]);
       return;
     }
-    const searchText = text.toLowerCase();
-    const results = await searchAdmisionesByField(field, searchText);
-    setSearchResults(results);
+    try {
+      const searchText = text.toLowerCase();
+      const results = await searchAdmisionesByField(field, searchText);
+      setSearchResults(Array.isArray(results) ? results : []);
+    } catch (error) {
+      console.error('Error buscando pacientes en admisiones:', error);
+      setSearchResults([]);
+    }
   };
 
   useEffect(() => {
@@ -568,7 +573,7 @@ function Admision() {
                               <div className="max-h-48 space-y-2 overflow-y-auto px-1 pb-1">
                                 {searchResults.map((patient) => (
                                   <button
-                                    key={patient.cedula}
+                                    key={patient.id || patient.pacienteId}
                                     type="button"
                                     className="w-full rounded-2xl border border-transparent bg-[#f7fbfc] px-4 py-3 text-left transition-all duration-200 hover:border-[#76c4d5]/25 hover:bg-[#eef8fa]"
                                     onClick={() => {

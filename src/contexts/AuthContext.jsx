@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/supabaseClient';
+import { supabase } from '@/supabaseClient.js';
 import { ROLES } from '@/constants/roles';
 import { loginWithEmailPassword, logoutUser, registerUserByAdmin } from '@/services/authService';
 import { getUserProfileByUid } from '@/services/userService';
@@ -76,10 +76,6 @@ export function AuthProvider({ children }) {
     listener?.subscription?.unsubscribe();
   };
 }, []);
-
-
-
-
 
   const login = useCallback(async ({ email, password }) => {
     setLoading(true);

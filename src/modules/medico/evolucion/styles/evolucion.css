@@ -1,0 +1,373 @@
+:root{
+  --teal: #0d9488;
+  --teal-d: #0f766e;
+  --teal-l: #ccfbf1;
+
+  --green: #16a34a;
+  --green-l: #dcfce7;
+
+  --red: #dc2626;
+  --red-l: #fee2e2;
+
+  --amber: #d97706;
+  --amber-l: #fef3c7;
+
+  --text: #371f1f;       /* 🔥 CLAVE */
+  --dim: #183e89;
+  --border: #e5e7eb;
+
+  --surface: #ffffff;    /* 🔥 CLAVE */
+  --bg: #f7fbff;
+  --bg:#dde7f0;--bg-grad-from:#c5d5e5;--bg-grad-to:#e8edf5;
+  --white:#ffffff;--surface:#f0f5fa;--surface2:#e8edf5;
+  --border:#b0c4d8;--border2:#90aac4;
+ 
+  
+  --navy:#1a3a5c;--navy-d:#0f2440;--navy-l:#e8f0f8;--navy-mid:#2a5278;
+  --red:#c53030;--red-l:#fff0f0;--red-mid:#fc8181;
+  --green:#276749;--green-l:#f0fff4;--green-mid:#68d391;
+  --amber:#b7791f;--amber-l:#fffaf0;--amber-mid:#f6ad55;
+  --purple:#553c9a;--purple-l:#f5f3ff;--purple-mid:#c4b5fd;
+  --blue:#3182ce;--blue-l:#ebf8ff;
+  --shadow-sm:0 1px 4px rgba(26,58,92,.09);
+  --shadow:0 2px 12px rgba(26,58,92,.12);
+  --shadow-lg:0 6px 28px rgba(26,58,92,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;background:linear-gradient(160deg,var(--bg-grad-from) 0%,var(--bg-grad-to) 100%);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:var(--surface);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  background: white;
+  color: var(--text);
+
+  font-size: 14px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--dim);
+}
+
+
+/* HEADER */
+.atlas-header{background:var(--navy);border-bottom:2px solid var(--navy-d);padding:10px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:500;box-shadow:0 3px 16px rgba(15,36,64,.4);}
+.atlas-header *{color:white!important;}
+.brand-text{font-family:Georgia,serif;font-size:1.1rem;font-weight:700;}
+.brand-text span{color:var(--teal-mid)!important;}
+.brand-sub{font-size:.56rem;color:rgba(255,255,255,.45)!important;letter-spacing:.1em;text-transform:uppercase;}
+.doc-title{font-size:.9rem;font-weight:800;color:var(--teal-mid)!important;letter-spacing:.06em;text-transform:uppercase;}
+.doc-sub{font-size:.58rem;color:rgba(255,255,255,.4)!important;}
+#atl-clock{font-family:'Courier New',monospace;font-size:.68rem;color:rgba(255,255,255,.5)!important;text-align:right;line-height:1.7;}
+.hdr-btn{padding:7px 14px;background:transparent;border:1.5px solid rgba(255,255,255,.25);border-radius:7px;color:white!important;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.hdr-btn:hover{border-color:var(--teal-mid);}
+.hdr-btn-teal{background:var(--teal)!important;border-color:var(--teal)!important;}
+
+/* APP */
+.app{max-width:1200px;margin:0 auto;padding:18px 20px 120px;display:flex;flex-direction:column;gap:14px;}
+
+/* FIX #6: .card overflow:visible para que los dropdowns CIE-10 y medicamentos
+   no sean cortados por el border-radius del card. Se reaplica el clip solo al header */
+.card{
+   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+/* El header y body sí necesitan el clip para que el radius se vea */
+.card-header{
+   background: var(--teal);
+  color: rgb(110, 22, 22);
+  padding: 10px 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-header *{color:white!important;}
+.card-icon{width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;}
+.card-title{
+  font-weight: 700;
+  font-size: 14px;}
+.card-badge{margin-left:auto;font-size:.62rem;padding:2px 9px;border-radius:100px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.15);color:white!important;}
+.card-body{
+  padding:16px 18px;
+  border-radius:0 0 10px 10px; /* FIX: re-aplica radius inferior al body */
+   padding: 14px;
+  background: white;
+}
+.ch-teal{background:linear-gradient(135deg,var(--teal),var(--teal-d))!important;}
+.ch-amber{background:linear-gradient(135deg,var(--amber),#975a16)!important;}
+.ch-green{background:linear-gradient(135deg,var(--green),#1a5c35)!important;}
+.ch-purple{background:linear-gradient(135deg,var(--purple),#44337a)!important;}
+.ch-red{background:linear-gradient(135deg,var(--red),#9b2c2c)!important;}
+.ch-blue{background:linear-gradient(135deg,var(--blue),#2b6cb0)!important;}
+.ch-navy{background:linear-gradient(135deg,var(--navy),var(--navy-d))!important;}
+
+/* CAMPOS */
+.fl{display:block;font-size:.67rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.fi,.fs,.fta{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12);}
+.fi::placeholder,.fta::placeholder{color:var(--dim);}
+.fta{resize:vertical;min-height:72px;line-height:1.6;}
+.fg{margin-bottom:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+/* FIX #2: .g5 con grid responsive — antes 5 cols fijas colapsaban en pantallas medianas */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+
+/* SECCIÓN LABEL */
+.sl{font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  margin-bottom: 4px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* CIE-10 BUSCADOR */
+.cie-wrap{position:relative;}
+.cie-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:9px 38px 9px 12px;font-family:'Inter',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.cie-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12);}
+.cie-input::placeholder{color:var(--dim);}
+.cie-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.9rem;}
+/* FIX #6b: z-index aumentado para garantizar que el dropdown aparezca sobre cards adyacentes */
+.cie-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:10px;max-height:240px;overflow-y:auto;z-index:200;display:none;box-shadow:var(--shadow-lg);}
+.cie-drop.open{display:block;}
+.cie-opt{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--surface2);transition:background .12s;display:flex;align-items:flex-start;gap:10px;}
+.cie-opt:last-child{border-bottom:none;}
+.cie-opt:hover{background:var(--teal-l);}
+/* FIX #5b: min-width flexible para códigos CIE */
+.cie-opt-code{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:var(--navy);min-width:52px;flex-shrink:0;margin-top:1px;}
+.cie-opt-desc{font-size:.82rem;color:var(--text);line-height:1.3;}
+.cie-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:28px;}
+.cie-tag{display:inline-flex;align-items:center;gap:5px;background:var(--navy-l);border:1px solid var(--border);border-radius:100px;padding:4px 10px;font-size:.76rem;}
+.cie-tag-code{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);}
+.cie-tag-name{color:var(--text);}
+.cie-tag-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0;line-height:1;transition:color .15s;}
+.cie-tag-del:hover{color:var(--red);}
+
+/* TABLAS */
+.tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
+.tbl th{padding:8px 10px;background:var(--navy);color:white;font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left;white-space:nowrap;}
+.tbl td{padding:5px 6px;border-bottom:1px solid var(--surface2);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--teal-l);}
+.tbl .fi{padding:5px 8px;font-size:.79rem;border-radius:5px;}
+.tbl .fs{padding:5px 8px;font-size:.79rem;border-radius:5px;}
+/* FIX #12: columna de eliminar con ancho fijo para evitar expansión en Firefox */
+.tbl td:last-child{width:36px;text-align:center;padding:4px 6px;}
+.btn-add-row{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:transparent;border:1.5px dashed var(--teal);border-radius:8px;color:var(--teal-d);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:10px;}
+.btn-add-row:hover{background:var(--teal-l);}
+.btn-del-row{width:26px;height:26px;border-radius:5px;background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.btn-del-row:hover{background:var(--red);color:white;}
+
+/* SOABIE */
+/* FIX #4: .soabie-grid responsive — antes 2 cols fijas en pantallas pequeñas */
+.soabie-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.soabie-card{border:1.5px solid var(--border);border-radius:9px;overflow:hidden;}
+.soabie-header{padding:7px 12px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px;}
+.soabie-body{padding:8px 10px;}
+/* FIX #17: Agregado outline:none en textarea dentro de soabie-body para evitar
+   doble borde (outline del browser + borde del card) al hacer focus */
+.soabie-body .fta{border:none;background:transparent;padding:4px 0;font-size:.84rem;resize:none;min-height:80px;outline:none;}
+.soabie-body .fta:focus{background:var(--surface);outline:none;box-shadow:none;}
+
+/* PRESCRIPCIÓN */
+.rx-item{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;position:relative;transition:border-color .2s;}
+.rx-item:hover{border-color:var(--teal);}
+.rx-item.rx-urgente{border-color:var(--red-mid);background:var(--red-l);}
+.rx-item.rx-enviada{border-color:var(--green-mid);background:var(--green-l);}
+.rx-item.rx-despachada{border-color:var(--teal);background:var(--teal-l);}
+.rx-num{position:absolute;top:10px;left:14px;width:22px;height:22px;background:var(--navy);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;}
+.rx-body{padding-left:32px;}
+/* FIX #8: flex-wrap:wrap en filas de prescripción para evitar overflow horizontal */
+.rx-body > div[style*="display:flex"]{flex-wrap:wrap;}
+.rx-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;}
+.rx-status-badge.pendiente{background:var(--amber-l);border:1px solid var(--amber-mid);color:var(--amber);}
+.rx-status-badge.enviada{background:var(--blue-l);border:1px solid #93c5fd;color:var(--blue);}
+.rx-status-badge.despachada{background:var(--green-l);border:1px solid var(--green-mid);color:var(--green);}
+.rx-status-badge.urgente{background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);}
+.rx-send-btn{padding:5px 12px;border-radius:7px;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:5px;}
+.rx-send-btn.send{background:var(--teal);color:white;}
+.rx-send-btn.send:hover{background:var(--teal-d);}
+.rx-send-btn.urgent{background:var(--red);color:white;}
+.rx-send-btn.urgent:hover{background:#9b2c2c;}
+.rx-send-btn.disabled{background:var(--green-l);border:1px solid var(--green-mid);color:var(--green);cursor:default;}
+
+/* FARMACIA PANEL */
+.farmacia-panel{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:11px;overflow:hidden;box-shadow:var(--shadow-lg);}
+.farmacia-header{padding:14px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.1);}
+.farmacia-icon{width:42px;height:42px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.farmacia-title{font-size:.9rem;font-weight:800;color:white;letter-spacing:.03em;}
+.farmacia-sub{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:1px;}
+/* FIX #7: padding-bottom faltante en farmacia-body */
+.farmacia-body{padding:14px 22px 20px;}
+.farmacia-queue{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;}
+.fq-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:12px;transition:all .2s;}
+.fq-item:hover{background:rgba(255,255,255,.1);}
+.fq-item.urgente{border-color:var(--red-mid);background:rgba(197,48,48,.15);}
+.fq-item.despachada{border-color:var(--green-mid);background:rgba(39,103,73,.15);opacity:.7;}
+.fq-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:800;color:white;flex-shrink:0;}
+.fq-info{flex:1;}
+.fq-med{font-size:.84rem;font-weight:700;color:white;}
+.fq-detail{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:1px;}
+.fq-pac{font-size:.7rem;color:var(--teal-mid);font-weight:600;}
+.fq-actions{display:flex;gap:5px;}
+.fq-btn{padding:4px 10px;border-radius:6px;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.fq-btn.despachar{background:var(--teal);color:white;}
+.fq-btn.despachar:hover{background:var(--teal-d);}
+.fq-btn.done{background:rgba(39,103,73,.3);color:var(--green-mid);cursor:default;}
+.fq-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.fq-dot.pendiente{background:var(--amber-mid);box-shadow:0 0 6px rgba(246,173,85,.53);animation:pulseQ 2s infinite;}
+.fq-dot.urgente{background:var(--red-mid);box-shadow:0 0 6px rgba(252,129,129,.53);animation:pulseQ .8s infinite;}
+.fq-dot.despachada{background:var(--green-mid);}
+@keyframes pulseQ{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+/* ALERTA FARMACIA */
+/* FIX #10: z-index bajado a 790 para que el modal (z:800) aparezca por encima */
+.farmacia-alert{position:fixed;top:78px;right:20px;z-index:790;display:flex;flex-direction:column;gap:8px;max-width:340px;}
+.f-alert{background:var(--navy);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--teal);transform:translateX(120%);transition:transform .3s ease;display:flex;align-items:flex-start;gap:10px;}
+.f-alert.show{transform:translateX(0);}
+.f-alert.urgente{border-left-color:var(--red);}
+.f-alert-icon{font-size:1.2rem;flex-shrink:0;margin-top:1px;}
+.f-alert-body{flex:1;}
+.f-alert-title{font-size:.8rem;font-weight:800;color:white;}
+.f-alert-sub{font-size:.72rem;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.4;}
+.f-alert-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:1rem;padding:0;line-height:1;}
+.f-alert-close:hover{color:white;}
+
+/* VITALES — SEMÁFORO */
+/* FIX #3: font-family explícita en vital-badge para consistencia tipográfica */
+.vital-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 11px;
+  border-radius:7px;
+  border:1.5px solid var(--border);
+  background:var(--white);
+  font-family:'JetBrains Mono',monospace; /* FIX: antes heredaba Inter mezclado */
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--navy);
+}
+/* FIX #3b: la label interior (tipo "PA", "FC") vuelve a Inter para legibilidad */
+.vital-badge > span:first-child{
+  font-family:'Inter',sans-serif;
+  font-size:.68rem;
+  font-weight:600;
+  margin-right:2px;
+}
+.vital-badge.alert{border-color:var(--red-mid);background:var(--red-l);color:var(--red);}
+.vital-badge.warn{border-color:var(--amber-mid);background:var(--amber-l);color:var(--amber);}
+.vital-badge.ok{border-color:var(--green-mid);background:var(--green-l);color:var(--green);}
+
+/* BOTTOM BAR */
+/* FIX #11: padding-bottom aumentado para compensar el btm más alto en responsive */
+.btm{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--navy-d);padding:11px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(15,36,64,.3);}
+.btm-stats{display:flex;gap:22px;align-items:center;}
+.btm-s{display:flex;flex-direction:column;gap:1px;}
+.btm-sl{font-size:.6rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.btm-sv{font-family:'JetBrains Mono',monospace;font-size:.84rem;color:var(--teal-mid);font-weight:700;}
+.btm-actions{display:flex;gap:8px;}
+.btn-outline{padding:8px 16px;background:transparent;color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.25);border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--teal-mid);color:var(--teal-mid);}
+.btn-primary{padding:9px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--teal-d);transform:translateY(-1px);}
+
+/* TOAST */
+#toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--teal);color:white;padding:10px 20px;border-radius:9px;font-size:.82rem;font-weight:700;box-shadow:var(--shadow-lg);opacity:0;transition:all .3s;z-index:9998;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* DOSIS ADMINISTRADAS */
+.dosis-timeline{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.dosis-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:7px;background:var(--surface);border:1px solid var(--border);font-size:.78rem;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dosis-row.admin{border-color:var(--green-mid);background:var(--green-l);}
+.dosis-row.omitida{border-color:var(--amber-mid);background:var(--amber-l);}
+.dosis-hora{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);font-size:.76rem;min-width:46px;}
+.dosis-badge{font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em;}
+.dosis-badge.adm{background:var(--green);color:white;}
+.dosis-badge.omit{background:var(--amber);color:white;}
+.dosis-prog-bar{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;margin-top:4px;}
+.dosis-prog-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+/* DESCONTINUADO */
+.rx-item.rx-descontinuada{border-color:#a0aec0;background:#f7fafc;opacity:.75;}
+.rx-descontinuada .rx-body *{color:#718096!important;}
+.rx-discont-banner{background:#fed7d7;border:1px solid #fc8181;border-radius:7px;padding:6px 12px;font-size:.76rem;color:#c53030;font-weight:600;display:flex;align-items:center;gap:6px;margin-top:6px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,39,68,.6);backdrop-filter:blur(4px);z-index:800;display:flex;align-items:center;justify-content:center;}
+.modal-box{background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);width:min(640px,95vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-header{padding:14px 20px;background:var(--navy);display:flex;align-items:center;gap:10px;}
+.modal-header *{color:white!important;}
+/* FIX #13: overflow-x:hidden en modal-body evita scroll horizontal inesperado */
+.modal-body{padding:18px 20px;overflow-y:auto;overflow-x:hidden;flex:1;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — FIX #2, #4, #10
+═══════════════════════════════════════════ */
+/* Pantallas medianas: tablets en landscape */
+@media(max-width:1100px){
+  .g4{grid-template-columns:1fr 1fr;}
+  .g5{grid-template-columns:1fr 1fr 1fr;}
+}
+
+/* Tablets portrait */
+@media(max-width:900px){
+  /* FIX #4: soabie-grid colapsa a 1 columna */
+  .soabie-grid{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .g5{grid-template-columns:1fr 1fr;}
+}
+
+/* Móviles */
+@media(max-width:600px){
+  .atlas-header{padding:8px 14px;gap:10px;}
+  .app{padding:12px 10px 130px;}
+  .g2,.g3,.g4,.g5{grid-template-columns:1fr;}
+  .card-body{padding:12px 14px;}
+  .card-header{padding:8px 14px;}
+  /* FIX #10: btm-stats wrap en móvil para evitar overflow */
+  .btm{flex-direction:column;gap:8px;padding:10px 14px;}
+  .btm-stats{flex-wrap:wrap;gap:10px;justify-content:center;}
+  .btm-actions{flex-wrap:wrap;justify-content:center;gap:6px;}
+  .btm-actions .btn-outline,.btm-actions .btn-primary{font-size:.74rem;padding:7px 12px;}
+  /* farmacia header responsive */
+  .farmacia-header{flex-wrap:wrap;gap:8px;}
+}
+
+/* ═══════════════════════════════════════════
+   PRINT — FIX #11 (headers de tabla visibles)
+═══════════════════════════════════════════ */
+@media print{
+  @page{margin:.8cm 1cm;size:A4 portrait;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:white!important;}
+  .atlas-header,.btm,.farmacia-panel,.farmacia-alert,.btn-add-row,.btn-del-row,
+  .rx-send-btn,.cie-wrap .cie-input,.cie-icon,.cie-drop{display:none!important;}
+  .app{padding:4px 0!important;gap:5px!important;}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;border-radius:4px!important;break-inside:avoid;margin-bottom:4px!important;overflow:hidden!important;}
+  .card-header{padding:4px 10px!important;border-radius:3px 3px 0 0!important;}
+  .card-body{padding:6px 10px!important;}
+  .fi,.fs,.fta{padding:3px 6px!important;font-size:7.5pt!important;border:1px solid #ccc!important;}
+  /* FIX #11: En impresión, headers de tabla con fondo gris claro + texto negro */
+  .tbl th{padding:3px 6px!important;font-size:7pt!important;background:#e8edf5!important;color:#1a2c3d!important;}
+  .tbl td{padding:3px 6px!important;font-size:7pt!important;}
+  .rx-item{padding:6px 10px!important;}
+  .cie-tags{margin-top:4px!important;}
+  .cie-tag{font-size:7pt!important;padding:2px 7px!important;}
+  .soabie-grid{grid-template-columns:1fr 1fr!important;}
+  .card{overflow:hidden!important;}
+}
+
+
