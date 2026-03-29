@@ -12,6 +12,7 @@ import BottomBar from "./components/BottomBar";
 import SignosVitales from "./components/SignosVitales";
 import usePrescripciones from "./hook/usePrescripciones";
 import {
+  getAdmisionForModuleById,
   getLatestSignosVitalesByAdmisionId,
   insertSignosVitalesByAdmisionId,
 } from "../../../services/admisionesSupabaseService";
@@ -51,6 +52,8 @@ const formatDateTime = (isoValue) => {
 const Evolucion = () => {
   const { mainId } = useParams();
 
+  const [admision, setAdmision] = useState(null);
+  const [loadingAdmision, setLoadingAdmision] = useState(true);
   const [formData, setFormData] = useState({});
   const [signosVitales, setSignosVitales] = useState(INITIAL_SIGNOS);
   const [loadingSignos, setLoadingSignos] = useState(true);
@@ -62,6 +65,40 @@ const Evolucion = () => {
     motivo: "",
     observacion: "",
   });
+
+  const pacienteNombre = useMemo(() => {
+    const nombre = [admision?.firstName, admision?.lastName]
+      .map((value) => toStringSafe(value).trim())
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+
+    return nombre || "";
+  }, [admision]);
+
+  const diagnosticoPrincipal = useMemo(
+    () => toStringSafe(admision?.diagnostico).trim(),
+    [admision]
+  );
+
+  const pacienteMeta = useMemo(() => {
+    const piso = toStringSafe(admision?.ubicacion?.piso).trim();
+    const habitacion = toStringSafe(admision?.ubicacion?.habitacion).trim();
+    const cama = [piso, habitacion].filter(Boolean).join(" · ") || habitacion || piso || "";
+
+    return {
+      admisionId: mainId || null,
+      cama,
+      medico: toStringSafe(admision?.medico).trim(),
+      bodega: "Farmacia Central",
+      area: toStringSafe(admision?.servicio).trim(),
+    };
+  }, [admision, mainId]);
+
+  const prescripcionesStorageKey = useMemo(
+    () => `atlas_evolucion_prescripciones_v2:${mainId || "sin-admision"}`,
+    [mainId]
+  );
 
   const {
     rxList,
@@ -82,7 +119,44 @@ const Evolucion = () => {
     registrarDosis,
     eliminarDosis,
     confirmarDevolucion,
-  } = usePrescripciones({ pacienteNombre: "Juan Perez" });
+  } = usePrescripciones({
+    pacienteNombre,
+    pacienteMeta,
+    storageKey: prescripcionesStorageKey,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    const loadAdmision = async () => {
+      if (!mainId) {
+        if (!active) return;
+        setAdmision(null);
+        setLoadingAdmision(false);
+        return;
+      }
+
+      setLoadingAdmision(true);
+
+      try {
+        const data = await getAdmisionForModuleById(mainId);
+        if (!active) return;
+        setAdmision(data || null);
+      } catch (error) {
+        console.error("Error cargando admision para evolucion:", error);
+        if (!active) return;
+        setAdmision(null);
+      } finally {
+        if (active) setLoadingAdmision(false);
+      }
+    };
+
+    loadAdmision();
+
+    return () => {
+      active = false;
+    };
+  }, [mainId]);
 
   const loadLatestSignos = useCallback(async () => {
     if (!mainId) {
@@ -241,8 +315,8 @@ const Evolucion = () => {
           onUpdateRx={updateRxField}
           onRemoveRx={removeRx}
           onToggleUrgente={toggleUrgente}
-          onSendRx={(id) => sendRxToFarmacia(id, "Juan Perez")}
-          onSendAll={() => sendAllToFarmacia("Juan Perez")}
+          onSendRx={sendRxToFarmacia}
+          onSendAll={sendAllToFarmacia}
           onDiscontinueRx={handleOpenDiscontinue}
           onRegistrarDosis={registrarDosis}
           onEliminarDosis={eliminarDosis}
@@ -261,12 +335,12 @@ const Evolucion = () => {
       </main>
 
       <BottomBar
-        paciente="Juan Perez"
-        dx="Neumonia"
+        paciente={loadingAdmision ? "Cargando..." : pacienteNombre}
+        dx={diagnosticoPrincipal}
         prescripciones={stats.totalRx}
         farmaciaPendientes={stats.pendientesFarmacia}
         onGuardar={handleSave}
-        onEnviarFarmacia={() => sendAllToFarmacia("Juan Perez")}
+        onEnviarFarmacia={sendAllToFarmacia}
         onAuditoria={() => console.log("Devoluciones pendientes:", stats.devolucionesPendientes)}
       />
 

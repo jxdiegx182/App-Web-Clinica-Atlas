@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient.js";
 
 const MEDICAMENTOS_CATALOGO_TABLE =
@@ -323,7 +323,7 @@ function applyDoseCalc(rx, options = {}) {
   return next;
 }
 
-function buildQueueItem(rx, pacienteNombre) {
+function buildQueueItem(rx, pacienteNombre, pacienteMeta = {}) {
   return {
     id: rx.id,
     nom: rx.nom,
@@ -339,18 +339,30 @@ function buildQueueItem(rx, pacienteNombre) {
     cant: toPositiveInt(rx.cant) || 0,
     solicitudFarmacia: Boolean(rx.solicitudFarmacia),
     paciente: pacienteNombre || "Paciente",
+    admisionId: pacienteMeta.admisionId || rx.admisionId || null,
+    cama: pacienteMeta.cama || rx.cama || "",
+    medico: pacienteMeta.medico || rx.medico || "",
+    bodega: pacienteMeta.bodega || rx.bodega || "Farmacia Central",
+    area: pacienteMeta.area || rx.area || "",
     hora: new Date().toTimeString().slice(0, 5),
     devolucionPendiente: toPositiveInt(rx.devolucion),
     devolucionConfirmadaAt: rx.devolucionConfirmadaAt || null,
   };
 }
 
-function replaceQueueItem(queue, rx, pacienteNombre) {
+function replaceQueueItem(queue, rx, pacienteNombre, pacienteMeta = {}) {
   return queue.map((item) => {
     if (item.id !== rx.id) return item;
     return {
       ...item,
-      ...buildQueueItem(rx, item.paciente || pacienteNombre),
+      ...buildQueueItem(rx, item.paciente || pacienteNombre, {
+        admisionId: item.admisionId,
+        cama: item.cama,
+        medico: item.medico,
+        bodega: item.bodega,
+        area: item.area,
+        ...pacienteMeta,
+      }),
       hora: item.hora,
       paciente: item.paciente || pacienteNombre,
       status:
@@ -411,6 +423,40 @@ function reducer(state, action) {
         ...state,
         rxCounter: nextId,
         rxList: [...state.rxList, withCalc],
+      };
+    }
+
+    case "ADD_SOLICITUD_FARMACIA": {
+      const { solicitud, pacienteNombre, pacienteMeta } = action.payload;
+      const nextId = state.rxCounter + 1;
+      const base = buildBaseRx({
+        id: nextId,
+        nom: solicitud.nombre,
+        com: "- Solicitud a Farmacia -",
+        conc: solicitud.conc,
+        dosis: solicitud.dosis,
+        via: solicitud.via,
+        frec: solicitud.frecuencia,
+        dur: solicitud.duracion,
+        obsCustom: solicitud.indicaciones,
+        solicitudFarmacia: true,
+        status: "enviada",
+      });
+      const withCalc = applyDoseCalc(base);
+      const nextRx = {
+        ...withCalc,
+        farmUnidades:
+          toPositiveInt(withCalc.farmUnidades) || toPositiveInt(withCalc.cant) || 1,
+      };
+
+      return {
+        ...state,
+        rxCounter: nextId,
+        rxList: [...state.rxList, nextRx],
+        farmaciaQueue: sortQueue([
+          ...state.farmaciaQueue,
+          buildQueueItem(nextRx, pacienteNombre, pacienteMeta),
+        ]),
       };
     }
 
@@ -488,7 +534,7 @@ function reducer(state, action) {
     }
 
     case "SEND_RX": {
-      const { id, pacienteNombre } = action.payload;
+      const { id, pacienteNombre, pacienteMeta } = action.payload;
       const rxList = state.rxList.map((rx) => {
         if (rx.id !== id || rx.status !== "pendiente") return rx;
         const recalculated = applyDoseCalc(rx);
@@ -507,8 +553,8 @@ function reducer(state, action) {
 
       const alreadyInQueue = state.farmaciaQueue.some((item) => item.id === id);
       const farmaciaQueue = alreadyInQueue
-        ? replaceQueueItem(state.farmaciaQueue, target, pacienteNombre)
-        : [...state.farmaciaQueue, buildQueueItem(target, pacienteNombre)];
+        ? replaceQueueItem(state.farmaciaQueue, target, pacienteNombre, pacienteMeta)
+        : [...state.farmaciaQueue, buildQueueItem(target, pacienteNombre, pacienteMeta)];
 
       return {
         ...state,
@@ -518,7 +564,7 @@ function reducer(state, action) {
     }
 
     case "SEND_ALL": {
-      const { pacienteNombre } = action.payload;
+      const { pacienteNombre, pacienteMeta } = action.payload;
       const rxList = state.rxList.map((rx) => {
         if (rx.status !== "pendiente") return rx;
         const recalculated = applyDoseCalc(rx);
@@ -539,8 +585,8 @@ function reducer(state, action) {
       updates.forEach((rx) => {
         const exists = farmaciaQueue.some((item) => item.id === rx.id);
         farmaciaQueue = exists
-          ? replaceQueueItem(farmaciaQueue, rx, pacienteNombre)
-          : [...farmaciaQueue, buildQueueItem(rx, pacienteNombre)];
+          ? replaceQueueItem(farmaciaQueue, rx, pacienteNombre, pacienteMeta)
+          : [...farmaciaQueue, buildQueueItem(rx, pacienteNombre, pacienteMeta)];
       });
 
       return {
@@ -706,6 +752,19 @@ function reducer(state, action) {
       };
     }
 
+    case "SYNC_PACIENTE_NOMBRE": {
+      const paciente = (action.payload?.pacienteNombre || "").trim();
+      if (!paciente || state.farmaciaQueue.length === 0) return state;
+
+      return {
+        ...state,
+        farmaciaQueue: state.farmaciaQueue.map((item) => ({
+          ...item,
+          paciente,
+        })),
+      };
+    }
+
     case "RESET": {
       return INITIAL_STATE;
     }
@@ -716,28 +775,40 @@ function reducer(state, action) {
 }
 
 export default function usePrescripciones(options = {}) {
-  const { pacienteNombre = "Paciente" } = options;
+  const { pacienteNombre = "Paciente", pacienteMeta = {}, storageKey = STORAGE_KEY } = options;
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const hydratedRef = useRef(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(false);
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(storageKey);
       if (raw) {
         const parsed = JSON.parse(raw);
         dispatch({ type: "HYDRATE", payload: parsed });
+      } else {
+        dispatch({ type: "RESET" });
       }
     } catch (error) {
       console.error("No se pudo hidratar prescripciones:", error);
+      dispatch({ type: "RESET" });
     } finally {
-      hydratedRef.current = true;
+      setIsHydrated(true);
     }
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
-    if (!hydratedRef.current) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+    if (!isHydrated) return;
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }, [isHydrated, state, storageKey]);
+
+  useEffect(() => {
+    if (!isHydrated || !pacienteNombre?.trim()) return;
+    dispatch({
+      type: "SYNC_PACIENTE_NOMBRE",
+      payload: { pacienteNombre },
+    });
+  }, [isHydrated, pacienteNombre]);
 
   const stats = useMemo(() => {
     const pendientesFarmacia = state.farmaciaQueue.filter(
@@ -803,20 +874,13 @@ export default function usePrescripciones(options = {}) {
 
     addRxFromCatalog: (med) => dispatch({ type: "ADD_RX", payload: med }),
 
-    addSolicitudFarmacia: (solicitud) =>
+    addSolicitudFarmacia: (solicitud, paciente = pacienteNombre, meta = pacienteMeta) =>
       dispatch({
-        type: "ADD_RX",
+        type: "ADD_SOLICITUD_FARMACIA",
         payload: {
-          nom: solicitud.nombre,
-          com: "- Solicitud a Farmacia -",
-          conc: solicitud.conc,
-          dosis: solicitud.dosis,
-          via: solicitud.via,
-          frec: solicitud.frecuencia,
-          dur: solicitud.duracion,
-          obsCustom: solicitud.indicaciones,
-          solicitudFarmacia: true,
-          status: "pendiente",
+          solicitud,
+          pacienteNombre: paciente,
+          pacienteMeta: meta,
         },
       }),
 
@@ -827,16 +891,16 @@ export default function usePrescripciones(options = {}) {
 
     toggleUrgente: (id) => dispatch({ type: "TOGGLE_URGENTE", payload: { id } }),
 
-    sendRxToFarmacia: (id, paciente = pacienteNombre) =>
+    sendRxToFarmacia: (id, paciente = pacienteNombre, meta = pacienteMeta) =>
       dispatch({
         type: "SEND_RX",
-        payload: { id, pacienteNombre: paciente },
+        payload: { id, pacienteNombre: paciente, pacienteMeta: meta },
       }),
 
-    sendAllToFarmacia: (paciente = pacienteNombre) =>
+    sendAllToFarmacia: (paciente = pacienteNombre, meta = pacienteMeta) =>
       dispatch({
         type: "SEND_ALL",
-        payload: { pacienteNombre: paciente },
+        payload: { pacienteNombre: paciente, pacienteMeta: meta },
       }),
 
     dispatchRxFromFarmacia: (id) =>

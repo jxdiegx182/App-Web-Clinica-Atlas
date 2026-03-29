@@ -433,9 +433,13 @@ export async function getAdmisionForModuleById(admisionId) {
     const paciente = row.pacientes || {};
     const mainData = toMainDataFromPaciente(paciente, row);
     const secondaryData = toSecondaryDataFromPaciente(paciente);
-     return {
+    return {
       id: row.id,
+      pacienteId: row.paciente_id || null,
+      admitido: row.admitido ?? null,
       ...mainData,
+      motivo: row.motivo || null,
+      diagnostico: row.diagnostico || null,
       secondaryData,
       createdAt: row.fecha_ingreso || row.created_at || null,
     };
@@ -448,7 +452,11 @@ export async function getAdmisionForModuleById(admisionId) {
 
   return {
     id: row.id,
+    pacienteId: row.paciente_id || null,
+    admitido: row.admitido ?? null,
     ...mainData,
+    motivo: row.motivo || null,
+    diagnostico: row.diagnostico || null,
     secondaryData,
     createdAt: row.fecha_ingreso || row.created_at || null,
   };
