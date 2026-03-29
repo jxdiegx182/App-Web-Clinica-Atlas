@@ -379,4 +379,101 @@ textarea::placeholder {
   .card{overflow:hidden!important;}
 }
 
+/* Prescripciones v2 */
+.rx-item{
+  animation:rxFadeIn .22s ease;
+}
+@keyframes rxFadeIn{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.rx-item.rx-enviada{
+  border-color:#93c5fd;
+  background:#eff6ff;
+}
+.rx-item.rx-despachada{
+  border-color:var(--green-mid);
+  background:var(--green-l);
+}
+.rx-item.rx-descontinuada{
+  border-color:var(--red-mid);
+  background:var(--red-l);
+  opacity:.92;
+}
+.rx-status-badge.pendiente{
+  background:#f3f4f6;
+  border:1px solid #d1d5db;
+  color:#4b5563;
+}
+.rx-status-badge.descontinuada{
+  background:var(--red-l);
+  border:1px solid var(--red-mid);
+  color:var(--red);
+}
+.rx-quick-badge{
+  font-size:.66rem;
+  font-weight:700;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid transparent;
+}
+.rx-quick-badge.buscar{
+  background:var(--amber-l);
+  border-color:var(--amber-mid);
+  color:var(--amber);
+}
+.rx-quick-badge.unidades{
+  background:var(--teal-l);
+  border-color:var(--teal);
+  color:var(--teal-d);
+}
+.rx-quick-badge.uptoma{
+  background:#f1f5f9;
+  border-color:#cbd5e1;
+  color:#334155;
+}
+.rx-calc-box{
+  margin-top:8px;
+  padding:8px 10px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:#f8fafc;
+  font-size:.76rem;
+  color:#334155;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.rx-actions-row{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.rx-progress-chip{
+  font-family:"JetBrains Mono",monospace;
+  font-size:.72rem;
+  font-weight:700;
+  color:var(--teal-d);
+}
+.rx-devolucion-alert{
+  margin-top:8px;
+  padding:7px 10px;
+  border-radius:7px;
+  border:1px solid var(--amber-mid);
+  background:var(--amber-l);
+  color:var(--amber);
+  font-size:.76rem;
+  font-weight:700;
+}
+.rx-timeline-empty{
+  font-size:.74rem;
+  color:var(--dim);
+  font-style:italic;
+}
+
 
