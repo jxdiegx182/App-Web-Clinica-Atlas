@@ -492,6 +492,8 @@ export async function getLatestSignosVitalesByAdmisionId(admisionId) {
     fr: row.frecuencia_respiratoria ?? null,
     glucosa: row.glucemia ?? null,
     diuresis: row.diuresis ?? null,
+    actividadMovilizacion: row.actividad_movilizacion ?? null,
+    dietaIndicada: row.dieta_indicada ?? null,
     enfermera: row.enfermera ?? null,
     horaRegistro: row.hora_registro ?? null,
     observaciones: row.observaciones ?? null,
@@ -519,6 +521,8 @@ export async function insertSignosVitalesByAdmisionId(admisionId, { vitals, enfe
     frecuencia_respiratoria,
     glucemia,
     diuresis,
+    actividad_movilizacion: vitals?.actividadMovilizacion || null,
+    dieta_indicada: vitals?.dietaIndicada || null,
     enfermera: enfermera || null,
     hora_registro: horaRegistro || null,
     observaciones: observaciones || null,
@@ -531,6 +535,31 @@ export async function insertSignosVitalesByAdmisionId(admisionId, { vitals, enfe
     .maybeSingle();
 
   if (error) {
+    const undefinedColumn =
+      error?.code === '42703' || String(error?.message || '').toLowerCase().includes('column');
+
+    // Fallback de compatibilidad si la tabla aún no tiene las columnas nuevas.
+    if (undefinedColumn) {
+      const fallbackPayload = { ...payload };
+      delete fallbackPayload.actividad_movilizacion;
+      delete fallbackPayload.dieta_indicada;
+
+      const fallbackAttempt = await supabase
+        .from(SIGNOS_VITALES_TABLE)
+        .insert([fallbackPayload])
+        .select('id')
+        .maybeSingle();
+
+      if (fallbackAttempt.error) {
+        throw mapSupabaseError(
+          fallbackAttempt.error,
+          'No se pudieron guardar los signos vitales en Supabase.'
+        );
+      }
+
+      return fallbackAttempt.data?.id || null;
+    }
+
     throw mapSupabaseError(error, 'No se pudieron guardar los signos vitales en Supabase.');
   }
 
