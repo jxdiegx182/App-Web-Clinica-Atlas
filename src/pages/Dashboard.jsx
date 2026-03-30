@@ -1186,7 +1186,7 @@ const resumenVitales = [
             <div className="flex gap-4">
               <Button
                 className="text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
-                onClick={() => navigate('/Parte-Operatorio')}
+                onClick={() => navigate('/ParteOperatorio')}
               >
                 <Activity className="text-white w-4 h-4 mr-2" />
                 Parte Operatorio

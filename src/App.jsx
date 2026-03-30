@@ -29,6 +29,7 @@ import Calendar from '@/components/Calendar';
 import Unauthorized from '@/pages/Unauthorized';
 import AdminUsers from '@/pages/AdminUsers';
 import Farmacia from '@/modules/Farmacia/Farmacia.jsx';
+import ParteOperatorio from '@/modules/ParteOperatorio/ParteOperatorio.jsx';
 import PanelAdministrativo from '@/modules/Panel-Admin/PanelAdministrativo.jsx';
 function withAuth(element, allowedRoles = ALL_ROLES) {
   return <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>;
@@ -99,8 +100,9 @@ function App() {
               path="/modulo-enfermeria/:mainId"
               element={withAuth(<NursingModule />, ROUTE_ALLOWED_ROLES.NURSING_MODULE)}
             />
-            <Route path="/Parte-Operatorio" element={withAuth(<Quirofano />)} />
+            <Route path="/Parte-Operatorio" element={withAuth(<Quirofano/>)} />
             <Route path="/Farmacia" element={withAuth(<Farmacia />)} />
+             <Route path="/ParteOperatorio" element={withAuth(<ParteOperatorio />)} />
             <Route path="/Panel-Administrativo" element={withAuth(<PanelAdministrativo />)} />
 
             <Route path="/" element={<Navigate to="/login" replace />} />
