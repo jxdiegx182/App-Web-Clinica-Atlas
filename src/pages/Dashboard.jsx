@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseConfig';
-import { useRef } from 'react';
-import { onSnapshot } from 'firebase/firestore';
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-} from 'firebase/firestore';
+import { getLatestSignosVitalesByAdmisionId, } from '@/services/admisionesSupabaseService';
 import GraficoPastelServicio from '../components/GraficoPastelServicio';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -87,7 +78,6 @@ const getMedicationScheduleHours = (item, record = {}) => {
   const interval = Number(item?.intervalo_horas || 0);
   const hasInterval = Number.isFinite(interval) && interval > 0;
   const generated = new Set();
-
   [baseHour, nextHour]
     .filter((hour) => hour && hour !== '--')
     .forEach((hour) => generated.add(hour));
@@ -745,56 +735,55 @@ const resumenVitales = [
   { label: 'F.R.', value: '--/min' },
 ];
 
- // 🆕 Cargar últimos signos vitales desde Firebase para cada paciente (en tiempo real)
+// 🆕 Cargar últimos signos vitales desde Supabase para cada paciente
   useEffect(() => {
     if (!mains || mains.length === 0) {
-      console.log('📊 No hay pacientes para cargar signos vitales');
+      setVitalSignsByPatient({});
       return;
     }
 
-    const unsubscribers = [];
+    let active = true;
 
-    mains.forEach((main) => {
+    const loadLatestVitalSigns = async () => {
       try {
-        const vitalSignsRef = collection(db, 'admisiones', main.id, 'vital_signs');
-        const q = query(vitalSignsRef, orderBy('createdAt', 'desc'), limit(1));
-
-        // Usar onSnapshot para escuchar cambios en tiempo real
-        const unsubscribe = onSnapshot(
-          q,
-          (snapshot) => {
-            if (!snapshot.empty) {
-              const latestVital = snapshot.docs[0].data();
-              console.log(`✅ Signos vitales cargados para ${main.nombre}:`, latestVital);
-              
-              // Actualizar el estado solo si hay datos
-              setVitalSignsByPatient((prev) => ({
-                ...prev,
-                [main.id]: latestVital,
-              }));
-            } else {
-              console.log(`📊 No hay signos vitales para ${main.nombre}`);
+        const vitalsEntries = await Promise.all(
+          mains.map(async (main) => {
+            try {
+              const latestVital = await getLatestSignosVitalesByAdmisionId(main.id);
+              return [main.id, latestVital || null];
+            } catch (error) {
+              console.error(`❌ Error cargando signos vitales para ${main.nombre}:`, error);
+              return [main.id, null];
             }
-          },
-          (error) => {
-            console.error(`❌ Error escuchando signos vitales para ${main.nombre}:`, error);
-          }
+          })
         );
 
-        unsubscribers.push(unsubscribe);
-      } catch (error) {
-        console.error(`❌ Error configurando listener para ${main.nombre}:`, error);
-      }
-    });
+        if (!active) return;
 
-    // Limpiar los listeners cuando se desmonta o cambian los mains
+        const nextVitals = {};
+        vitalsEntries.forEach(([mainId, latestVital]) => {
+          if (latestVital) {
+            nextVitals[mainId] = latestVital;
+          }
+        });
+
+        setVitalSignsByPatient(nextVitals);
+      } catch (error) {
+        console.error('❌ Error cargando últimos signos vitales desde Supabase:', error);
+      }
+    };
+
+    loadLatestVitalSigns();
+
     return () => {
-      unsubscribers.forEach((unsubscribe) => unsubscribe());
+      active = false;
     };
   }, [mains]);
 
 
-  // 🆕 Generar dinámicamente el resumen vitales desde Firebase
+
+
+  // 🆕 Generar dinámicamente el resumen vitales desde Supabase
   const getDynamicResumenVitales = (mainId) => {
     const patientVitals = vitalSignsByPatient[mainId];
     
@@ -803,7 +792,7 @@ const resumenVitales = [
         { label: 'P.A.', value: patientVitals.presion || '--' },
         { label: 'PULSO', value: `${patientVitals.pulso || '--'} lpm` },
         { label: 'TEMP.', value: `${patientVitals.temperatura || '--'} C` },
-        { label: 'SAT O2', value: `${patientVitals.satO2 || '--'}%` },
+        { label: 'SAT O2', value: `${patientVitals.satO2 || patientVitals.sat_o2 || '--'}%` },
         { label: 'PESO', value: `${patientVitals.peso || '--'} KG` },
         { label: 'F.R.', value: `${patientVitals.fr || '--'}/min` },
       ];

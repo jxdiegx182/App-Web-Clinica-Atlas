@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { searchCIE } from "../services/cie10Service";
 
 const createEmptyDxRow = () => ({
@@ -21,18 +21,22 @@ const createDxRowFromCIE = (cieItem, tipo) => ({
   obs: "",
 });
 
-export default function DiagnosticoCIE10() {
+export default function DiagnosticoCIE10({ rows = [], onChangeRows }) {
   const [mainSearch, setMainSearch] = useState("");
   const [mainResults, setMainResults] = useState([]);
   const [secSearch, setSecSearch] = useState("");
   const [secResults, setSecResults] = useState([]);
-  const [cieSelected, setCieSelected] = useState({ main: [], sec: [] });
-  const [rows, setRows] = useState([]);
 
   const mainTimeoutRef = useRef(null);
   const secTimeoutRef = useRef(null);
   const mainRequestRef = useRef(0);
   const secRequestRef = useRef(0);
+
+  const updateRows = (updater) => {
+    if (typeof onChangeRows !== "function") return;
+    const nextRows = typeof updater === "function" ? updater(rows) : updater;
+    onChangeRows(nextRows);
+  };
 
   const handleSearchMain = (value) => {
     setMainSearch(value);
@@ -96,7 +100,7 @@ export default function DiagnosticoCIE10() {
   }, []);
 
   const appendRowFromSelection = (cieItem, tipo) => {
-    setRows((prev) => {
+    updateRows((prev) => {
       const alreadyInTable = prev.some((row) => row.code === cieItem.code);
       if (alreadyInTable) return prev;
       return [...prev, createDxRowFromCIE(cieItem, tipo)];
@@ -104,27 +108,23 @@ export default function DiagnosticoCIE10() {
   };
 
   const selectMainDiagnosis = (cieItem) => {
-    setCieSelected((prev) => ({
-      ...prev,
-      main: [cieItem],
-    }));
+    updateRows((prev) => {
+      const withoutMain = prev.filter((row) => row.tipo !== "Principal");
+      const existing = prev.find((row) => row.code === cieItem.code);
+      const principalRow = existing
+        ? { ...existing, tipo: "Principal" }
+        : createDxRowFromCIE(cieItem, "Principal");
 
-    appendRowFromSelection(cieItem, "Principal");
+      return [...withoutMain.filter((row) => row.code !== cieItem.code), principalRow];
+    });
     setMainSearch("");
     setMainResults([]);
   };
 
   const selectSecondaryDiagnosis = (cieItem) => {
-    const exists =
-      cieSelected.main.some((item) => item.code === cieItem.code) ||
-      cieSelected.sec.some((item) => item.code === cieItem.code);
+    const exists = rows.some((item) => item.code === cieItem.code);
 
     if (exists) return;
-
-    setCieSelected((prev) => ({
-      ...prev,
-      sec: [...prev.sec, cieItem],
-    }));
 
     appendRowFromSelection(cieItem, "Secundario");
     setSecSearch("");
@@ -132,27 +132,39 @@ export default function DiagnosticoCIE10() {
   };
 
   const removeDiagnosis = (scope, code) => {
-    setCieSelected((prev) => ({
-      ...prev,
-      [scope]: prev[scope].filter((item) => item.code !== code),
-    }));
+    updateRows((prev) =>
+      prev.filter((row) => {
+        if (row.code !== code) return true;
+        return scope === "main" ? row.tipo !== "Principal" : row.tipo === "Principal";
+      })
+    );
   };
 
   const updateRow = (id, field, value) => {
-    setRows((prev) =>
+    updateRows((prev) =>
       prev.map((row) => (row.id === id ? { ...row, [field]: value } : row))
     );
   };
 
   const removeRow = (id) => {
-    setRows((prev) => prev.filter((row) => row.id !== id));
+    updateRows((prev) => prev.filter((row) => row.id !== id));
   };
 
   const handleAddRow = () => {
-    setRows((prev) => [...prev, createEmptyDxRow()]);
+    updateRows((prev) => [...prev, createEmptyDxRow()]);
   };
 
-  const totalDx = cieSelected.main.length + cieSelected.sec.length;
+  const cieSelected = useMemo(() => {
+    const main = rows.filter(
+      (row) => row.tipo === "Principal" && (row.code?.trim() || row.desc?.trim())
+    );
+    const sec = rows.filter(
+      (row) => row.tipo !== "Principal" && (row.code?.trim() || row.desc?.trim())
+    );
+    return { main, sec };
+  }, [rows]);
+
+  const totalDx = rows.filter((row) => row.code?.trim() || row.desc?.trim()).length;
   const badgeText = totalDx
     ? `${totalDx} diagnóstico${totalDx > 1 ? "s" : ""}`
     : "Sin diagnóstico";
@@ -209,9 +221,9 @@ export default function DiagnosticoCIE10() {
                 <span>Sin diagnóstico principal</span>
               ) : (
                 cieSelected.main.map((item) => (
-                  <span key={`tag-main-${item.code}`} className="cie-tag">
+                  <span key={`tag-main-${item.id || item.code}`} className="cie-tag">
                     <span className="cie-tag-code">{item.code}</span>
-                    <span className="cie-tag-name">{item.description}</span>
+                    <span className="cie-tag-name">{item.desc || item.description}</span>
                     <button
                       type="button"
                       className="cie-tag-del"
@@ -264,9 +276,9 @@ export default function DiagnosticoCIE10() {
                 <span>Sin diagnósticos secundarios</span>
               ) : (
                 cieSelected.sec.map((item) => (
-                  <span key={`tag-sec-${item.code}`} className="cie-tag">
+                  <span key={`tag-sec-${item.id || item.code}`} className="cie-tag">
                     <span className="cie-tag-code">{item.code}</span>
-                    <span className="cie-tag-name">{item.description}</span>
+                    <span className="cie-tag-name">{item.desc || item.description}</span>
                     <button
                       type="button"
                       className="cie-tag-del"

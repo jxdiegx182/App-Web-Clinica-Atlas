@@ -1,33 +1,40 @@
-import { useState } from "react";
+const EMPTY_INFUSION_ROW = {
+  solucion: "",
+  volumen: "",
+  velocidad: "",
+  aditivos: "",
+  via: "",
+  inicio: "",
+  duracion: "",
+  estado: "",
+};
 
-export default function InfusionesTable() {
-  const [infusiones, setInfusiones] = useState([]);
+export default function InfusionesTable({ value = [], onChange }) {
+  const infusiones = Array.isArray(value) ? value : [];
+
+  const updateInfusiones = (updater) => {
+    if (typeof onChange !== "function") return;
+    const next = typeof updater === "function" ? updater(infusiones) : updater;
+    onChange(next);
+  };
 
   const handleAddRow = () => {
-    setInfusiones([
-      ...infusiones,
-      {
-        solucion: "",
-        volumen: "",
-        velocidad: "",
-        aditivos: "",
-        via: "",
-        inicio: "",
-        duracion: "",
-        estado: "",
-      },
-    ]);
+    updateInfusiones((prev) => [...prev, { ...EMPTY_INFUSION_ROW }]);
   };
 
   const handleChange = (index, field, value) => {
-    const updated = [...infusiones];
-    updated[index][field] = value;
-    setInfusiones(updated);
+    updateInfusiones((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+      return updated;
+    });
   };
 
   const handleDelete = (index) => {
-    const updated = infusiones.filter((_, i) => i !== index);
-    setInfusiones(updated);
+    updateInfusiones((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient.js";
 
 const MEDICAMENTOS_CATALOGO_TABLE =
@@ -384,7 +384,8 @@ function sortQueue(queue) {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "HYDRATE": {
+    case "HYDRATE":
+    case "HYDRATE_EXTERNAL": {
       const payload = action.payload || INITIAL_STATE;
       const rxList = Array.isArray(payload.rxList)
         ? payload.rxList.map((rx, index) => {
@@ -765,6 +766,23 @@ function reducer(state, action) {
       };
     }
 
+    case "SYNC_PACIENTE_META": {
+      const meta = action.payload?.pacienteMeta || {};
+      if (state.farmaciaQueue.length === 0) return state;
+
+      return {
+        ...state,
+        farmaciaQueue: state.farmaciaQueue.map((item) => ({
+          ...item,
+          cama: meta.cama || item.cama || "",
+          medico: meta.medico || item.medico || "",
+          bodega: meta.bodega || item.bodega || "Farmacia Central",
+          area: meta.area || item.area || "",
+          admisionId: meta.admisionId || item.admisionId || null,
+        })),
+      };
+    }
+
     case "RESET": {
       return INITIAL_STATE;
     }
@@ -778,6 +796,15 @@ export default function usePrescripciones(options = {}) {
   const { pacienteNombre = "Paciente", pacienteMeta = {}, storageKey = STORAGE_KEY } = options;
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [isHydrated, setIsHydrated] = useState(false);
+
+  const hydratePrescripciones = useCallback(
+    (payload) =>
+      dispatch({
+        type: "HYDRATE_EXTERNAL",
+        payload,
+      }),
+    []
+  );
 
   useEffect(() => {
     setIsHydrated(false);
@@ -800,6 +827,9 @@ export default function usePrescripciones(options = {}) {
   useEffect(() => {
     if (!isHydrated) return;
     localStorage.setItem(storageKey, JSON.stringify(state));
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("atlas:farmacia-sync"));
+    }
   }, [isHydrated, state, storageKey]);
 
   useEffect(() => {
@@ -809,6 +839,14 @@ export default function usePrescripciones(options = {}) {
       payload: { pacienteNombre },
     });
   }, [isHydrated, pacienteNombre]);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    dispatch({
+      type: "SYNC_PACIENTE_META",
+      payload: { pacienteMeta },
+    });
+  }, [isHydrated, pacienteMeta]);
 
   const stats = useMemo(() => {
     const pendientesFarmacia = state.farmaciaQueue.filter(
@@ -929,6 +967,8 @@ export default function usePrescripciones(options = {}) {
         type: "CONFIRMAR_DEVOLUCION",
         payload: { id },
       }),
+
+    hydratePrescripciones,
 
     resetPrescripciones: () => dispatch({ type: "RESET" }),
   };

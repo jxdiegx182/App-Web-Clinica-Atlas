@@ -1,0 +1,75 @@
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — MANFHER SYSTEMS · Atlas HIS
+   Form. 005 — Evolución y Prescripciones
+══════════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --bg: #dde7f0;
+  --bg-grad-from: #c5d5e5;
+  --bg-grad-to: #e8edf5;
+  --white: #ffffff;
+  --surface: #f0f5fa;
+  --surface2: #e8edf5;
+
+  /* Borders */
+  --border: #b0c4d8;
+  --border2: #90aac4;
+
+  /* Text */
+  --text: #1a2c3d;
+  --muted: #5a7a96;
+  --dim: #8baabf;
+
+  /* Teal (primary) */
+  --teal: #2a9d8f;
+  --teal-d: #1f7a6e;
+  --teal-l: #d8f2ef;
+  --teal-mid: #4db6ac;
+
+  /* Navy */
+  --navy: #1a3a5c;
+  --navy-d: #0f2440;
+  --navy-l: #e8f0f8;
+  --navy-mid: #2a5278;
+
+  /* Semantic */
+  --red: #c53030;
+  --red-l: #fff0f0;
+  --red-mid: #fc8181;
+  --green: #276749;
+  --green-l: #f0fff4;
+  --green-mid: #68d391;
+  --amber: #b7791f;
+  --amber-l: #fffaf0;
+  --amber-mid: #f6ad55;
+  --purple: #553c9a;
+  --purple-l: #f5f3ff;
+  --purple-mid: #c4b5fd;
+  --blue: #3182ce;
+  --blue-l: #ebf8ff;
+
+  /* IMC */
+  --imc-bajo: #3182ce;
+  --imc-normal: #276749;
+  --imc-sobre: #b7791f;
+  --imc-obeso: #c53030;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(26, 58, 92, 0.09);
+  --shadow: 0 2px 12px rgba(26, 58, 92, 0.12);
+  --shadow-lg: 0 6px 28px rgba(26, 58, 92, 0.16);
+
+  /* Typography */
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: 'DM Serif Display', serif;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius: 9px;
+  --radius-lg: 11px;
+  --radius-xl: 14px;
+
+  /* Transitions */
+  --transition: 0.2s ease;
+}

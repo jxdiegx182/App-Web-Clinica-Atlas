@@ -11,12 +11,27 @@ const EMPTY_ROW = {
   obs: "",
 };
 
-export default function MedicionHabitual({ searchMedicamentos }) {
-  const [rows, setRows] = useState([]);
-  const [alergias, setAlergias] = useState("");
-  const [observaciones, setObservaciones] = useState("");
+const EMPTY_VALUE = {
+  rows: [],
+  alergias: "",
+  observaciones: "",
+};
+
+export default function MedicionHabitual({ searchMedicamentos, value = EMPTY_VALUE, onChange }) {
+  const rows = Array.isArray(value?.rows) ? value.rows : [];
+  const alergias = value?.alergias || "";
+  const observaciones = value?.observaciones || "";
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
+
+  const updateValue = (patch) => {
+    if (typeof onChange !== "function") return;
+    onChange({
+      ...EMPTY_VALUE,
+      ...value,
+      ...patch,
+    });
+  };
 
   const openDropdown = search.trim().length >= 2;
 
@@ -43,36 +58,42 @@ export default function MedicionHabitual({ searchMedicamentos }) {
   };
 
   const handleAddRow = () => {
-    setRows((prev) => [...prev, { ...EMPTY_ROW }]);
+    updateValue({
+      rows: [...rows, { ...EMPTY_ROW }],
+    });
   };
 
   const handleChange = (index, field, value) => {
-    setRows((prev) => {
-      const next = [...prev];
-      next[index] = {
-        ...next[index],
-        [field]: value,
-      };
-      return next;
+    const next = [...rows];
+    next[index] = {
+      ...next[index],
+      [field]: value,
+    };
+    updateValue({
+      rows: next,
     });
   };
 
   const handleDelete = (index) => {
-    setRows((prev) => prev.filter((_, i) => i !== index));
+    updateValue({
+      rows: rows.filter((_, i) => i !== index),
+    });
   };
 
   const handleSelectCatalog = (med) => {
-    setRows((prev) => [
-      ...prev,
-      {
-        ...EMPTY_ROW,
-        medicamento: med.nombre || "",
-        comercial: med.comercial || "",
-        dosis: med.dosis || "",
-        frecuencia: med.frecuencia || "",
-        via: med.via || "",
-      },
-    ]);
+    updateValue({
+      rows: [
+        ...rows,
+        {
+          ...EMPTY_ROW,
+          medicamento: med.nombre || "",
+          comercial: med.comercial || "",
+          dosis: med.dosis || "",
+          frecuencia: med.frecuencia || "",
+          via: med.via || "",
+        },
+      ],
+    });
     setSearch("");
     setResults([]);
   };
@@ -223,7 +244,7 @@ export default function MedicionHabitual({ searchMedicamentos }) {
               className="fta"
               placeholder="Reacciones adversas conocidas"
               value={alergias}
-              onChange={(event) => setAlergias(event.target.value)}
+              onChange={(event) => updateValue({ alergias: event.target.value })}
             />
           </div>
 
@@ -233,7 +254,7 @@ export default function MedicionHabitual({ searchMedicamentos }) {
               className="fta"
               placeholder="Adherencia / barreras / recomendaciones"
               value={observaciones}
-              onChange={(event) => setObservaciones(event.target.value)}
+              onChange={(event) => updateValue({ observaciones: event.target.value })}
             />
           </div>
         </div>
