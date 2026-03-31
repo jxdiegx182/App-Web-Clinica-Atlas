@@ -289,7 +289,7 @@ const Evolucion = () => {
   };
 
   return (
-    <>
+    <div className="evolucion">
       <main className="app">
         <SignosVitales
           value={signosVitales}
@@ -407,7 +407,7 @@ const Evolucion = () => {
           </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

@@ -16,7 +16,7 @@ import Emergencia from '@/pages/Emergencia';
 import Epicrisis from '@/pages/Epicrisis';
 import Evolucion from '@/modules/medico/evolucion/Evolucion.jsx';
 import Interconsulta from '@/pages/Interconsulta';
-import Protocolo from '@/pages/Protocolo';
+import Protocolo from '@/modules/medico/protocolo/ProtocoloOperatorio.jsx';
 import Consentimientos from '@/pages/Consentimientos';
 import ModalCita from '@/pages/ModalCita';
 import Chatbot from '@/pages/Chatbot';

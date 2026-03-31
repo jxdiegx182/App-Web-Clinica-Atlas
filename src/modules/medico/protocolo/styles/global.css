@@ -1,0 +1,62 @@
+@import './tokens.css';
+
+/* Body background */
+.protocolo-operatorio {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(160deg, var(--bg-grad-from) 0%, var(--bg-grad-to) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* Scrollbar */
+.protocolo-operatorio ::-webkit-scrollbar { width: 6px; height: 6px; }
+.protocolo-operatorio ::-webkit-scrollbar-track { background: var(--surface); }
+.protocolo-operatorio ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.protocolo-operatorio ::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+
+/* Grillas de estructura */
+.protocolo-operatorio .g2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.protocolo-operatorio .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+/* Estilos base para inputs del sistema */
+.protocolo-operatorio .fi, .protocolo-operatorio .fs, .protocolo-operatorio .fta {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  transition: all .2s;
+  box-sizing: border-box;
+}
+
+.protocolo-operatorio .fi:focus, .protocolo-operatorio .fs:focus, .protocolo-operatorio .fta:focus { 
+  border-color: var(--teal); 
+  box-shadow: 0 0 0 3px rgba(21,101,192,.1); 
+}
+
+.protocolo-operatorio .fi::placeholder, .protocolo-operatorio .fta::placeholder { color: var(--dim); }
+
+.protocolo-operatorio .fta {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.7;
+}
+
+.protocolo-operatorio .fs option { background: white; color: var(--text); }
+
+.protocolo-operatorio .fl {
+  display: block;
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}

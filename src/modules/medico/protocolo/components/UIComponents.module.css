@@ -1,0 +1,70 @@
+@import '../styles/tokens.css';
+
+.card {
+  background: var(--white);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.cardHeader {
+  padding: 12px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* El color azul oscuro que viste en el original */
+.chTeal { 
+  background: var(--navy) !important; 
+}
+
+.chTeal .cardTitle, .chTeal .cardIcon {
+  color: white !important;
+}
+
+.cardTitle {
+  font-size: .88rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.cardIcon { font-size: 1.2rem; }
+
+.cardBody { padding: 20px; }
+
+.btnPrimary {
+  background: var(--teal);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: .82rem;
+  transition: background .2s;
+}
+.btnPrimary:hover { background: var(--teal-d); }
+
+.btnOutline {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: .82rem;
+  transition: all .2s;
+}
+.btnOutline:hover { border-color: var(--teal); color: var(--teal-d); }

@@ -1,0 +1,718 @@
+/* ══════════════════════════════════════════════════════════════════
+   ENTREGABLE 5 — Protocolo.module.css
+   Clases ESPECÍFICAS del Form. 017 — Protocolo Operatorio
+   Solo estilos que NO existen en los tokens globales de Atlas HIS.
+
+   NO reimplementar aquí:
+   - Variables CSS (están en tokens.css)
+   - .card, .card-header, .card-body (en UIComponents.module.css)
+   - .fi, .fs, .fta, .fl (en global.css)
+   - .g2, .g3, .g4 (en global.css)
+   - .btn-primary, .btn-outline (en UIComponents.module.css)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── ROOT ── */
+.protocoloRoot {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 22px 20px 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ════════════════════════════════════════
+   CABECERA DEL PACIENTE
+════════════════════════════════════════ */
+.patHeader {
+  background: var(--navy);
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+}
+.patAvatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-d));
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.patName {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: white;
+}
+.patId {
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  opacity: .6;
+  margin-top: 2px;
+  color: rgba(255,255,255,.7);
+}
+.allergyBadge {
+  background: rgba(197,48,48,.2);
+  border: 1px solid rgba(197,48,48,.5);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: #fc8181;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.patBody {
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+}
+
+/* ════════════════════════════════════════
+   BADGE DE CONEXIÓN CIE-10
+════════════════════════════════════════ */
+.connBadge {
+  font-size: .65rem;
+  padding: 2px 9px;
+  border-radius: 100px;
+  background: var(--teal-l);
+  border: 1px solid var(--teal);
+  color: var(--teal-d);
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+/* ════════════════════════════════════════
+   TIPO CIRUGÍA / ANESTESIA
+════════════════════════════════════════ */
+.cxTypeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cxTypeBtn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 20px;
+  border-radius: 9px;
+  border: 2px solid var(--border);
+  background: var(--white);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all .2s;
+  user-select: none;
+}
+.cxTypeBtn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.cxDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+
+/* Emergencia */
+.cxEmergencia.active  { border-color: var(--red);  background: var(--red-l);  color: var(--red); box-shadow: 0 0 0 3px rgba(197,48,48,.12); }
+.cxEmergencia:not(.active):hover { border-color: var(--red-mid); color: var(--red); }
+/* Electiva / genérico */
+.cxElectiva.active    { border-color: var(--teal); background: var(--teal-l); color: var(--teal-d); box-shadow: 0 0 0 3px rgba(21,101,192,.14); }
+.cxElectiva:not(.active):hover { border-color: var(--teal); color: var(--teal-d); }
+.cxDotActive { background: var(--teal); box-shadow: 0 0 6px rgba(21,101,192,.5); }
+
+.cxBanner {
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+.cxBanner.emergencia { background: var(--red);  color: white; animation: pulseBanner 1.8s infinite; }
+.cxBanner.electiva   { background: var(--teal); color: white; }
+@keyframes pulseBanner { 0%,100%{opacity:1}50%{opacity:.6} }
+
+/* ════════════════════════════════════════
+   TIEMPOS QUIRÚRGICOS
+════════════════════════════════════════ */
+.tiemposRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tiempoCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9px;
+}
+.tcLabel {
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--teal-d);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tcInput {
+  width: 110px;
+  padding: 5px 8px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-align: center;
+  color: var(--navy);
+  outline: none;
+  transition: border-color .2s;
+  background: var(--white);
+}
+.tcInput:focus { border-color: var(--teal); }
+.tcTotal {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--teal-d);
+  min-width: 80px;
+}
+
+/* ════════════════════════════════════════
+   NARRACIÓN QUIRÚRGICA
+════════════════════════════════════════ */
+.narrContainer { display: flex; flex-direction: column; gap: 0; }
+.narrSection {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.narrHead {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.narrNum {
+  width: 24px; height: 24px;
+  background: var(--teal);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 800;
+  color: white; flex-shrink: 0;
+}
+.narrTitle {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.narrBody { padding: 14px 16px; }
+
+/* ════════════════════════════════════════
+   PANEL CIE-10 / CPT
+════════════════════════════════════════ */
+.codePanel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+}
+.codeTabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.codeTab {
+  padding: 10px 20px;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: var(--surface);
+  font-family: var(--font-body);
+}
+.codeTab:hover { color: var(--text); }
+.onCie { color: var(--navy); border-bottom-color: var(--navy); background: var(--white); }
+.onCpt { color: var(--teal-d); border-bottom-color: var(--teal); background: var(--white); }
+.codeTabContent { padding: 16px; }
+
+.cieSyncBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 9px 14px;
+  background: #dbeafe;
+  border: 1px solid #2979ff;
+  border-radius: 8px;
+  font-size: .78rem;
+  color: #0d47a1;
+  font-weight: 600;
+}
+.cieSyncCount {
+  margin-left: auto;
+  background: #0d47a1;
+  color: white;
+  font-size: .65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 100px;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+
+/* Tags de códigos */
+.codesSelected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 0;
+}
+.codeTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 100px;
+  padding: 5px 12px 5px 10px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+.cieTagC { background: var(--navy-l); border: 1px solid var(--border); }
+.cptTagC { background: var(--teal-l); border: 1px solid var(--teal); }
+.ctCode  { font-family: var(--font-mono); font-weight: 700; color: var(--navy); }
+.ctName  { color: var(--text); }
+.ctDel   { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; transition: color .15s; }
+.ctDel:hover { color: var(--red); }
+.syncBadge {
+  font-size: .6rem;
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: #0d47a1;
+  color: white;
+  font-weight: 700;
+  letter-spacing: .05em;
+  margin-left: 2px;
+}
+.coCode { font-family: var(--font-mono); font-size: .78rem; font-weight: 700; min-width: 70px; flex-shrink: 0; }
+.cieCode { color: var(--navy); }
+.cptCode { color: var(--teal-d); }
+.coDesc  { font-size: .82rem; color: var(--text); line-height: 1.3; }
+
+/* ════════════════════════════════════════
+   BUSCADOR STAFF MÉDICO
+════════════════════════════════════════ */
+.staffDrop {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0; right: 0;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 300;
+  box-shadow: var(--shadow-lg);
+}
+.staffOpt {
+  padding: 9px 13px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--surface2);
+  transition: background .12s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.staffOpt:last-child { border-bottom: none; }
+.staffOpt:hover { background: var(--teal-l); }
+.staffNombre { font-size: .84rem; font-weight: 600; color: var(--text); }
+.staffEsp    { font-size: .72rem; color: var(--muted); }
+
+/* ════════════════════════════════════════
+   CIE SEARCH / TAGS (específico Form 017)
+════════════════════════════════════════ */
+.cieOptCode {
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+.cieOptDesc { font-size: .82rem; color: var(--text); line-height: 1.3; }
+.cieTags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; padding: 4px 0; margin-top: 6px; }
+.emptyLabel { font-size: .78rem; color: var(--dim); font-style: italic; }
+
+/* ════════════════════════════════════════
+   EQUIPOS E INSUMOS
+════════════════════════════════════════ */
+.insumosTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+.insumosTable th {
+  padding: 9px 12px;
+  background: var(--navy);
+  color: white;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.insumosTable td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--surface2);
+  vertical-align: middle;
+}
+.insumosTable tr:last-child td { border-bottom: none; }
+.insumosTable tr:hover td { background: var(--teal-l); }
+.insumoQty {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-align: center;
+  font-size: .82rem;
+  background: var(--white);
+  color: var(--text);
+  outline: none;
+}
+.insumoQty:focus { border-color: var(--teal); }
+.insumoObs {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: .8rem;
+  background: var(--white);
+  color: var(--text);
+  outline: none;
+}
+.insumoObs:focus { border-color: var(--teal); }
+.btnDel {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--red-l);
+  border: 1px solid var(--red-mid);
+  color: var(--red);
+  font-size: .9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.btnDel:hover { background: var(--red); color: white; }
+
+/* ── Conteo gasas ── */
+.conteoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.conteoLabel {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.conteoInput {
+  width: 58px;
+  padding: 5px 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-align: center;
+  font-size: .82rem;
+  background: var(--white);
+  color: var(--text);
+  outline: none;
+}
+.conteoInput:focus { border-color: var(--teal); }
+.conteoResult {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.conteoResult.ok    { background: var(--green-l); border: 1.5px solid #9ae6b4; color: var(--green); }
+.conteoResult.error { background: var(--red-l);   border: 1.5px solid var(--red-mid); color: var(--red); }
+
+/* ════════════════════════════════════════
+   COMPLICACIONES / MUESTRA
+════════════════════════════════════════ */
+.ctBtn {
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--muted);
+  font-size: .83rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all .15s;
+}
+.ctBtn:hover { border-color: var(--text); color: var(--text); }
+.ctBtn.si { background: var(--red-l);   border-color: var(--red-mid);  color: var(--red);   }
+.ctBtn.no { background: var(--green-l); border-color: #9ae6b4;         color: var(--green); }
+
+.muestraContainer {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.muestraHeader {
+  padding: 10px 16px;
+  background: var(--amber-l);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--amber);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.muestraTitle { font-size: .84rem; font-weight: 700; color: var(--amber); }
+
+/* ── Patólogos ── */
+.patologoSection { padding: 14px 16px; border-top: 1px solid var(--border); }
+.patologoHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+.patologoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.patologoCard {
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.patologoCard:hover { border-color: var(--teal); background: var(--teal-l); transform: translateY(-1px); }
+.patologoSelected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--navy-l);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+}
+.notifMsg {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: .78rem;
+  font-weight: 600;
+  background: var(--green-l);
+  border: 1px solid #9ae6b4;
+  color: var(--green);
+}
+
+/* ════════════════════════════════════════
+   PANEL ASISTENTE IA
+════════════════════════════════════════ */
+.aiPanel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.aiHeader {
+  padding: 16px 22px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: white;
+}
+.aiHeaderIcon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-d));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+}
+.aiHeaderTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.aiHeaderSub { font-size: .68rem; opacity: .5; color: rgba(255,255,255,.7); margin-top: 1px; }
+.aiGrid {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: var(--surface);
+}
+.aiBtn {
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-body);
+}
+.aiBtn:hover   { border-color: var(--teal); background: var(--teal-l); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.aiBtn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.aiBtnIcon  { font-size: 1.3rem; }
+.aiBtnTitle { font-size: .85rem; font-weight: 700; color: var(--navy); }
+.aiBtnDesc  { font-size: .7rem;  color: var(--muted); line-height: 1.4; }
+
+.aiLoading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  color: var(--teal);
+  font-size: .83rem;
+  font-style: italic;
+}
+.aiSpin {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(21,101,192,.20);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.aiResult {
+  margin: 0 20px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+}
+.aiResultHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.aiResultLabel { font-size: .7rem; font-weight: 700; color: var(--teal); letter-spacing: .1em; text-transform: uppercase; }
+.aiResultTag   { margin-left: auto; background: var(--teal-l); color: var(--teal-d); font-size: .65rem; font-weight: 800; padding: 3px 9px; border-radius: 100px; letter-spacing: .08em; }
+.aiResultBody  { padding: 16px; color: var(--text); font-size: .86rem; line-height: 1.75; }
+
+/* ── Alertas IA ── */
+.alertsWrap { display: flex; flex-direction: column; gap: 9px; padding: 16px; }
+.alertRow { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; }
+.arCritical { background: var(--red-l);   border: 1px solid var(--red-mid); }
+.arWarning  { background: var(--amber-l); border: 1px solid #fbd38d; }
+.arInfo     { background: var(--navy-l);  border: 1px solid var(--border); }
+.arOk       { background: var(--green-l); border: 1px solid #9ae6b4; }
+.arIcon     { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.arBody     { flex: 1; }
+.arTitle    { font-size: .82rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.arDesc     { font-size: .77rem; color: var(--muted); line-height: 1.5; }
+.arBadge    { font-size: .62rem; font-weight: 800; letter-spacing: .08em; padding: 3px 8px; border-radius: 100px; flex-shrink: 0; }
+.bCrit      { background: #fed7d7; color: var(--red); }
+.bWarn      { background: #feebc8; color: #c05621; }
+.bInfo      { background: var(--navy-l); color: var(--navy); }
+.bOk        { background: var(--green-l); color: var(--green); }
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .patBody      { grid-template-columns: repeat(4, 1fr); }
+  .aiGrid       { grid-template-columns: 1fr 1fr; }
+  .patologoGrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 900px) {
+  .patBody      { grid-template-columns: repeat(3, 1fr); }
+  .aiGrid       { grid-template-columns: 1fr 1fr; }
+  .tiemposRow   { flex-direction: column; align-items: flex-start; }
+  .patologoGrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .protocoloRoot { padding: 12px 10px 130px; gap: 12px; }
+  .patBody       { grid-template-columns: 1fr 1fr; }
+  .aiGrid        { grid-template-columns: 1fr; }
+  .patologoGrid  { grid-template-columns: 1fr; }
+  .cxTypeRow     { flex-direction: column; align-items: flex-start; }
+}
+
+/* ════════════════════════════════════════
+   PRINT — Form. 017
+════════════════════════════════════════ */
+@media print {
+  .protocoloRoot { padding: 8px 12px 20px !important; gap: 10px !important; }
+  .aiPanel       { display: none !important; }
+  .aiBtn, .ctBtn { display: none !important; }
+  .staffDrop, .aiGrid { display: none !important; }
+  .allergyBadge  { background: #fed7d7 !important; color: var(--red) !important; print-color-adjust: exact; }
+  .cxBanner      { display: inline-block !important; }
+  .narrSection   { margin-bottom: 6px !important; }
+  .narrHead      { padding: 6px 12px !important; }
+  .insumosTable th { background: #333 !important; color: white !important; font-size: 8pt !important; print-color-adjust: exact; }
+  .insumosTable td { font-size: 8.5pt !important; }
+  .patologoGrid, .patologoCard { display: none !important; }
+  .patologoSelected { display: block !important; }
+}

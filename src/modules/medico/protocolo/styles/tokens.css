@@ -1,0 +1,32 @@
+.protocolo-operatorio {
+  --bg: #FFFFFF;
+  --bg-grad-from: #ffffff;
+  --bg-grad-to: #69c9bb9a;
+  --white: #ffffff;
+  --surface: #eef4fb;
+  --surface2: #69c9bbad;
+  --text: #595759;
+  --muted: #4EA685;
+  --dim: #595759;
+  --border: #76c4d5;
+  --border2: #7aaac9;
+  --navy: #69C9BA;
+  --navy-d: #061828;
+  --navy-l: #eef4fb;
+  --teal: #FFFFFF;
+  --teal-d: #4EA685;
+  --teal-l: #dbeafe;
+  --teal-mid: #595759;
+  --red: #c53030;
+  --red-l: #fff0f0;
+  --red-mid: #feb2b2;
+  --green: #2f855a;
+  --green-l: #f0fff4;
+  --amber: #b7791f;
+  --amber-l: #fffaf0;
+  --font-body: 'Montserrat', sans-serif;
+  --font-mono: 'Montserrat', sans-serif;
+  --shadow: 0 2px 12px rgba(10,39,68,.14);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 25px rgba(10,39,68,0.15);
+}

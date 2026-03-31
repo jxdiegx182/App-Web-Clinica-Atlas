@@ -110,59 +110,61 @@ const Farmacia = () => {
   };
 
   return (
-    <div className="farmacia-shell">
-      <Header
-        clock={farmacia.clock}
-        criticalCount={farmacia.criticalInventory.length}
-        onShowInventory={() => farmacia.setActiveTab("inv")}
-        onOpenNewItem={() => farmacia.setNewItemOpen(true)}
-        onToggleAlerts={() =>
-          farmacia.showToast(
-            farmacia.criticalInventory.length
-              ? `⚠ ${farmacia.criticalInventory.length} item(s) con stock crítico`
-              : "✅ Sin alertas de stock",
-            "a"
-          )
-        }
-      />
+    <div className="farmacia">
+      <div className="farmacia-shell">
+        <Header
+          clock={farmacia.clock}
+          criticalCount={farmacia.criticalInventory.length}
+          onShowInventory={() => farmacia.setActiveTab("inv")}
+          onOpenNewItem={() => farmacia.setNewItemOpen(true)}
+          onToggleAlerts={() =>
+            farmacia.showToast(
+              farmacia.criticalInventory.length
+                ? `⚠ ${farmacia.criticalInventory.length} item(s) con stock crítico`
+                : "✅ Sin alertas de stock",
+              "a"
+            )
+          }
+        />
 
-      <Sidebar
-        activeTab={farmacia.activeTab}
-        onChangeTab={farmacia.setActiveTab}
-        pendingOrders={farmacia.kpis.pendientes}
-        occupiedBeds={farmacia.beds.filter((bed) => bed.estado === "ocupado").length}
-      />
+        <Sidebar
+          activeTab={farmacia.activeTab}
+          onChangeTab={farmacia.setActiveTab}
+          pendingOrders={farmacia.kpis.pendientes}
+          occupiedBeds={farmacia.beds.filter((bed) => bed.estado === "ocupado").length}
+        />
 
-      <div id="content">
-        {farmacia.loading ? (
-          <div className="card">
-            <div className="cbody">Cargando módulo de farmacia...</div>
-          </div>
-        ) : (
-          renderActiveSection()
-        )}
+        <div id="content">
+          {farmacia.loading ? (
+            <div className="card">
+              <div className="cbody">Cargando módulo de farmacia...</div>
+            </div>
+          ) : (
+            renderActiveSection()
+          )}
+        </div>
+
+        <Modals
+          newItemOpen={farmacia.newItemOpen}
+          onCloseNewItem={() => farmacia.setNewItemOpen(false)}
+          newItemForm={farmacia.newItemForm}
+          onNewItemFormChange={(field, value) =>
+            farmacia.setNewItemForm((prev) => ({ ...prev, [field]: value }))
+          }
+          onCreateNewItem={farmacia.handleCreateNewItem}
+          restockTarget={farmacia.restockTarget}
+          restockForm={farmacia.restockForm}
+          onRestockFormChange={(field, value) =>
+            farmacia.setRestockForm((prev) => ({ ...prev, [field]: value }))
+          }
+          onCloseRestock={() => farmacia.setRestockTargetId(null)}
+          onConfirmRestock={farmacia.handleConfirmRestock}
+          helpers={farmacia.helpers}
+          bodegas={farmacia.metadata.bodegas}
+        />
+
+        <Toast toast={farmacia.toast} onClose={farmacia.clearToast} />
       </div>
-
-      <Modals
-        newItemOpen={farmacia.newItemOpen}
-        onCloseNewItem={() => farmacia.setNewItemOpen(false)}
-        newItemForm={farmacia.newItemForm}
-        onNewItemFormChange={(field, value) =>
-          farmacia.setNewItemForm((prev) => ({ ...prev, [field]: value }))
-        }
-        onCreateNewItem={farmacia.handleCreateNewItem}
-        restockTarget={farmacia.restockTarget}
-        restockForm={farmacia.restockForm}
-        onRestockFormChange={(field, value) =>
-          farmacia.setRestockForm((prev) => ({ ...prev, [field]: value }))
-        }
-        onCloseRestock={() => farmacia.setRestockTargetId(null)}
-        onConfirmRestock={farmacia.handleConfirmRestock}
-        helpers={farmacia.helpers}
-        bodegas={farmacia.metadata.bodegas}
-      />
-
-      <Toast toast={farmacia.toast} onClose={farmacia.clearToast} />
     </div>
   );
 };

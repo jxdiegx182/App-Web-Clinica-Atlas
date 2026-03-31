@@ -13,7 +13,7 @@ import Evolucion from '@/modules/medico/evolucion/Evolucion.jsx';
 import Interconsulta from './Interconsulta';
 import Certificado from './Certificado';
 import Receta from './Receta';
-import Protocolo from './Protocolo';
+import Protocolo from '@/modules/medico/protocolo/ProtocoloOperatorio.jsx';
 import RegAnestesia from './RegAnestesia';
 import MedicalModuleConsen from './Consentimientos';
 import {
