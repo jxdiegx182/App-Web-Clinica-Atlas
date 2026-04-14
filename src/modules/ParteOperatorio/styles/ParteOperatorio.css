@@ -1,5 +1,5 @@
 .parte-operatorio {
-  --navy: #69c9ba;
+  --navy: #69c9bb;
   --navy-d: #0f2440;
   --navy-mid: #2a5278;
   --navy-l: #e8f0f8;
@@ -32,7 +32,7 @@
   padding: 0;
 }
 .parte-operatorio {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   background: linear-gradient(160deg, #c5d5e5, #e8edf5);
   background-attachment: fixed;
   color: var(--text);
@@ -50,7 +50,7 @@
   border-radius: 3px;
 }
 .parte-operatorio .hdr {
-  background: var(--navy);
+  background: #ffffff;
   padding: 10px 28px;
   display: flex;
   align-items: center;
@@ -64,7 +64,7 @@
   color: white !important;
 }
 .parte-operatorio .brand {
-  font-family: Georgia, serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -72,14 +72,14 @@
   color: var(--teal-mid) !important;
 }
 .parte-operatorio .hdr-title {
-  font-size: 0.9rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--teal-mid) !important;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .parte-operatorio #hdr-clock {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.5) !important;
   text-align: right;
@@ -94,7 +94,7 @@
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: all 0.2s;
 }
 .parte-operatorio .hdr-btn:hover {
@@ -147,7 +147,7 @@
   border: 2px solid transparent;
   background: var(--navy);
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   cursor: pointer;
@@ -170,7 +170,7 @@
   font-weight: 400;
   opacity: 0.65;
   margin-top: 2px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
 }
 .parte-operatorio .main-grid {
   display: grid;
@@ -213,7 +213,7 @@
   text-transform: uppercase;
 }
 .parte-operatorio .tbl-fecha {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.68rem;
   color: var(--teal-mid) !important;
   margin-left: auto;
@@ -279,7 +279,7 @@
   border-bottom: none;
 }
 .parte-operatorio .hc {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   color: var(--navy);
   white-space: nowrap;
@@ -322,7 +322,7 @@
   border: 1px solid rgba(39, 103, 73, 0.25);
 }
 .parte-operatorio .sc2 {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 800;
   font-size: 0.75rem;
   color: var(--teal-d);
@@ -406,7 +406,7 @@
   border: 1.5px solid var(--border);
   border-radius: 7px;
   padding: 6px 9px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.79rem;
   color: var(--text);
   outline: none;
@@ -443,7 +443,7 @@
   color: white;
   border: none;
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.79rem;
   font-weight: 700;
   cursor: pointer;
@@ -458,7 +458,7 @@
   color: var(--muted);
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.79rem;
   cursor: pointer;
 }
@@ -528,7 +528,7 @@
   background: transparent;
   border: 1.5px solid var(--border);
   border-radius: 7px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.79rem;
   cursor: pointer;
   color: var(--text);
@@ -539,7 +539,7 @@
   color: white;
   border: none;
   border-radius: 7px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.79rem;
   font-weight: 700;
   cursor: pointer;
@@ -612,7 +612,7 @@
   text-transform: uppercase;
 }
 .parte-operatorio .bts-v {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.81rem;
   color: var(--teal-mid);
   font-weight: 700;
@@ -627,7 +627,7 @@
   color: rgba(255, 255, 255, 0.7);
   border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.77rem;
   font-weight: 600;
   cursor: pointer;
@@ -710,7 +710,7 @@
   width: 44px;
   height: 52px;
   text-align: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.4rem;
   font-weight: 800;
   border: 2px solid var(--border);
@@ -737,7 +737,7 @@
   color: white;
   border: none;
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
@@ -797,7 +797,7 @@
   text-transform: uppercase;
 }
 .parte-operatorio .fecha-display {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.88rem;
   font-weight: 800;
   color: var(--navy);
@@ -833,7 +833,7 @@
   border: 1.5px solid var(--border);
   border-radius: 7px;
   padding: 5px 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.8rem;
   color: var(--text);
   outline: none;
@@ -885,7 +885,7 @@
   padding: 5px 8px;
   border-bottom: 1px solid var(--surface2);
   font-size: 0.68rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   text-align: center;
   position: relative;
   min-height: 28px;
@@ -966,7 +966,7 @@
   padding: 4px 10px;
   border-radius: 6px;
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   cursor: pointer;
@@ -1193,7 +1193,7 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .parte-operatorio .day-pill:hover {
   border-color: var(--teal);
@@ -1235,7 +1235,7 @@
   border: 1.5px solid var(--border);
   border-radius: 7px;
   padding: 6px 9px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--navy);
@@ -1411,7 +1411,7 @@
   color: white;
   border: none;
   border-radius: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
@@ -1437,7 +1437,7 @@
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid var(--surface2);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.62rem; 
 }
 

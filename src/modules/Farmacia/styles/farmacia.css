@@ -7,11 +7,11 @@
   --green:#276749;--green2:rgba(39,103,73,.1);
   --amber:#b7791f;--amber2:rgba(183,121,31,.1);
   --blue:#3182ce;--blue2:rgba(49,130,206,.1);
-  --navy:#69c9bb92;--navy-d:#0f2440;
+  --navy:#69c9bb;--navy-d:#4ea685;
   --border:#b0c4d8;--border2:#90aac4;
   --text:#1a2c3d;--muted:#5a7a96;--dim:#8baabf;--white:#ffffff;
   scroll-behavior:smooth;
-  font-family:'DM Sans',sans-serif;
+  font-family:'Montserrat',sans-serif;
   background:linear-gradient(160deg,#c5d5e5,#e8edf5);
   background-attachment:fixed;
   color:var(--text);
@@ -31,7 +31,7 @@
 /* ── TOPBAR ── */
 .farmacia #topbar{height:50px;background:var(--navy);border-bottom:2px solid var(--navy-d);padding:0 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:700;box-shadow:0 2px 16px rgba(15,36,64,.4);}
 .farmacia .logo{display:flex;align-items:center;gap:8px;padding-right:13px;border-right:1px solid rgba(255,255,255,.15);flex-shrink:0;}
-.farmacia .logo-box{width:28px;height:28px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:white;font-family:'Rajdhani',sans-serif;}
+.farmacia .logo-box{width:28px;height:28px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:white;font-family:'Montserrat',sans-serif;}
 .farmacia .logo-name{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;color:var(--teal);letter-spacing:.04em;}
 .farmacia .logo-name b{color:#fff;}
 .farmacia .logo-sub{font-size:.46rem;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;}
@@ -81,8 +81,8 @@
 
 /* ── CARD ── */
 .farmacia .card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(26,58,92,.07);}
-.farmacia .ch{background:linear-gradient(135deg,var(--teal),var(--teal2));padding:8px 13px;display:flex;align-items:center;gap:7px;}
-.farmacia .ch-t{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#fff;letter-spacing:.06em;text-transform:uppercase;}
+.farmacia .ch{background:linear-gradient(135deg,var(--teal2),var(--teal2));padding:9px 13px;display:flex;align-items:center;gap:7px;}
+.farmacia .ch-t{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#ffffff;letter-spacing:.06em;text-transform:uppercase;}
 .farmacia .ch-b{margin-left:auto;padding:2px 7px;border-radius:100px;font-size:.57rem;font-weight:700;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.2);color:#fff;}
 .farmacia .cbody{padding:11px 13px;}
 
@@ -94,7 +94,7 @@
 .farmacia .tbl tr:last-child td{border-bottom:none;}
 .farmacia .tw{overflow-x:auto;}
 .farmacia .mc{font-family:'Montserrat',monospace;font-size:.7rem;color:var(--teal2);}
-.farmacia .nc{font-weight:600;color:var(--navy);}
+.farmacia .nc{font-weight:600;color:var(--navy-d);}
 .farmacia .dc{color:var(--muted);font-size:.72rem;}
 .farmacia .pc-g{font-family:'Montserrat',monospace;font-weight:700;text-align:right;color:var(--green);}
 
@@ -116,7 +116,7 @@
 
 /* ── SEARCH ── */
 .farmacia .sr{position:relative;flex:1;}
-.farmacia .sr input{width:100%;padding:7px 10px 7px 28px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border-color .16s;}
+.farmacia .sr input{width:100%;padding:7px 10px 7px 28px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-family:'Montserrat',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border-color .16s;}
 .farmacia .sr input:focus{border-color:var(--teal);}
 .farmacia .sr input::placeholder{color:var(--dim);}
 .farmacia .sr-ic{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--teal2);font-size:.72rem;pointer-events:none;}
@@ -128,7 +128,7 @@
 /* ── FORM ── */
 .farmacia .fg{display:flex;flex-direction:column;gap:3px;}
 .farmacia .fl{font-size:.56rem;font-weight:700;color:var(--teal2);letter-spacing:.08em;text-transform:uppercase;}
-.farmacia .fi,.farmacia .fs,.farmacia .fta{background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border-color .16s;width:100%;appearance:none;}
+.farmacia .fi,.farmacia .fs,.farmacia .fta{background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Montserrat',sans-serif;font-size:.78rem;color:var(--text);outline:none;transition:border-color .16s;width:100%;appearance:none;}
 .farmacia .fi:focus,.farmacia .fs:focus,.farmacia .fta:focus{border-color:var(--teal);}
 .farmacia .fi::placeholder{color:var(--dim);}
 .farmacia .fm{font-family:'Montserrat',monospace;font-size:.74rem;color:var(--teal2);font-weight:600;}
@@ -192,7 +192,7 @@
 
 /* ── PAGINADOR INVENTARIO ── */
 .farmacia .inv-pager{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 12px;border-top:1px solid var(--border);background:var(--bg3);flex-wrap:wrap;min-height:42px;}
-.farmacia .pager-btn{min-width:28px;height:26px;padding:0 8px;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--muted);transition:all .14s;font-family:'DM Sans',sans-serif;line-height:1;}
+.farmacia .pager-btn{min-width:28px;height:26px;padding:0 8px;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--muted);transition:all .14s;font-family:'Montserrat',sans-serif;line-height:1;}
 .farmacia .pager-btn:hover:not(:disabled){border-color:var(--teal2);color:var(--teal2);}
 .farmacia .pager-btn.on{background:var(--teal2);color:#fff;border-color:var(--teal2);}
 .farmacia .pager-btn:disabled{opacity:.3;cursor:not-allowed;}

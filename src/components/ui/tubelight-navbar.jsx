@@ -26,7 +26,7 @@ export function NavBar({ items, className, onChange }) {
 
   return (
     <div className={cn("fixed bottom-0 sm:top-0 left-1/2 -translate-x-1/2 z-50 mb-6 sm:pt-6", className)}>
-      <div className="flex items-center gap-1 bg-[#76c4d5] border border-border mt-8 py-1 px-1 rounded-full shadow-lg">
+      <div className="flex items-center gap-1 bg-[#69c9ba] border border-border mt-8 py-1 px-1 rounded-full shadow-lg">
         {items.map((item) => {
           const isActive = activeTab === item.name
           return (
@@ -35,8 +35,8 @@ export function NavBar({ items, className, onChange }) {
               onClick={() => handleClick(item.name)}
               className={cn(
                 "relative cursor-pointer text-xl font-semibold px-1 rounded-full transition-colors ",
-                "text-foreground hover:text-[#595759] ",
-                isActive && "bg-[#ffffff]/30",
+                "text-[#595759] hover:text-[#ffffff] ", 
+                isActive && "bg-[#595759]/70 text-[#ffffff]",
               )}
             >
               {isActive && (
@@ -46,8 +46,8 @@ export function NavBar({ items, className, onChange }) {
                   initial={false}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#595759] rounded-t-full">
-                    <div className="absolute w-20 h-6 bg-[#76c4d5]/40 rounded-full blur-md -top-2 -left-2" />
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#ffffff] rounded-t-full">
+                    <div className="absolute w-20 h-6 bg-[#76c4d5]/30 rounded-full blur-md -top-2 -left-2" />
                   </div>
                 </motion.div>
               )}

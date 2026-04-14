@@ -50,7 +50,7 @@ const Login = () => {
       </Helmet>
 
       <div className="min-h-[38rem] bg-gradient-to-br from-[#ffffff] via-[#ffffff] to-[#FFFFFF] relative px-4 py-1">
-        <div className="border-b-4 border-black-9 pb-1 pl-1 items-start">
+        <div className="border-b-8 border-[#69c9ba] pb-1 pl-1 items-start">
           <div>
             <img
               src="https://i.postimg.cc/9MHfPv55/Gemini-Generated-Image-4e7mun4e7mun4e7m.png"
@@ -71,8 +71,8 @@ const Login = () => {
           <h1 className="text-4xl font-bold text-center text-[#69C9BA]">INGRESO SISTEMA</h1>
         </div>
 
-        <div className="flex mt-4 bg-[#69C9BA]/30 rounded-lg border border-[#337375] shadow-md mx-1 max-w-9xl p-1">
-          <div className="flex justify-center items-center mt-1 bg-[#76C4D5]/9 rounded-lg border border-[#337375] shadow-md mx-auto max-w-5x1 p-10">
+        <div className="flex mt-4 bg-[#ffffff]/100 rounded-lg border border-[#ffffff] shadow-md mx-1 max-w-9xl p-6">
+          <div className="flex justify-center items-center mt-1 bg-[#69C9BA]/20 rounded-lg  shadow-md mx-auto max-w-5x1 p-10">
             <div className="hidden md:flex items-center justify-center w-1/2">
               <img
                 src="https://future-health.care/wp-content/uploads/2023/07/Tendencias_1200x800_blog.jpg"

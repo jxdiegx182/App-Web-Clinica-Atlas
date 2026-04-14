@@ -599,7 +599,7 @@ const ParteOperatorio = () => {
               {errorPin && <div className="access-error">{errorPin}</div>}
               <button className="access-btn" onClick={verificarAcceso}>🔓 Ingresar como Administrador</button>
               <button
-                style={{ width: '100%', marginTop: '8px', padding: '10px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: '8px', fontFamily: 'inherit', fontSize: '.84rem', color: 'var(--muted)', cursor: 'pointer' }}
+                style={{ width: '100%', marginTop: '8px', padding: '10px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: '8px', fontFamily: "'Montserrat',sans-serif", fontSize: '.84rem', color: 'var(--muted)', cursor: 'pointer' }}
                 onClick={entrarSoloLectura}
               >
                 👁 Solo lectura — Ver parte
@@ -684,12 +684,16 @@ const ParteOperatorio = () => {
         {/* HEADER */}
         <header className="hdr">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <svg viewBox="0 0 44 44" width="38" height="38">
-              <rect width="44" height="44" rx="9" fill="#0f2440" />
-              <text x="22" y="30" fontFamily="Georgia,serif" fontSize="24" fontWeight="bold" fill="#4db6ac" textAnchor="middle">A</text>
-            </svg>
+            <div className="flex flex-col">
+            <img
+              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
+              alt="Logo"
+              className="w-44"
+            />
+           
+          </div>
             <div>
-              <div className="brand">Clínicas <span>ATLAS</span></div>
+              
               <div style={{ fontSize: '.52rem', color: 'rgba(255,255,255,.4)', textTransform: 'uppercase' }}>Sistema de Gestión Médica</div>
             </div>
           </div>
@@ -697,11 +701,11 @@ const ParteOperatorio = () => {
             <div className="hdr-title">Parte Operatorio</div>
           </div>
           {modoAdmin && (
-            <span style={{ padding: '4px 10px', background: 'var(--green-l)', border: '1px solid var(--green-mid)', borderRadius: '8px', fontSize: '.72rem', fontWeight: 700, color: 'var(--green)' }}>
+            <span style={{ padding: '4px 10px', background: '#69c9ba', border: '1px solid var(--green-mid)', borderRadius: '8px', fontSize: '.72rem', fontWeight: 700, color: 'var(--green)' }}>
               🔓 Admin
             </span>
           )}
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '.7rem', color: 'rgba(255,255,255,.5)', textAlign: 'right', lineHeight: 1.8, whiteSpace: 'pre' }}>
+          <div style={{color: '#000000',  background: '#69c9bb5f', fontFamily: "'Montserrat',sans-serif", fontSize: '.7rem', textAlign: 'right', lineHeight: 1.8, whiteSpace: 'pre' }}>
             {reloj}
           </div>
           <button className="hdr-btn" onClick={exportarCSV}>📊 CSV</button>
@@ -785,13 +789,13 @@ const ParteOperatorio = () => {
                               </span>
                             </td>
                             <td className="nc">{r.nom}</td>
-                            <td style={{ textAlign: 'center', fontFamily: "'JetBrains Mono',monospace" }}>{r.edad || '—'}</td>
+                            <td style={{ textAlign: 'center', fontFamily: "'Montserrat',sans-serif" }}>{r.edad || '—'}</td>
                             <td style={{ fontWeight: 600, color: 'var(--navy-mid)' }}>{r.cir}</td>
                             <td className="dc">{r.dr}</td>
                             <td className="dc">{r.ayu || '—'}</td>
                             <td className="dc">{r.ane || '—'}</td>
                             <td><span className={`tbadge ${tcls(r.tipo)}`}>{r.tipo}</span></td>
-                            <td style={{ textAlign: 'center', fontFamily: "'JetBrains Mono',monospace" }}>{r.tpo}h</td>
+                            <td style={{ textAlign: 'center', fontFamily: "'Montserrat',sans-serif" }}>{r.tpo}h</td>
                             <td className="sc2">{SS[r.sala]}</td>
                             <td><span className={`estado-badge ${est.cls}`}>{est.icon} {est.lbl}</span></td>
                             {modoAdmin && (
@@ -1114,7 +1118,7 @@ const ParteOperatorio = () => {
                           {r.nom} <span style={{ fontSize: '.68rem', color: 'var(--muted)', fontWeight: 400 }}>— Paciente</span>
                         </div>
                         <div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{r.cir} · {h12(r.hora)} · {SN[r.sala]}</div>
-                        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '.7rem', color: 'var(--navy)', marginTop: 3 }}>📞 {r.tel_pac || 'Sin teléfono'}</div>
+                        <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '.7rem', color: 'var(--navy)', marginTop: 3 }}>📞 {r.tel_pac || 'Sin teléfono'}</div>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                         {r.tel_pac
@@ -1133,7 +1137,7 @@ const ParteOperatorio = () => {
                           {r.dr} <span style={{ fontSize: '.68rem', color: 'var(--muted)', fontWeight: 400 }}>— Cirujano</span>
                         </div>
                         <div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{r.cir} · {r.nom} · {h12(r.hora)}</div>
-                        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '.7rem', color: 'var(--navy)', marginTop: 3 }}>📞 {r.tel_dr || 'Sin teléfono'}</div>
+                        <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '.7rem', color: 'var(--navy)', marginTop: 3 }}>📞 {r.tel_dr || 'Sin teléfono'}</div>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                         {r.tel_dr

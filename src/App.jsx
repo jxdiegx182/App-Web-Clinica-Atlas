@@ -47,7 +47,7 @@ function App() {
           />
         </Helmet>
 
-        <div className="min-h-screen w-full bg-gradient-to-bl from-[#76c4d5] via-[#ffffff] to-[#76c4d5]">
+        <div className="min-h-screen w-full bg-gradient-to-bl from-[#69C9BA]/10 via-[#69C9BA]/20 to-[#69C9BA]/40">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/unauthorized" element={<Unauthorized />} />

@@ -984,43 +984,46 @@ const resumenVitales = [
           className="bg-white shadow p-1"
         >
 
-          <div className="max-w-9xl mx-auto flex justify-between items-center">
+          <div className="max-w-9xl mx-[0.3rem] flex justify-between items-center">
 
-            <div className="flex-1 pointer-events-none select-none text-[#4ea685] font-bold text-3xl text-center">
+            <div className="flex-1 ml-[21rem] pointer-events-none select-none text-[#4ea685] font-bold text-3xl text-center">
               RACK HOSPITALARIO
             </div>
 
             <div className="relative z-20 flex items-center gap-2">
               {isAdminUser && (
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <Button
+                  title="Ir a Farmacia"
                     onClick={() => navigate('/farmacia')}
-                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
+                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] font-bold hover:bg-[#4ea685] shadow-md"
                   >
-                    <Pill className="text-white w-6 h-6 mr-2" />
-                    Farmacia
+                    <Pill className="text-white w-6 h-6 text-[#000000]/60 font-bold" />
+                    
                   </Button>
                   <Button
+                   title="Ir a Panel Administrativo"
                     onClick={() => navigate('/Panel-Administrativo')}
-                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
+                    className="relative z-50 h-10 px-5 rounded-xl bg-[#69c9ba] font-bold hover:bg-[#4ea685] shadow-md"
                   >
-                    <PanelTopOpen className="text-white w-6 h-6 mr-2" />
-                    Panel Administrativo
+                    <PanelTopOpen className="text-[#000000]/60 w-6 h-6 " />
+                    
                   </Button>
                 </div>
               )}
               <div className="text-[0.8rem] text-gray-700 font-medium flex items-right gap-1">
                 <User className="w-8 h-8" />
-                {profile?.nombre || user?.email || 'Usuario'}
+                {profile?.nombre || user?.email || 'Usuario'}<br />
                 {role ? ` (${role})` : ''}
               </div>
 
               <Button
+              title="Salir del sistema"
                 onClick={handleLogout}
                 variant="outline"
-                className="border-[#69c9ba] bg-[#69c9ba] text-white hover:bg-[#595759]"
+                className="h-10 px-5 rounded-xl border-[#69c9ba] bg-[#69c9ba] text-[#000000]/60 font-bold hover:bg-[#4ea685] shadow-md"
               >
-                <LogOut className=" w-4 h-4 mr-2" /> Salir
+                <LogOut className=" w-4 h-4 mr-2 text-[#000000]/60 font-bold" /> Salir
               </Button>
 
             </div>
@@ -1052,7 +1055,7 @@ const resumenVitales = [
               {/*++++++++++++++++++++++++++++++++++++++++++++++++ OCUPACIÓN CAMAS++++++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-40  p-4 rounded-3xl bg-gradient-to-br from-[#e6f6f6] to-white text-[#007e8f] shadow-lg border border-[#bde3e3]"
+                className="relative w-30  p-2 rounded-3xl bg-gradient-to-br from-[#e6f6f6] to-white text-[#007e8f] shadow-lg border border-[#bde3e3]"
               >
                 <div className="text-xs text-gray-500 uppercase tracking-wider">
                   Ocupación de Camas
@@ -1096,7 +1099,7 @@ const resumenVitales = [
 {/* ++++++++++++++++++++++++++++++++++++++TERAPIA INTENSIVA++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
 <motion.div
   whileHover={{ scale: 1.03 }}
-  className="relative w-40 p-4 rounded-3xl 
+  className="relative w-40 p-2 rounded-3xl 
   bg-gradient-to-br from-orange-50 to-white
   shadow-lg border border-orange-100"
 >
@@ -1121,7 +1124,7 @@ const resumenVitales = [
               {/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ALTAS++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-40 p-4 rounded-3xl 
+                className="relative w-40 p-2 rounded-3xl 
         bg-gradient-to-br from-[#e6f6f6] to-white
         shadow-lg border border-green-100"
               >
@@ -1145,7 +1148,7 @@ const resumenVitales = [
 {/* +++++++++++++++++++++++++++++++++++++++++++QUIRÓFANO+++++++++++++++++++++++++++++++++++++++++++++++++ */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
-                className="relative w-40 p-4 rounded-3xl 
+                className="relative w-40 p-2 rounded-3xl 
         bg-gradient-to-br from-[#e0f2f2] to-white
         shadow-lg border border-purple-100 "
               >
@@ -1633,7 +1636,7 @@ const resumenVitales = [
       <div className="flex justify-center items-center py-1 bg-white ">
         <div className="flex items-center gap-3">
           <span className="cursor-pointer text-gray-500 text-xl">←</span>
-          <span className="px-3 py-1 rounded bg-[#007e8f] text-white hover:bg-[#16324a] font-bold cursor-pointer">
+          <span className="px-3 py-1 rounded bg-[#69c9ba] text-white hover:bg-[#4ea685] font-bold cursor-pointer">
             1
           </span>
           <span className="px-3 py-1 rounded hover:bg-gray-200 cursor-pointer text-gray-800">

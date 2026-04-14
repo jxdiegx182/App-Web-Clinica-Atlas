@@ -315,22 +315,20 @@ function Admision() {
                   Volver
                 </Button>
                 </div>
-        <header className={cn(shellCardClass, 'overflow-hidden p-3 md:p-4')}>
+        <header className={cn(shellCardClass, 'overflow-hidden p-3 md:p-3')}>
            
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#76c4d5] via-[#69c9ba] to-[#4ea685]" />
           <div className="relative flex flex-col gap-5">
             <div className="flex flex-col gap-1 lg:flex-row lg:items-start lg:justify-between">
              
-
-
               <div className="grid grid-cols-1 gap-[3rem] sm:grid-cols-2 xl:grid-cols-5">
                 
               
                 
                 <div className="space-y-9">
-                  <div className="inline-flex w-fit mt-6 items-center text-center rounded-full border border-[#76c4d5]/25 bg-[#76c4d5]/10 px-2 py-5 text-[19px] font-bold uppercase tracking-[0.001em] text-[#595759]">
+                  <div className="inline-flex w-fit mt-1 items-center text-center rounded-full border border-[#000000]/5 bg-[#595759]/5 px-2 py-5 text-[15px] font-bold uppercase tracking-[0.001em] text-[#595759]">
                     <HeartPulse className="h-6 w-6" />
-                    Admisión Clínica
+                     Admisión Clínica 
                   </div>
                   
                 </div>
@@ -367,19 +365,19 @@ function Admision() {
         <main className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="space-y-6">
             <div className={cn(shellCardClass, 'overflow-hidden')}>
-              <div className="bg-gradient-to-r from-[#76c4d5] via-[#69c9ba] to-[#4ea685] p-3 text-white">
+              <div className="bg-gradient-to-r from-[#69c9ba]/40 via-[#69c9ba]/40 to-[#69c9ba]/40 p-3 text-[#595759]">
                 <div className="flex items-center gap-2">
                   <div className="rounded-2xl bg-white/20 p-2 backdrop-blur-sm">
                     <Clock3 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
+                    <p className="text-sm font-bold uppercase tracking-[0.05em] text-[#000000]/70">
                       Hora actual
                     </p>
                     <p className="text-[19px] font-black tracking-wide">{formattedTime}</p>
                   </div>
                 </div>
-                <p className="mt-1 text-[14px] font-medium uppercase tracking-wide text-white/90">
+                <p className="mt-1 text-[14px] font-medium uppercase tracking-wide text-[#595759]">
                   {formattedDate}
                 </p>
               </div>
@@ -462,7 +460,7 @@ function Admision() {
                 <Button
                   type="button"
                   onClick={handleAdmitirPaciente}
-                  className="h-12 w-full rounded-2xl bg-gradient-to-r from-[#4ea685] to-[#69c9ba] text-sm font-semibold text-white shadow-[0_16px_30px_-18px_rgba(78,166,133,0.8)] transition-all duration-200 hover:-translate-y-0.5 hover:from-[#459778] hover:to-[#5cbbaa]"
+                  className="h-12 w-full rounded-2xl bg-gradient-to-r from-[#69c9ba] to-[#69c9ba] text-sm font-semibold text-white shadow-[0_16px_30px_-18px_rgba(78,166,133,0.8)] transition-all duration-200 hover:-translate-y-0.5 hover:from-[#4ea685] hover:to-[#4ea685] "
                 >
                   <HeartPulse className="mr-2 h-4 w-4" />
                   Admitir paciente
@@ -501,10 +499,10 @@ function Admision() {
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-[#595759]/90 bg-[#69c9ba]/20 p-3">
+              <div className="rounded-[24px] border border-[#595759]/10 bg-[#69c9ba]/15 p-3">
                 <NavBar
                   items={navItems}
-                  className="!static !left-auto !top-auto !mb-0 !translate-x-0 sm:!pt-0 [&>div]:!mt-0 [&>div]:!w-full [&>div]:!justify-center [&>div]:!gap-2 [&>div]:!rounded-[18px] [&>div]:!border-[#76c4d5]/20 [&>div]:!bg-[#4ea685]/50 [&>div]:!px-2 [&>div]:!py-2 [&>div]:!shadow-none"
+                  className="!static !left-auto !top-auto !mb-0 !translate-x-0 sm:!pt-0 [&>div]:!mt-0 [&>div]:!w-full [&>div]:!justify-center [&>div]:!gap-2 [&>div]:!rounded-[18px] [&>div]:!border-[#69c9ba] [&>div]:!bg-[#69c9ba]/30 [&>div]:!px-2 [&>div]:!py-2 [&>div]:!shadow-none"
                   onChange={setActiveTab}
                 />
               </div>
@@ -973,7 +971,7 @@ function Admision() {
                           subtitle="Datos de origen, nacimiento y contacto general del paciente."
                         />
 
-                        <div className="mt-5 grid gap-4 md:grid-cols-2">
+                        <div className="mt-0 grid gap-1 md:grid-cols-2">
                           <FieldShell icon={Shield} label="Nacionalidad">
                             <Input
                               type="text"
@@ -1209,14 +1207,14 @@ function Admision() {
 export default Admision;
 
 const MetricCard = ({ icon: Icon, label, value }) => (
-  <div className="min-w-[180px] rounded-[22px] border border-[#76c4d5]/18 bg-gradient-to-br from-white to-[#f6fbfc] p-4">
+  <div className="min-w-[180px] rounded-[22px] border border-[#000000]/10 bg-gradient-to-br from-[#595759]/5 to-[#595759]/5 p-2">
     <div className="flex items-center gap-3">
-      <div className="rounded-2xl bg-[#76c4d5]/12 p-3 text-[#4ea685]">
+      <div className="rounded-2xl bg-[#76c4d5]/12 p-1 text-[#4ea685]">
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#69c9ba]">{label}</p>
-        <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-[#595759]">{value}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#4ea865]">{label}</p>
+        <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-[#000000]/70">{value}</p>
       </div>
     </div>
   </div>
@@ -1256,13 +1254,13 @@ const MiniInfoCard = ({ icon: Icon, label, value }) => (
 );
 
 const SectionHeader = ({ icon: Icon, title, subtitle }) => (
-  <div className="flex items-start gap-4">
-    <div className="rounded-[22px] bg-gradient-to-br from-[#76c4d5]/18 to-[#69c9ba]/20 p-3 text-[#4ea685] shadow-sm">
+  <div className="flex items-start gap-3">
+    <div className="rounded-[22px] bg-gradient-to-br from-[#76c4d5]/18 to-[#69c9ba]/20 p-3 text-[#595759] shadow-sm">
       <Icon className="h-5 w-5" />
     </div>
     <div>
-      <h3 className="text-lg font-bold text-[#595759]">{title}</h3>
-      <p className="mt-1 text-sm leading-6 text-[#595759]/65">{subtitle}</p>
+      <h3 className="text-lg font-bold text-[#4ea685]">{title}</h3>
+      <p className="mt-1 text-sm  leading-6 text-[#76c4d5]">{subtitle}</p>
     </div>
   </div>
 );
@@ -1270,11 +1268,11 @@ const SectionHeader = ({ icon: Icon, title, subtitle }) => (
 const FieldShell = ({ icon: Icon, label, hint, children, className }) => (
   <div className={cn('space-y-2', className)}>
     <div className="flex items-center gap-2 text-[#595759]">
-      <span className="rounded-xl bg-[#76c4d5]/12 p-2 text-[#69c9ba]">
+      <span className="rounded-xl bg-[#595759]/10 p-2 text-[#4ea685] ">
         <Icon className="h-4 w-4" />
       </span>
       <div>
-        <p className="text-sm font-semibold">{label}</p>
+        <p className="text-sm text-[#595759] font-semibold">{label}</p>
         {hint ? <p className="text-xs text-[#595759]/55">{hint}</p> : null}
       </div>
     </div>
