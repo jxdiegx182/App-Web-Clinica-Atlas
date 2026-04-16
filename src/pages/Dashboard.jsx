@@ -588,7 +588,7 @@ const totalTerapiaIntensiva = visibleMains.filter(
 //+++++++++++++++++++++++++++++TERAPIA INTENISVA CONTADOR ++++++++++++++++++++
 
 
-  //LOGICA DEL ESTADO PARA ALMACENAR EN FIREBASE SEGUN EL SELECTOR
+  //LOGICA DEL ESTADO PARA ALMACENAR EN SUPABASE SEGUN EL SELECTOR
   const handleEstadoChange = async (mainId, nuevoEstado) => {
     try {
       const targetPatient = mains.find((item) => item.id === mainId);
