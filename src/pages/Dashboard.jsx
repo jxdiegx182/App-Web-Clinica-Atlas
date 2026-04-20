@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { getLatestSignosVitalesByAdmisionId, } from '@/services/admisionesSupabaseService';
-import GraficoPastelServicio from '../components/GraficoPastelServicio';
+
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { canAccessByRole, getAllowedRolesForDashboardModule } from '@/constants/accessControl';
 import { ROLES } from '@/constants/roles';
-import { PatientCard, PatientSearchBar, PatientsGrid } from '@/modules/dashboard/components';
-import { getStatusColor } from '@/shared/theme/colors';
+import { getStatusColorObject } from '@/shared/theme/colors';
+import { VitalsTooltip, MedicationTooltip, PatientRow, DashboardHeader } from '@/modules/dashboard/components';
+import {
+  getMedicationScheduleHours,
+  buildMedicationRecordsByKey,
+  getMedicationPlanByAdmisionId,
+  getMedicationAdminRecords,
+  registerMedicationAdministration,
+  subscribeMedicationChanges,
+} from '@/services/medicationService';
+
 import {
   getAdmisionesAdmitidas,
   subscribeAdmisionesAdmitidas,
   updateAdmisionById,
 } from '@/services/admisionesSupabaseService';
-import { supabase } from '@/lib/supabaseClient.js';
 import {
   LogOut,
   User,
@@ -33,6 +41,8 @@ import {
   PanelTopOpen,
   TimerIcon,
   ArrowBigUp,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 // ✅ NUEVO: Usar el sistema de colores centralizado
@@ -49,119 +59,9 @@ const serviciosHospital = [
 const UNAUTHORIZED_MODULE_BUTTON_MODE = 'hide'; // 'hide' | 'disable'
 const ALTA_MEDICA_ESTADO = 'Alta Médica';
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-const MEDICATION_ADMIN_TABLE =
-  import.meta.env.VITE_SUPABASE_MEDICATION_ADMIN_TABLE || 'medicamentos_administraciones';
+const ITEMS_PER_PAGE = 15;
+const ESTADOS_OPCIONES = ['Espera', 'Atención', 'Terapia Intensiva', 'Alta Médica', 'Procedimiento', 'Quirófano'];
 const MEDICATION_REFRESH_INTERVAL_MS = 30000;
-
-function parseHourToMinutes(hour) {
-  const text = String(hour || '').trim();
-  const match = text.match(/^(\d{1,2}):(\d{2})$/);
-  if (!match) return Number.POSITIVE_INFINITY;
-  const h = Number(match[1]);
-  const m = Number(match[2]);
-  if (Number.isNaN(h) || Number.isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
-    return Number.POSITIVE_INFINITY;
-  }
-  return h * 60 + m;
-}
-
-const formatMinutesToHour = (minutes) => {
-  const safe = ((minutes % 1440) + 1440) % 1440;
-  const hh = String(Math.floor(safe / 60)).padStart(2, '0');
-  const mm = String(safe % 60).padStart(2, '0');
-  return `${hh}:${mm}`;
-};
-
-const getMedicationScheduleHours = (item, record = {}) => {
-  const baseHour = String(item?.hora_inicio || item?.horaPrimeraToma || '').trim();
-  const nextHour = String(item?.proxima_toma || item?.proximaToma || '').trim();
-  const interval = Number(item?.intervalo_horas || 0);
-  const hasInterval = Number.isFinite(interval) && interval > 0;
-  const generated = new Set();
-  [baseHour, nextHour]
-    .filter((hour) => hour && hour !== '--')
-    .forEach((hour) => generated.add(hour));
-
-  if (hasInterval) {
-    const startMin = parseHourToMinutes(baseHour);
-    const nextMin = parseHourToMinutes(nextHour);
-    const maxSteps = Math.max(1, Math.ceil(24 / interval));
-    if (Number.isFinite(startMin)) {
-      for (let i = 1; i <= maxSteps; i += 1) {
-        generated.add(formatMinutesToHour(startMin + i * interval * 60));
-      }
-    }
-    if (Number.isFinite(nextMin)) {
-      for (let i = 1; i <= maxSteps; i += 1) {
-        generated.add(formatMinutesToHour(nextMin + i * interval * 60));
-      }
-    }
-  }
-
-  const hours = [
-    ...Array.from(generated),
-    ...(Array.isArray(record?.horariosProgramados) ? record.horariosProgramados : []),
-    ...Object.keys(record?.administracionesPorHora || {}),
-  ]
-    .map((hour) => String(hour || '').trim())
-    .filter((hour) => hour && hour !== '--');
-
-  return Array.from(new Set(hours)).sort(
-    (a, b) => parseHourToMinutes(a) - parseHourToMinutes(b)
-  );
-};
-
-const toSupabaseError = (error, fallbackMessage) => {
-  if (!error) return new Error(fallbackMessage);
-  const wrapped = new Error(error.message || fallbackMessage);
-  wrapped.code = error.code;
-  wrapped.details = error.details;
-  wrapped.hint = error.hint;
-  return wrapped;
-};
-
-const buildMedicationRecordsByKey = (administraciones = []) => {
-  const records = {};
-  const toMillis = (value) => {
-    if (!value) return 0;
-    const parsed = value?.toDate ? value.toDate() : new Date(value);
-    const time = parsed.getTime();
-    return Number.isNaN(time) ? 0 : time;
-  };
-
-  (administraciones || []).forEach((row) => {
-    const medicationKey = row?.medicamento_id;
-    const scheduledHour = String(row?.hora_programada || row?.hora || '').trim();
-    if (!medicationKey || !scheduledHour) return;
-
-    if (!records[medicationKey]) {
-      records[medicationKey] = {
-        medicationKey,
-        horariosProgramados: [],
-        administracionesPorHora: {},
-      };
-    }
-
-    const existingHourData = records[medicationKey].administracionesPorHora[scheduledHour];
-    const existingTime = toMillis(existingHourData?.confirmationTime);
-    const incomingTime = toMillis(row?.timestamp || row?.created_at) || Date.now();
-
-    if (!records[medicationKey].horariosProgramados.includes(scheduledHour)) {
-      records[medicationKey].horariosProgramados.push(scheduledHour);
-    }
-
-    if (!existingHourData || incomingTime >= existingTime) {
-      records[medicationKey].administracionesPorHora[scheduledHour] = {
-        confirmada: Boolean(row?.confirmado || row?.estado === 'administrado'),
-        confirmationTime: row?.timestamp || row?.created_at || '',
-        confirmadoPor: row?.confirmado_por || '',
-        estado: row?.estado || (row?.confirmado ? 'administrado' : 'pendiente'),
-      };
-    }
-  });
-
-  return records;
-};
 
 const Dashboard = () => {
   const { user, profile, role, logout } = useAuth(); //USUARIO
@@ -191,15 +91,7 @@ const Dashboard = () => {
     if (!parts.length) return '(Sin ubicación)';
     return `(${parts.join(' | ')})`;
   };
-  // ========== DEFINICIÓN DE ESTADOS DE PACIENTES ==========
-  const estadosPaciente = {
-    'Espera': { color: 'bg-gray-400', text: 'text-gray-700' },
-    'Atención': { color: 'bg-blue-500', text: 'text-blue-700' },
-    'Terapia Intensiva': { color: 'bg-red-500', text: 'text-red-700' },
-    'Alta Médica': { color: 'bg-green-500', text: 'text-green-700' },
-    'Procedimiento': { color: 'bg-yellow-500', text: 'text-yellow-700' },
-    'Quirófano': { color: 'bg-orange-500', text: 'text-orange-700' },
-  };
+  // ========== COLORES DE ESTADO — desde sistema centralizado ==========
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -272,7 +164,7 @@ const Dashboard = () => {
       />
     ),
   };
-  const names = ['PARTE OPERATORIO'];
+
 
   const moduleColors = {
     'Modulo Médico': 'border-blue-400 text-blue-500',
@@ -363,69 +255,9 @@ const Dashboard = () => {
       await Promise.all(
         mains.map(async (main) => {
           try {
-            const { data: evolutions, error: evolutionsError } = await supabase
-              .from('clinical_evolution')
-              .select(
-                `
-                  id,
-                  created_at,
-                  medicamentos (
-                    id,
-                    clinical_evolution_id,
-                    medicamento,
-                    via,
-                    frecuencia,
-                    hora_inicio,
-                    intervalo_horas,
-                    proxima_toma,
-                    presentacion,
-                    administra,
-                    cantidad,
-                    indicacion,
-                    created_at
-                  )
-                `
-              )
-              .eq('admision_id', main.id)
-              .order('created_at', { ascending: false });
-
-            if (evolutionsError) {
-              throw toSupabaseError(
-                evolutionsError,
-                `No se pudo cargar medicación para ${main.nombre}.`
-              );
-            }
-
-            const medications = [];
-            (evolutions || []).forEach((evolution) => {
-              (evolution?.medicamentos || []).forEach((med) => {
-                medications.push({
-                  ...med,
-                  source: 'Registro medicación',
-                  clinical_evolution_id:
-                    med?.clinical_evolution_id || evolution?.id || null,
-                });
-              });
-            });
-
-            nextPlan[main.id] = medications;
-
-            const { data: administraciones, error: administracionesError } =
-              await supabase
-                .from(MEDICATION_ADMIN_TABLE)
-                .select('*')
-                .eq('admision_id', main.id)
-                .order('timestamp', { ascending: false });
-
-            if (administracionesError && administracionesError.code !== '42P01') {
-              throw toSupabaseError(
-                administracionesError,
-                `No se pudieron cargar checks de medicación para ${main.nombre}.`
-              );
-            }
-
-            const recordsByKey = buildMedicationRecordsByKey(administraciones || []);
-            nextRecords[main.id] = recordsByKey;
+            nextPlan[main.id] = await getMedicationPlanByAdmisionId(main.id);
+            const administraciones = await getMedicationAdminRecords(main.id);
+            nextRecords[main.id] = buildMedicationRecordsByKey(administraciones);
           } catch (error) {
             console.error(
               `❌ Error cargando plan/registro de medicación para ${main.nombre}:`,
@@ -451,28 +283,10 @@ const Dashboard = () => {
 
     loadMedicationData();
 
-    const medicationChannel = supabase
-      .channel(`dashboard-medication-${mainIds.join('-')}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'clinical_evolution' },
-        scheduleReload
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'medicamentos' },
-        scheduleReload
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: MEDICATION_ADMIN_TABLE },
-        scheduleReload
-      )
-      .subscribe((status) => {
-        if (status === 'CHANNEL_ERROR') {
-          console.warn('⚠️ Realtime de medicamentos no disponible. Se usará refresco automático.');
-        }
-      });
+    const removeChannel = subscribeMedicationChanges(
+      `dashboard-medication-${mainIds.join('-')}`,
+      scheduleReload
+    );
 
     const intervalId = setInterval(loadMedicationData, MEDICATION_REFRESH_INTERVAL_MS);
 
@@ -480,7 +294,7 @@ const Dashboard = () => {
       isMounted = false;
       clearInterval(intervalId);
       if (refreshTimeout) clearTimeout(refreshTimeout);
-      supabase.removeChannel(medicationChannel);
+      removeChannel();
     };
   }, [mains]);
 
@@ -550,12 +364,21 @@ const Dashboard = () => {
 
   //ORDEN ASCENDENTE O DESCENDENTE
   const [orderAsc, setOrderAsc] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const sortedMains = [...filteredMains].sort((a, b) => {
     const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
     const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return orderAsc ? dateA - dateB : dateB - dateA;
   });
+
+  // PAGINACIÓN
+  const totalPages = Math.max(1, Math.ceil(sortedMains.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedMains = sortedMains.slice(
+    (safePage - 1) * ITEMS_PER_PAGE,
+    safePage * ITEMS_PER_PAGE
+  );
 
   // 🔥 CONTADOR ALTAS MÉDICAS
   //+++++++++++++++++++++++++++++++++
@@ -577,15 +400,15 @@ const Dashboard = () => {
   const totalQuirofano = visibleMains.filter((m) => (estados[m.id] || m.estado) === 'Quirófano').length;
 
   //++++++++++++++++++++++++++++++++++++
-//+++++++++CONTADOR DE TERAPIA INTENISVA ++++++++++++++
-// 🔥 CONTADOR TERAPIA INTENSIVA (TIEMPO REAL)
-const totalTerapiaIntensiva = visibleMains.filter(
-  (m) =>
-    (estados[m.id] || m.estado) === 'Terapia Intensiva' //||
-   // m.servicio === 'UCI' ||
+  //+++++++++CONTADOR DE TERAPIA INTENISVA ++++++++++++++
+  // 🔥 CONTADOR TERAPIA INTENSIVA (TIEMPO REAL)
+  const totalTerapiaIntensiva = visibleMains.filter(
+    (m) =>
+      (estados[m.id] || m.estado) === 'Terapia Intensiva' //||
+    // m.servicio === 'UCI' ||
     //m.servicio === 'UCI PEDIATRICA'
-).length;
-//+++++++++++++++++++++++++++++TERAPIA INTENISVA CONTADOR ++++++++++++++++++++
+  ).length;
+  //+++++++++++++++++++++++++++++TERAPIA INTENISVA CONTADOR ++++++++++++++++++++
 
 
   //LOGICA DEL ESTADO PARA ALMACENAR EN SUPABASE SEGUN EL SELECTOR
@@ -684,58 +507,22 @@ const totalTerapiaIntensiva = visibleMains.filter(
   //*************************** //✔ Misma lógica ✔ Mismo patrón ✔ Cero sorpresas****************************** */
 
   //++++++++++++++++++++++++++++++++++++++chat gpt++++++++++++++++++++++++++++++++
-  const AnimatedNumber = ({ value }) => {
-    const [display, setDisplay] = useState(0);
-
-    useEffect(() => {
-      let start = 0;
-      const duration = 40;
-      const increment = value / (duration / 160);
-
-      const counter = setInterval(() => {
-        start += increment;
-        if (start >= value) {
-          setDisplay(value);
-          clearInterval(counter);
-        } else {
-          setDisplay(Math.floor(start));
-        }
-      }, 16);
-
-      return () => clearInterval(counter);
-    }, [value]);
-
-    return <span>{display}</span>;
-  };
-//++++++++++++++++++++++++++++++++++DINAMISCO PARA LAS KPI +++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
-  const servicioColor = (servicio) => {
-    switch (servicio) {
-      case 'UCI':
-        return 'bg-red-100 text-red-700';
-      case 'EMERGENCIA':
-        return 'bg-orange-100 text-orange-700';
-      case 'HOSPITALIZACION':
-        return 'bg-blue-100 text-blue-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-  //++++++++++++++++++++++++++++++++++++
 
 
-const resumenVitales = [
-  { label: 'P.A.', value: '--' },
-  { label: 'PULSO', value: '-- lpm' },
-  { label: 'TEMP.', value: '-- C' },
-  { label: 'SAT O2', value: '--%' },
-  { label: 'PESO', value: '-- KG' },
-  { label: 'F.R.', value: '--/min' },
-];
 
-// 🆕 Cargar últimos signos vitales desde Supabase para cada paciente
+  const resumenVitales = [
+    { label: 'P.A.', value: '--' },
+    { label: 'PULSO', value: '-- lpm' },
+    { label: 'TEMP.', value: '-- C' },
+    { label: 'SAT O2', value: '--%' },
+    { label: 'PESO', value: '-- KG' },
+    { label: 'F.R.', value: '--/min' },
+  ];
+
+  // 🆕 Cargar últimos signos vitales desde Supabase para cada paciente
   useEffect(() => {
     if (!mains || mains.length === 0) {
       setVitalSignsByPatient({});
@@ -786,7 +573,7 @@ const resumenVitales = [
   // 🆕 Generar dinámicamente el resumen vitales desde Supabase
   const getDynamicResumenVitales = (mainId) => {
     const patientVitals = vitalSignsByPatient[mainId];
-    
+
     if (patientVitals) {
       return [
         { label: 'P.A.', value: patientVitals.presion || '--' },
@@ -797,7 +584,7 @@ const resumenVitales = [
         { label: 'F.R.', value: `${patientVitals.fr || '--'}/min` },
       ];
     }
-    
+
     return resumenVitales; // Fallback a valores por defecto
   };
 
@@ -832,7 +619,7 @@ const resumenVitales = [
         administracionesPorHora[hour] = {
           confirmada: Boolean(
             hourRecord?.confirmada ||
-              (record?.confirmada && !record?.administracionesPorHora)
+            (record?.confirmada && !record?.administracionesPorHora)
           ),
           confirmationTime:
             hourRecord?.confirmationTime || record?.confirmationTime || '',
@@ -926,10 +713,7 @@ const resumenVitales = [
         created_at: nowIso,
       };
 
-      const { error } = await supabase.from(MEDICATION_ADMIN_TABLE).insert([payload]);
-      if (error) {
-        throw toSupabaseError(error, 'No se pudo registrar la administración.');
-      }
+      await registerMedicationAdministration(payload);
 
       toast({
         title: 'Registro de medicación',
@@ -978,240 +762,22 @@ const resumenVitales = [
       </Helmet>
 
       <div className="min-h-screen w-full bg-gradient-to-br from-white via-[#f0f7f7] to-[#d9eeee]">
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white shadow p-1"
-        >
-
-          <div className="max-w-9xl mx-[0.3rem] flex justify-between items-center">
-
-            <div className="flex-1 ml-[21rem] pointer-events-none select-none text-[#4ea685] font-bold text-3xl text-center">
-              RACK HOSPITALARIO
-            </div>
-
-            <div className="relative z-20 flex items-center gap-2">
-              {isAdminUser && (
-                <div className="flex gap-3">
-                  <Button
-                  title="Ir a Farmacia"
-                    onClick={() => navigate('/farmacia')}
-                    className="relative z-50 text-white h-10 px-5 rounded-xl bg-[#69c9ba] font-bold hover:bg-[#4ea685] shadow-md"
-                  >
-                    <Pill className="text-white w-6 h-6 text-[#000000]/60 font-bold" />
-                    
-                  </Button>
-                  <Button
-                   title="Ir a Panel Administrativo"
-                    onClick={() => navigate('/Panel-Administrativo')}
-                    className="relative z-50 h-10 px-5 rounded-xl bg-[#69c9ba] font-bold hover:bg-[#4ea685] shadow-md"
-                  >
-                    <PanelTopOpen className="text-[#000000]/60 w-6 h-6 " />
-                    
-                  </Button>
-                </div>
-              )}
-              <div className="text-[0.8rem] text-gray-700 font-medium flex items-right gap-1">
-                <User className="w-8 h-8" />
-                {profile?.nombre || user?.email || 'Usuario'}<br />
-                {role ? ` (${role})` : ''}
-              </div>
-
-              <Button
-              title="Salir del sistema"
-                onClick={handleLogout}
-                variant="outline"
-                className="h-10 px-5 rounded-xl border-[#69c9ba] bg-[#69c9ba] text-[#000000]/60 font-bold hover:bg-[#4ea685] shadow-md"
-              >
-                <LogOut className=" w-4 h-4 mr-2 text-[#000000]/60 font-bold" /> Salir
-              </Button>
-
-            </div>
-
-          </div>
-        </motion.header>
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui empieza el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        <header className="grid grid-cols-3 items-center px-8 py-6 backdrop-blur-xl bg-white/70 border-b border-gray-200 shadow-sm ">
-          {/* IZQUIERDA */}
-          <div className="flex flex-col">
-            <img
-              src="https://clinicas-atlas.com/wp-content/uploads/2024/11/clinicas-atlas-ecuador.png"
-              alt="Logo"
-              className="w-44"
-            />
-            <span className="text-gray-500 text-sm mt-2 tracking-wide">
-              {formatearFechaHora(fechaHoraActual)}
-            </span>
-          </div>
-
-          {/* CENTRO KPIs */}
-          <div className="flex justify-center">
-            <div className="flex gap-3">
-              {/*++++++++++++++++++++++++++++++++++++++++++++++++ OCUPACIÓN CAMAS++++++++++++++++++++++++++++++++++++++++++++++++ */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="relative w-30  p-2 rounded-3xl bg-gradient-to-br from-[#e6f6f6] to-white text-[#007e8f] shadow-lg border border-[#bde3e3]"
-              >
-                <div className="text-xs text-gray-500 uppercase tracking-wider">
-                  Ocupación de Camas
-                </div>
-
-                <div className="flex items-center justify-between mt-3">
-                  <div className="text-4xl font-bold text-blue-600">
-                    <AnimatedNumber value={camasOcupadas} />
-                    <span className="text-lg text-gray-500 font-medium">
-                      {' '}
-                      / {TOTAL_CAMAS}
-                    </span>
-                  </div>
-
-                  <div className="text-blue-500 text-sm font-semibold">
-                    {porcentajeOcupacion}%
-                  </div>
-                </div>
-
-                {/* Barra progreso */}
-                <div className="mt-4 w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${porcentajeOcupacion}%` }}
-                    transition={{ duration: 0.8 }}
-                    className={`h-2 rounded-full ${
-                      porcentajeOcupacion > 80
-                        ? 'bg-red-500'
-                        : porcentajeOcupacion > 60
-                        ? 'bg-yellow-500'
-                        : 'bg-blue-500'
-                    }`}
-                  />
-                </div>
-
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-blue-500 rounded-full" />
-              </motion.div>
-              {/*++++++++++++++++++++++++++++++++++++++++++++++++ OCUPACIÓN CAMAS++++++++++++++++++++++++++++++++++++++++++++++++ */}
-              {/*++++++++++++++++++++++++++++++++++++++++++++++++ OCUPACIÓN CAMAS++++++++++++++++++++++++++++++++++++++++++++++++ */}
-
-{/* ++++++++++++++++++++++++++++++++++++++TERAPIA INTENSIVA++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
-<motion.div
-  whileHover={{ scale: 1.03 }}
-  className="relative w-40 p-2 rounded-3xl 
-  bg-gradient-to-br from-orange-50 to-white
-  shadow-lg border border-orange-100"
->
-  <div className="text-xs text-gray-500 uppercase tracking-wider">
-    Terapia Intensiva
-  </div>
-
-  <div className="flex items-center justify-between mt-3">
-    <div className="text-4xl font-bold text-orange-600">
-      <AnimatedNumber value={totalTerapiaIntensiva} />
-    </div>
-
-    <div className="text-orange-600 text-sm font-semibold">
-      Críticos
-    </div>
-  </div>
-
-  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-orange-500 rounded-b-2xl" />
-</motion.div>
-
-{/* ++++++++++++++++++++++++++++++++++++++TERAPIA INTENSIVA++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
-              {/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ALTAS++++++++++++++++++++++++++++++++++++++++++++ */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="relative w-40 p-2 rounded-3xl 
-        bg-gradient-to-br from-[#e6f6f6] to-white
-        shadow-lg border border-green-100"
-              >
-                <div className="text-xs text-gray-500 uppercase tracking-wider">
-                  Altas Médicas
-                </div>
-
-                <div className="flex items-center justify-between mt-3">
-                  <div className="text-4xl font-bold text-[#008C8C]">
-                    <AnimatedNumber value={totalAltasMedicas} />
-                  </div>
-
-                  <div className="text-[#008C8C] text-sm font-semibold">
-                    + Activas
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-[#008C8C] rounded-b-3xl" />
-              </motion.div>
-{/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ALTAS++++++++++++++++++++++++++++++++++++++++++++ */}
-{/* +++++++++++++++++++++++++++++++++++++++++++QUIRÓFANO+++++++++++++++++++++++++++++++++++++++++++++++++ */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="relative w-40 p-2 rounded-3xl 
-        bg-gradient-to-br from-[#e0f2f2] to-white
-        shadow-lg border border-purple-100 "
-              >
-                <div className="text-xs text-gray-500 uppercase tracking-wider">
-                  En Quirófano
-                </div>
-
-                <div className="flex items-center justify-between mt-3">
-                  <div className="text-4xl font-bold text-purple-600">
-                    <AnimatedNumber value={totalQuirofano} />
-                  </div>
-
-                  <div className="text-purple-500 text-sm font-semibold">
-                    En proceso
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-purple-500 rounded-full" />
-              </motion.div>
-            </div>
-          </div>
-
-{/* +++++++++++++++++++++++++++++++++++++++++++QUIRÓFANO+++++++++++++++++++++++++++++++++++++++++++++++++ */}
-
-          {/* DERECHA */}
-          <div className="flex flex-col items-end gap-4">
-            <div className="flex gap-4">
-              <Button
-                className="text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
-                onClick={() => navigate('/ParteOperatorio')}
-              >
-                <Activity className="text-white w-4 h-4 mr-2" />
-                Parte Operatorio
-              </Button>
-
-              <Button
-                className=" text-white h-10 px-5 rounded-xl bg-[#69c9ba] hover:bg-[#595759] shadow-md"
-                onClick={() => navigate('/admision')}
-              >
-                <Stethoscope className="w-4 h-4 mr-2" />
-                Admisión
-              </Button>
-            </div>
-
-            <Input
-              type="text"
-              placeholder="Buscar paciente o médico..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-80 rounded-xl border border-gray-300 shadow-sm
-      focus:ring-2 focus:ring-[#007e8f]/60"
-            />
-          </div>
-        </header>
-        {/* ++++++++++++++++++++++++++++++++++++aqui termibna el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-        {/* ++++++++++++++++++++++++++++++++++++aqui termina el header gpt 5 ++++++++++++++++++++++++++++++++++++++++++ */}
-
+        <DashboardHeader
+          isAdminUser={isAdminUser}
+          profile={profile}
+          user={user}
+          role={role}
+          handleLogout={handleLogout}
+          fechaHoraActual={fechaHoraActual}
+          camasOcupadas={camasOcupadas}
+          TOTAL_CAMAS={TOTAL_CAMAS}
+          porcentajeOcupacion={porcentajeOcupacion}
+          totalTerapiaIntensiva={totalTerapiaIntensiva}
+          totalAltasMedicas={totalAltasMedicas}
+          totalQuirofano={totalQuirofano}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
         <div className=" max-w-full p-6 pb-72  ">
           <Card className="border-3 border-[#76c4d5]/90 shadow-lg rounded-xl overflow-visible ">
             <table className="w-full text-sm relative  ">
@@ -1241,7 +807,7 @@ const resumenVitales = [
 
               {/*Elgrupo para leer datos de las citas*/}
               <tbody>
-                {sortedMains.map((main, index) => {
+                {paginatedMains.map((main, index) => {
                   const patientMedicationRows = getPatientMedicationRows(main.id);
                   const pendingMedicationCount = getPendingMedicationCount(main.id);
                   const estadoActualFila = estados[main.id] || main.estado || 'Atención';
@@ -1250,381 +816,33 @@ const resumenVitales = [
                   const ubicacionTexto = formatUbicacionDashboard(main.ubicacion);
 
                   return (
-                  <motion.tr
-                    key={main.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * index }}
-                    //cuado ESTA EN UCI SE PONE ROJO LA FILA COMPLETA. Y OTRAS CONDICIONES MAS
-                    className={`${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    } hover:bg-slate-100 transition-colors`}
-                  >
-
-
-                    {/**Aqui inicia el encabezado del dashboard */}
-                    <td className="px-4 py-3 text-center text-[#595759] font-medium bg-[#69c9ba]/20 ">
-                      {main.fechaIngreso}
-                    </td>
-
-                    {/**Aqui PARA QUE ME DE LA ESTADIA DEL PACIENTE TENGO QUE SUMAR LOS DIAS DESDE QUE INGRESO */}
-                    <td className="px-4 py-3 text-center text-[#595759] font-medium "> 
-                      {main.estancia} <h1>días</h1>
-                    </td>
-
-                    {/*Elgrupo de las personas que estan en mi dashboard traidas directamente de firebase*/}
-                    <td className="relative px-4 py-3 bg-[#69c9ba]/20 text-center">
-                      <div className="inline-block group cursor-pointer">
-                        {/* Nombre */}
-                        <span className="text-[#595759] font-bold group-hover:text-[#4ea685] transition">
-                          {main.nombre}
-                        </span>
-
-                        {/* Tooltip */}
-                        <div
-                          className="pointer-events-none absolute top-full left-1/2 z-[9999] w-80 -translate-x-1/2 mt-2
-        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200 rounded-lg bg-white border border-[#76C4D5]
-        shadow-2xl p-4 text-xs text-gray-800"
-                        >
-                          <p className="font-bold text-[#595759] items-center mb-3 flex items-center gap-1">
-                            🩺 SIGNOS VITALES
-                          </p>
-
-                        
-                           <div className="bg-gradient-to-br from-[#76C4D5]/30 to-[#76C4D5]/30 rounded-lg p-3 text-sm text-gray-700">
-                <h3 className="font-semibold text-slate-700 mb-2 text-center">ÚLTIMOS SIGNOS VITALES</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {getDynamicResumenVitales(main.id).map((vital) => (
-                    <div key={vital.label} className="rounded-md px-2 py-1.5 bg-white text-slate-700 text-center border border-gray-200">
-                      <p className="text-[9px] font-semibold uppercase text-[#007e8f]">{vital.label}</p>
-                      <p className="text-xs font-bold text-gray-800">{vital.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-                          {/* Flechita */}
-                          <div
-                            className="absolute left-1/2 -translate-x-1/2 -top-2
-          w-3 h-3 bg-white
-          border-l border-t border-gray-200
-          rotate-45
-        "
-                          />
-                        </div>
-                      </div>
-                    </td>
-
-
-
-                      {/* CEDULA */}
-                    <td className="px-4 py-3 text-[#4EA685] font-semibold ">
-                      {main.cedula}
-                    </td>
-                    {/* MEDICO */}
-                    <td className="px-4 py-3 text-[#595759] font-medium bg-[#69c9ba]/20">
-                      {main.medico}
-                    </td>
-                    {/* *******************************AQUI es cuadro ventana   *******************************
-                     *******************************externa para las alertas indicacion de medicamentos *******************************
-                    ********************************************************************************************************** */}
-
-                    <td className="px-4 py-3 text-[#000d5b] relative ">
-                      {/* ALERGIAS 1 */}
-                      <div className="inline-block group cursor-pointer">
-                        <span className="text-gray-900 font-medium group-hover:text-[#007e8f] transition">
-                          {main.alergiaIconUno}
-                        </span>
-                        <div
-                          className=" pointer-events-none absolute bottom-full left-1/2 z-50 w-64 -translate-x-[-80px] -translate-y-[-60px] 
-        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-90 transition-all duration-200 rounded-xl bg-white border border-gray-300
-        shadow-xl p-3 text-xs text-gray-800"
-                        >
-                          <p className="font-semibold text-[#007e8f] mb-2 flex items-center gap-1">
-                            Alergía a:
-                          </p>
-
-                          <ul className="space-y-1/2">
-                            <li>{main.alergiaUno}</li>
-                          </ul>
-
-                          {/* Flechita */}
-                          <div
-                            className="absolute left-1 top-full -translate-x-4 -translate-y-10 w-3 h-3 bg-white border-r border-b border-gray-300
-                                              rotate-45"
-                          />
-                        </div>
-                      </div>
-                      {/* ICONO 2 ANTES ALERGIA  2 AHORA INDICACIONES */}
-                      <div className="inline-block group cursor-pointer">
-                        <span className="text-gray-900 font-medium group-hover:text-[#007e8f] transition">
-                          {main.alergiaIconDos}
-                        </span>
-                        {/* Tooltip */}
-                        <div
-                          className=" pointer-events-none absolute bottom-full left-1/2 z-50 w-64 -translate-x-[-80px] -translate-y-[-60px] 
-        scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-90 transition-all duration-200 rounded-xl bg-white border border-gray-300
-        shadow-xl p-3 text-xs text-gray-800"
-                        >
-                          
-
-                          <ul className="space-y-1/2">
-                            <li>{main.alergiaDos}</li>
-                          </ul>
-
-                          {/* Flechita */}
-                          <div
-                            className="absolute left-1 top-full -translate-x-4 -translate-y-10
-                                            w-3 h-3 bg-white border-r border-b border-gray-300
-                                              rotate-45"
-                          />
-                        </div>
-                      </div>
-                      {/********************************** ICONO 3 ANTES ALERGIA  3 AHORA HORARIO DE MEDICAMENTOS ***********LO DINAMICO DEL HORARIO 6:00PM****************************/}
-
-                      <div
-                        key={main.id}
-                        className="relative inline-block cursor-pointer"
-                        onMouseEnter={() => setShowTooltip(main.id)}
-                        onMouseLeave={() => setShowTooltip(null)}
-                      >
-                        <div className="relative inline-flex items-center justify-center">
-                          <span
-                            className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition ${
-                              pendingMedicationCount > 0
-                                ? 'border-red-300 bg-red-100 text-red-700'
-                                : 'border-emerald-300 bg-emerald-100 text-emerald-700'
-                            }`}
-                            title="Horario de medicamentos"
-                          >
-                            <TimerIcon className="h-4 w-4" />
-                          </span>
-                          {pendingMedicationCount > 0 ? (
-                            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white">
-                              {pendingMedicationCount > 9 ? '9+' : pendingMedicationCount}
-                            </span>
-                          ) : null}
-                        </div>
-
-                        {showTooltip === main.id && (
-                          <div className="absolute top-full left-1/2 z-[9999] w-80 -translate-x-1/2  
-      rounded-lg bg-white border border-[#76C4D5] shadow-2xl p-4 text-xs text-gray-800 pointer-events-auto"
-    > <div className="mb-2 flex items-center justify-between gap-2">
-                              <p className="font-bold text-[#4EA685]">
-                                HORARIO DE MEDICAMENTOS
-                              </p>
-                              <span
-                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                                  isNurseUser
-                                    ? 'bg-emerald-100 text-[#595759]'
-                                    : 'bg-[#76C4D5]-100 text-[#595759] border border-[#76C4D5]'
-                                }`}
-                              >
-                                {isNurseUser ? 'Checks habilitados (enfermería)' : 'Solo enfermería'}
-                              </span>
-                            </div>
-
-                            {patientMedicationRows.length === 0 ? (
-                              <p className="text-gray-600">
-                                Sin medicación pendiente para este paciente.
-                              </p>
-                            ) : (
-                              <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-                                {patientMedicationRows.map((medication) => (
-                                  <div
-                                    key={medication.id}
-                                    className="rounded-lg border border-gray-200 bg-[#76C4D5]/20 px-2 py-2"
-                                  >
-                                    <p className="font-semibold text-[#595759]">
-                                      {medication.medicamento}
-                                    </p>
-                                    <div className="mt-1 flex flex-wrap gap-1.5">
-                                      {medication.scheduleHours.length === 0 ? (
-                                        <span className="text-[10px] text-amber-700">
-                                          Sin horas programadas
-                                        </span>
-                                      ) : (
-                                        medication.scheduleHours.map((hour) => {
-                                          const hourRecord =
-                                            medication.administracionesPorHora?.[hour];
-                                          const isCompleted =
-                                            Boolean(hourRecord?.confirmada);
-
-                                          return (
-                                            <button
-                                              type="button"
-                                              key={`${medication.id}-${hour}`}
-                                              onClick={() =>
-                                                handleMedicationHourClick(
-                                                  main,
-                                                  medication,
-                                                  hour
-                                                )
-                                              }
-                                              disabled={!isNurseUser || isCompleted}
-                                              className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-                                                isCompleted
-                                                  ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                                                  : 'bg-red-100 text-red-700 border border-red-300'
-                                              } ${
-                                                !isNurseUser
-                                                  ? 'cursor-not-allowed opacity-70'
-                                                  : 'hover:brightness-95'
-                                              }`}
-                                              title={
-                                                isCompleted
-                                                  ? `Registrado por ${hourRecord?.confirmadoPor || 'enfermería'}`
-                                                  : isNurseUser
-                                                    ? 'Click para registrar administración'
-                                                    : 'Solo enfermería puede registrar'
-                                              }
-                                            >
-                                              {hour}
-                                            </button>
-                                          );
-                                        })
-                                      )}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                           <div className="flex items-center gap-1 mt-2 text-[11px] font-bold">
-                              <p className="text-[#595759]">Pendientes:</p>
-                                  <p className="text-[#B51414]">{pendingMedicationCount}</p>
-                                    </div>
-
-                            {!isNurseUser ? (
-                              <p className="mt-1 text-[10px] text-[#595759]/50 font-bold">
-                                Solo usuarios de enfermería pueden registrar la medicación.
-                              </p>
-                            ) : null}
-
-                            {/* Flechita */}
-                            <div className="absolute left-6 top-full w-3 h-3 bg-white border-r border-b border-gray-300 rotate-45" />
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    {/* ARRIBA AQUI es las alertas de medicacmentos que faltan por dar al paciente *******************************
-                     ******************************* TENER QUE CONECTAR CON LA APLICACION MISMA *******************************
-                     *******************************MUCHO OJO SE AGRUPA DESDE AQUI HASTA ******************************* */}
-
-                    {/**AQUI AGREGO EL SELECTOR DE ESTADOS DEPENDE DE QUE SE ENCUENTRE EL PACIENTE */}
-                    <td className="px-4 py-3 text-center font-medium bg-[#69c9ba]/10">
-                      <div className="flex items-center justify-center gap-2">
-                        {/* Punto de color */}
-                        <span
-                          className={`w-3 h-3 rounded-full ${
-                            (estadosPaciente[estadoActualFila] || estadosPaciente['Atención'])
-                              .color
-                          }`}
-                        />
-
-                        {/* Selector */}
-                        <select
-                          value={estadoActualFila}
-                          onChange={(e) =>
-                            handleEstadoChange(main.id, e.target.value)
-                          }
-                          disabled={isAltaBloqueada}
-                          className={`px-2 py-1 rounded-full text-xs font-semibold bg-[#69c9ba]/50 text-[#000000]/70 transition ${
-                            isAltaBloqueada
-                              ? 'cursor-not-allowed opacity-100'
-                              : 'hover:text-[#000000]'
-                          }`}
-                        >
-                          {Object.keys(estadosPaciente).map((opcion) => (
-                            <option key={opcion} value={opcion}>
-                              {opcion}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </td>
-                    {/**HASTA AQUI AGREGO EL SELECTOR DE ESTADOS DEPENDE DE QUE SE ENCUENTRE EL PACIENTE */}
-
-                    {/**AGREGAR SELECTOR PARA SERVICIOS*+++++++++++++++++++++++++++++++++++++++++++++**/}
-                    <td className="px-4 py-3 text-center font-medium">
-                      <div className="flex flex-col items-center">
-                        {/* Selector Servicio */}
-                        <select
-                          value={servicioActual}
-                          onChange={(e) =>
-                            handleServicioChange(main.id, e.target.value)
-                          }
-                          disabled={isAltaBloqueada}
-                          className={`bg-transparent border-none outline-none font-bold text-[#4ea685] transition ${
-                            isAltaBloqueada ? 'cursor-not-allowed opacity-70' : 'hover:text-[#595759]'
-                          }`}
-                        >
-                          {serviciosHospital.map((servicio) => (
-                            <option key={servicio} value={servicio}>
-                              {servicio}
-                            </option>
-                          ))}
-                        </select>
-
-                        {/* Ubicación debajo del servicio */}
-                        <div className="text-[11px] text-gray-500 mt-1 leading-tight hover:text-[#000000]">
-                          {ubicacionTexto}
-                        </div>
-                      </div>
-                    </td>
-                    {/**AGREGAR SELECTOR PARA SERVICIOS ****++++++++++++++++++++++++++++++++++*******a */}
-
-                    <td className="px-4 py-3 text-[#000d5b] bg-[#69c9ba]/20">
-                      {main.seguro}
-                    </td>
-
-                    <td className="px-4 py-3 ">
-                      <div className="flex justify-center gap-2">
-                        {getRenderableModules(main.modulos).map((modulo, idx) => {
-                          const hasAccess = userCanAccessModule(modulo);
-                          const shouldDisable =
-                            UNAUTHORIZED_MODULE_BUTTON_MODE === 'disable' && !hasAccess;
-
-                          return (
-                            <Button
-                              key={idx}
-                              size="icon"
-                              variant="outline"
-                              disabled={shouldDisable}
-                              onClick={() => handleModuleClick(main.id, modulo)}
-                              className={`relative rounded-full border-2 shadow-sm bg-white transition ${moduleColors[modulo]} ${
-                                shouldDisable
-                                  ? 'cursor-not-allowed opacity-40'
-                                  : 'hover:bg-gray-100 hover:shadow-md'
-                              }`}
-                              title={
-                                shouldDisable
-                                  ? `${modulo} (sin permisos para tu rol)`
-                                  : modulo
-                              }
-                            >
-                              {moduleIcons[modulo] || (
-                                <FileText className="w-5 h-5" />
-                              )}
-
-                              {/**aqui agrego informacion para el mensaje de alerta en mod enfrmeria  */}
-                              {modulo === 'Modulo Enfermeria' &&
-                                pendingMedicationCount > 0 && (
-                                  <span
-                                    className="absolute -top-1 -right-1 bg-red-600 text-white 
-      text-[10px] w-5 h-5 rounded-full flex items-center justify-center
-      alert-pulse"
-                                  >
-                                    {pendingMedicationCount > 9 ? '9+' : pendingMedicationCount}
-                                  </span>
-                                )}
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </td>
-                  </motion.tr>
-                );
+                    <PatientRow
+                      key={main.id}
+                      main={main}
+                      index={index}
+                      estadoActualFila={estadoActualFila}
+                      isAltaBloqueada={isAltaBloqueada}
+                      servicioActual={servicioActual}
+                      ubicacionTexto={ubicacionTexto}
+                      vitales={getDynamicResumenVitales(main.id)}
+                      patientMedicationRows={patientMedicationRows}
+                      pendingMedicationCount={pendingMedicationCount}
+                      showTooltip={showTooltip}
+                      setShowTooltip={setShowTooltip}
+                      isNurseUser={isNurseUser}
+                      handleMedicationHourClick={handleMedicationHourClick}
+                      handleEstadoChange={handleEstadoChange}
+                      handleServicioChange={handleServicioChange}
+                      getRenderableModules={getRenderableModules}
+                      userCanAccessModule={userCanAccessModule}
+                      handleModuleClick={handleModuleClick}
+                      moduleColors={moduleColors}
+                      moduleIcons={moduleIcons}
+                      ESTADOS_OPCIONES={ESTADOS_OPCIONES}
+                      serviciosHospital={serviciosHospital}
+                      UNAUTHORIZED_MODULE_BUTTON_MODE={UNAUTHORIZED_MODULE_BUTTON_MODE}
+                    />
+                  );
                 })}
               </tbody>
             </table>
@@ -1633,26 +851,44 @@ const resumenVitales = [
       </div>
 
       {/* Pie de página con paginación */}
-      <div className="flex justify-center items-center py-1 bg-white ">
-        <div className="flex items-center gap-3">
-          <span className="cursor-pointer text-gray-500 text-xl">←</span>
-          <span className="px-3 py-1 rounded bg-[#69c9ba] text-white hover:bg-[#4ea685] font-bold cursor-pointer">
-            1
-          </span>
-          <span className="px-3 py-1 rounded hover:bg-gray-200 cursor-pointer text-gray-800">
-            2
-          </span>
-          <span className="px-3 py-1 rounded hover:bg-gray-200 cursor-pointer text-gray-800">
-            3
-          </span>
-          <span className="px-3 py-1 rounded hover:bg-gray-200 cursor-pointer text-gray-800">
-            4
-          </span>
-          <span className="cursor-pointer text-gray-500 text-xl">→</span>
+      <div className="flex justify-center items-center py-2 bg-white gap-4">
+        <span className="text-sm text-gray-500">
+          {sortedMains.length} paciente{sortedMains.length !== 1 ? 's' : ''}
+        </span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={safePage <= 1}
+            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1 rounded font-bold text-sm transition ${
+                page === safePage
+                  ? 'bg-[#69c9ba] text-white shadow'
+                  : 'hover:bg-gray-200 text-gray-800'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safePage >= totalPages}
+            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
         </div>
       </div>
     </>
   );
 };
 
-export default Dashboard;
+export default Dashboard;
