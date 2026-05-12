@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo Operatorio — M.S-P HCU Form. 017 · Clínicas Atlas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   PALETA ATLAS — idéntica a registro_anestesia
+══════════════════════════════════════════ */
+:root{
+  --bg:#dce8f5;--bg-grad-from:#c2d8ef;--bg-grad-to:#e4eff8;
+  --white:#ffffff;--surface:#eef4fb;--surface2:#e0ecf6;
+  --border:#a8c4df;--border2:#7aaac9;
+  --text:#0d2137;--muted:#3a6080;--dim:#7aaac9;
+  --teal:#1565c0;--teal-d:#0d47a1;--teal-l:#dbeafe;--teal-mid:#2979ff;
+  --navy:#0a2744;--navy-d:#061828;--navy-l:#dbeafe;--navy-mid:#1a4a7a;
+  --red:#c53030;--red-l:#fff0f0;--red-mid:#fc8181;
+  --green:#276749;--green-l:#f0fff4;
+  --amber:#b7791f;--amber-l:#fffaf0;
+  --yellow:#d69e2e;--blue:#1565c0;
+  --purple:#553c9a;--purple-l:#ede9fe;--purple-mid:#a78bfa;
+  --shadow-sm:0 1px 4px rgba(10,39,68,.10);
+  --shadow:0 2px 12px rgba(10,39,68,.14);
+  --shadow-lg:0 6px 28px rgba(10,39,68,.18);
+  --s1:var(--white);--s2:var(--surface);--s3:var(--surface2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:linear-gradient(160deg,var(--bg-grad-from) 0%,var(--bg-grad-to) 100%);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--teal);}
+
+/* ── HEADER ── */
+.atlas-header{background:var(--navy);border-bottom:2px solid var(--navy-d);padding:11px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:500;box-shadow:0 3px 16px rgba(15,36,64,.4);}
+.atlas-header *{color:white!important;}
+.brand-text{font-family:Georgia,serif;font-size:1.12rem;font-weight:700;color:white!important;}
+.brand-text span{color:var(--teal-mid)!important;}
+.brand-sub{font-size:.58rem;color:rgba(255,255,255,.5)!important;letter-spacing:.1em;text-transform:uppercase;}
+.doc-title{font-size:.95rem;font-weight:800;color:var(--teal-mid)!important;letter-spacing:.06em;text-transform:uppercase;}
+.doc-sub{font-size:.6rem;color:rgba(255,255,255,.45)!important;letter-spacing:.08em;}
+#atl-clock{font-family:'Courier New',monospace;font-size:.7rem;color:rgba(255,255,255,.55)!important;text-align:right;line-height:1.7;}
+.hdr-btn{padding:8px 15px;background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:7px;color:white!important;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.hdr-btn:hover{border-color:var(--teal-mid);color:var(--teal-mid)!important;}
+.hdr-btn-primary{background:var(--teal)!important;border-color:var(--teal)!important;}
+.hdr-btn-primary:hover{background:var(--teal-d)!important;}
+
+/* ── NAV ── */
+.nav-strip{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08);overflow-x:auto;scrollbar-width:none;}
+.nav-strip::-webkit-scrollbar{display:none;}
+.nav-inner{max-width:1320px;margin:0 auto;padding:0 20px;display:flex;}
+.ntab{padding:11px 18px;color:rgba(255,255,255,.48);font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.ntab:hover{color:rgba(255,255,255,.82);}
+.ntab.on{color:var(--teal-mid);border-bottom-color:var(--teal-mid);}
+
+/* ── LAYOUT ── */
+.app{max-width:1320px;margin:0 auto;padding:22px 20px 110px;display:flex;flex-direction:column;gap:18px;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .2s;}
+.card:hover{box-shadow:var(--shadow);}
+.card-header{padding:13px 20px;background:var(--navy);border-bottom:1px solid var(--navy-d);display:flex;align-items:center;gap:10px;}
+.card-header *{color:white!important;}
+.card-icon{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+.card-title{font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.card-sub{font-size:.66rem;opacity:.45;margin-left:auto;letter-spacing:.06em;text-transform:uppercase;}
+.card-body{padding:20px;}
+
+/* colored card headers */
+.ch-teal{background:linear-gradient(135deg,#1565c0,#0d47a1)!important;}
+.ch-orange{background:linear-gradient(135deg,#1565c0,#0d47a1)!important;}
+.ch-green{background:linear-gradient(135deg,#1a4a7a,#0a2744)!important;}
+.ch-purple{background:linear-gradient(135deg,#1565c0,#0d47a1)!important;}
+.ch-amber{background:linear-gradient(135deg,#1a4a7a,#0a2744)!important;}
+
+/* ── FORM ── */
+.fl,.field-label{display:block;font-size:.7rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+.fi,.fs,.fta,.field-input,.field-select{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;}
+.fi:focus,.fs:focus,.fta:focus,.field-input:focus,.field-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(21,101,192,.15);}
+.fi::placeholder,.fta::placeholder,.field-input::placeholder{color:var(--dim);}
+.fs option,.field-select option{background:white;color:var(--text);}
+.fta{resize:vertical;min-height:90px;line-height:1.7;}
+.fg{margin-bottom:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
+
+/* ── PATIENT HEADER ── */
+.pat-header{background:var(--navy);padding:16px 22px;display:flex;align-items:center;gap:16px;}
+.pat-header *{color:white!important;}
+.pat-avatar{width:48px;height:48px;background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.pat-name{font-size:1.2rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
+.pat-id{font-family:'JetBrains Mono',monospace;font-size:.75rem;opacity:.6;margin-top:2px;}
+.allergy-badge{background:rgba(197,48,48,.2);border:1px solid rgba(197,48,48,.5);border-radius:100px;padding:5px 14px;font-size:.72rem;font-weight:700;color:#fc8181!important;letter-spacing:.08em;text-transform:uppercase;margin-left:auto;display:flex;align-items:center;gap:6px;}
+.pat-body{padding:18px 22px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+
+/* ── TIPO CIRUGÍA ── */
+.cx-type-btn{display:flex;align-items:center;gap:9px;padding:10px 20px;border-radius:9px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-family:'Inter',sans-serif;font-size:.84rem;font-weight:700;color:var(--muted);transition:all .2s;user-select:none;}
+.cx-type-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.cx-type-btn .cx-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:all .2s;flex-shrink:0;}
+.cx-emergencia.active{border-color:var(--red);background:var(--red-l);color:var(--red);box-shadow:0 0 0 3px rgba(197,48,48,.12);}
+.cx-emergencia.active .cx-dot{background:var(--red);box-shadow:0 0 6px rgba(197,48,48,.6);}
+.cx-emergencia:not(.active):hover{border-color:var(--red-mid);color:var(--red);}
+.cx-electiva.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);box-shadow:0 0 0 3px rgba(21,101,192,.14);}
+.cx-electiva.active .cx-dot{background:var(--teal);box-shadow:0 0 6px rgba(21,101,192,.5);}
+.cx-electiva:not(.active):hover{border-color:var(--teal);color:var(--teal-d);}
+#cx-banner{display:none;padding:4px 14px;border-radius:6px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:10px;}
+#cx-banner.emergencia{background:var(--red);color:white;animation:pulseBanner 1.8s infinite;}
+#cx-banner.electiva{background:var(--teal);color:white;}
+@keyframes pulseBanner{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── CIE-10 SEARCH BOXES ── */
+.cie-search-box{position:relative;margin-bottom:8px;}
+.cie-search-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:10px 40px 10px 13px;font-family:'Inter',sans-serif;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.cie-search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(21,101,192,.15);}
+.cie-search-input::placeholder{color:var(--dim);}
+.cie-search-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.cie-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:9px;max-height:220px;overflow-y:auto;z-index:50;display:none;box-shadow:var(--shadow-lg);}
+.cie-dropdown.open{display:block;}
+.cie-option{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--surface2);transition:background .15s;display:flex;align-items:flex-start;gap:10px;}
+.cie-option:last-child{border-bottom:none;}
+.cie-option:hover{background:var(--teal-l);}
+.cie-opt-code{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--navy);min-width:60px;flex-shrink:0;}
+.cie-opt-desc{font-size:.82rem;color:var(--text);line-height:1.3;}
+.cie-tags{display:flex;flex-wrap:wrap;gap:8px;min-height:32px;padding:4px 0;}
+.cie-tag{display:flex;align-items:center;gap:6px;background:var(--navy-l);border:1px solid var(--border);border-radius:100px;padding:5px 12px 5px 10px;font-size:.78rem;}
+.cie-tag-code{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);}
+.cie-tag-name{color:var(--text);}
+.cie-tag-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0;transition:color .15s;}
+.cie-tag-del:hover{color:var(--red);}
+
+/* ── NARR SECTIONS ── */
+.narr-section{background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:12px;}
+.narr-head{padding:10px 16px;display:flex;align-items:center;gap:10px;background:var(--surface);border-bottom:1px solid var(--border);}
+.narr-num{width:24px;height:24px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:white;flex-shrink:0;}
+.narr-title{font-size:.9rem;font-weight:700;color:var(--navy);letter-spacing:.04em;text-transform:uppercase;}
+.narr-body{padding:14px 16px;}
+.narr-body .fta{background:var(--white);border-color:var(--border);min-height:90px;}
+
+/* ── TIEMPOS ── */
+.tiempos-panel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.tiempo-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 14px;text-align:center;}
+.tc-label{font-size:.62rem;font-weight:700;color:var(--teal-d);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.tc-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:7px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;text-align:center;color:var(--navy);outline:none;transition:border-color .2s;}
+.tc-input:focus{border-color:var(--teal);}
+.tc-total{width:100%;background:var(--teal-l);border:1px solid var(--teal);border-radius:7px;padding:7px;font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;text-align:center;color:var(--teal-d);}
+
+/* ── COMPLICACIONES ── */
+.ct-btn{padding:9px 22px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:.83rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.ct-btn:hover{border-color:var(--text);color:var(--text);}
+.ct-btn.si{background:var(--red-l);border-color:var(--red-mid);color:var(--red);}
+.ct-btn.no{background:var(--green-l);border-color:#9ae6b4;color:var(--green);}
+
+/* ── EQUIPOS ── */
+.equip-tab-btn{padding:8px 16px;border:2px solid var(--border);border-radius:9px;background:var(--white);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;}
+.equip-tab-btn:hover{border-color:var(--teal);color:var(--teal-d);}
+.equip-tab-btn.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);}
+.equip-panel{display:none;}
+.equip-panel.show{display:block;}
+.equip-section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.equip-chk{padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.78rem;font-weight:500;color:var(--text);cursor:pointer;background:var(--white);transition:all .15s;user-select:none;margin-bottom:4px;display:block;width:100%;}
+.equip-chk:hover{border-color:var(--teal);background:var(--teal-l);}
+.equip-chk.on{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);font-weight:700;}
+.equip-chk.on::before{content:'✓ ';color:var(--teal);}
+.equip-resumen{display:none;margin-top:12px;padding:10px 14px;background:var(--navy-l);border:1.5px solid var(--border);border-radius:9px;font-size:.78rem;color:var(--navy);line-height:1.8;}
+
+/* insumos table */
+.insumos-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.insumos-table th{padding:9px 12px;background:var(--navy);color:white;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:left;}
+.insumos-table td{padding:7px 10px;border-bottom:1px solid var(--surface2);}
+.insumos-table tr:last-child td{border-bottom:none;}
+.insumos-table tr:hover td{background:var(--teal-l);}
+.insumos-table .fi{padding:5px 8px;font-size:.8rem;}
+
+/* ── CODE PANEL ── */
+.code-panel{background:var(--surface2);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
+.code-tabs{display:flex;border-bottom:1px solid var(--border);}
+.code-tab{padding:10px 20px;font-size:.78rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;background:var(--surface);}
+.code-tab:hover{color:var(--text);}
+.code-tab.on-cie{color:var(--navy);border-bottom-color:var(--navy);background:var(--white);}
+.code-tab.on-cpt{color:var(--teal-d);border-bottom-color:var(--teal);background:var(--white);}
+.code-tab-content{padding:16px;}
+.code-tab-pane{display:none;}
+.code-tab-pane.active{display:block;}
+.code-search-wrap{position:relative;margin-bottom:14px;}
+.code-search{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:11px 44px 11px 14px;font-family:'Inter',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.code-search::placeholder{color:var(--dim);}
+.code-search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(21,101,192,.15);}
+.code-search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.code-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:10px;max-height:240px;overflow-y:auto;z-index:50;display:none;box-shadow:var(--shadow-lg);}
+.code-dropdown.open{display:block;}
+.code-opt{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--surface2);display:flex;align-items:flex-start;gap:10px;transition:background .12s;}
+.code-opt:last-child{border-bottom:none;}
+.code-opt:hover{background:var(--teal-l);}
+.co-code{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;min-width:70px;flex-shrink:0;}
+.cie-code{color:var(--navy);}
+.cpt-code{color:var(--teal-d);}
+.co-desc{font-size:.82rem;color:var(--text);line-height:1.3;}
+.codes-selected{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;padding:4px 0;}
+.code-tag{display:flex;align-items:center;gap:6px;border-radius:100px;padding:5px 12px 5px 10px;font-size:.75rem;font-weight:600;}
+.cie-tag-c{background:var(--navy-l);border:1px solid var(--border);}
+.cie-tag-c .ct-code{color:var(--navy);font-family:'JetBrains Mono',monospace;font-weight:700;}
+.cpt-tag-c{background:var(--teal-l);border:1px solid var(--teal);}
+.cpt-tag-c .ct-code{color:var(--teal-d);font-family:'JetBrains Mono',monospace;font-weight:700;}
+.ct-name{color:var(--text);}
+.ct-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;transition:color .15s;}
+.ct-del:hover{color:var(--red);}
+.manual-row{display:grid;grid-template-columns:110px 1fr auto;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);align-items:end;}
+.btn-add-code{padding:9px 14px;background:var(--navy-l);border:1px solid var(--border);border-radius:8px;color:var(--navy);font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
+.btn-add-code:hover{background:var(--navy);color:white;}
+.btn-add-code-cpt{background:var(--teal-l);border-color:var(--teal);color:var(--teal-d);}
+.btn-add-code-cpt:hover{background:var(--teal);color:white;}
+
+/* ── AI PANEL ── */
+.ai-panel{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+.ai-hdr{padding:16px 22px;background:var(--navy);display:flex;align-items:center;gap:14px;}
+.ai-hdr *{color:white!important;}
+.ai-hdr-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.ai-hdr-title{font-size:1rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
+.ai-hdr-sub{font-size:.68rem;opacity:.5;margin-top:1px;}
+.ai-grid{padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:var(--surface);}
+.ai-btn{padding:14px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:11px;cursor:pointer;text-align:left;transition:all .2s;display:flex;flex-direction:column;gap:6px;font-family:'Inter',sans-serif;}
+.ai-btn:hover{border-color:var(--teal);background:var(--teal-l);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.ai-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.ai-btn-icon{font-size:1.3rem;}
+.ai-btn-title{font-size:.85rem;font-weight:700;color:var(--navy);}
+.ai-btn-desc{font-size:.7rem;color:var(--muted);line-height:1.4;}
+.ai-result{margin:0 20px 20px;background:var(--surface);border:1px solid var(--border);border-radius:11px;display:none;}
+.ai-result.show{display:block;}
+.ai-result-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.arh-label{font-size:.7rem;font-weight:700;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;}
+.arh-tag{margin-left:auto;background:var(--teal-l);color:var(--teal-d);font-size:.65rem;font-weight:800;padding:3px 9px;border-radius:100px;letter-spacing:.08em;}
+.ai-result-body{padding:16px;color:var(--text);font-size:.86rem;line-height:1.75;white-space:pre-wrap;}
+.ai-loading{display:flex;align-items:center;gap:10px;padding:18px 16px;color:var(--teal);font-size:.83rem;font-style:italic;}
+.ai-spin{width:18px;height:18px;border:2px solid rgba(21,101,192,.20);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alerts-wrap{margin:0 20px 20px;display:flex;flex-direction:column;gap:9px;display:none;}
+.alert-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:10px;}
+.ar-critical{background:var(--red-l);border:1px solid var(--red-mid);}
+.ar-warning{background:var(--amber-l);border:1px solid #fbd38d;}
+.ar-info{background:var(--navy-l);border:1px solid var(--border);}
+.ar-ok{background:var(--green-l);border:1px solid #9ae6b4;}
+.ar-icon{font-size:1.1rem;flex-shrink:0;}
+.ar-body{flex:1;}
+.ar-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ar-desc{font-size:.77rem;color:var(--muted);line-height:1.5;}
+.ar-badge{font-size:.62rem;font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:100px;flex-shrink:0;}
+.b-crit{background:#fed7d7;color:var(--red);}
+.b-warn{background:#feebc8;color:#c05621;}
+.b-info{background:var(--navy-l);color:var(--navy);}
+.b-ok{background:var(--green-l);color:var(--green);}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:7px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-add-row{display:flex;align-items:center;gap:7px;padding:8px 14px;background:transparent;border:1.5px dashed var(--teal);border-radius:7px;color:var(--teal-d);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:10px;}
+.btn-add-row:hover{background:var(--teal-l);}
+.btn-del{width:28px;height:28px;border-radius:6px;background:var(--red-l);border:1px solid var(--red-mid);color:var(--red);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.btn-del:hover{background:var(--red);color:white;}
+.section-label{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.dv{height:1px;background:var(--border);margin:16px 0;}
+
+/* ── BOTTOM BAR ── */
+.btm{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--navy-d);padding:13px 28px;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 -4px 20px rgba(15,36,64,.3);}
+.btm *{color:white!important;}
+.btm-info{display:flex;gap:24px;align-items:center;}
+.btm-s{display:flex;flex-direction:column;gap:1px;}
+.btm-sl{font-size:.62rem;color:rgba(255,255,255,.38)!important;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.btm-sv{font-family:'JetBrains Mono',monospace;font-size:.86rem;color:var(--teal-mid)!important;font-weight:700;}
+.btm-btns{display:flex;gap:10px;}
+.btm-btn-outline{padding:8px 16px;background:transparent;border:1.5px solid rgba(255,255,255,.3);border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;color:white!important;}
+.btm-btn-outline:hover{border-color:var(--teal-mid);color:var(--teal-mid)!important;}
+.btm-btn-primary{padding:9px 20px;background:var(--teal);color:white!important;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btm-btn-primary:hover{background:var(--teal-d);}
+.toast{position:fixed;top:78px;right:22px;background:var(--teal);color:white;padding:11px 18px;border-radius:9px;font-size:.82rem;font-weight:700;box-shadow:var(--shadow-lg);transform:translateX(140%);transition:transform .3s ease;z-index:9999;font-family:'Inter',sans-serif;}
+.toast.show{transform:translateX(0);}
+
+@media(max-width:900px){
+  .pat-body,.ai-grid{grid-template-columns:1fr 1fr;}
+  .g4,.g3{grid-template-columns:1fr 1fr;}
+  .tiempos-panel{grid-template-columns:1fr;}
+}
+@media print{
+  /* ── Reset general ── */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:white!important;color:#000!important;font-size:10pt!important;margin:0;padding:0;}
+
+  /* ── Ocultar TODO lo interactivo y navegación ── */
+  .btm,.atlas-header,.nav-strip,#tpl-modal,#tpl-toast,
+  #tpl-btn-count,
+  #toast,#sync-toast-el,
+  /* Botones */
+  .btn-add-code,.btn-add-code-cpt,.btn-add-row,.btn-del,
+  .hdr-btn,.hdr-btn-primary,.btm-btn-outline,.btm-btn-primary,
+  /* Buscadores y dropdowns */
+  .cie-search-box,.cie-search-input,.cie-search-icon,
+  .cie-dropdown,.ins-dropdown,.code-dropdown,
+  .code-search-wrap,
+  /* Campos de búsqueda de diagnósticos */
+  #diag-ingreso-search,#diag-ingreso-drop,
+  #op-propuesta-search,#op-propuesta-drop,
+  #op-diagpos-search,#op-diagpos-drop,
+  #cie-search,#cie-drop,#cpt-search,#cpt-drop,
+  /* Ingreso manual */
+  /* Botones de tipo cirugía y anestesia — ocultar solo los NO activos */
+  .cx-type-btn:not(.active){display:none!important;}
+  .cx-type-btn.active{cursor:default;transform:none!important;box-shadow:none!important;}
+  .ct-btn,
+  /* Panel IA completo */
+  #s-ia,
+  /* Equipos — buscador y filtro */
+  #srch-universal,#ins-cat-filter,
+  /* Banners de sincronización */
+  #cie-sync-banner,#diag-ingreso-sync-badge,
+  /* Conteo gasas labels de sección */
+  .section-label,
+  /* Tabs de códigos */
+  .code-tabs,
+  /* Narr sections head acciones */
+  .narr-head .btn,
+  /* Icono lupa */
+  .cie-search-icon
+  {display:none!important;}
+
+  /* ── Layout limpio ── */
+  .app{padding:8px 12px 20px!important;gap:12px!important;}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;border-radius:6px!important;break-inside:avoid;margin-bottom:10px;}
+  .card-body{padding:12px 14px!important;}
+  .card-header{padding:8px 14px!important;}
+  .card-header *{font-size:9pt!important;}
+
+  /* ── Paciente ── */
+  .pat-body{grid-template-columns:repeat(4,1fr)!important;gap:8px!important;padding:10px 14px!important;}
+  .pat-header{padding:10px 14px!important;}
+  .pat-name{font-size:13pt!important;}
+
+  /* ── Mostrar solo valores, no inputs vacíos ── */
+  input[type="text"],input[type="number"],input[type="date"],input[type="time"],textarea,select{
+    border:none!important;border-bottom:1px solid #ccc!important;
+    border-radius:0!important;background:transparent!important;
+    padding:2px 0!important;font-size:9.5pt!important;
+    box-shadow:none!important;width:100%!important;
+  }
+  input:placeholder-shown,textarea:placeholder-shown{border-bottom-color:#eee!important;}
+
+  /* ── Tags CIE y CPT ── */
+  .cie-tag,.code-tag,.cie-tag-c,.cpt-tag-c{
+    border:1px solid #ccc!important;background:#f5f5f5!important;
+    padding:2px 8px!important;font-size:8pt!important;
+  }
+
+  /* ── Textarea narrativas — mostrar completo ── */
+  .fta,textarea{
+    min-height:0!important;height:auto!important;
+    overflow:visible!important;resize:none!important;
+    white-space:pre-wrap!important;
+  }
+
+  /* ── Tiempos inline ── */
+  #s-tiempos .card-body{padding:8px 14px!important;}
+  .tc-total{background:transparent!important;border:none!important;color:#000!important;font-size:1rem!important;padding:0!important;}
+  .tc-input{font-size:.9rem!important;padding:3px 6px!important;}
+
+  /* ── Tabla de insumos ── */
+  #insumos-wrap table th{background:#333!important;color:white!important;font-size:8pt!important;padding:5px 8px!important;}
+  #insumos-wrap table td{padding:4px 8px!important;font-size:8.5pt!important;}
+  #insumos-wrap table input{border:none!important;background:transparent!important;font-size:8.5pt!important;}
+
+  /* ── Ocultar ítems vacíos de tabla ── */
+  #insumos-body:empty{display:none!important;}
+  #insumos-wrap:has(tbody:empty){display:none!important;}
+
+  /* ── Conteo gasas ── */
+  #conteo-resultado{font-size:9pt!important;padding:4px 10px!important;}
+
+  /* ── Zona de complicaciones/muestra ── */
+  #comp-desc-zone .fta,#muest-desc-zone .fta{min-height:0!important;}
+
+  /* ── Narr sections ── */
+  .narr-section{margin-bottom:6px!important;}
+  .narr-head{padding:6px 12px!important;}
+  .narr-num{width:18px!important;height:18px!important;font-size:8pt!important;}
+  .narr-title{font-size:9pt!important;}
+  .narr-body{padding:8px 12px!important;}
+
+  /* ── Firma ── */
+  .g2:last-child{margin-top:20px;}
+
+  /* ── Patólogos: solo mostrar el seleccionado ── */
+  #patologo-grid,#btn-notificar,#notif-result,
+  button[onclick="clearPatologo()"]{display:none!important;}
+  #patologo-selected-info{display:block!important;background:none!important;border:1px solid #ccc!important;padding:6px 10px!important;}
+
+  /* ── Page settings ── */
+  @page{margin:1.2cm 1.4cm;size:A4 portrait;}
+
+  /* ── Ocultar secciones completamente vacías de insumos/equipos ── */
+  #s-equipos-insumos .section-label{display:none!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+
+<!-- ═══ PANEL DE PLANTILLAS ═══ -->
+<!-- Modal plantillas -->
+<div id="tpl-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,39,68,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);width:min(640px,95vw);max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="padding:16px 22px;background:var(--navy);display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1.1rem;">📋</span>
+      <div style="flex:1;color:white;">
+        <div style="font-size:.88rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;">Plantillas de <span id="modal-user-name" style="color:var(--teal-mid);"></span></div>
+        <div style="font-size:.65rem;opacity:.5;margin-top:1px;">Selecciona una plantilla para cargar</div>
+      </div>
+      <button onclick="closeTemplateModal()" style="background:rgba(255,255,255,.1);border:none;border-radius:7px;color:white;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div id="tpl-modal-body" style="padding:18px 22px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
+<div id="toast">✓ Protocolo guardado correctamente</div>
+<div id="tpl-toast" style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;padding:9px 20px;border-radius:9px;font-size:.8rem;font-weight:600;box-shadow:var(--shadow-lg);z-index:9999;display:flex;align-items:center;gap:8px;border:1px solid var(--teal);opacity:0;transition:all .3s ease;pointer-events:none;white-space:nowrap;font-family:'Inter',sans-serif;"></div>
+
+<main class="app" style="padding-top:14px;">
+
+<!-- ═══ 1. PACIENTE ═══ -->
+<div id="s-pac" class="card">
+  <div class="pat-header">
+    <div class="pat-avatar">🧑‍⚕️</div>
+    <div>
+      <div class="pat-name" id="disp-name">ALCIVAR ROMERO DAVID ERNESTO</div>
+      <div class="pat-id">ID: 1713656748 · HCL: 1713656748 · DOB: 21/12/1982</div>
+    </div>
+    <div class="allergy-badge">⚠️ ALERGIA: <span id="disp-alerg">PENICILINA</span></div>
+  </div>
+  <div class="pat-body">
+    <div class="fg"><label class="fl">Nombres y Apellidos</label><input class="fi" id="p-nombres" type="text" value="ALCIVAR ROMERO DAVID ERNESTO" oninput="updatePatient()"></div>
+    <div class="fg"><label class="fl">Identificación</label><input class="fi" id="p-id" type="text" value="1713656748" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);"></div>
+    <div class="fg"><label class="fl">Edad</label><input class="fi" id="p-edad" type="text" value="41 años"></div>
+    <div class="fg"><label class="fl">Servicio</label><input class="fi" id="p-serv" type="text" value="CIRUGÍA"></div>
+    <div class="fg"><label class="fl">Seguro</label><input class="fi" id="p-seguro" type="text" value="HUMANA"></div>
+    <div class="fg"><label class="fl">HCL</label><input class="fi" id="p-hcl" type="text" value="1713656748" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);"></div>
+    <div class="fg"><label class="fl">Fecha Nacimiento</label><input class="fi" id="p-fnac" type="date" value="1982-12-21"></div>
+    <div class="fg"><label class="fl">Médico</label><input class="fi" id="p-medico" type="text" placeholder="Dr. Nombre..."></div>
+    <div class="fg"><label class="fl">Días de Estancia</label><input class="fi" id="p-dias" type="number" value="3" oninput="updateStats()"></div>
+    <div class="fg"><label class="fl">Alergias ⚠️</label><input class="fi" id="p-alerg" type="text" value="PENICILINA" style="color:var(--red);font-weight:700;" oninput="updateAlergy()"></div>
+    <div class="fg"><label class="fl">Fecha de Cirugía</label><input class="fi" id="p-fecha" type="date"></div>
+    <div class="fg"><label class="fl">N° Hoja</label><input class="fi" type="number" placeholder="017" style="font-family:'JetBrains Mono',monospace;"></div>
+  </div>
+
+  <!-- Diagnóstico de Ingreso — campo independiente con CIE-10 -->
+  <div style="padding:0 22px 18px;">
+    <div style="border-top:1px solid var(--border);padding-top:14px;">
+
+      <!-- ── BOTÓN PLANTILLAS ── -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:1rem;">📁</span>
+          <div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--navy);">Mis Plantillas</div>
+            <div style="font-size:.65rem;color:var(--muted);" id="tpl-btn-count">Cargando...</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="openTemplateModal()"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--navy);border:none;border-radius:8px;color:white;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;"
+            onmouseover="this.style.background='var(--navy-mid)'" onmouseout="this.style.background='var(--navy)'">
+            📂 Cargar plantilla
+          </button>
+          <button onclick="saveTemplate()"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--teal);border:none;border-radius:8px;color:white;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;"
+            onmouseover="this.style.background='var(--teal-d)'" onmouseout="this.style.background='var(--teal)'">
+            💾 Guardar como plantilla
+          </button>
+          <button onclick="clearForm()"
+            style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:transparent;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;"
+            onmouseover="this.style.borderColor='var(--red-mid)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+            🗑 Limpiar
+          </button>
+        </div>
+      </div>
+      <!-- ── FIN BOTÓN PLANTILLAS ── -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <label class="fl" style="margin:0;">🏥 Diagnóstico de Ingreso</label>
+        <span style="font-size:.65rem;padding:2px 9px;border-radius:100px;background:var(--teal-l);border:1px solid var(--teal);color:var(--teal-d);font-weight:700;letter-spacing:.06em;">CONECTADO CON CIE-10</span>
+        <span id="diag-ingreso-sync-badge" style="display:none;font-size:.65rem;padding:2px 9px;border-radius:100px;background:#dbeafe;border:1px solid #2979ff;color:#0d47a1;font-weight:700;letter-spacing:.06em;">✓ Sincronizado</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <div style="flex:1;position:relative;">
+          <input class="cie-search-input" id="diag-ingreso-search" type="text"
+            placeholder="Buscar diagnóstico de ingreso por código o descripción CIE-10..."
+            oninput="searchDiagIngreso(this.value)"
+            onfocus="openDiagIngresoDrop()"
+            onblur="setTimeout(closeDiagIngresoDrop,200)"
+            autocomplete="off">
+          <span class="cie-search-icon">🔍</span>
+          <div class="cie-dropdown" id="diag-ingreso-drop"></div>
+        </div>
+      </div>
+      <!-- Tags seleccionados -->
+      <div id="diag-ingreso-tags" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;min-height:28px;">
+        <span style="font-size:.78rem;color:var(--dim);font-style:italic;">Sin diagnóstico de ingreso — se sincronizará automáticamente con CIE-10</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2. OPERACIÓN ═══ -->
+<div id="s-op" class="card">
+  <div class="card-header ch-teal"><div class="card-icon">⚙️</div><span class="card-title">Operación y Tipo de Cirugía</span></div>
+  <div class="card-body">
+
+    <!-- Operación Propuesta con buscador CIE-10 -->
+    <div class="g2" style="margin-bottom:16px;">
+      <div class="fg">
+        <label class="fl">Operación Propuesta</label>
+        <div class="cie-search-box">
+          <input class="cie-search-input" id="op-propuesta-search" type="text" placeholder="Buscar procedimiento o código CIE-10..." oninput="searchOpPropuesta(this.value)" onfocus="openOpDrop()" onblur="setTimeout(closeOpDrop,200)" autocomplete="off">
+          <span class="cie-search-icon">🔍</span>
+          <div class="cie-dropdown" id="op-propuesta-drop"></div>
+        </div>
+        <div class="cie-tags" id="op-propuesta-tags"><span style="font-size:.78rem;color:var(--dim);">Sin procedimiento seleccionado</span></div>
+      </div>
+
+      <!-- Diagnóstico Posoperatorio con buscador CIE-10 -->
+      <div class="fg">
+        <label class="fl">Diagnóstico Posoperatorio</label>
+        <div class="cie-search-box">
+          <input class="cie-search-input" id="op-diagpos-search" type="text" placeholder="Buscar diagnóstico o código CIE-10..." oninput="searchDiagPos(this.value)" onfocus="openDiagDrop()" onblur="setTimeout(closeDiagDrop,200)" autocomplete="off">
+          <span class="cie-search-icon">🔍</span>
+          <div class="cie-dropdown" id="op-diagpos-drop"></div>
+        </div>
+        <div class="cie-tags" id="op-diagpos-tags"><span style="font-size:.78rem;color:var(--dim);">Sin diagnóstico seleccionado</span></div>
+      </div>
+    </div>
+
+    <!-- Tipo Cirugía + Anestesia -->
+    <div class="g2">
+      <div class="fg">
+        <label class="fl" style="margin-bottom:10px;">Tipo de Cirugía</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <button class="cx-type-btn cx-electiva" id="btn-electiva" onclick="selCxTipo('electiva')">
+            <span class="cx-dot"></span>📅 ELECTIVA
+          </button>
+          <button class="cx-type-btn cx-emergencia" id="btn-emergencia" onclick="selCxTipo('emergencia')">
+            <span class="cx-dot"></span>🚨 EMERGENCIA
+          </button>
+          <span id="cx-banner"></span>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" style="margin-bottom:10px;">Tipo de Anestesia</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="tipo-anestesia">
+          <div class="cx-type-btn" onclick="selAnest(this)" style="font-size:.78rem;padding:8px 14px;">💉 General</div>
+          <div class="cx-type-btn" onclick="selAnest(this)" style="font-size:.78rem;padding:8px 14px;">🩻 Conductiva</div>
+          <div class="cx-type-btn" onclick="selAnest(this)" style="font-size:.78rem;padding:8px 14px;">🎯 Bloqueo</div>
+          <div class="cx-type-btn" onclick="selAnest(this)" style="font-size:.78rem;padding:8px 14px;">😴 Sedación</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3. EQUIPO OPERATORIO ═══ -->
+<div id="s-equipo" class="card">
+  <div class="card-header ch-orange"><div class="card-icon">👨‍⚕️</div><span class="card-title">Equipo Operatorio</span></div>
+  <div class="card-body">
+    <div class="g3" style="margin-bottom:14px;">
+      <div class="fg"><label class="fl">Cirujano 1</label><input class="fi" id="eq-cir1" type="text" placeholder="Dr. Apellido Nombre..."></div>
+      <div class="fg"><label class="fl">Cirujano 2</label><input class="fi" type="text" placeholder="Dr. Apellido Nombre..."></div>
+      <div class="fg"><label class="fl">Anestesiólogo</label><input class="fi" type="text" placeholder="Dr. Apellido Nombre..."></div>
+    </div>
+    <div class="g3" style="margin-bottom:14px;">
+      <div class="fg"><label class="fl">Ayudante 1</label><input class="fi" type="text" placeholder="Dr. Apellido Nombre..."></div>
+      <div class="fg"><label class="fl">Ayudante 2</label><input class="fi" type="text" placeholder="Dr. Apellido Nombre..."></div>
+      <div class="fg"><label class="fl">Pediatra</label><input class="fi" type="text" placeholder="Dr. Apellido Nombre..."></div>
+    </div>
+    <div style="display:grid;grid-template-columns:140px 1fr;gap:14px;">
+      <div class="fg"><label class="fl">Sexo RN</label><select class="fs"><option value="">—</option><option>Masculino</option><option>Femenino</option></select></div>
+      <div class="fg"><label class="fl">Hora Nacimiento RN</label><input class="fi" type="time"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4. TIEMPOS ═══ -->
+<div id="s-tiempos" class="card">
+  <div class="card-header ch-amber"><div class="card-icon">⏱</div><span class="card-title">Tiempos Quirúrgicos</span></div>
+  <div class="card-body" style="padding:12px 20px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 14px;">
+        <span style="font-size:.62rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;">🟢 Inicio</span>
+        <input class="tc-input" id="t-inicio" type="time" oninput="calcTiempo()" style="width:110px;padding:5px 8px;font-size:1rem;border-radius:6px;">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 14px;">
+        <span style="font-size:.62rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;">🔴 Fin</span>
+        <input class="tc-input" id="t-fin" type="time" oninput="calcTiempo()" style="width:110px;padding:5px 8px;font-size:1rem;border-radius:6px;">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--teal-l);border:1px solid var(--teal);border-radius:9px;padding:8px 16px;">
+        <span style="font-size:.62rem;font-weight:700;color:var(--teal-d);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;">⏱ Duración</span>
+        <div class="tc-total" id="t-total" style="border:none;background:transparent;padding:0;font-size:1.1rem;width:auto;min-width:80px;">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5. DESCRIPCIÓN QUIRÚRGICA ═══ -->
+<div id="s-narr" class="card">
+  <div class="card-header"><div class="card-icon">📝</div><span class="card-title">Descripción Quirúrgica Detallada</span><span class="card-sub">Narración del acto operatorio</span></div>
+  <div class="card-body">
+    <div class="narr-section"><div class="narr-head"><div class="narr-num">I</div><span class="narr-title">Diéresis — Acceso y Apertura</span></div><div class="narr-body"><textarea class="fta" id="narr-dieresis" placeholder="Tipo de incisión, acceso quirúrgico, apertura de planos: piel, TCSC, fascia, músculo, peritoneo. Localización, longitud, dirección y hemostasia..."></textarea></div></div>
+    <div class="narr-section"><div class="narr-head"><div class="narr-num">II</div><span class="narr-title">Exposición — Visualización del Campo</span></div><div class="narr-body"><textarea class="fta" id="narr-exposicion" placeholder="Maniobras de exposición: separación de órganos, uso de valvas, retractores, tracción. Estructuras anatómicas visualizadas..."></textarea></div></div>
+    <div class="narr-section"><div class="narr-head"><div class="narr-num">III</div><span class="narr-title">Exploración y Hallazgos Quirúrgicos</span></div><div class="narr-body"><textarea class="fta" id="narr-exploracion" style="min-height:120px;" placeholder="Hallazgos intraoperatorios: condición del órgano objetivo, estructuras adyacentes, sangrado, adherencias, lesiones, dimensiones, características macroscópicas..."></textarea></div></div>
+    <div class="narr-section"><div class="narr-head"><div class="narr-num">IV</div><span class="narr-title">Procedimiento Operatorio</span></div><div class="narr-body"><textarea class="fta" id="narr-procedimiento" style="min-height:150px;" placeholder="Paso a paso del procedimiento: técnica quirúrgica, maniobras, ligaduras, suturas, resecciones, anastomosis, drenajes, implantes..."></textarea></div></div>
+    <div class="narr-section"><div class="narr-head"><div class="narr-num">V</div><span class="narr-title">Síntesis — Cierre por Planos</span></div><div class="narr-body"><textarea class="fta" id="narr-sintesis" placeholder="Cierre por planos: peritoneo, fascia, músculo, TCSC, piel. Tipo de sutura, material, técnica, drenajes, apósitos..."></textarea></div></div>
+  </div>
+</div>
+
+<!-- ═══ 6. CIE-10 / CPT ═══ -->
+<div id="s-codes" class="card">
+  <div class="card-header ch-green"><div class="card-icon">🔢</div><span class="card-title">Codificación — CIE-10 y CPT</span><span class="card-sub">Búsqueda · Selección · Verificación IA</span></div>
+  <div class="card-body">
+    <div class="code-panel">
+      <div class="code-tabs">
+        <div class="code-tab on-cie" id="tab-cie" onclick="switchTab('cie')">🔵 CIE-10 — Diagnósticos</div>
+        <div class="code-tab" id="tab-cpt" onclick="switchTab('cpt')">🟢 CPT — Procedimientos</div>
+      </div>
+      <div class="code-tab-content">
+        <!-- CIE-10 -->
+        <div class="code-tab-pane active" id="pane-cie">
+          <!-- Indicador de sincronización con Diagnóstico de Ingreso -->
+          <div id="cie-sync-banner" style="display:none;margin-bottom:12px;padding:9px 14px;background:#dbeafe;border:1px solid #2979ff;border-radius:8px;display:flex;align-items:center;gap:8px;font-size:.78rem;">
+            <span style="font-size:.9rem;">🔗</span>
+            <span style="color:#0d47a1;font-weight:600;">Conectado con <strong>Diagnóstico de Ingreso</strong> — los códigos se sincronizan automáticamente</span>
+            <span id="cie-sync-count" style="margin-left:auto;background:#0d47a1;color:white;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:100px;letter-spacing:.06em;"></span>
+          </div>
+          <div class="code-search-wrap"><input class="code-search" id="cie-search" type="text" placeholder="Buscar por código o descripción... ej: K37, fractura, colecistitis" oninput="searchCode('cie',this.value)" onfocus="openDrop('cie')" onblur="setTimeout(()=>closeDrop('cie'),200)" autocomplete="off"><span class="code-search-icon">🔍</span><div class="code-dropdown" id="cie-drop"></div></div>
+          <label class="fl" style="margin-bottom:8px;display:block;">Códigos CIE-10 seleccionados</label>
+          <div class="codes-selected" id="cie-selected"><span style="font-size:.78rem;color:var(--muted);">Ningún código seleccionado</span></div>
+        </div>
+        <!-- CPT -->
+        <div class="code-tab-pane" id="pane-cpt">
+          <div class="code-search-wrap"><input class="code-search" id="cpt-search" type="text" placeholder="Buscar por código CPT o procedimiento... ej: 47600, colecistectomía" oninput="searchCode('cpt',this.value)" onfocus="openDrop('cpt')" onblur="setTimeout(()=>closeDrop('cpt'),200)" autocomplete="off"><span class="code-search-icon">🔍</span><div class="code-dropdown" id="cpt-drop"></div></div>
+          <label class="fl" style="margin-bottom:8px;display:block;">Códigos CPT seleccionados</label>
+          <div class="codes-selected" id="cpt-selected"><span style="font-size:.78rem;color:var(--muted);">Ningún código seleccionado</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 7. EQUIPOS E INSUMOS ═══ -->
+<div id="s-equipos-insumos" class="card">
+  <div class="card-header ch-purple"><div class="card-icon">🔧</div><span class="card-title">Equipos e Insumos Utilizados</span><span class="card-sub" id="insumos-count-label">0 ítems</span></div>
+  <div class="card-body">
+
+    <!-- Buscador único universal -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:flex-end;">
+      <div style="flex:1;position:relative;">
+        <input class="fi" id="srch-universal" type="text"
+          placeholder="Buscar equipo o insumo — ej: bisturí, vicryl 3-0, penrose, surgicel, prótesis, gasa..."
+          oninput="searchInsumo('universal',this.value)"
+          onfocus="openInsDrop('universal')"
+          onblur="setTimeout(()=>closeInsDrop('universal'),200)"
+          autocomplete="off" style="padding-right:38px;">
+        <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;">🔍</span>
+        <div class="ins-dropdown" id="drop-universal"></div>
+      </div>
+      <!-- Filtro por categoría -->
+      <select class="fs" id="ins-cat-filter" style="width:160px;padding:8px 10px;">
+        <option value="all">Todas las categorías</option>
+        <option value="instrumental">✂️ Instrumental</option>
+        <option value="suturas">🧵 Suturas</option>
+        <option value="drenajes">🩺 Drenajes/Sondas</option>
+        <option value="hemostasia">🩸 Hemostasia</option>
+        <option value="implantes">🦴 Implantes</option>
+        <option value="generales">📦 Generales</option>
+      </select>
+    </div>
+
+    <!-- Tabla de insumos agregados -->
+    <div id="insumos-wrap" style="display:none;margin-bottom:14px;">
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead>
+          <tr>
+            <th style="padding:8px 12px;background:var(--navy);color:white;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:left;">Categoría</th>
+            <th style="padding:8px 12px;background:var(--navy);color:white;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:left;">Insumo / Equipo</th>
+            <th style="padding:8px 12px;background:var(--navy);color:white;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;width:70px;">Cant.</th>
+            <th style="padding:8px 12px;background:var(--navy);color:white;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:left;">Talla / Lote / Obs.</th>
+            <th style="padding:8px 12px;background:var(--navy);color:white;width:36px;"></th>
+          </tr>
+        </thead>
+        <tbody id="insumos-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Conteo gasas — compacto en una línea -->
+    <div style="display:flex;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;">
+      <span style="font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;">Conteo Gasas/Compresas:</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:.72rem;color:var(--muted);">Gasas</span>
+        <input class="fi" id="gasas-inicio" type="number" placeholder="ini" oninput="verificarConteo()" style="width:58px;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;font-size:.82rem;">
+        <span style="color:var(--dim);">→</span>
+        <input class="fi" id="gasas-fin" type="number" placeholder="fin" oninput="verificarConteo()" style="width:58px;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;font-size:.82rem;">
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:.72rem;color:var(--muted);">Compresas</span>
+        <input class="fi" id="compresas-inicio" type="number" placeholder="ini" oninput="verificarConteo()" style="width:58px;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;font-size:.82rem;">
+        <span style="color:var(--dim);">→</span>
+        <input class="fi" id="compresas-fin" type="number" placeholder="fin" oninput="verificarConteo()" style="width:58px;padding:5px 6px;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;font-size:.82rem;">
+      </div>
+      <div id="conteo-resultado" style="display:none;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:700;"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ 8. COMPLICACIONES Y MUESTRA ═══ -->
+
+    <!-- ── INSTRUMENTAL ── -->
+<!-- ═══ 8. COMPLICACIONES Y MUESTRA ═══ -->
+
+    <!-- ── INSTRUMENTAL ── -->
+<!-- ═══ 8. COMPLICACIONES Y MUESTRA ═══ -->
+<div id="s-comp" class="card">
+  <div class="card-header ch-orange"><div class="card-icon">⚠️</div><span class="card-title">Complicaciones, Muestra y Cierre</span></div>
+  <div class="card-body">
+    <div class="g2" style="margin-bottom:16px;">
+      <div class="fg"><label class="fl" style="margin-bottom:12px;">¿Hubo Complicaciones?</label>
+        <div style="display:flex;gap:8px;">
+          <button class="ct-btn" id="comp-si" onclick="setComp(true)">✓ SÍ</button>
+          <button class="ct-btn" id="comp-no" onclick="setComp(false)">✗ NO</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">¿Muestra para Patología?</label>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="ct-btn" id="muest-si" onclick="setMuestra(true)">✓ SÍ</button>
+          <button class="ct-btn" id="muest-no" onclick="setMuestra(false)">✗ NO</button>
+        </div>
+      </div>
+    </div>
+    <div id="comp-desc-zone"></div>
+    <div id="muest-desc-zone"></div>
+    <div class="dv"></div>
+    <div class="g2">
+      <div class="fg"><label class="fl">Firma del Cirujano</label><input class="fi" type="text" placeholder="Dr./Dra. Apellido Nombre — Firma"></div>
+      <div class="fg"><label class="fl">Nombre del Cirujano</label><input class="fi" id="firma-cir" type="text" placeholder="Nombre completo legible"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 9. PANEL IA ═══ -->
+<div id="s-ia" class="ai-panel">
+  <div class="ai-hdr"><div class="ai-hdr-icon">🤖</div><div><div class="ai-hdr-title">Asistente IA Quirúrgico</div><div class="ai-hdr-sub">Verificación CIE-10 · Validación CPT · Alertas · Control de calidad</div></div></div>
+  <div class="ai-grid">
+    <button class="ai-btn" onclick="runIA('alertas')"><span class="ai-btn-icon">🚨</span><span class="ai-btn-title">Alertas y Errores</span><span class="ai-btn-desc">Detecta inconsistencias y riesgos de seguridad quirúrgica</span></button>
+    <button class="ai-btn" onclick="runIA('cie_verify')"><span class="ai-btn-icon">🔵</span><span class="ai-btn-title">Verificar CIE-10</span><span class="ai-btn-desc">Valida los códigos CIE-10 vs procedimiento y diagnóstico</span></button>
+    <button class="ai-btn" onclick="runIA('cpt_verify')"><span class="ai-btn-icon">🟢</span><span class="ai-btn-title">Verificar CPT</span><span class="ai-btn-desc">Valida códigos CPT y sugiere procedimientos omitidos</span></button>
+    <button class="ai-btn" onclick="runIA('resumen')"><span class="ai-btn-icon">📋</span><span class="ai-btn-title">Resumen Operatorio</span><span class="ai-btn-desc">Genera resumen ejecutivo del protocolo quirúrgico</span></button>
+    <button class="ai-btn" onclick="runIA('alergia')"><span class="ai-btn-icon">⚠️</span><span class="ai-btn-title">Control de Alergias</span><span class="ai-btn-desc">Verifica compatibilidad con alergias registradas</span></button>
+    <button class="ai-btn" onclick="runIA('protocolo')"><span class="ai-btn-icon">✅</span><span class="ai-btn-title">Revisión de Protocolo</span><span class="ai-btn-desc">Evalúa completitud y calidad de la documentación</span></button>
+  </div>
+  <div class="ai-result" id="ai-result"><div class="ai-result-hdr"><span class="arh-label" id="ai-label">Análisis</span><span class="arh-tag" id="ai-tag">IA</span></div><div class="ai-result-body" id="ai-body"></div></div>
+  <div class="alerts-wrap" id="alerts-wrap"></div>
+</div>
+
+</main>
+
+<!-- BOTTOM BAR -->
+<div class="btm">
+  <div class="btm-info">
+    <div class="btm-s"><span class="btm-sl">Paciente</span><span class="btm-sv" id="stat-pac">ALCIVAR R. DAVID</span></div>
+    <div class="btm-s"><span class="btm-sl">ID</span><span class="btm-sv" id="stat-id">1713656748</span></div>
+    <div class="btm-s"><span class="btm-sl">Alergias</span><span class="btm-sv" id="stat-alg" style="color:#fc8181!important;">PENICILINA</span></div>
+    <div class="btm-s"><span class="btm-sl">Tipo Cirugía</span><span class="btm-sv" id="stat-cx">—</span></div>
+    <div class="btm-s"><span class="btm-sl">Duración Qx</span><span class="btm-sv" id="stat-dur">—</span></div>
+  </div>
+  <div class="btm-btns">
+    <button class="btm-btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btm-btn-primary" onclick="guardar()">💾 Guardar Protocolo</button>
+  </div>
+</div>
+
+<script>
+// ═══ NAV ═══
+function navTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+
+// ═══ STATS ═══
+function updatePatient(){
+  const n=document.getElementById('p-nombres').value||'—';
+  document.getElementById('disp-name').textContent=n.toUpperCase();
+  document.getElementById('stat-pac').textContent=n.split(' ').slice(0,3).join(' ');
+}
+function updateAlergy(){
+  const a=document.getElementById('p-alerg').value||'—';
+  document.getElementById('disp-alerg').textContent=a;
+  document.getElementById('stat-alg').textContent=a;
+}
+function updateStats(){
+  document.getElementById('stat-id').textContent=document.getElementById('p-id').value||'—';
+}
+
+// ═══ TIPO CIRUGÍA ═══
+let cxTipo=null;
+function selCxTipo(tipo){
+  const btnE=document.getElementById('btn-emergencia');
+  const btnL=document.getElementById('btn-electiva');
+  const banner=document.getElementById('cx-banner');
+  if(cxTipo===tipo){
+    cxTipo=null;
+    btnE.classList.remove('active'); btnL.classList.remove('active');
+    banner.style.display='none'; banner.className='';
+    document.getElementById('stat-cx').textContent='—';
+    return;
+  }
+  cxTipo=tipo;
+  btnE.classList.toggle('active',tipo==='emergencia');
+  btnL.classList.toggle('active',tipo==='electiva');
+  banner.style.display='inline-block';
+  banner.className=tipo;
+  banner.textContent=tipo==='emergencia'?'⚠ EMERGENCIA':'✓ ELECTIVA';
+  document.getElementById('stat-cx').textContent=tipo.toUpperCase();
+}
+
+// Anestesia tipo
+function selAnest(el){
+  document.querySelectorAll('#tipo-anestesia .cx-type-btn').forEach(b=>{b.classList.remove('active','cx-electiva');});
+  el.classList.add('active','cx-electiva');
+}
+
+// ═══ TIEMPOS ═══
+function calcTiempo(){
+  const i=document.getElementById('t-inicio').value;
+  const f=document.getElementById('t-fin').value;
+  const tot=document.getElementById('t-total');
+  if(!i||!f){tot.textContent='—';document.getElementById('stat-dur').textContent='—';return;}
+  const[ih,im]=i.split(':').map(Number);const[fh,fm]=f.split(':').map(Number);
+  let mins=(fh*60+fm)-(ih*60+im);if(mins<0)mins+=1440;
+  const h=Math.floor(mins/60),m=mins%60;
+  const out=h>0?`${h}h ${m}min`:`${m} min`;
+  tot.textContent=out;document.getElementById('stat-dur').textContent=out;
+}
+
+// ═══ COMPLICACIONES ═══
+function setComp(val){
+  document.getElementById('comp-si').className=val?'ct-btn si':'ct-btn';
+  document.getElementById('comp-no').className=val?'ct-btn':'ct-btn no';
+  const z=document.getElementById('comp-desc-zone');
+  z.innerHTML=val?`<div style="margin-top:14px;"><label class="fl">Descripción de Complicaciones</label><textarea class="fta" style="border-color:var(--red-mid);" placeholder="Describa detalladamente las complicaciones y su manejo..."></textarea></div>`:'';
+}
+function setMuestra(val){
+  document.getElementById('muest-si').className=val?'ct-btn si':'ct-btn';
+  document.getElementById('muest-no').className=val?'ct-btn':'ct-btn no';
+  const z=document.getElementById('muest-desc-zone');
+  z.innerHTML=val?`<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="fg"><label class="fl">Tipo de Tejido / Muestra</label><input class="fi" type="text" placeholder="Ej: Apéndice cecal, vesícula..."></div>
+    <div class="fg"><label class="fl">N° de Piezas</label><input class="fi" type="number" min="1" placeholder="1"></div>
+    <div class="fg"><label class="fl">Diagnóstico de Presunción</label><input class="fi" type="text" placeholder="Diagnóstico presuntivo..."></div>
+    <div class="fg"><label class="fl">Urgencia</label><select class="fs"><option>🟢 Rutina (24-48h)</option><option>🟡 Prioritaria (12h)</option><option>🔴 Urgente (intraoperatoria)</option></select></div>
+    <div class="fg" style="grid-column:1/-1"><label class="fl">Características Macroscópicas</label><textarea class="fta" style="min-height:70px;" placeholder="Dimensiones, color, consistencia..."></textarea></div>
+  </div>`:'';
+}
+
+// ═══ PATÓLOGOS ═══
+const PATOLOGOS=[
+  {id:'p1',nombre:'Dr. Carlos Mendoza Vargas',   especialidad:'Patología Quirúrgica',   email:'c.mendoza@patologia.ec',  turno:'Mañana'},
+  {id:'p2',nombre:'Dra. María Elena Suárez',     especialidad:'Citopatología',          email:'m.suarez@patologia.ec',   turno:'Mañana'},
+  {id:'p3',nombre:'Dr. Rodrigo Andrade Pinto',   especialidad:'Neuropatología',         email:'r.andrade@patologia.ec',  turno:'Tarde'},
+  {id:'p4',nombre:'Dra. Lucía Flores Castillo',  especialidad:'Patología Oncológica',   email:'l.flores@patologia.ec',   turno:'Tarde'},
+  {id:'p5',nombre:'Dr. Jorge Herrera Toapanta',  especialidad:'Patología General',      email:'j.herrera@patologia.ec',  turno:'Noche'},
+  {id:'p6',nombre:'Dra. Andrea Vega Rodríguez',  especialidad:'Inmunohistoquímica',     email:'a.vega@patologia.ec',     turno:'Mañana'},
+];
+let selectedPatologo=null, muestraSent=false;
+
+function setMuestra(val){
+  document.getElementById('muest-si').className=val?'ct-btn si':'ct-btn';
+  document.getElementById('muest-no').className=val?'ct-btn':'ct-btn no';
+  const z=document.getElementById('muest-desc-zone');
+  if(!val){z.innerHTML='';selectedPatologo=null;return;}
+  muestraSent=false;
+  z.innerHTML=`
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+    <!-- Muestra -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="padding:10px 16px;background:var(--amber-l);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+        <span>🧫</span><span style="font-size:.84rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;">Descripción de la Muestra Patológica</span>
+      </div>
+      <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="fg"><label class="fl">Tipo de Tejido / Muestra</label><input class="fi" id="muest-tipo" type="text" placeholder="Ej: Apéndice cecal, vesícula biliar..."></div>
+        <div class="fg"><label class="fl">Nº de Piezas / Frascos</label><input class="fi" id="muest-piezas" type="number" min="1" placeholder="1"></div>
+        <div class="fg"><label class="fl">Diagnóstico de Presunción</label><input class="fi" id="muest-diag" type="text" placeholder="Diagnóstico clínico-quirúrgico de presunción..."></div>
+        <div class="fg"><label class="fl">Urgencia</label><select class="fs" id="muest-urgencia"><option value="rutina">🟢 Rutina (24-48h)</option><option value="prioritaria">🟡 Prioritaria (12h)</option><option value="urgente">🔴 Urgente (intraoperatoria)</option></select></div>
+        <div class="fg" style="grid-column:1/-1"><label class="fl">Características Macroscópicas</label><textarea class="fta" id="muest-macro" style="min-height:70px;" placeholder="Dimensiones, color, consistencia, superficie, contenido..."></textarea></div>
+      </div>
+    </div>
+    <!-- Patólogo -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="padding:8px 16px;background:var(--purple-l);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+        <span>👨‍🔬</span><span style="font-size:.82rem;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.06em;">Asignar Patólogo</span>
+      </div>
+      <div style="padding:10px 14px;">
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:10px;" id="patologo-grid">
+          ${PATOLOGOS.map(p=>`
+            <div id="pc-${p.id}" onclick="selectPatologo('${p.id}')" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 10px;cursor:pointer;background:var(--white);transition:all .15s;text-align:center;">
+              <div style="font-size:.72rem;font-weight:700;color:var(--text);line-height:1.3;">${p.nombre.split(' ').slice(0,2).join(' ')}</div>
+              <div style="font-size:.62rem;color:var(--muted);margin-top:2px;">${p.turno}</div>
+            </div>`).join('')}
+        </div>
+        <div id="patologo-selected-info" style="display:none;background:var(--purple-l);border:1px solid var(--purple-mid);border-radius:8px;padding:9px 12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span>✅</span>
+            <div style="flex:1;"><div id="pat-sel-name" style="font-size:.84rem;font-weight:700;color:var(--purple);"></div><div id="pat-sel-esp" style="font-size:.72rem;color:var(--muted);"></div></div>
+            <button onclick="clearPatologo()" class="btn-add-code" style="font-size:.72rem;padding:4px 10px;">Cambiar</button>
+          </div>
+        </div>
+        <!-- Botón notificar compacto -->
+        <div style="margin-top:8px;display:flex;align-items:center;justify-content:flex-end;">
+          <button id="btn-notificar" onclick="enviarNotificacion()" class="btm-btn-primary" style="padding:7px 16px;font-size:.8rem;">
+            <span>🔔</span> Enviar Notificación
+          </button>
+        </div>
+        <div id="notif-result" style="display:none;margin-top:8px;font-size:.78rem;"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectPatologo(id){
+  selectedPatologo=PATOLOGOS.find(p=>p.id===id);
+  PATOLOGOS.forEach(p=>{
+    const c=document.getElementById('pc-'+p.id);if(!c)return;
+    if(p.id===id){c.style.border='1.5px solid var(--purple)';c.style.background='var(--purple-l)';c.style.boxShadow='0 0 0 3px rgba(85,60,154,.12)';}
+    else{c.style.border='1.5px solid var(--border)';c.style.background='var(--white)';c.style.boxShadow='';}
+  });
+  const info=document.getElementById('patologo-selected-info');
+  if(info){info.style.display='block';document.getElementById('pat-sel-name').textContent=selectedPatologo.nombre+' — '+selectedPatologo.turno;document.getElementById('pat-sel-esp').textContent=selectedPatologo.especialidad+' · '+selectedPatologo.email;}
+}
+
+function clearPatologo(){
+  selectedPatologo=null;
+  PATOLOGOS.forEach(p=>{const c=document.getElementById('pc-'+p.id);if(c){c.style.border='1.5px solid var(--border)';c.style.background='var(--white)';c.style.boxShadow='';}});
+  const info=document.getElementById('patologo-selected-info');if(info)info.style.display='none';
+}
+
+function enviarNotificacion(){
+  const tipo=document.getElementById('muest-tipo')?.value?.trim()||'';
+  const piezas=document.getElementById('muest-piezas')?.value||'1';
+  const diag=document.getElementById('muest-diag')?.value?.trim()||'';
+  const urgencia=document.getElementById('muest-urgencia')?.value||'rutina';
+  const macro=document.getElementById('muest-macro')?.value?.trim()||'';
+  if(!tipo){showNotifError('⚠️ Especifique el tipo de tejido / muestra.');return;}
+  if(!selectedPatologo){showNotifError('⚠️ Seleccione un patólogo.');return;}
+  if(muestraSent){showNotifError('ℹ️ La notificación ya fue enviada.');return;}
+  const btn=document.getElementById('btn-notificar');btn.disabled=true;btn.innerHTML='<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;"></div> Enviando...';
+  const pac=document.getElementById('p-nombres')?.value||'Paciente';
+  const pacId=document.getElementById('p-id')?.value||'—';
+  const now=new Date();const hora=now.toTimeString().slice(0,5);const fecha=now.toLocaleDateString('es-EC',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const urgLabels={rutina:'🟢 Rutina (24-48h)',prioritaria:'🟡 Prioritaria (12h)',urgente:'🔴 URGENTE'};
+  setTimeout(()=>{
+    muestraSent=true;btn.innerHTML='✅ Notificación Enviada';btn.style.background='var(--green)';btn.disabled=false;
+    const result=document.getElementById('notif-result');result.style.display='block';
+    result.innerHTML=`<div style="background:var(--green-l);border:1px solid #9ae6b4;border-left:4px solid var(--green);border-radius:10px;padding:14px 16px;">
+      <div style="font-size:.84rem;font-weight:700;color:var(--green);margin-bottom:10px;">✅ Notificación enviada — ${fecha} a las ${hora}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.78rem;color:var(--text);">
+        <div><strong>Patólogo:</strong> ${selectedPatologo.nombre}</div>
+        <div><strong>Paciente:</strong> ${pac} (${pacId})</div>
+        <div><strong>Muestra:</strong> ${tipo} (${piezas} pieza${piezas>1?'s':''})</div>
+        <div><strong>Urgencia:</strong> ${urgLabels[urgencia]}</div>
+        ${diag?`<div style="grid-column:1/-1"><strong>Presunción:</strong> ${diag}</div>`:''}
+      </div>
+      <button onclick="reenviarNotificacion()" class="btn-add-code" style="margin-top:10px;font-size:.72rem;padding:5px 12px;">🔁 Reenviar</button>
+    </div>`;
+  },1800);
+}
+
+function reenviarNotificacion(){
+  muestraSent=false;
+  const btn=document.getElementById('btn-notificar');if(btn){btn.innerHTML='<span>🔔</span> Enviar Notificación';btn.style.background='var(--teal)';btn.disabled=false;}
+  const r=document.getElementById('notif-result');if(r)r.style.display='none';
+}
+
+function showNotifError(msg){
+  const r=document.getElementById('notif-result');r.style.display='block';
+  r.innerHTML=`<div style="background:var(--red-l);border:1px solid var(--red-mid);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--red);">${msg}</div>`;
+  setTimeout(()=>{r.style.display='none';},4000);
+}
+// ═══ EQUIPOS E INSUMOS — BUSCADORES ═══
+const INSUMOS_DB = {
+  instrumental: [
+    'Bisturí hoja N°10','Bisturí hoja N°15','Bisturí hoja N°20','Bisturí hoja N°22',
+    'Tijera de Mayo','Tijera de Metzenbaum','Tijera de Potts','Tijera de iris',
+    'Electrobisturí monopolar','Electrobisturí bipolar','Bisturí ultrasónico (Harmonic)','LigaSure',
+    'Pinza de Kelly','Pinza de Kocher','Pinza de Babcock','Pinza de Allis','Pinza de Rochester',
+    'Pinza de Satinsky','Pinza de Duval','Pinza hemostática','Clamp intestinal','Clamp vascular',
+    'Porta-agujas de Mayo-Hegar','Porta-agujas de Castroviejo','Porta-agujas de Heaney',
+    'Separador de Farabeuf','Separador de Richardson','Valva de Doyen','Valva malleable',
+    'Separador automático (Balfour)','Separador de Thompson','Separador de Weitlaner',
+    'Retirador de láminas','Cánula de aspiración Yankauer','Cánula de Poole',
+    'Trocar laparoscópico 5mm','Trocar laparoscópico 10mm','Trocar laparoscópico 12mm',
+    'Óptica laparoscópica 0°','Óptica laparoscópica 30°','Insuflador laparoscópico',
+    'Aplicador de clip laparoscópico','Disector laparoscópico','Grasper laparoscópico',
+  ],
+  suturas: [
+    'Vicryl 0-0','Vicryl 1-0','Vicryl 2-0','Vicryl 3-0','Vicryl 4-0',
+    'Vicryl Plus 0-0','Vicryl Plus 1-0','Vicryl Plus 2-0','Vicryl Plus 3-0',
+    'Monocryl 3-0','Monocryl 4-0','Monocryl 5-0',
+    'PDS 0-0','PDS 1-0','PDS 2-0','PDS 3-0',
+    'Catgut simple 2-0','Catgut simple 3-0','Catgut cromado 2-0','Catgut cromado 0-0',
+    'Prolene 2-0','Prolene 3-0','Prolene 4-0','Prolene 5-0','Prolene 6-0',
+    'Nylon 2-0','Nylon 3-0','Nylon 4-0','Nylon 5-0',
+    'Mersilene 2-0','Seda trenzada 2-0','Seda trenzada 3-0',
+    'Grapadora lineal GIA 60','Grapadora lineal GIA 80','Grapadora lineal GIA 100',
+    'Grapadora circular EEA 21','Grapadora circular EEA 25','Grapadora circular EEA 28','Grapadora circular EEA 31',
+    'Grapadora TA 30','Grapadora TA 60','Clip de titanio','Clip de Hem-o-lok',
+  ],
+  drenajes: [
+    'Drenaje de Penrose','Drenaje de Blake 7mm','Drenaje de Blake 10mm',
+    'Drenaje de Jackson-Pratt','Drenaje de Redón 10Fr','Drenaje de Redón 14Fr',
+    'Tubo de Kher (en T biliar)','Drenaje de Abramson','Tubo de tórax 28Fr','Tubo de tórax 32Fr',
+    'Sonda Foley 12Fr','Sonda Foley 14Fr','Sonda Foley 16Fr','Sonda Foley 18Fr','Sonda Foley 20Fr',
+    'Sonda nasogástrica 12Fr','Sonda nasogástrica 14Fr','Sonda nasogástrica 16Fr',
+    'Sonda de Levin','Sonda de Pezzar (cistostomía)','Sonda de aspiración 14Fr',
+    'Catéter epidural','Catéter venoso central','Catéter de presión arterial',
+  ],
+  hemostasia: [
+    'Surgicel (celulosa oxidada)','Surgicel Fibrillar','Gelita / Gelfoam esponja',
+    'Avitene (microfibras colágeno)','Floseal (trombina + gelatina)',
+    'Tisseel (cola de fibrina)','Tachosil (esponja de fibrina)','Bone wax (cera de hueso)',
+    'Electrocauterio monopolar','Electrocauterio bipolar',
+    'Argón plasma (APC)','Láser quirúrgico','CUSA (ultrasonido quirúrgico)',
+    'Torniquete neumático','Torniquete isquémico manual',
+    'LigaSure vessel sealer','Harmonic scalpel','EnSeal',
+  ],
+  implantes: [
+    'Prótesis total de cadera cementada','Prótesis total de cadera no cementada',
+    'Prótesis parcial de cadera (hemiartroplastia)','Prótesis total de rodilla',
+    'Placa DHS (cadera)','Placa DCS','Clavo endomedular femoral','Clavo endomedular tibial',
+    'Placa de compresión dinámica (DCP)','Placa bloqueada LCP','Tornillos canulados 6.5mm',
+    'Tornillos canulados 7.3mm','Tornillos de esponjosa 4mm','Tornillos corticales 3.5mm',
+    'Fijador externo unilateral','Fijador externo circular (Ilizarov)',
+    'Malla de polipropileno','Malla biológica porcina','Malla biológica bovina',
+    'Malla absorbible Vicryl','Plug herniario','Parche abdominal','Malla laparoscópica',
+    'Prótesis de válvula aórtica','Prótesis de válvula mitral','Injerto vascular Dacron',
+    'Injerto vascular PTFE','Stent vascular','Endoprótesis aórtica',
+  ],
+  generales: [
+    'Gasas 4x4 estériles','Gasas 10x10 estériles','Compresas abdominales 30x30',
+    'Compresas abdominales 45x45','Gasas hemostáticas','Apósito adhesivo',
+    'Tegaderm','Opsite','Cubierta plástica herida',
+    'Guantes estériles 6.0','Guantes estériles 6.5','Guantes estériles 7.0',
+    'Guantes estériles 7.5','Guantes estériles 8.0',
+    'Campos quirúrgicos estériles','Cubierta de mesa de Mayo',
+    'Bata quirúrgica estéril','Jeringa 5ml','Jeringa 10ml','Jeringa 20ml',
+    'Aguja 18G','Aguja 21G','Aguja 23G','Catéter IV 18G','Catéter IV 20G',
+    'Equipo de irrigación','Suero fisiológico 1000ml','Suero fisiológico 500ml',
+    'Hilo de marcado (seda azul)','Azul de metileno','Yodo povidona',
+  ],
+};
+
+// Map category labels
+const CAT_LABELS = {
+  instrumental:'✂️ Instrumental',suturas:'🧵 Suturas',drenajes:'🩺 Drenajes/Sondas',
+  hemostasia:'🩸 Hemostasia',implantes:'🦴 Implantes',generales:'📦 Generales',
+};
+const CAT_COLORS = {
+  instrumental:'var(--navy)',suturas:'var(--teal-d)',drenajes:'var(--teal)',
+  hemostasia:'var(--red)',implantes:'var(--purple)',generales:'var(--amber)',
+};
+
+let insumosRows = []; // {id, cat, nombre, cantidad, obs}
+let insIdCounter = 0;
+
+// Add CSS for dropdown dynamically
+(function(){
+  const s=document.createElement('style');
+  s.textContent=`.ins-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:9px;max-height:200px;overflow-y:auto;z-index:60;display:none;box-shadow:var(--shadow-lg);}
+.ins-dropdown.open{display:block;}
+.ins-opt{padding:9px 13px;cursor:pointer;border-bottom:1px solid var(--surface2);font-size:.83rem;color:var(--text);transition:background .12s;}
+.ins-opt:last-child{border-bottom:none;}
+.ins-opt:hover{background:var(--teal-l);color:var(--teal-d);}
+.ins-opt em{font-style:normal;font-weight:700;color:var(--teal-d);}`;
+  document.head.appendChild(s);
+})();
+
+function searchInsumo(cat, q){
+  const dd = document.getElementById('drop-'+cat);
+  if(!q || q.length < 1){ dd.innerHTML=''; dd.classList.remove('open'); return; }
+  const q2 = q.toLowerCase();
+
+  // Universal: use category filter dropdown
+  const filterVal = document.getElementById('ins-cat-filter')?.value || 'all';
+  let items = [];
+  if(filterVal === 'all'){
+    Object.entries(INSUMOS_DB).forEach(([c,arr]) => arr.forEach(i => items.push({cat:c,nombre:i})));
+  } else {
+    items = (INSUMOS_DB[filterVal]||[]).map(i => ({cat:filterVal, nombre:i}));
+  }
+
+  let res = items.filter(i => i.nombre.toLowerCase().includes(q2));
+
+  // Free-text option
+  if(q.trim().length >= 2 && !res.find(r => r.nombre.toLowerCase() === q2)){
+    const freeCat = filterVal === 'all' ? 'generales' : filterVal;
+    res = [...res, {cat:freeCat, nombre:q.trim(), isNew:true}];
+  }
+  res = res.slice(0, 14);
+
+  if(!res.length){
+    dd.innerHTML='<div class="ins-opt" style="color:var(--muted);cursor:default;font-style:italic;">Sin resultados</div>';
+    dd.classList.add('open'); return;
+  }
+
+  const icons = {instrumental:'✂️',suturas:'🧵',drenajes:'🩺',hemostasia:'🩸',implantes:'🦴',generales:'📦'};
+  dd.innerHTML = res.map(r => {
+    const hi = r.nombre.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<em>${m}</em>`);
+    return `<div class="ins-opt" onclick="addInsumoFromSearch('${r.cat}','${r.nombre.replace(/'/g,"\\'")}')">
+      <span style="margin-right:5px;">${icons[r.cat]||'🔧'}</span>
+      ${r.isNew ? '<span style="color:var(--teal-d);font-weight:700;margin-right:4px;">＋</span>' : ''}${hi}
+    </div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
+function openInsDrop(cat){
+  const inp = document.getElementById('srch-'+cat);
+  if(inp && inp.value.length >= 1) searchInsumo(cat, inp.value);
+}
+function closeInsDrop(cat){
+  const dd = document.getElementById('drop-'+cat);
+  if(dd) dd.classList.remove('open');
+}
+
+function addInsumoFromSearch(cat, nombre){
+  insIdCounter++;
+  insumosRows.push({id:insIdCounter, cat, nombre, cantidad:1, obs:''});
+  renderInsumosTable();
+  const inp = document.getElementById('srch-universal');
+  if(inp) inp.value = '';
+  closeInsDrop('universal');
+}
+
+function removeInsumoRow(id){
+  insumosRows = insumosRows.filter(r => r.id !== id);
+  renderInsumosTable();
+}
+
+function renderInsumosTable(){
+  const wrap = document.getElementById('insumos-wrap');
+  const tbody = document.getElementById('insumos-body');
+  const lbl = document.getElementById('insumos-count-label');
+  if(!wrap || !tbody) return;
+
+  if(!insumosRows.length){
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+  if(lbl) lbl.textContent = insumosRows.length + ' ítem' + (insumosRows.length !== 1 ? 's' : '');
+
+  tbody.innerHTML = insumosRows.map(r => `
+    <tr id="irow-${r.id}">
+      <td style="padding:7px 10px;border-bottom:1px solid var(--surface2);">
+        <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:.68rem;font-weight:700;background:var(--surface);color:${CAT_COLORS[r.cat]};border:1px solid var(--border);">
+          ${CAT_LABELS[r.cat] || r.cat}
+        </span>
+      </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--surface2);font-weight:600;color:var(--text);">${r.nombre}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--surface2);text-align:center;">
+        <input type="number" min="1" value="${r.cantidad}"
+          onchange="updateInsumo(${r.id},'cantidad',this.value)"
+          style="width:60px;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:700;text-align:center;font-size:.82rem;background:var(--white);color:var(--text);outline:none;"
+          onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--surface2);">
+        <input type="text" value="${r.obs}" placeholder="Talla, lote, referencia..."
+          onchange="updateInsumo(${r.id},'obs',this.value)"
+          style="width:100%;padding:4px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.8rem;background:var(--white);color:var(--text);outline:none;"
+          onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--surface2);text-align:center;">
+        <button class="btn-del" onclick="removeInsumoRow(${r.id})" title="Eliminar">✕</button>
+      </td>
+    </tr>`).join('');
+}
+
+function updateInsumo(id, field, val){
+  const row = insumosRows.find(r => r.id === id);
+  if(row) row[field] = field === 'cantidad' ? parseInt(val)||1 : val;
+}
+
+function verificarConteo(){
+  const gi=parseInt(document.getElementById('gasas-inicio')?.value)||0;
+  const gf=parseInt(document.getElementById('gasas-fin')?.value)||0;
+  const ci=parseInt(document.getElementById('compresas-inicio')?.value)||0;
+  const cf=parseInt(document.getElementById('compresas-fin')?.value)||0;
+  const res=document.getElementById('conteo-resultado');
+  if(!res) return;
+  if(!gi&&!gf&&!ci&&!cf){res.style.display='none';return;}
+  const ok=(gi===gf)&&(ci===cf);
+  res.style.display='block';
+  res.style.background=ok?'var(--green-l)':'var(--red-l)';
+  res.style.border='1.5px solid '+(ok?'#9ae6b4':'var(--red-mid)');
+  res.style.color=ok?'var(--green)':'var(--red)';
+  res.textContent=ok?'✅ Conteo correcto — Gasas: '+gi+'/'+gf+' · Compresas: '+ci+'/'+cf:'⚠️ CONTEO INCORRECTO — Gasas: inicio '+gi+' / fin '+gf+' · Compresas: inicio '+ci+' / fin '+cf;
+}
+
+// ═══ OPERACIÓN PROPUESTA — BUSCADOR CIE-10 ═══
+let opSelected=[];
+function searchOpPropuesta(q){
+  const dd=document.getElementById('op-propuesta-drop');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=CIE10.filter(r=>r.c.toLowerCase().includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){dd.innerHTML='<div class="cie-option" style="color:var(--muted);cursor:default;">Sin resultados</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(r=>`<div class="cie-option" onclick="addOpCode('${r.c}','${r.d.replace(/'/g,"\\'")}')"><span class="cie-opt-code">${r.c}</span><span class="cie-opt-desc">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+function openOpDrop(){if(document.getElementById('op-propuesta-search').value.length>=2)searchOpPropuesta(document.getElementById('op-propuesta-search').value);}
+function closeOpDrop(){document.getElementById('op-propuesta-drop').classList.remove('open');}
+function addOpCode(code,desc){
+  if(opSelected.find(x=>x.c===code))return;
+  opSelected.push({c:code,d:desc});renderOpTags();
+  document.getElementById('op-propuesta-search').value='';closeOpDrop();
+}
+function removeOp(code){opSelected=opSelected.filter(x=>x.c!==code);renderOpTags();}
+function renderOpTags(){
+  const cont=document.getElementById('op-propuesta-tags');
+  if(!opSelected.length){cont.innerHTML='<span style="font-size:.78rem;color:var(--dim);">Sin procedimiento seleccionado</span>';return;}
+  cont.innerHTML=opSelected.map(x=>`<span class="cie-tag"><span class="cie-tag-code">${x.c}</span><span class="cie-tag-name">${x.d}</span><button class="cie-tag-del" onclick="removeOp('${x.c}')">✕</button></span>`).join('');
+}
+
+// ═══ DIAGNÓSTICO POSOPERATORIO — BUSCADOR CIE-10 ═══
+let diagSelected=[];
+function searchDiagPos(q){
+  const dd=document.getElementById('op-diagpos-drop');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=CIE10.filter(r=>r.c.toLowerCase().includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){dd.innerHTML='<div class="cie-option" style="color:var(--muted);cursor:default;">Sin resultados</div>';dd.classList.add('open');return;}
+  dd.innerHTML=res.map(r=>`<div class="cie-option" onclick="addDiagCode('${r.c}','${r.d.replace(/'/g,"\\'")}')"><span class="cie-opt-code">${r.c}</span><span class="cie-opt-desc">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+function openDiagDrop(){if(document.getElementById('op-diagpos-search').value.length>=2)searchDiagPos(document.getElementById('op-diagpos-search').value);}
+function closeDiagDrop(){document.getElementById('op-diagpos-drop').classList.remove('open');}
+function addDiagCode(code,desc){
+  if(diagSelected.find(x=>x.c===code))return;
+  diagSelected.push({c:code,d:desc});renderDiagTags();
+  document.getElementById('op-diagpos-search').value='';closeDiagDrop();
+}
+function removeDiag(code){diagSelected=diagSelected.filter(x=>x.c!==code);renderDiagTags();}
+function renderDiagTags(){
+  const cont=document.getElementById('op-diagpos-tags');
+  if(!diagSelected.length){cont.innerHTML='<span style="font-size:.78rem;color:var(--dim);">Sin diagnóstico seleccionado</span>';return;}
+  cont.innerHTML=diagSelected.map(x=>`<span class="cie-tag"><span class="cie-tag-code">${x.c}</span><span class="cie-tag-name">${x.d}</span><button class="cie-tag-del" onclick="removeDiag('${x.c}')">✕</button></span>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// DIAGNÓSTICO DE INGRESO — BUSCADOR CIE-10 INDEPENDIENTE
+// CONECTADO CON SECCIÓN CIE-10/CPT
+// ══════════════════════════════════════════════════════
+let diagIngresoSelected = []; // [{c, d}]
+
+function searchDiagIngreso(q){
+  const dd = document.getElementById('diag-ingreso-drop');
+  if(!q || q.length < 2){ dd.innerHTML=''; dd.classList.remove('open'); return; }
+  const q2 = q.toLowerCase();
+  const res = CIE10.filter(r => r.c.toLowerCase().includes(q2) || r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){
+    dd.innerHTML='<div class="cie-option" style="color:var(--muted);cursor:default;">Sin resultados</div>';
+    dd.classList.add('open'); return;
+  }
+  dd.innerHTML = res.map(r =>
+    `<div class="cie-option" onclick="addDiagIngreso('${r.c}','${r.d.replace(/'/g,"\\'")}')">
+      <span class="cie-opt-code">${r.c}</span>
+      <span class="cie-opt-desc">${r.d}</span>
+    </div>`
+  ).join('');
+  dd.classList.add('open');
+}
+function openDiagIngresoDrop(){
+  const v = document.getElementById('diag-ingreso-search')?.value;
+  if(v && v.length >= 2) searchDiagIngreso(v);
+}
+function closeDiagIngresoDrop(){
+  document.getElementById('diag-ingreso-drop')?.classList.remove('open');
+}
+
+function addDiagIngreso(code, desc){
+  if(diagIngresoSelected.find(x => x.c === code)) return;
+  diagIngresoSelected.push({c: code, d: desc});
+  renderDiagIngresoTags();
+  syncDiagIngresoToCIE(code, desc);
+  document.getElementById('diag-ingreso-search').value = '';
+  closeDiagIngresoDrop();
+}
+
+function removeDiagIngreso(code){
+  diagIngresoSelected = diagIngresoSelected.filter(x => x.c !== code);
+  renderDiagIngresoTags();
+  // También quitar del CIE-10 si fue agregado por sincronización
+  removeSyncedCIE(code);
+}
+
+function renderDiagIngresoTags(){
+  const cont = document.getElementById('diag-ingreso-tags');
+  const badge = document.getElementById('diag-ingreso-sync-badge');
+  if(!cont) return;
+  if(!diagIngresoSelected.length){
+    cont.innerHTML = '<span style="font-size:.78rem;color:var(--dim);font-style:italic;">Sin diagnóstico de ingreso — se sincronizará automáticamente con CIE-10</span>';
+    if(badge) badge.style.display = 'none';
+    return;
+  }
+  if(badge) badge.style.display = 'inline-flex';
+  cont.innerHTML = diagIngresoSelected.map(x => `
+    <span style="display:inline-flex;align-items:center;gap:6px;background:#dbeafe;border:1px solid #2979ff;border-radius:100px;padding:5px 12px 5px 10px;font-size:.78rem;">
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#0d47a1;">${x.c}</span>
+      <span style="color:var(--text);">${x.d}</span>
+      <span style="font-size:.6rem;padding:1px 6px;border-radius:100px;background:#0d47a1;color:white;font-weight:700;letter-spacing:.05em;">INGRESO</span>
+      <button onclick="removeDiagIngreso('${x.c}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+    </span>`).join('');
+}
+
+// ── SINCRONIZACIÓN CON SECCIÓN CIE-10/CPT ──
+const syncedCIECodes = new Set(); // rastrear cuáles vinieron del diagnóstico de ingreso
+
+function syncDiagIngresoToCIE(code, desc){
+  // Agregar al array selCIE si no existe ya
+  if(selCIE.find(x => x.c === code)) {
+    // Ya existe — solo marcar como sincronizado
+    syncedCIECodes.add(code);
+    updateCIESyncBanner();
+    renderCodes('cie');
+    return;
+  }
+  selCIE.push({c: code, d: desc, fromIngreso: true});
+  syncedCIECodes.add(code);
+  renderCodes('cie');
+  updateCIESyncBanner();
+  // Mostrar notificación de sincronización
+  showSyncToast(code, desc);
+}
+
+function removeSyncedCIE(code){
+  // Solo quitar si fue agregado por sincronización
+  if(syncedCIECodes.has(code)){
+    selCIE = selCIE.filter(x => x.c !== code);
+    syncedCIECodes.delete(code);
+    renderCodes('cie');
+    updateCIESyncBanner();
+  }
+}
+
+function updateCIESyncBanner(){
+  const banner = document.getElementById('cie-sync-banner');
+  const count  = document.getElementById('cie-sync-count');
+  if(!banner) return;
+  if(syncedCIECodes.size > 0){
+    banner.style.display = 'flex';
+    if(count) count.textContent = syncedCIECodes.size + ' sincronizado' + (syncedCIECodes.size !== 1 ? 's' : '');
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function showSyncToast(code, desc){
+  // Remove existing sync toast
+  const old = document.getElementById('sync-toast-el');
+  if(old) old.remove();
+  const div = document.createElement('div');
+  div.id = 'sync-toast-el';
+  div.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--navy);color:white;padding:10px 20px;border-radius:9px;font-size:.8rem;font-weight:600;
+    box-shadow:var(--shadow-lg);z-index:9999;display:flex;align-items:center;gap:8px;
+    border:1px solid #2979ff;opacity:0;transition:all .3s ease;white-space:nowrap;font-family:'Inter',sans-serif;`;
+  div.innerHTML = `<span style="font-size:1rem;">🔗</span> <strong style="color:#2979ff;">${code}</strong> sincronizado con CIE-10`;
+  document.body.appendChild(div);
+  requestAnimationFrame(()=>{ div.style.opacity='1'; div.style.transform='translateX(-50%) translateY(0)'; });
+  setTimeout(()=>{
+    div.style.opacity='0'; div.style.transform='translateX(-50%) translateY(10px)';
+    setTimeout(()=>div.remove(), 350);
+  }, 2500);
+}
+
+// ═══ CIE-10 / CPT DATABASE ═══
+const CIE10=[
+  {c:'K35',d:'Apendicitis aguda con peritonitis'},{c:'K37',d:'Apendicitis, no especificada'},
+  {c:'K40.0',d:'Hernia inguinal bilateral'},{c:'K40.9',d:'Hernia inguinal unilateral sin obstrucción'},
+  {c:'K41.9',d:'Hernia femoral unilateral sin obstrucción'},{c:'K43.0',d:'Hernia ventral incisional'},
+  {c:'K43.9',d:'Hernia ventral sin obstrucción'},{c:'K80.0',d:'Colelitiasis con colecistitis aguda'},
+  {c:'K80.2',d:'Colelitiasis sin colecistitis'},{c:'K81.0',d:'Colecistitis aguda'},
+  {c:'K85.9',d:'Pancreatitis aguda'},{c:'K56.0',d:'Íleo paralítico'},
+  {c:'K57.3',d:'Enfermedad diverticular del intestino grueso'},{c:'K92.1',d:'Melena'},
+  {c:'S72.0',d:'Fractura del cuello del fémur'},{c:'S72.1',d:'Fractura pertrocantérica'},
+  {c:'S82.0',d:'Fractura de la rótula'},{c:'S82.1',d:'Fractura tibia proximal'},
+  {c:'S42.2',d:'Fractura húmero proximal'},{c:'M16.1',d:'Coxartrosis primaria unilateral'},
+  {c:'M17.1',d:'Gonartrosis primaria unilateral'},{c:'M23.2',d:'Trastorno de menisco'},
+  {c:'M75.1',d:'Síndrome del manguito rotador'},{c:'N20.0',d:'Cálculo del riñón'},
+  {c:'N40',d:'Hiperplasia de la próstata'},{c:'O82',d:'Parto por cesárea'},
+  {c:'C18.9',d:'Tumor maligno del colon'},{c:'C25.9',d:'Tumor maligno del páncreas'},
+  {c:'C50.9',d:'Tumor maligno de la mama'},{c:'Z96.6',d:'Presencia de artroplastia de rodilla'},
+  {c:'I25.1',d:'Enfermedad aterosclerótica del corazón'},{c:'I70.2',d:'Aterosclerosis de arterias de extremidades'},
+  {c:'T84.0',d:'Complicación mecánica de implante articular'},{c:'Z96.4',d:'Presencia de implante ortopédico'},
+];
+
+const CPT=[
+  {c:'44950',d:'Apendicectomía'},{c:'44960',d:'Apendicectomía con perforación o absceso'},
+  {c:'44970',d:'Apendicectomía laparoscópica'},{c:'47600',d:'Colecistectomía'},
+  {c:'47562',d:'Colecistectomía laparoscópica'},{c:'47563',d:'Colecistectomía laparoscópica con colangiografía'},
+  {c:'49505',d:'Reparación hernia inguinal, inicial'},{c:'49520',d:'Reparación hernia inguinal, recurrente'},
+  {c:'49560',d:'Reparación hernia ventral incisional, inicial'},{c:'27130',d:'Artroplastia total de cadera'},
+  {c:'27447',d:'Artroplastia total de rodilla'},{c:'27245',d:'Tratamiento fractura femoral pertrocantérica con implante'},
+  {c:'29881',d:'Artroscopía de rodilla con meniscectomía'},{c:'29882',d:'Artroscopía de rodilla con reparación de menisco'},
+  {c:'23412',d:'Reparación manguito rotador crónico'},{c:'50590',d:'Litotripsia extracorpórea de cálculos renales'},
+  {c:'52601',d:'Resección transuretral de próstata (RTUP)'},{c:'59510',d:'Parto por cesárea con tubaría'},
+  {c:'59514',d:'Parto por cesárea'},{c:'44140',d:'Colectomía parcial'},
+  {c:'48100',d:'Biopsia de páncreas'},{c:'19120',d:'Escisión de lesión de mama'},
+  {c:'33533',d:'CABG arterial, individual'},{c:'35301',d:'Endarterectomía de arteria femoral'},
+  {c:'43239',d:'Gastroscopía con biopsia'},{c:'45378',d:'Colonoscopía diagnóstica'},
+  {c:'43280',d:'Fundoplicatura laparoscópica'},{c:'49650',d:'Laparoscopía diagnóstica'},
+];
+
+let selCIE=[],selCPT=[];
+
+function searchCode(type,q){
+  const db=type==='cie'?CIE10:CPT;
+  const dd=document.getElementById(type+'-drop');
+  if(!q||q.length<2){dd.innerHTML='';dd.classList.remove('open');return;}
+  const q2=q.toLowerCase();
+  const res=db.filter(r=>r.c.toLowerCase().includes(q2)||r.d.toLowerCase().includes(q2)).slice(0,12);
+  if(!res.length){dd.innerHTML=`<div class="code-opt" style="color:var(--muted);cursor:default;">Sin resultados</div>`;dd.classList.add('open');return;}
+  dd.innerHTML=res.map(r=>`<div class="code-opt" onclick="addCode('${type}','${r.c}','${r.d.replace(/'/g,"\\'")}')"><span class="co-code ${type}-code">${r.c}</span><span class="co-desc">${r.d}</span></div>`).join('');
+  dd.classList.add('open');
+}
+function openDrop(type){const q=document.getElementById(type+'-search').value;if(q.length>=2)searchCode(type,q);}
+function closeDrop(type){document.getElementById(type+'-drop').classList.remove('open');}
+function addCode(type,code,desc){
+  const arr=type==='cie'?selCIE:selCPT;
+  if(arr.find(x=>x.c===code))return;
+  arr.push({c:code,d:desc});renderCodes(type);
+  document.getElementById(type+'-search').value='';closeDrop(type);
+}
+function removeCode(type,code){
+  if(type==='cie')selCIE=selCIE.filter(x=>x.c!==code);
+  else selCPT=selCPT.filter(x=>x.c!==code);
+  renderCodes(type);
+}
+function renderCodes(type){
+  const arr = type==='cie' ? selCIE : selCPT;
+  const cont = document.getElementById(type+'-selected');
+  if(!arr.length){ cont.innerHTML=`<span style="font-size:.78rem;color:var(--muted);">Ningún código seleccionado</span>`; return; }
+  cont.innerHTML = arr.map(x => {
+    const isSynced = type==='cie' && syncedCIECodes && syncedCIECodes.has(x.c);
+    const syncBadge = isSynced
+      ? `<span style="font-size:.6rem;padding:1px 6px;border-radius:100px;background:#0d47a1;color:white;font-weight:700;letter-spacing:.05em;margin-left:2px;">🔗 INGRESO</span>`
+      : '';
+    return `<span class="code-tag ${type}-tag-c" style="${isSynced ? 'border-color:#2979ff;background:#dbeafe;' : ''}">
+      <span class="ct-code">${x.c}</span>
+      <span class="ct-name">${x.d}</span>
+      ${syncBadge}
+      <button class="ct-del" onclick="removeCode('${type}','${x.c}')">✕</button>
+    </span>`;
+  }).join('');
+}
+
+// ═══ CODE TABS ═══
+function switchTab(t){
+  document.getElementById('pane-cie').classList.toggle('active',t==='cie');
+  document.getElementById('pane-cpt').classList.toggle('active',t==='cpt');
+  document.getElementById('tab-cie').className='code-tab'+(t==='cie'?' on-cie':'');
+  document.getElementById('tab-cpt').className='code-tab'+(t==='cpt'?' on-cpt':'');
+}
+
+// ═══ COLLECT DATA ═══
+function collectData(){
+  return{
+    paciente:document.getElementById('p-nombres').value,
+    id:document.getElementById('p-id').value,
+    edad:document.getElementById('p-edad').value,
+    alergia:document.getElementById('p-alerg').value,
+    tipoCirugia:cxTipo||'No especificado',
+    operacion:opSelected.map(x=>x.c!=='—'?x.c+': '+x.d:x.d).join(', ')||document.getElementById('op-propuesta-search').value||'No especificado',
+    diagPos:diagSelected.map(x=>x.c!=='—'?x.c+': '+x.d:x.d).join(', ')||'No especificado',
+    dieresis:document.getElementById('narr-dieresis').value,
+    exposicion:document.getElementById('narr-exposicion').value,
+    exploracion:document.getElementById('narr-exploracion').value,
+    procedimiento:document.getElementById('narr-procedimiento').value,
+    sintesis:document.getElementById('narr-sintesis').value,
+    codigosCIE:selCIE.map(x=>x.c+': '+x.d).join(', ')||'Ninguno',
+    codigosCPT:selCPT.map(x=>x.c+': '+x.d).join(', ')||'Ninguno',
+    equipos: insumosRows.length ? insumosRows.map(r=>r.nombre+(r.obs?' ('+r.obs+')':'')).join(', ') : 'No especificado',
+    cirujano1:document.getElementById('eq-cir1').value,
+    tiempoTotal:document.getElementById('t-total').textContent,
+  };
+}
+
+// ═══ IA ═══
+async function runIA(type){
+  const d=collectData();
+  const hasData=d.operacion!=='No especificado'||d.procedimiento||d.exploracion;
+  if(!hasData){alert('Ingrese información quirúrgica antes de usar el asistente IA.');return;}
+  document.querySelectorAll('.ai-btn').forEach(b=>b.disabled=true);
+  const result=document.getElementById('ai-result');
+  const body=document.getElementById('ai-body');
+  const label=document.getElementById('ai-label');
+  const tag=document.getElementById('ai-tag');
+  const alertsWrap=document.getElementById('alerts-wrap');
+  result.classList.add('show');alertsWrap.style.display='none';
+  body.innerHTML='<div class="ai-loading"><div class="ai-spin"></div>Analizando protocolo quirúrgico...</div>';
+
+  const CONFIGS={
+    alertas:{label:'Alertas y Errores del Protocolo',tag:'ALERTAS',
+      prompt:`Eres cirujano revisor experto. Analiza este protocolo y detecta errores, inconsistencias y riesgos. Devuelve SOLO JSON: {"alertas":[{"nivel":"critico|advertencia|info|ok","titulo":"Título","descripcion":"Descripción"}]}\n\nPaciente: ${d.paciente}\nAlergia: ${d.alergia} ← CRÍTICO\nOperación: ${d.operacion}\nDiagnóstico: ${d.diagPos}\nTipo: ${d.tipoCirugia}\nCIE-10: ${d.codigosCIE}\nCPT: ${d.codigosCPT}\nEquipos: ${d.equipos}\nProcedimiento: ${d.procedimiento||'No completado'}\nSíntesis: ${d.sintesis||'No completado'}`},
+    cie_verify:{label:'Verificación CIE-10',tag:'CIE-10',
+      prompt:`Experto en codificación ICD-10. Analiza los códigos CIE-10 de este protocolo.\n\nOperación: ${d.operacion}\nDiagnóstico Posoperatorio: ${d.diagPos}\nHallazgos: ${d.exploracion||'No especificado'}\nCódigos CIE-10: ${d.codigosCIE}\n\nEvalúa: ✅ Validación · ❌ Errores · ➕ Faltantes · 🔄 Alternativos · 💡 Recomendación`},
+    cpt_verify:{label:'Verificación CPT',tag:'CPT',
+      prompt:`Experto en codificación CPT quirúrgica.\n\nOperación: ${d.operacion}\nProcedimiento: ${d.procedimiento||'No especificado'}\nTipo: ${d.tipoCirugia}\nCódigos CPT: ${d.codigosCPT}\n\nAnaliza: ✅ Validación · ❌ Errores · ➕ Faltantes · 💰 Facturación · 🔄 Sugeridos · ⚠️ Alertas`},
+    resumen:{label:'Resumen Ejecutivo',tag:'RESUMEN',
+      prompt:`Cirujano experto. Genera resumen operatorio profesional.\n\nPaciente: ${d.paciente} | Edad: ${d.edad} | Alergia: ${d.alergia}\nOperación: ${d.operacion} | Tipo: ${d.tipoCirugia} | Tiempo: ${d.tiempoTotal}\nHallazgos: ${d.exploracion||'No especificado'}\nProcedimiento: ${d.procedimiento||'No especificado'}\nEquipos: ${d.equipos}\n\nEstructura: OPERACIÓN · HALLAZGOS · TÉCNICA · CIERRE · DIAGNÓSTICO FINAL · DURACIÓN. Máx 200 palabras.`},
+    alergia:{label:'Control de Alergias',tag:'ALERGIAS',
+      prompt:`Farmacólogo clínico. Analiza alergias vs procedimiento.\n\nAlergia: ${d.alergia}\nProcedimiento: ${d.procedimiento||'No especificado'}\nOperación: ${d.operacion}\n\nEvalúa: 🚨 Riesgo directo · 💊 Fármacos a EVITAR · ✅ Alternativas · 🔗 Reactividad cruzada · 📋 Protocolos`},
+    protocolo:{label:'Revisión de Protocolo',tag:'CALIDAD',
+      prompt:`Auditor médico. Evalúa completitud del protocolo.\n\nCampos: Operación:${d.operacion?'✅':'❌'} · Diagnóstico:${d.diagPos!=='No especificado'?'✅':'❌'} · Diéresis:${d.dieresis?'✅':'❌'} · Exposición:${d.exposicion?'✅':'❌'} · Hallazgos:${d.exploracion?'✅':'❌'} · Procedimiento:${d.procedimiento?'✅':'❌'} · Síntesis:${d.sintesis?'✅':'❌'} · CIE-10:${selCIE.length>0?'✅':'❌'} · CPT:${selCPT.length>0?'✅':'❌'} · Equipos:${equipSelected.size>0?'✅':'❌'}\n\nEvalúa: 📊 Score · ❌ Críticos faltantes · ⚠️ Recomendados · 📝 Calidad narrativa · ✅ Fortalezas · 🎯 Prioridades. Puntaje 1-10.`},
+  };
+
+  const cfg=CONFIGS[type];
+  label.textContent=cfg.label;tag.textContent=cfg.tag;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:cfg.prompt}]})});
+    const data=await res.json();
+    const raw=data.content?.map(c=>c.text||'').join('')||'Error al obtener respuesta.';
+    if(type==='alertas'){
+      try{const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());body.innerHTML=`<span style="color:var(--muted);font-size:.83rem;">${(parsed.alertas||[]).length} hallazgo(s) detectado(s)</span>`;renderAlerts(parsed.alertas||[]);}
+      catch{body.innerHTML=raw.replace(/\n/g,'<br>');}
+    }else{body.innerHTML=raw.replace(/\n/g,'<br>');}
+  }catch(e){body.innerHTML='<span style="color:var(--red);">⚠️ Error al conectar con la IA.</span>';}
+  document.querySelectorAll('.ai-btn').forEach(b=>b.disabled=false);
+}
+
+function renderAlerts(alerts){
+  const wrap=document.getElementById('alerts-wrap');wrap.style.display='flex';wrap.innerHTML='';
+  if(!alerts.length){wrap.innerHTML='<div class="alert-row ar-ok"><span class="ar-icon">✅</span><div class="ar-body"><div class="ar-title">Sin alertas críticas</div><div class="ar-desc">El protocolo parece completo y sin inconsistencias mayores.</div></div></div>';return;}
+  const MAP={critico:{cls:'ar-critical',bcls:'b-crit',icon:'🔴',lbl:'CRÍTICO'},advertencia:{cls:'ar-warning',bcls:'b-warn',icon:'⚠️',lbl:'ADVERTENCIA'},info:{cls:'ar-info',bcls:'b-info',icon:'ℹ️',lbl:'INFO'},ok:{cls:'ar-ok',bcls:'b-ok',icon:'✅',lbl:'OK'}};
+  alerts.forEach(a=>{const m=MAP[a.nivel]||MAP.info;const el=document.createElement('div');el.className=`alert-row ${m.cls}`;el.innerHTML=`<span class="ar-icon">${m.icon}</span><div class="ar-body"><div class="ar-title">${a.titulo}</div><div class="ar-desc">${a.descripcion}</div></div><span class="ar-badge ${m.bcls}">${m.lbl}</span>`;wrap.appendChild(el);});
+}
+
+// ══════════════════════════════════════════════════════
+// SISTEMA DE PLANTILLAS POR USUARIO
+// ══════════════════════════════════════════════════════
+const TPL_STORAGE_KEY = 'atlas_proto_users';
+let currentUser = null;
+
+// ── Persistencia localStorage ──
+function tplLoad(){ try{ return JSON.parse(localStorage.getItem(TPL_STORAGE_KEY)||'{}'); }catch(e){ return {}; } }
+function tplSave(data){ localStorage.setItem(TPL_STORAGE_KEY, JSON.stringify(data)); }
+
+// ── Captura completa del estado del formulario ──
+function captureFormState(){
+  const get = id => document.getElementById(id)?.value || '';
+  const getChecked = id => document.getElementById(id)?.checked || false;
+
+  // Tipo anestesia activa
+  const anestEl = document.querySelector('#tipo-anestesia .cx-type-btn.active');
+  const anestesia = anestEl ? anestEl.textContent.trim() : '';
+
+  return {
+    // Paciente
+    pNombres: get('p-nombres'), pId: get('p-id'), pEdad: get('p-edad'),
+    pServ: get('p-serv'), pSeguro: get('p-seguro'), pHcl: get('p-hcl'),
+    pFnac: get('p-fnac'), pMedico: get('p-medico'), pDias: get('p-dias'),
+    pAlerg: get('p-alerg'), pFecha: get('p-fecha'),
+    // Operación
+    cxTipo, anestesia,
+    // Equipo
+    eqCir1: get('eq-cir1'),
+    // Tiempos
+    tInicio: get('t-inicio'), tFin: get('t-fin'),
+    // Narrativa
+    nDieresis: get('narr-dieresis'), nExposicion: get('narr-exposicion'),
+    nExploracion: get('narr-exploracion'), nProcedimiento: get('narr-procedimiento'),
+    nSintesis: get('narr-sintesis'),
+    // Diagnósticos con códigos
+    diagIngresoSelected: JSON.parse(JSON.stringify(diagIngresoSelected)),
+    opSelected:    JSON.parse(JSON.stringify(opSelected)),
+    diagSelected:  JSON.parse(JSON.stringify(diagSelected)),
+    selCIE:        JSON.parse(JSON.stringify(selCIE)),
+    selCPT:        JSON.parse(JSON.stringify(selCPT)),
+    insumosRows:   JSON.parse(JSON.stringify(insumosRows)),
+    // Timestamp
+    savedAt: new Date().toLocaleString('es-EC'),
+  };
+}
+
+// ── Restaura estado del formulario ──
+function restoreFormState(state){
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value = val||''; };
+
+  set('p-nombres', state.pNombres); set('p-id', state.pId);
+  set('p-edad', state.pEdad);       set('p-serv', state.pServ);
+  set('p-seguro', state.pSeguro);   set('p-hcl', state.pHcl);
+  set('p-fnac', state.pFnac);       set('p-medico', state.pMedico);
+  set('p-dias', state.pDias);       set('p-alerg', state.pAlerg);
+  set('p-fecha', state.pFecha);
+
+  // Tipo cirugía
+  cxTipo = null;
+  document.getElementById('btn-emergencia')?.classList.remove('active');
+  document.getElementById('btn-electiva')?.classList.remove('active');
+  document.getElementById('cx-banner').style.display = 'none';
+  if(state.cxTipo) selCxTipo(state.cxTipo);
+
+  // Anestesia
+  document.querySelectorAll('#tipo-anestesia .cx-type-btn').forEach(b => {
+    b.classList.remove('active','cx-electiva');
+    if(state.anestesia && b.textContent.trim() === state.anestesia) {
+      b.classList.add('active','cx-electiva');
+    }
+  });
+
+  set('eq-cir1', state.eqCir1);
+  set('t-inicio', state.tInicio);  set('t-fin', state.tFin);
+  calcTiempo();
+
+  set('narr-dieresis', state.nDieresis);
+  set('narr-exposicion', state.nExposicion);
+  set('narr-exploracion', state.nExploracion);
+  set('narr-procedimiento', state.nProcedimiento);
+  set('narr-sintesis', state.nSintesis);
+
+  // Diagnósticos y arrays
+  diagIngresoSelected = state.diagIngresoSelected || [];
+  opSelected   = state.opSelected   || [];
+  diagSelected = state.diagSelected || [];
+  selCIE       = state.selCIE       || [];
+  selCPT       = state.selCPT       || [];
+  insumosRows  = state.insumosRows  || [];
+  insIdCounter = insumosRows.length ? Math.max(...insumosRows.map(r=>r.id||0)) : 0;
+
+  // Re-render todo
+  renderDiagIngresoTags();
+  renderOpTags();
+  renderDiagTags();
+  renderCodes('cie');
+  renderCodes('cpt');
+  renderInsumosTable();
+  updatePatient();
+  updateAlergy();
+  updateStats();
+  updateCIESyncBanner();
+  syncedCIECodes.clear();
+  (state.selCIE||[]).forEach(x=>{ if(x.fromIngreso) syncedCIECodes.add(x.c); });
+}
+
+// ── Usuarios ── (el usuario viene del dashboard)
+function initUsers(){
+  if(window.ATLAS_USER) currentUser = window.ATLAS_USER;
+  else currentUser = localStorage.getItem('atlas_proto_last_user') || 'default';
+  localStorage.setItem('atlas_proto_last_user', currentUser);
+  const data = tplLoad();
+  if(!data[currentUser]){ data[currentUser]={templates:[]}; tplSave(data); }
+  updateTplBtnCount();
+}
+
+function updateTplBtnCount(){
+  const tpls = tplLoad()[currentUser]?.templates || [];
+  const el = document.getElementById('tpl-btn-count');
+  if(el) el.textContent = tpls.length === 0
+    ? 'Sin plantillas guardadas'
+    : tpls.length + ' plantilla' + (tpls.length!==1?'s':'') + ' guardada' + (tpls.length!==1?'s':'');
+}
+
+
+
+// ── Guardar plantilla ──
+function saveTemplate(){
+  if(!currentUser){ showTplToast('⚠️ Selecciona un usuario primero','warn'); return; }
+  const name = prompt('Nombre de la plantilla:');
+  if(!name || !name.trim()) return;
+  const data  = tplLoad();
+  if(!data[currentUser]) data[currentUser] = {templates:[]};
+  const state = captureFormState();
+  state.name  = name.trim();
+  data[currentUser].templates.push(state);
+  tplSave(data);
+  updateTplBtnCount();
+  showTplToast('✅ Plantilla "'+name.trim()+'" guardada');
+}
+
+// ── Cargar plantilla ──
+function loadTemplate(idx){
+  if(!currentUser) return;
+  const data = tplLoad();
+  const tpls = data[currentUser]?.templates || [];
+  if(!tpls[idx]) return;
+  const tpl  = tpls[idx];
+  // Si hay datos en el form, confirmar
+  const hasData = document.getElementById('narr-dieresis')?.value ||
+                  document.getElementById('p-nombres')?.value !== 'ALCIVAR ROMERO DAVID ERNESTO';
+  if(hasData && !confirm(`¿Cargar plantilla "${tpl.name}"?\nSe reemplazarán los datos actuales.`)) return;
+  restoreFormState(tpl);
+  closeTemplateModal();
+  showTplToast('📋 Plantilla "'+tpl.name+'" cargada');
+}
+
+// ── Eliminar plantilla ──
+function deleteTemplate(idx){
+  if(!currentUser) return;
+  const data = tplLoad();
+  const name = data[currentUser]?.templates[idx]?.name || '';
+  if(!confirm('¿Eliminar plantilla "'+name+'"?')) return;
+  data[currentUser].templates.splice(idx,1);
+  tplSave(data);
+  updateTplBtnCount();
+  showTplToast('🗑 Plantilla eliminada');
+}
+
+// ── Limpiar formulario ──
+function clearForm(){
+  if(!confirm('¿Limpiar todos los campos del formulario?')) return;
+  document.querySelectorAll('.fi,.fta,.fs').forEach(el=>{
+    if(el.type==='checkbox'||el.type==='radio') el.checked=false;
+    else el.value='';
+  });
+  cxTipo=null;
+  ['btn-emergencia','btn-electiva'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
+  document.getElementById('cx-banner').style.display='none';
+  document.getElementById('stat-cx').textContent='—';
+  document.querySelectorAll('#tipo-anestesia .cx-type-btn').forEach(b=>b.classList.remove('active','cx-electiva'));
+  diagIngresoSelected=[]; opSelected=[]; diagSelected=[];
+  selCIE=[]; selCPT=[]; insumosRows=[];
+  syncedCIECodes.clear();
+  renderDiagIngresoTags(); renderOpTags(); renderDiagTags();
+  renderCodes('cie'); renderCodes('cpt'); renderInsumosTable();
+  updateCIESyncBanner();
+  document.getElementById('t-total').textContent='—';
+  document.getElementById('stat-dur').textContent='—';
+  showTplToast('🗑 Formulario limpiado');
+}
+
+// ── Modal ──
+function openTemplateModal(){
+  if(!currentUser){ showTplToast('⚠️ Selecciona un usuario primero','warn'); return; }
+  const data = tplLoad();
+  const tpls = data[currentUser]?.templates || [];
+  document.getElementById('modal-user-name').textContent = currentUser;
+  const body = document.getElementById('tpl-modal-body');
+
+  if(!tpls.length){
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-size:.85rem;">Sin plantillas guardadas para este usuario</div>';
+  } else {
+    body.innerHTML = tpls.map((t,i) => `
+      <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .15s;"
+        onmouseover="this.style.boxShadow='var(--shadow)'" onmouseout="this.style.boxShadow='none'">
+        <div style="padding:12px 16px;background:var(--surface);display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.1rem;">📋</span>
+          <div style="flex:1;">
+            <div style="font-size:.88rem;font-weight:700;color:var(--text);">${t.name}</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">
+              Guardada: ${t.savedAt||'—'} · Paciente: ${t.pNombres||'—'}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="loadTemplate(${i})" style="padding:6px 14px;background:var(--teal);border:none;border-radius:7px;color:white;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">📂 Cargar</button>
+            <button onclick="deleteTemplate(${i})" style="padding:6px 10px;background:var(--red-l);border:1px solid var(--red-mid);border-radius:7px;color:var(--red);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">🗑</button>
+          </div>
+        </div>
+        <!-- Preview de campos completados -->
+        <div style="padding:8px 16px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;">
+          ${[
+            t.cxTipo        ? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:var(--navy-l);border:1px solid var(--border);color:var(--navy);">⚙️ ${t.cxTipo}</span>` : '',
+            t.anestesia     ? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:var(--navy-l);border:1px solid var(--border);color:var(--navy);">💉 ${t.anestesia}</span>` : '',
+            t.selCIE?.length? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:#dbeafe;border:1px solid var(--teal);color:var(--teal-d);">🔵 ${t.selCIE.length} CIE-10</span>` : '',
+            t.selCPT?.length? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:#dbeafe;border:1px solid var(--teal);color:var(--teal-d);">🟢 ${t.selCPT.length} CPT</span>` : '',
+            t.insumosRows?.length? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:var(--surface);border:1px solid var(--border);color:var(--muted);">🔧 ${t.insumosRows.length} insumos</span>` : '',
+            t.nProcedimiento? `<span style="font-size:.68rem;padding:2px 8px;border-radius:100px;background:var(--green-l);border:1px solid #9ae6b4;color:var(--green);">📝 Procedimiento</span>` : '',
+          ].filter(Boolean).join('')}
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('tpl-modal').style.display = 'flex';
+}
+function closeTemplateModal(){ document.getElementById('tpl-modal').style.display='none'; }
+
+// ── Toast de plantillas ──
+function showTplToast(msg, type){
+  const el = document.getElementById('tpl-toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.borderColor = type==='warn' ? 'var(--amber)' : 'var(--teal)';
+  el.style.opacity = '1';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>{
+    el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(10px)';
+  }, 2500);
+}
+
+// ── Guardar también guarda en el perfil del usuario activo ──
+function guardar(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  initUsers();
+  document.getElementById('tpl-modal').addEventListener('click',e=>{
+    if(e.target===document.getElementById('tpl-modal')) closeTemplateModal();
+  });
+  document.getElementById('p-fecha').value=new Date().toISOString().slice(0,10);
+  // Close dropdowns on outside click
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#op-propuesta-search')&&!e.target.closest('#op-propuesta-drop'))closeOpDrop();
+    if(!e.target.closest('#op-diagpos-search')&&!e.target.closest('#op-diagpos-drop'))closeDiagDrop();
+    if(!e.target.closest('#cie-search')&&!e.target.closest('#cie-drop'))closeDrop('cie');
+    if(!e.target.closest('#cpt-search')&&!e.target.closest('#cpt-drop'))closeDrop('cpt');
+    if(!e.target.closest('#diag-ingreso-search')&&!e.target.closest('#diag-ingreso-drop'))closeDiagIngresoDrop();
+  });
+  updateStats();
+  // Add gasas conteo listeners
+  ['gasas-inicio','gasas-fin','compresas-inicio','compresas-fin'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.addEventListener('input',verificarConteo);
+  });
+});
+</script>
+</body>
+</html>
