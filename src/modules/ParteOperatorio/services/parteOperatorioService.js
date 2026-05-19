@@ -1,0 +1,33 @@
+import { SN } from '../data/parteOperatorioData';
+import { horaToMin, minToHora, SALA_SUCIA_MIN } from '../utils/parteOperatorioUtils';
+
+export const buildPayload = (reg) => ({
+  schedule_id:        reg.id,
+  external_ref:       `ATL-${reg.fecha?.replace(/-/g, '')}-${String(reg.id).padStart(4, '0')}`,
+  procedure_date:     reg.fecha,
+  start_time:         reg.hora,
+  end_time:           minToHora(horaToMin(reg.hora) + Math.round(reg.tpo * 60)),
+  duration_hours:     reg.tpo,
+  cleanup_buffer_min: SALA_SUCIA_MIN,
+  room_id:            reg.sala,
+  room_name:          SN[reg.sala] || '',
+  patient_name:       reg.nom?.toUpperCase(),
+  patient_age:        reg.edad || null,
+  patient_cedula:     reg.cedula || null,
+  patient_db_id:      reg.pac_id || null,
+  surgeon_name:       reg.dr?.toUpperCase(),
+  assistant_name:     reg.ayu?.toUpperCase() || null,
+  anesthesiologist:   reg.ane?.toUpperCase() || null,
+  pediatrician:       reg.ped || null,
+  procedure_name:     reg.cir?.toUpperCase(),
+  procedure_type:     reg.tipo,
+  observations:       reg.obs || null,
+  patient_phone:      reg.tel_pac || null,
+  surgeon_phone:      reg.tel_dr || null,
+  patient_email:      reg.email_pac || null,
+  surgeon_email:      reg.email_dr || null,
+  status:             (reg.estado || 'programado').toUpperCase(),
+  created_at:         new Date().toISOString(),
+  updated_at:         new Date().toISOString(),
+  created_by:         'PARTE_OPERATORIO_UI',
+});

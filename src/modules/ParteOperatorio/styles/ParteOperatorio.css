@@ -90,7 +90,7 @@
   background: transparent;
   border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: 7px;
-  color: white !important;
+  color: rgb(62, 62, 62) !important;
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
