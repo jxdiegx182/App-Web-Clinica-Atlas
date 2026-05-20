@@ -65,11 +65,11 @@ const moduleIcons = {
 };
 
 const moduleColors = {
-  'Modulo Médico': 'border-blue-400 text-blue-500',
-  'Modulo Enfermeria': 'border-blue-400 text-blue-500',
-  'Modulo Examenes': 'border-blue-400 text-blue-500',
-  'Modulo Facturación': 'border-blue-400 text-blue-500',
-  'Parte Operatorio': 'border-blue-400 text-blue-500',
+  'Modulo Médico': 'border-gray-400 text-blue-500',
+  'Modulo Enfermeria': 'border-gray-400 text-blue-500',
+  'Modulo Examenes': 'border-gray-400 text-blue-500',
+  'Modulo Facturación': 'border-gray-400 text-blue-500',
+  'Parte Operatorio': 'border-gray-400 text-blue-500',
 };
 
 
@@ -127,16 +127,16 @@ const Dashboard = () => {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <div className=" max-w-full p-6 pb-72  ">
+        <div className=" max-w-full overflow-x-auto p-3 pb-72  ">
           <Card className="border-3 border-[#76c4d5]/90 shadow-lg rounded-xl overflow-visible ">
             <table className="w-full text-sm relative  ">
               <thead className="bg-[#69c9ba] text-white uppercase text-xs tracking-wider ">
                 {/*turqueza encabezado */}
                 <tr>
-                  <th className="text-center px-4 py-3 cursor-pointer select-none hover:text-[#595759]"
+                  <th className="text-center px-3 py-1 cursor-pointer select-none hover:text-[#595759]"
                     onClick={() => setOrderAsc(!orderAsc)}>
 
-                    <Calendar className="inline w-4 h-4 mr-2" />
+                    
                     Fecha Ingreso{' '}
                     <ArrowBigUp className="inline w-4 h-4 mr-2" />
 
@@ -240,4 +240,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard;

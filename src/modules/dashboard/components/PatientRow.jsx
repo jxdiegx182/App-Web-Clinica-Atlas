@@ -39,17 +39,17 @@ const PatientRow = ({
       className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-slate-100 transition-colors`}
     >
       {/* FECHA INGRESO */}
-      <td className="px-4 py-3 text-center text-[#595759] font-medium bg-[#69c9ba]/20 ">
+      <td className="px-1 py-3 text-center text-[#595759] font-medium bg-[#69c9ba]/20 ">
         {main.fechaIngreso}
       </td>
 
       {/* ESTANCIA */}
-      <td className="px-4 py-3 text-center text-[#595759] font-medium ">
+      <td className="px-1 py-3 text-center text-[#595759] font-medium ">
         {main.estancia} <h1>días</h1>
       </td>
 
       {/* PACIENTE y SIGNOS VITALES */}
-      <td className="relative px-4 py-3 bg-[#69c9ba]/20 text-center">
+      <td className="relative px-2 py-3 bg-[#69c9ba]/20 text-center">
         <div className="inline-block group cursor-pointer">
           <span className="text-[#595759] font-bold group-hover:text-[#4ea685] transition">
             {main.nombre}
@@ -59,19 +59,19 @@ const PatientRow = ({
       </td>
 
       {/* CEDULA */}
-      <td className="px-4 py-3 text-[#4EA685] font-semibold ">
+      <td className="px-2 py-3 text-[#4EA685] font-semibold ">
         {main.cedula}
       </td>
 
       {/* MEDICO */}
-      <td className="px-4 py-3 text-[#595759] font-medium bg-[#69c9ba]/20">
+      <td className="px-3 py-3 text-[#595759] font-medium bg-[#69c9ba]/20">
         {main.medico}
       </td>
 
       {/* ALERTAS, ALERGIAS Y MEDICACIÓN */}
-      <td className="px-4 py-3 text-[#000d5b] relative ">
+      <td className="px-1 py-1 text-[#000d5b] relative ">
         {/* ALERGIAS 1 */}
-        <div className="inline-block group cursor-pointer mr-1">
+        <div className="inline-block group cursor-pointer mr-5">
           <span className="text-gray-900 font-medium group-hover:text-[#007e8f] transition">
             {main.alergiaIconUno}
           </span>
@@ -121,17 +121,17 @@ const PatientRow = ({
       </td>
 
       {/* ESTADO */}
-      <td className="px-4 py-3 text-center font-medium bg-[#69c9ba]/10">
+      <td className="px-1 py-3 text-center font-medium bg-[#69c9ba]/10">
         <div className="flex items-center justify-center gap-2">
           <span
-            className="w-3 h-3 rounded-full"
+            className="w-2 h-2 rounded-full"
             style={{ backgroundColor: getStatusColorObject(estadoActualFila).badge }}
           />
           <select
             value={estadoActualFila}
             onChange={(e) => handleEstadoChange(main.id, e.target.value)}
             disabled={isAltaBloqueada}
-            className={`px-2 py-1 rounded-full text-xs font-semibold bg-[#69c9ba]/50 text-[#000000]/70 transition ${
+            className={`px-1 py-1 rounded-full text-xs font-semibold bg-[#69c9ba]/50 text-[#000000]/70 transition ${
               isAltaBloqueada ? 'cursor-not-allowed opacity-100' : 'hover:text-[#000000]'
             }`}
           >
@@ -145,7 +145,7 @@ const PatientRow = ({
       </td>
 
       {/* SERVICIO */}
-      <td className="px-4 py-3 text-center font-medium">
+      <td className="px-1 py-3 text-center font-medium">
         <div className="flex flex-col items-center">
           <select
             value={servicioActual}
@@ -168,10 +168,10 @@ const PatientRow = ({
       </td>
 
       {/* SEGURO */}
-      <td className="px-4 py-3 text-[#000d5b] bg-[#69c9ba]/20">{main.seguro}</td>
+      <td className="px-2 py-3 text-[#000d5b] bg-[#69c9ba]/20">{main.seguro}</td>
 
       {/* MODULOS */}
-      <td className="px-4 py-3 ">
+      <td className="px-1 py-3 ">
         <div className="flex justify-center gap-2">
           {getRenderableModules(main.modulos).map((modulo, idx) => {
             const hasAccess = userCanAccessModule(modulo);
