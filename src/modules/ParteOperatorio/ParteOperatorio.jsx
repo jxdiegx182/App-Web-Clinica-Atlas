@@ -755,7 +755,7 @@ const ParteOperatorio = () => {
               </div>
               <div className="bts-s">
                 <span className="bts-l">Modo</span>
-                <span className="bts-v" style={{ color: modoAdmin ? 'var(--navy-mid)' : 'var(--teal-mid)' }}>
+                <span className="bts-v" style={{ color: modoAdmin ? 'var(--navy-mid)' : 'var(--amber-mid)' }}>
                   {modoAdmin ? '🔓 Admin' : '👁 Lectura'}
                 </span>
               </div>
