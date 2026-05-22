@@ -483,9 +483,11 @@ const ParteOperatorio = () => {
           <div style={{color: '#000000', padding: '4px 10px', background: '#69c9ba', border: '1px solid var(--green-mid)', borderRadius: '8px', fontSize: '.72rem', fontWeight: 700, color: 'var(--green)'  }}>
             {reloj}
           </div>
-          <button className="hdr-btn" onClick={exportarCSV}>📊 CSV</button>
-          <button className="hdr-btn hdr-btn-teal" onClick={() => window.print()}>🖨️ Imprimir</button>
-        </header>
+          <div className="btz">
+              <button className="bbz" onClick={exportarCSV}>📊 CSV</button>
+              <button className="bbz" onClick={() => window.print()}>🖨️ Imprimir</button>
+            </div>
+            </header>
 
         <main className="app">
 

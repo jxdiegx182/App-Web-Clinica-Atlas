@@ -98,11 +98,12 @@
   transition: all 0.2s;
 }
 .parte-operatorio .hdr-btn:hover {
-  border-color: var(--teal-mid);
+  border-color:  rgb(50, 144, 138);
 }
-.parte-operatorio .hdr-btn-teal {
-  background: var(--teal) !important;
-  border-color: var(--teal) !important;
+.parte-operatorio .hdr-btn-teal:hover {
+  background:  rgb(255, 255, 255) ;
+  border-color:  rgb(32, 120, 114);
+  color : rgb(97, 96, 99) !important;
 }
 .parte-operatorio .app {
   max-width: 1320px;
@@ -593,7 +594,7 @@
   justify-content: space-between;
   align-items: center;
   z-index: 100;
-  box-shadow: 0 -4px 20px rgba(15, 36, 64, 0.3);
+  box-shadow: 0 -4px 20px rgb(15, 64, 51);
 }
 .parte-operatorio .bts {
   display: flex;
@@ -605,17 +606,17 @@
   gap: 1px;
 }
 .parte-operatorio .bts-l {
-  font-size: 0.57rem;
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: 600;
+  font-size: 0.66rem;
+  color: rgb(83, 81, 81);
+  font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 .parte-operatorio .bts-v {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.81rem;
-  color: var(--teal-mid);
-  font-weight: 700;
+  font-size: 0.66rem;
+  color: rgb(255, 255, 255);
+  font-weight: 800;
 }
 .parte-operatorio .bta {
   display: flex;
@@ -624,18 +625,47 @@
 .parte-operatorio .bbt {
   padding: 8px 15px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
+  color: rgb(255, 255, 255);
+  border: 1.5px solid rgb(255, 255, 255);
+  border-radius: 18px;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.77rem;
-  font-weight: 600;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.parte-operatorio .btz {
+  display: flex;
+  gap: 8px;
+}
+.parte-operatorio .bbz:hover {
+  padding: 8px 15px;
+  background: rgba(121, 117, 124, 0.73);
+  color: rgba(255, 255, 255, 0.617);
+  border: 1.5px solid rgb(46, 137, 140);
+  border-radius: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.77rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.parte-operatorio .bbz {
+  padding: 8px 15px;
+  background: rgb(135, 202, 202);
+  color: rgba(255, 255, 255, 0.617);
+  border: 1.5px solid rgb(46, 137, 140);
+  border-radius: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.77rem;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.2s;
 }
 .parte-operatorio .bbt:hover {
   border-color: var(--teal-mid);
-  color: var(--teal-mid);
+  color: rgb(114, 108, 118);
 }
 
 @media print {
